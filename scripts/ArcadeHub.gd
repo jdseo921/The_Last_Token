@@ -149,7 +149,7 @@ func _handle_cabinet_07() -> void:
 		start_dialogue([{"speaker": "Cabinet 07", "text": "INSERT PURPOSE."}])
 		return
 	if not GameState.rockbyte_duel_completed:
-		SceneChanger.change_scene("res://scenes/minigames/RockbyteDuel.tscn")
+		SceneChanger.go_to_rockbyte_duel()
 		return
 	start_dialogue([
 		{"speaker": "Cabinet 07", "text": "TOKEN ACCEPTED."},
@@ -162,14 +162,29 @@ func _handle_memory_terminal() -> void:
 		save_slot_menu.queue_free()
 	save_slot_menu = load("res://scenes/ui/SaveSlotMenu.tscn").instantiate()
 	add_child(save_slot_menu)
+	if player and player.has_method("set_control_enabled"):
+		player.set_control_enabled(false)
+	if save_slot_menu.has_signal("menu_closed"):
+		save_slot_menu.menu_closed.connect(_on_save_slot_menu_closed, CONNECT_ONE_SHOT)
 	if save_slot_menu.has_method("open_menu"):
 		save_slot_menu.open_menu(true)
 
+func _on_save_slot_menu_closed() -> void:
+	if player and player.has_method("set_control_enabled"):
+		player.set_control_enabled(true)
+	save_slot_menu = null
+
 func _handle_staff_door() -> void:
 	if GameState.staff_room_unlocked:
-		SceneChanger.change_scene("res://scenes/arcade/StaffRoom.tscn")
+		SceneChanger.go_to_staff_room()
 		return
-	SceneChanger.change_scene("res://scenes/arcade/SyncDoorPuzzle.tscn")
+	if GameState.lost_token_quest_completed and GameState.rockbyte_duel_completed:
+		SceneChanger.go_to_sync_door_puzzle()
+		return
+	start_dialogue([
+		{"speaker": "Staff Door", "text": "TWO SIGNALS REQUIRED."},
+		{"speaker": "Staff Door", "text": "MEMORY TOKEN NOT VERIFIED."},
+	])
 
 func _handle_owner_portrait() -> void:
 	GameState.owner_portrait_secret_found = true

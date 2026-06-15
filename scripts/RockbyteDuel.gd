@@ -132,9 +132,9 @@ func _finish_duel(player_won: bool) -> void:
 
 func _on_exit_pressed() -> void:
 	if player_won_last_round:
-		SceneChanger.change_scene("res://scenes/arcade/ArcadeHub.tscn")
+		SceneChanger.go_to_arcade_hub()
 		return
-	SceneChanger.change_scene("res://scenes/minigames/RockbyteDuel.tscn")
+	SceneChanger.go_to_rockbyte_duel()
 
 func _refresh_ui() -> void:
 	count_label.text = "Left: %d | Right: %d" % [left_pile, right_pile]

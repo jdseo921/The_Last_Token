@@ -55,6 +55,9 @@ func _interact_with_nearest() -> void:
 		target.interact(self)
 
 func _set_prompt() -> void:
+	if not can_control:
+		interaction_prompt_changed.emit("")
+		return
 	if nearby_interactables.is_empty():
 		interaction_prompt_changed.emit("")
 	else:

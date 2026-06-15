@@ -49,7 +49,7 @@ func handle_interactable_interaction(interactable: Node, player_node: Node = nul
 		"employee_file":
 			_handle_employee_file()
 		"exit_door":
-			SceneChanger.change_scene("res://scenes/arcade/ArcadeHub.tscn")
+			SceneChanger.go_to_arcade_hub()
 		_:
 			start_dialogue([{"speaker": "System", "text": "Nothing happens."}])
 

@@ -8,4 +8,4 @@ func _ready() -> void:
 func _on_continue_pressed() -> void:
 	GameState.ending_seen = true
 	GameState.unlock_post_reveal_roam()
-	SceneChanger.change_scene("res://scenes/arcade/ArcadeHub.tscn")
+	SceneChanger.go_to_arcade_hub()

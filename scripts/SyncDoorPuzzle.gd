@@ -64,11 +64,10 @@ func _check_success() -> void:
 		exit_button.visible = true
 
 func _on_exit_pressed() -> void:
-	SceneChanger.change_scene("res://scenes/arcade/ArcadeHub.tscn")
+	SceneChanger.go_to_arcade_hub()
 
 func _refresh_ui() -> void:
 	if puzzle_solved:
 		return
 	door_label.text = "Staff Door: Locked"
 	status_label.text = "Switch A: %s | Switch B: %s" % ["ACTIVE" if switch_a_active else "OFF", "ACTIVE" if switch_b_active else "OFF"]
-*** End Patch
