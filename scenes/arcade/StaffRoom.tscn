@@ -1,0 +1,52 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/StaffRoom.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/arcade/HubInteractable.tscn" id="4"]
+
+[node name="StaffRoom" type="Node2D"]
+script = ExtResource("1")
+
+[node name="RoomBackdrop" type="ColorRect" parent="."]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 336.0
+offset_bottom = 208.0
+color = Color(0.09, 0.09, 0.1, 1)
+
+[node name="Player" parent="." instance=ExtResource("2")]
+position = Vector2(80, 168)
+
+[node name="DialogueBox" parent="." instance=ExtResource("3")]
+
+[node name="InteractionPrompt" type="Label" parent="."]
+position = Vector2(20, 220)
+text = ""
+
+[node name="RoomLabel" type="Label" parent="."]
+position = Vector2(24, 24)
+text = "STAFF ROOM"
+
+[node name="TerminalLabel" type="Label" parent="."]
+position = Vector2(200, 54)
+text = "OLD TERMINAL"
+
+[node name="EmployeeFileLabel" type="Label" parent="."]
+position = Vector2(44, 72)
+text = "EMPLOYEE 04 FILE"
+
+[node name="Terminal" parent="." instance=ExtResource("4")]
+position = Vector2(240, 96)
+interactable_kind = "terminal"
+label_text = "TERMINAL"
+
+[node name="EmployeeFile" parent="." instance=ExtResource("4")]
+position = Vector2(88, 112)
+interactable_kind = "employee_file"
+label_text = "FILE"
+
+[node name="ExitDoor" parent="." instance=ExtResource("4")]
+position = Vector2(296, 168)
+interactable_kind = "exit_door"
+label_text = "EXIT"

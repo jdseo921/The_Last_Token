@@ -1,0 +1,58 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/SyncDoorPuzzle.gd" id="1"]
+
+[node name="SyncDoorPuzzle" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 32.0
+offset_top = 32.0
+offset_right = 608.0
+offset_bottom = 408.0
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 552.0
+offset_bottom = 344.0
+
+[node name="TitleLabel" type="Label" parent="Panel/VBox"]
+text = "SYNC DOOR"
+
+[node name="InstructionLabel" type="Label" parent="Panel/VBox"]
+text = "Two switches must be active at the same time. One switch stays active for 5 seconds. Press the second switch before the first one resets."
+
+[node name="DoorLabel" type="Label" parent="Panel/VBox"]
+text = "Staff Door: Locked"
+
+[node name="StatusLabel" type="Label" parent="Panel/VBox"]
+text = "Activate both switches to open the door."
+
+[node name="SwitchesHBox" type="HBoxContainer" parent="Panel/VBox"]
+
+[node name="SwitchAButton" type="Button" parent="Panel/VBox/SwitchesHBox"]
+text = "Switch A"
+
+[node name="SwitchBButton" type="Button" parent="Panel/VBox/SwitchesHBox"]
+text = "Switch B"
+
+[node name="ExitButton" type="Button" parent="Panel/VBox"]
+visible = false
+text = "Return"
+
+[node name="SwitchATimer" type="Timer" parent="."]
+one_shot = true
+wait_time = 5.0
+
+[node name="SwitchBTimer" type="Timer" parent="."]
+one_shot = true
+wait_time = 5.0

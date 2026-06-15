@@ -1,0 +1,15 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; but direct edits are fine for project scaffolding.
+
+[application]
+
+config/name="The Last Token"
+run/main_scene="res://scenes/main/Main.tscn"
+config/features=PackedStringArray("4.4", "Forward Plus")
+
+[autoload]
+
+GameState="*res://scripts/GameState.gd"
+SceneChanger="*res://scripts/SceneChanger.gd"
+SaveManager="*res://scripts/SaveManager.gd"

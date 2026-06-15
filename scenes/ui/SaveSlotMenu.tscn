@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/SaveSlotMenu.gd" id="1"]
+
+[node name="SaveSlotMenu" type="Control"]
+script = ExtResource("1")
+
+[node name="Panel" type="Panel" parent="."]
+
+[node name="TitleLabel" type="Label" parent="Panel"]
+text = "MEMORY TERMINAL"
+
+[node name="SubtitleLabel" type="Label" parent="Panel"]
+text = "Save restored progress?"
+
+[node name="SlotsVBox" type="VBoxContainer" parent="Panel"]
+
+[node name="ConfirmOverwrite" type="ConfirmationDialog" parent="."]
+dialog_text = "Overwrite this Memory Slot?"

@@ -1,0 +1,35 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/EndingPrompt.gd" id="1"]
+
+[node name="EndingPrompt" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 48.0
+offset_right = 592.0
+offset_bottom = 392.0
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 520.0
+offset_bottom = 320.0
+
+[node name="TitleLabel" type="Label" parent="Panel/VBox"]
+text = "THE END"
+
+[node name="BodyLabel" type="Label" parent="Panel/VBox"]
+text = "The reveal is complete. Continue into post-reveal roam mode."
+
+[node name="ContinueButton" type="Button" parent="Panel/VBox"]
+text = "Continue"
