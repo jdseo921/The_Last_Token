@@ -29,6 +29,17 @@
 - Remaining runtime issues: unknown until the project is opened and played in Godot.
 - Do not treat the MVP as live-verified until the full route below passes in the Godot runtime.
 
+## Live Godot Acceptance Fix Pass
+- Date: 2026-06-18
+- Requested route: full 32-step acceptance route from `res://scenes/main/Main.tscn` through post-reveal restore.
+- Result: blocked before launch.
+- Commands attempted: `Get-Command godot`, `Get-Command godot4`, `where.exe godot`, `where.exe godot4`, and a search for `Godot*.exe` in common local install/download locations.
+- Godot executable found: no.
+- Acceptance steps passed live: none.
+- Runtime issues fixed: none, because the game could not be launched.
+- Remaining blocker: install Godot 4.4.x or provide the executable path, then rerun the full route.
+- Project status: not live-verified and not publishable until the full route passes in Godot.
+
 ## Final MVP Acceptance Pass
 - Date: 2026-06-18
 - Method: static script/scene/resource-path review only; live Godot launch was unavailable in this shell.
