@@ -20,47 +20,47 @@ color = Color(0, 0, 0, 0.72)
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 0
 offset_left = 48.0
-offset_top = 48.0
+offset_top = 20.0
 offset_right = 592.0
-offset_bottom = 392.0
+offset_bottom = 430.0
 
 [node name="TitleLabel" type="Label" parent="Panel"]
 layout_mode = 0
 offset_left = 24.0
-offset_top = 20.0
+offset_top = 16.0
 offset_right = 520.0
-offset_bottom = 48.0
+offset_bottom = 44.0
 text = "MEMORY TERMINAL"
 
 [node name="SubtitleLabel" type="Label" parent="Panel"]
 layout_mode = 0
 offset_left = 24.0
-offset_top = 56.0
+offset_top = 48.0
 offset_right = 520.0
-offset_bottom = 84.0
+offset_bottom = 76.0
 text = "Save Memory - choose a slot"
 
 [node name="SlotsVBox" type="VBoxContainer" parent="Panel"]
 layout_mode = 0
 offset_left = 24.0
-offset_top = 104.0
+offset_top = 88.0
 offset_right = 520.0
-offset_bottom = 236.0
+offset_bottom = 334.0
 
 [node name="ModeButton" type="Button" parent="Panel"]
 layout_mode = 0
 offset_left = 24.0
-offset_top = 264.0
+offset_top = 356.0
 offset_right = 184.0
-offset_bottom = 300.0
+offset_bottom = 392.0
 text = "Restore Memory"
 
 [node name="CloseButton" type="Button" parent="Panel"]
 layout_mode = 0
 offset_left = 200.0
-offset_top = 264.0
+offset_top = 356.0
 offset_right = 320.0
-offset_bottom = 300.0
+offset_bottom = 392.0
 text = "Back"
 
 [node name="ConfirmOverwrite" type="ConfirmationDialog" parent="."]

@@ -60,11 +60,11 @@ func _ensure_input_actions() -> void:
 
 func get_games_completed_count() -> int:
 	var completed := 0
-	if lost_token_quest_completed:
-		completed += 1
 	if rockbyte_duel_completed:
 		completed += 1
 	if story_puzzle_completed:
+		completed += 1
+	if twist_reveal_seen:
 		completed += 1
 	return completed
 
@@ -87,21 +87,59 @@ func get_total_secrets_count() -> int:
 	return 4
 
 func get_story_phase_label() -> String:
+	if post_reveal_roam_unlocked:
+		return "Post-Reveal Roam"
 	if ending_seen:
 		return "Ending"
 	if twist_reveal_seen:
-		return "Post-Reveal"
+		return "Truth Revealed"
 	if staff_room_unlocked:
-		return "Staff Access"
+		return "Staff Room"
 	if story_puzzle_completed:
-		return "Clue Solved"
+		return "Sync Door Solved"
 	if lost_token_quest_completed:
-		return "Quest Complete"
+		return "Lost Token Returned"
+	if rockbyte_duel_completed or lost_token_collected:
+		return "Lost Token Found"
 	if lost_token_quest_started:
-		return "Quest Active"
+		return "Cabinet 07"
 	if story_started:
-		return "Story Started"
-	return "New Game"
+		return "Opening Night"
+	return "New Memory"
+
+func reset_for_new_game() -> void:
+	story_started = false
+	lost_token_quest_started = false
+	lost_token_collected = false
+	lost_token_quest_completed = false
+	rockbyte_duel_completed = false
+	story_puzzle_completed = false
+	staff_room_unlocked = false
+	twist_reveal_seen = false
+	ending_seen = false
+	post_reveal_roam_unlocked = false
+	mira_intro_seen = false
+	mira_post_reveal_seen = false
+	gus_intro_seen = false
+	gus_post_reveal_seen = false
+	vendo_intro_seen = false
+	vendo_post_reveal_seen = false
+	cabinet07_employee_hint_seen = false
+	mr_byte_intro_seen = false
+	mr_byte_post_reveal_seen = false
+	broken_cabinet_secret_found = false
+	owner_portrait_secret_found = false
+	employee_04_file_found = false
+	vendo_memory_riddle_secret_found = false
+	save_slot_index = 0
+	save_slot_name = ""
+	save_timestamp = ""
+	save_version = 1
+	save_scene_name = ""
+	save_player_position_x = 0.0
+	save_player_position_y = 0.0
+	save_player_facing = "down"
+	save_progress_stage = "New Memory"
 
 func start_lost_token_quest() -> void:
 	story_started = true
