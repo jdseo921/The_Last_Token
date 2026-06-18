@@ -1,6 +1,7 @@
-[gd_scene format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/RockbyteDuel.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/minigames/common/MinigameStage.tscn" id="2_stage"]
 
 [node name="RockbyteDuel" type="Control"]
 layout_mode = 3
@@ -11,70 +12,257 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
 
-[node name="Background" type="ColorRect" parent="."]
-layout_mode = 0
-offset_right = 640.0
-offset_bottom = 440.0
-color = Color(0.035, 0.035, 0.055, 1)
+[node name="BackgroundLayer" type="CanvasLayer" parent="."]
+layer = -2
 
-[node name="Panel" type="Panel" parent="."]
-layout_mode = 0
-offset_left = 32.0
+[node name="BackgroundPlaceholder" type="ColorRect" parent="BackgroundLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.025, 0.025, 0.045, 1)
+
+[node name="BackgroundTexture" type="TextureRect" parent="BackgroundLayer"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CabinetFrameLayer" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="FramePlaceholder" type="Panel" parent="CabinetFrameLayer"]
+offset_left = 28.0
 offset_top = 22.0
-offset_right = 608.0
+offset_right = 612.0
 offset_bottom = 420.0
 
-[node name="VBox" type="VBoxContainer" parent="Panel"]
+[node name="FrameTexture" type="TextureRect" parent="CabinetFrameLayer"]
+visible = false
+offset_left = 28.0
+offset_top = 22.0
+offset_right = 612.0
+offset_bottom = 420.0
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TitleLabel" type="Label" parent="."]
 layout_mode = 0
-offset_left = 24.0
-offset_top = 18.0
-offset_right = 552.0
-offset_bottom = 378.0
-
-[node name="TitleLabel" type="Label" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 28)
+offset_left = 56.0
+offset_top = 40.0
+offset_right = 584.0
+offset_bottom = 74.0
+theme_override_font_sizes/font_size = 24
 text = "ROCKBYTE DUEL"
-
-[node name="InstructionLabel" type="Label" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 76)
-text = "Rules:
-Take exactly 1 rock from Left, Right, or Both.
-Cabinet 07 moves after you.
-Whoever takes the final rock wins."
-autowrap_mode = 3
-
-[node name="CountLabel" type="Label" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 34)
-theme_override_font_sizes/font_size = 20
-text = "Left: 5 | Right: 5"
 horizontal_alignment = 1
 
-[node name="TurnLabel" type="Label" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 24)
+[node name="InstructionPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 56.0
+offset_top = 82.0
+offset_right = 584.0
+offset_bottom = 144.0
+
+[node name="InstructionLabel" type="Label" parent="InstructionPanel"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 6.0
+offset_right = 516.0
+offset_bottom = 56.0
+text = "Two piles remain.
+Take 1 from Left, Right, or Both.
+Whoever takes the final rock wins."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="GameArea" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 58.0
+offset_top = 156.0
+offset_right = 582.0
+offset_bottom = 282.0
+
+[node name="CountLabel" type="Label" parent="GameArea"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 8.0
+offset_right = 508.0
+offset_bottom = 34.0
+theme_override_font_sizes/font_size = 18
+text = "LEFT PILE: 5        RIGHT PILE: 5"
+horizontal_alignment = 1
+
+[node name="PilesHBox" type="HBoxContainer" parent="GameArea"]
+visible = false
+layout_mode = 0
+offset_left = 44.0
+offset_top = 42.0
+offset_right = 480.0
+offset_bottom = 112.0
+alignment = 1
+
+[node name="LeftPilePanel" type="Panel" parent="GameArea/PilesHBox"]
+custom_minimum_size = Vector2(190, 68)
+
+[node name="LeftPileTitle" type="Label" parent="GameArea/PilesHBox/LeftPilePanel"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 6.0
+offset_right = 182.0
+offset_bottom = 24.0
+text = "LEFT"
+horizontal_alignment = 1
+
+[node name="LeftRockGrid" type="HBoxContainer" parent="GameArea/PilesHBox/LeftPilePanel"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 32.0
+offset_right = 170.0
+offset_bottom = 56.0
+alignment = 1
+
+[node name="Rock1" type="ColorRect" parent="GameArea/PilesHBox/LeftPilePanel/LeftRockGrid"]
+custom_minimum_size = Vector2(18, 18)
+color = Color(0.68, 0.72, 0.78, 1)
+
+[node name="Rock2" type="ColorRect" parent="GameArea/PilesHBox/LeftPilePanel/LeftRockGrid"]
+custom_minimum_size = Vector2(18, 18)
+color = Color(0.68, 0.72, 0.78, 1)
+
+[node name="Rock3" type="ColorRect" parent="GameArea/PilesHBox/LeftPilePanel/LeftRockGrid"]
+custom_minimum_size = Vector2(18, 18)
+color = Color(0.68, 0.72, 0.78, 1)
+
+[node name="Rock4" type="ColorRect" parent="GameArea/PilesHBox/LeftPilePanel/LeftRockGrid"]
+custom_minimum_size = Vector2(18, 18)
+color = Color(0.68, 0.72, 0.78, 1)
+
+[node name="Rock5" type="ColorRect" parent="GameArea/PilesHBox/LeftPilePanel/LeftRockGrid"]
+custom_minimum_size = Vector2(18, 18)
+color = Color(0.68, 0.72, 0.78, 1)
+
+[node name="RightPilePanel" type="Panel" parent="GameArea/PilesHBox"]
+custom_minimum_size = Vector2(190, 68)
+
+[node name="RightPileTitle" type="Label" parent="GameArea/PilesHBox/RightPilePanel"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 6.0
+offset_right = 182.0
+offset_bottom = 24.0
+text = "RIGHT"
+horizontal_alignment = 1
+
+[node name="RightRockGrid" type="HBoxContainer" parent="GameArea/PilesHBox/RightPilePanel"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 32.0
+offset_right = 170.0
+offset_bottom = 56.0
+alignment = 1
+
+[node name="Rock1" type="ColorRect" parent="GameArea/PilesHBox/RightPilePanel/RightRockGrid"]
+custom_minimum_size = Vector2(18, 18)
+color = Color(0.68, 0.72, 0.78, 1)
+
+[node name="Rock2" type="ColorRect" parent="GameArea/PilesHBox/RightPilePanel/RightRockGrid"]
+custom_minimum_size = Vector2(18, 18)
+color = Color(0.68, 0.72, 0.78, 1)
+
+[node name="Rock3" type="ColorRect" parent="GameArea/PilesHBox/RightPilePanel/RightRockGrid"]
+custom_minimum_size = Vector2(18, 18)
+color = Color(0.68, 0.72, 0.78, 1)
+
+[node name="Rock4" type="ColorRect" parent="GameArea/PilesHBox/RightPilePanel/RightRockGrid"]
+custom_minimum_size = Vector2(18, 18)
+color = Color(0.68, 0.72, 0.78, 1)
+
+[node name="Rock5" type="ColorRect" parent="GameArea/PilesHBox/RightPilePanel/RightRockGrid"]
+custom_minimum_size = Vector2(18, 18)
+color = Color(0.68, 0.72, 0.78, 1)
+
+[node name="Stage" parent="." instance=ExtResource("2_stage")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StatusPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 58.0
+offset_top = 292.0
+offset_right = 582.0
+offset_bottom = 356.0
+
+[node name="StatusVBox" type="VBoxContainer" parent="StatusPanel"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 6.0
+offset_right = 512.0
+offset_bottom = 58.0
+
+[node name="TurnLabel" type="Label" parent="StatusPanel/StatusVBox"]
+custom_minimum_size = Vector2(0, 20)
 text = "Your turn"
 horizontal_alignment = 1
 
-[node name="StatusLabel" type="Label" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 104)
+[node name="StatusLabel" type="Label" parent="StatusPanel/StatusVBox"]
+custom_minimum_size = Vector2(0, 32)
 text = "Choose your move."
+horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="ButtonsHBox" type="HBoxContainer" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 38)
+[node name="ButtonArea" type="Control" parent="."]
+layout_mode = 0
+offset_left = 56.0
+offset_top = 366.0
+offset_right = 584.0
+offset_bottom = 406.0
 
-[node name="TakeLeftButton" type="Button" parent="Panel/VBox/ButtonsHBox"]
-custom_minimum_size = Vector2(120, 36)
+[node name="ButtonsHBox" type="HBoxContainer" parent="ButtonArea"]
+layout_mode = 0
+offset_left = 60.0
+offset_top = 0.0
+offset_right = 468.0
+offset_bottom = 38.0
+alignment = 1
+
+[node name="TakeLeftButton" type="Button" parent="ButtonArea/ButtonsHBox"]
+custom_minimum_size = Vector2(124, 36)
 text = "Take Left"
 
-[node name="TakeRightButton" type="Button" parent="Panel/VBox/ButtonsHBox"]
-custom_minimum_size = Vector2(120, 36)
+[node name="TakeRightButton" type="Button" parent="ButtonArea/ButtonsHBox"]
+custom_minimum_size = Vector2(124, 36)
 text = "Take Right"
 
-[node name="TakeBothButton" type="Button" parent="Panel/VBox/ButtonsHBox"]
-custom_minimum_size = Vector2(120, 36)
+[node name="TakeBothButton" type="Button" parent="ButtonArea/ButtonsHBox"]
+custom_minimum_size = Vector2(124, 36)
 text = "Take Both"
 
-[node name="ExitButton" type="Button" parent="Panel/VBox"]
+[node name="ExitButton" type="Button" parent="ButtonArea"]
 visible = false
-custom_minimum_size = Vector2(160, 34)
+layout_mode = 0
+offset_left = 184.0
+offset_top = 0.0
+offset_right = 344.0
+offset_bottom = 38.0
 text = "Exit"
+
+[node name="EffectsLayer" type="CanvasLayer" parent="."]
+layer = 5
+
+[node name="CRTGlitchOverlayPlaceholder" type="ColorRect" parent="EffectsLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.08, 0.2, 0.28, 0.055)

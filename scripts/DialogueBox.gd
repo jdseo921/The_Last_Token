@@ -5,6 +5,9 @@ signal dialogue_finished
 const ADVANCE_COOLDOWN_MSEC := 180
 const LETTERS_PER_SECOND := 42.0
 const WORDS_PER_SECOND := 7.0
+const TEXT_LEFT_WITHOUT_PORTRAIT := 16.0
+const TEXT_LEFT_WITH_PORTRAIT := 120.0
+const PORTRAIT_REGISTRY := preload("res://scripts/DialoguePortraitRegistry.gd")
 const MACHINE_SPEAKERS := [
 	"Cabinet 07",
 	"Staff Door",
@@ -16,6 +19,7 @@ const MACHINE_SPEAKERS := [
 ]
 
 @onready var panel: Panel = $Panel
+@onready var portrait_texture_rect: TextureRect = $Panel/Portrait
 @onready var speaker_name_label: Label = $Panel/SpeakerName
 @onready var dialogue_text_label: Label = $Panel/DialogueText
 @onready var continue_prompt_label: Label = $Panel/ContinuePrompt
@@ -89,11 +93,13 @@ func _refresh_line() -> void:
 	if not active or current_index >= dialogue_lines.size():
 		speaker_name_label.text = ""
 		dialogue_text_label.text = ""
+		_show_portrait("")
 		return
 	var line: Dictionary = dialogue_lines[current_index]
 	var speaker := str(line.get("speaker", ""))
 	var text := str(line.get("text", ""))
 	speaker_name_label.text = speaker
+	_show_portrait(_get_portrait_path(line, speaker))
 	current_reveal_mode = _get_reveal_mode(speaker)
 	if current_reveal_mode == "words":
 		current_full_text = text.to_upper()
@@ -120,6 +126,29 @@ func _complete_current_line() -> void:
 		dialogue_text_label.text = current_full_text
 		dialogue_text_label.visible_characters = -1
 	line_complete = true
+
+func _show_portrait(path: String) -> void:
+	portrait_texture_rect.visible = false
+	portrait_texture_rect.texture = null
+	_set_text_left(TEXT_LEFT_WITHOUT_PORTRAIT)
+	if path.is_empty():
+		return
+	if not ResourceLoader.exists(path):
+		return
+	var resource := load(path)
+	if resource is Texture2D:
+		portrait_texture_rect.texture = resource
+		portrait_texture_rect.visible = true
+		_set_text_left(TEXT_LEFT_WITH_PORTRAIT)
+
+func _get_portrait_path(line: Dictionary, speaker: String) -> String:
+	if line.has("portrait"):
+		return str(line.get("portrait", ""))
+	return PORTRAIT_REGISTRY.get_default_portrait_path(speaker)
+
+func _set_text_left(left: float) -> void:
+	speaker_name_label.offset_left = left
+	dialogue_text_label.offset_left = left
 
 func _get_reveal_mode(speaker: String) -> String:
 	if speaker == "Player":

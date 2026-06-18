@@ -1,0 +1,154 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/MinigameScreenTemplate.gd" id="1"]
+
+[node name="MinigameScreenTemplate" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+title_text = "BROKEN SCREEN TEMPLATE"
+instruction_text = "Every minigame should explain the rule clearly here.
+Final art can replace the placeholder background and cabinet frame later."
+status_text = "Ready."
+
+[node name="BackgroundLayer" type="CanvasLayer" parent="."]
+layer = -2
+
+[node name="BackgroundPlaceholder" type="ColorRect" parent="BackgroundLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.025, 0.025, 0.04, 1)
+
+[node name="BackgroundTexture" type="TextureRect" parent="BackgroundLayer"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CabinetFrameLayer" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="FramePlaceholder" type="Panel" parent="CabinetFrameLayer"]
+offset_left = 28.0
+offset_top = 24.0
+offset_right = 612.0
+offset_bottom = 416.0
+
+[node name="FrameTexture" type="TextureRect" parent="CabinetFrameLayer"]
+visible = false
+offset_left = 28.0
+offset_top = 24.0
+offset_right = 612.0
+offset_bottom = 416.0
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TitleLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 56.0
+offset_top = 42.0
+offset_right = 584.0
+offset_bottom = 76.0
+theme_override_font_sizes/font_size = 24
+text = "MINIGAME TITLE"
+horizontal_alignment = 1
+
+[node name="InstructionPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 56.0
+offset_top = 86.0
+offset_right = 584.0
+offset_bottom = 150.0
+
+[node name="InstructionLabel" type="Label" parent="InstructionPanel"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 516.0
+offset_bottom = 56.0
+text = "Instructions go here."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="GameArea" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 72.0
+offset_top = 166.0
+offset_right = 568.0
+offset_bottom = 292.0
+
+[node name="GameAreaLabel" type="Label" parent="GameArea"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 46.0
+offset_right = 480.0
+offset_bottom = 78.0
+text = "Gameplay widgets go here"
+horizontal_alignment = 1
+
+[node name="StatusPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 72.0
+offset_top = 304.0
+offset_right = 568.0
+offset_bottom = 346.0
+
+[node name="StatusLabel" type="Label" parent="StatusPanel"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 484.0
+offset_bottom = 34.0
+text = "Status text goes here."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ResultPanel" type="Panel" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 112.0
+offset_top = 170.0
+offset_right = 528.0
+offset_bottom = 288.0
+
+[node name="ResultLabel" type="Label" parent="ResultPanel"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 400.0
+offset_bottom = 102.0
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="EffectsLayer" type="CanvasLayer" parent="."]
+layer = 5
+
+[node name="CRTGlitchOverlayPlaceholder" type="ColorRect" parent="EffectsLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.1, 0.25, 0.22, 0.06)
+
+[node name="ExitButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 240.0
+offset_top = 362.0
+offset_right = 400.0
+offset_bottom = 400.0
+text = "Exit"

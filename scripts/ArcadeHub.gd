@@ -1,11 +1,12 @@
 extends Node2D
 
 @onready var player: CharacterBody2D = $Player
-@onready var dialogue_box: CanvasLayer = $DialogueBox
-@onready var prompt_label: Label = $InteractionPrompt
-@onready var hint_label: Label = $HintLabel
-@onready var post_reveal_hint_label: Label = $PostRevealHintLabel
-@onready var objective_hint_label: Label = $ObjectiveHintLabel
+@onready var ui_layer: Node2D = $UILayer
+@onready var dialogue_box: CanvasLayer = $UILayer/DialogueBox
+@onready var prompt_label: Label = $UILayer/InteractionPrompt
+@onready var hint_label: Label = $UILayer/HintLabel
+@onready var post_reveal_hint_label: Label = $UILayer/PostRevealHintLabel
+@onready var objective_hint_label: Label = $UILayer/ObjectiveHintLabel
 
 var save_slot_menu: Control = null
 var choice_box: CanvasLayer = null
@@ -212,7 +213,7 @@ func _open_vendo_memory_riddle() -> void:
 	if choice_box and is_instance_valid(choice_box):
 		choice_box.queue_free()
 	choice_box = load("res://scenes/ui/ChoiceBox.tscn").instantiate()
-	add_child(choice_box)
+	ui_layer.add_child(choice_box)
 	if player and player.has_method("set_control_enabled"):
 		player.set_control_enabled(false)
 	if choice_box.has_signal("choice_selected"):
@@ -305,7 +306,7 @@ func _handle_memory_terminal() -> void:
 	if save_slot_menu and is_instance_valid(save_slot_menu):
 		save_slot_menu.queue_free()
 	save_slot_menu = load("res://scenes/ui/SaveSlotMenu.tscn").instantiate()
-	add_child(save_slot_menu)
+	ui_layer.add_child(save_slot_menu)
 	if player and player.has_method("set_control_enabled"):
 		player.set_control_enabled(false)
 	if save_slot_menu.has_signal("menu_closed"):

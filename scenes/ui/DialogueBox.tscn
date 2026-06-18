@@ -11,6 +11,15 @@ offset_top = 198.0
 offset_right = 616.0
 offset_bottom = 360.0
 
+[node name="Portrait" type="TextureRect" parent="Panel"]
+visible = false
+offset_left = 16.0
+offset_top = 18.0
+offset_right = 104.0
+offset_bottom = 122.0
+expand_mode = 1
+stretch_mode = 5
+
 [node name="SpeakerName" type="Label" parent="Panel"]
 offset_left = 16.0
 offset_top = 10.0

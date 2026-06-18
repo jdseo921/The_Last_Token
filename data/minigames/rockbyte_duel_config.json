@@ -1,0 +1,22 @@
+{
+  "minigame_id": "rockbyte_duel",
+  "title": "ROCKBYTE DUEL",
+  "background": "res://assets/art/minigames/rockbyte_duel/backgrounds/rockbyte_background.png",
+  "participants": [
+    {
+      "actor_id": "player",
+      "display_name": "Player",
+      "actor_type": "player",
+      "side": "left",
+      "sprite_texture_path": "res://assets/art/minigames/common/actors/player_minigame_idle.png"
+    },
+    {
+      "actor_id": "cabinet07",
+      "display_name": "Cabinet 07",
+      "actor_type": "machine",
+      "side": "right",
+      "sprite_texture_path": "res://assets/art/minigames/common/actors/cabinet07_idle.png",
+      "idle_flicker_enabled": true
+    }
+  ]
+}
