@@ -27,22 +27,30 @@ offset_bottom = 408.0
 [node name="VBox" type="VBoxContainer" parent="Panel"]
 layout_mode = 0
 offset_left = 24.0
-offset_top = 24.0
+offset_top = 18.0
 offset_right = 552.0
-offset_bottom = 344.0
+offset_bottom = 360.0
 
 [node name="TitleLabel" type="Label" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 32)
+custom_minimum_size = Vector2(0, 28)
 text = "ROCKBYTE DUEL"
 
 [node name="InstructionLabel" type="Label" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 64)
-text = "Take 1 rock from the left pile, right pile, or both piles. Whoever takes the final rock wins."
+custom_minimum_size = Vector2(0, 76)
+text = "ROCKBYTE DUEL
+Two piles remain.
+Take 1 from Left, Right, or Both.
+Whoever takes the final rock wins."
 autowrap_mode = 3
 
 [node name="CountLabel" type="Label" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 28)
 text = "Left: 5 | Right: 5"
+horizontal_alignment = 1
+
+[node name="TurnLabel" type="Label" parent="Panel/VBox"]
+custom_minimum_size = Vector2(0, 24)
+text = "Your turn"
 horizontal_alignment = 1
 
 [node name="StatusLabel" type="Label" parent="Panel/VBox"]
@@ -51,7 +59,7 @@ text = "Choose your move."
 autowrap_mode = 3
 
 [node name="ButtonsHBox" type="HBoxContainer" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 42)
+custom_minimum_size = Vector2(0, 38)
 
 [node name="TakeLeftButton" type="Button" parent="Panel/VBox/ButtonsHBox"]
 custom_minimum_size = Vector2(120, 36)
@@ -67,5 +75,5 @@ text = "Take Both"
 
 [node name="ExitButton" type="Button" parent="Panel/VBox"]
 visible = false
-custom_minimum_size = Vector2(160, 36)
+custom_minimum_size = Vector2(160, 34)
 text = "Exit"

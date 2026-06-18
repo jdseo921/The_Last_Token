@@ -42,7 +42,7 @@ func _handle_employee_04_file() -> void:
 		return
 	_start_terminal_dialogue([
 		{"speaker": "Employee File", "text": "EMPLOYEE 04 // STATUS: ARCHIVED RESTORE PROFILE."},
-		{"speaker": "Employee File", "text": "The photo is corrupted beyond recognition."},
+		{"speaker": "Employee File", "text": "The photo will not load."},
 	], Callable(self, "_restore_player_control"))
 
 func _handle_terminal_interaction() -> void:
@@ -59,7 +59,7 @@ func _handle_terminal_interaction() -> void:
 	reveal_in_progress = true
 	_start_terminal_dialogue([
 		{"speaker": "Terminal", "text": "Employee file recovered."},
-		{"speaker": "Terminal", "text": "Restoration subject found."},
+		{"speaker": "Terminal", "text": "Restore subject found."},
 		{"speaker": "Terminal", "text": "Name: Employee 04."},
 	], Callable(self, "_start_reveal"))
 
@@ -100,6 +100,10 @@ func _start_reveal() -> void:
 func _on_reveal_finished() -> void:
 	GameState.mark_twist_reveal_seen()
 	GameState.employee_04_file_found = true
+	reveal_in_progress = false
+	if active_cutscene and is_instance_valid(active_cutscene):
+		active_cutscene.queue_free()
+	active_cutscene = null
 	var ending_prompt := ENDING_PROMPT_SCENE.instantiate()
 	add_child(ending_prompt)
 

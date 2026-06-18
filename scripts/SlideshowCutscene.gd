@@ -2,12 +2,15 @@ extends CanvasLayer
 
 signal cutscene_finished
 
-const ADVANCE_COOLDOWN_MSEC := 150
+const ADVANCE_COOLDOWN_MSEC := 250
+const MIN_SLIDE_DELAY_SEC := 0.25
+const FINAL_MEMORY_DELAY_SEC := 0.65
 
 @onready var panel_texture: TextureRect = $PanelTexture
 @onready var missing_panel: Panel = $MissingPanel
 @onready var missing_panel_label: Label = $MissingPanel/MissingPanelLabel
 @onready var caption_label: Label = $CaptionLabel
+@onready var slide_counter_label: Label = $SlideCounterLabel
 @onready var prompt_label: Label = $PromptLabel
 
 var slides: Array = []
@@ -15,14 +18,18 @@ var current_index := 0
 var active_tween: Tween = null
 var can_advance := false
 var finished := false
+var waiting_for_final_input := false
 var last_advance_msec := 0
+var advance_generation := 0
 
 func start_cutscene(slide_list: Array) -> void:
 	slides = slide_list.duplicate()
 	current_index = 0
 	finished = false
 	can_advance = false
+	waiting_for_final_input = false
 	last_advance_msec = 0
+	advance_generation = 0
 	visible = true
 	prompt_label.text = "Press E / Space to continue"
 	if slides.is_empty():
@@ -47,9 +54,12 @@ func _unhandled_input(event: InputEvent) -> void:
 func _next_slide() -> void:
 	if finished:
 		return
+	if waiting_for_final_input:
+		_finish_cutscene()
+		return
 	current_index += 1
 	if current_index >= slides.size():
-		_finish_cutscene()
+		_show_final_memory_prompt()
 		return
 	_show_current_slide()
 
@@ -57,6 +67,7 @@ func _show_current_slide() -> void:
 	if finished or current_index < 0 or current_index >= slides.size():
 		return
 	can_advance = false
+	advance_generation += 1
 	if active_tween and active_tween.is_valid():
 		active_tween.kill()
 	panel_texture.scale = Vector2.ONE
@@ -65,11 +76,13 @@ func _show_current_slide() -> void:
 	var slide := _get_slide_data(current_index)
 	var image_path := str(slide.get("image_path", ""))
 	caption_label.text = str(slide.get("caption", ""))
+	slide_counter_label.text = "Memory %d / %d" % [current_index + 1, slides.size()]
+	prompt_label.text = "Press E / Space to continue"
 	var effect := str(slide.get("effect", "fade"))
 	var duration := float(slide.get("duration", 0.5))
 	_apply_image(image_path)
 	_apply_effect(effect, duration)
-	call_deferred("_enable_advance")
+	_enable_advance_after_delay(MIN_SLIDE_DELAY_SEC, advance_generation)
 
 func _get_slide_data(index: int) -> Dictionary:
 	if index < 0 or index >= slides.size():
@@ -82,7 +95,7 @@ func _apply_image(image_path: String) -> void:
 	if image_path.is_empty() or not ResourceLoader.exists(image_path):
 		panel_texture.texture = null
 		missing_panel.visible = true
-		missing_panel_label.text = "PLACEHOLDER PANEL\nImage pending"
+		missing_panel_label.text = "MEMORY PANEL\nImage pending"
 		return
 	var texture := load(image_path)
 	if texture is Texture2D:
@@ -91,7 +104,7 @@ func _apply_image(image_path: String) -> void:
 	else:
 		panel_texture.texture = null
 		missing_panel.visible = true
-		missing_panel_label.text = "PLACEHOLDER PANEL\nImage unavailable"
+		missing_panel_label.text = "MEMORY PANEL\nImage pending"
 
 func _apply_effect(effect: String, duration: float) -> void:
 	active_tween = create_tween()
@@ -114,8 +127,16 @@ func _play_audio(method_name: String) -> void:
 	if audio_manager and audio_manager.has_method(method_name):
 		audio_manager.call(method_name)
 
-func _enable_advance() -> void:
-	if visible and not finished:
+func _show_final_memory_prompt() -> void:
+	waiting_for_final_input = true
+	can_advance = false
+	advance_generation += 1
+	prompt_label.text = "Press E / Space to finish memory"
+	_enable_advance_after_delay(FINAL_MEMORY_DELAY_SEC, advance_generation)
+
+func _enable_advance_after_delay(delay: float, generation: int) -> void:
+	await get_tree().create_timer(delay).timeout
+	if visible and not finished and generation == advance_generation:
 		can_advance = true
 
 func _finish_cutscene() -> void:

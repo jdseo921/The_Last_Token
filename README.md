@@ -3,10 +3,11 @@
 The Last Token is a 2D top-down retro arcade mystery about exploring Pixel Haven, talking to strange arcade regulars, recovering a lost token, unlocking the staff room, and uncovering who the player really is.
 
 ## Status
-The project is currently a playable MVP with placeholder visuals, placeholder slideshow panels, and optional audio hooks. It is intended for local testing and feedback, not final release.
+The project is currently a playable MVP with placeholder visuals, placeholder slideshow panels, Memory Slots, post-reveal roam, and optional audio hooks. It is ready for local testing and feedback, not final release.
 
 ## Engine
 - Godot 4.x
+- Godot 4.4.x preferred, because `project.godot` currently lists the `4.4` feature tag.
 - Main scene: `res://scenes/main/Main.tscn`
 
 ## Open The Project
@@ -21,6 +22,25 @@ The project is currently a playable MVP with placeholder visuals, placeholder sl
 2. Press Play.
 3. If prompted for a main scene, choose `res://scenes/main/Main.tscn`.
 
+## Manual Windows Export
+No `export_presets.cfg` is currently included. Create the preset manually in Godot:
+
+1. Open the project in Godot 4.4.x.
+2. Go to `Project -> Export`.
+3. Choose `Add...`.
+4. Select `Windows Desktop`.
+5. Install export templates if Godot prompts for them.
+6. Choose `Export Project`.
+7. Export builds outside this repo or into an ignored local build folder.
+
+Do not commit generated `.exe`, `.pck`, or large build output files.
+
+## Controls
+- Move: `WASD` / Arrow Keys
+- Interact / Continue: `E` / Space
+- Cancel / Back: Esc / Backspace
+- Menus: mouse click / keyboard focus where supported
+
 ## Core Gameplay Loop
 Explore the arcade, talk to Mira and the other core NPCs, play Rockbyte Duel, solve the Sync Door puzzle, enter the Staff Room, watch the reveal slideshow, and continue into post-reveal roam.
 
@@ -29,3 +49,10 @@ The Memory Terminal opens a small save/load menu with three Memory Slots. Saves 
 
 ## Post-Reveal Roam
 After the ending prompt, the player returns to ArcadeHub with post-reveal state unlocked. NPC dialogue changes to reflect the reveal, and the state can be saved and loaded.
+
+## Current Placeholders
+- Visuals are simple shapes and labels.
+- Cutscene panels may be missing and display `MEMORY PANEL / Image pending`.
+- Audio hooks are present, but final sound effects and music are not included.
+- Exact player position restore is placeholder-level; story state and safe scene paths are restored.
+- Rockbyte Duel uses simple AI for MVP testing.

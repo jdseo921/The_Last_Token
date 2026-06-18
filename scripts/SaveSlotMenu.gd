@@ -20,7 +20,7 @@ var pending_mode := ""
 
 func _ready() -> void:
 	visible = false
-	mode_button.pressed.connect(_on_mode_pressed)
+	mode_button.disabled = true
 	close_button.pressed.connect(close_menu)
 	confirm_overwrite.confirmed.connect(_on_overwrite_confirmed)
 	_build_slots()
@@ -55,7 +55,7 @@ func _build_slots() -> void:
 
 func _refresh_slots() -> void:
 	subtitle_label.text = _get_subtitle_text()
-	mode_button.text = _get_next_mode_button_text()
+	mode_button.text = _get_mode_display_text()
 	for slot_id in range(1, 4):
 		var button := slot_buttons[slot_id - 1]
 		var summary := SaveManager.get_slot_summary(slot_id)
@@ -103,16 +103,6 @@ func _handle_save_slot(slot_id: int) -> void:
 	if SaveManager.save_game(slot_id):
 		close_menu()
 
-func _on_mode_pressed() -> void:
-	match current_mode:
-		MODE_SAVE:
-			current_mode = MODE_LOAD
-		MODE_LOAD:
-			current_mode = MODE_NEW_GAME
-		_:
-			current_mode = MODE_SAVE
-	_refresh_slots()
-
 func _confirm_overwrite(slot_id: int, mode: String) -> void:
 	pending_slot_id = slot_id
 	pending_mode = mode
@@ -152,14 +142,14 @@ func _get_subtitle_text() -> String:
 		_:
 			return "Save Memory - choose a slot"
 
-func _get_next_mode_button_text() -> String:
+func _get_mode_display_text() -> String:
 	match current_mode:
 		MODE_SAVE:
-			return "Restore Memory"
+			return "Mode: Save Memory"
 		MODE_LOAD:
-			return "New Memory"
+			return "Mode: Restore Memory"
 		_:
-			return "Save Memory"
+			return "Mode: New Memory"
 
 func _play_audio(method_name: String) -> void:
 	var audio_manager := get_node_or_null("/root/AudioManager")

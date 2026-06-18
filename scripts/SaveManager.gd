@@ -8,9 +8,13 @@ func ensure_save_directory() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(SAVE_DIR))
 
 func save_game(slot_id: int) -> bool:
+	if slot_id <= 0:
+		_play_audio("play_error")
+		return false
 	ensure_save_directory()
+	var timestamp := Time.get_datetime_string_from_system()
 	GameState.save_slot_index = slot_id
-	GameState.save_timestamp = Time.get_datetime_string_from_system()
+	GameState.save_timestamp = timestamp
 	GameState.save_progress_stage = GameState.get_story_phase_label()
 	var file_path := _get_slot_path(slot_id)
 	var save_file := FileAccess.open(file_path, FileAccess.WRITE)
@@ -20,13 +24,16 @@ func save_game(slot_id: int) -> bool:
 	var save_data := collect_save_data()
 	save_data["slot_id"] = slot_id
 	save_data["save_exists"] = true
-	save_data["last_saved_at"] = Time.get_datetime_string_from_system()
+	save_data["last_saved_at"] = timestamp
 	save_file.store_string(JSON.stringify(save_data, "\t"))
 	active_slot_id = slot_id
 	_play_audio("play_save")
 	return true
 
 func load_game(slot_id: int) -> bool:
+	if slot_id <= 0:
+		_play_audio("play_error")
+		return false
 	var file_path := _get_slot_path(slot_id)
 	if not FileAccess.file_exists(file_path):
 		_play_audio("play_error")
@@ -44,15 +51,22 @@ func load_game(slot_id: int) -> bool:
 		return false
 	apply_save_data(parsed)
 	active_slot_id = slot_id
+	GameState.save_slot_index = slot_id
+	GameState.save_progress_stage = GameState.get_story_phase_label()
 	load_saved_scene_or_default(parsed)
 	_play_audio("play_ui_confirm")
 	return true
 
 func start_new_memory(slot_id: int) -> bool:
+	if slot_id <= 0:
+		_play_audio("play_error")
+		return false
 	GameState.reset_for_new_game()
-	active_slot_id = slot_id
 	GameState.save_slot_index = slot_id
-	return save_game(slot_id)
+	var saved := save_game(slot_id)
+	if not saved:
+		active_slot_id = 0
+	return saved
 
 func get_slot_summary(slot_id: int) -> Dictionary:
 	var file_path := _get_slot_path(slot_id)
@@ -64,14 +78,18 @@ func get_slot_summary(slot_id: int) -> Dictionary:
 	var parsed := JSON.parse_string(save_file.get_as_text())
 	if typeof(parsed) != TYPE_DICTIONARY:
 		return {"slot_id": slot_id, "save_exists": false}
-	return parsed
+	return _normalize_slot_summary(parsed, slot_id)
 
 func delete_save(slot_id: int) -> void:
+	if slot_id <= 0:
+		return
 	var file_path := _get_slot_path(slot_id)
 	if FileAccess.file_exists(file_path):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(file_path))
 
 func has_save(slot_id: int) -> bool:
+	if slot_id <= 0:
+		return false
 	return FileAccess.file_exists(_get_slot_path(slot_id))
 
 func collect_save_data() -> Dictionary:
@@ -98,6 +116,7 @@ func collect_save_data() -> Dictionary:
 
 func apply_save_data(data: Dictionary) -> void:
 	if data.has("game_state") and typeof(data["game_state"]) == TYPE_DICTIONARY:
+		GameState.reset_for_new_game()
 		GameState.apply_save_data(data["game_state"])
 
 func load_saved_scene_or_default(data: Dictionary) -> void:
@@ -128,6 +147,67 @@ func _get_current_save_scene_path() -> String:
 
 func _get_slot_path(slot_id: int) -> String:
 	return "%s/slot_%d.json" % [SAVE_DIR, slot_id]
+
+func _normalize_slot_summary(data: Dictionary, slot_id: int) -> Dictionary:
+	data["slot_id"] = slot_id
+	data["save_exists"] = true
+	if not data.has("game_state") or typeof(data["game_state"]) != TYPE_DICTIONARY:
+		return data
+	var game_state: Dictionary = data["game_state"]
+	data["story_phase"] = _get_story_phase_label_from_data(game_state)
+	data["games_completed_count"] = _get_games_completed_count_from_data(game_state)
+	data["total_games_count"] = 3
+	data["secrets_found_count"] = _get_secrets_found_count_from_data(game_state)
+	data["total_secrets_count"] = 4
+	data["post_reveal_roam_unlocked"] = bool(game_state.get("post_reveal_roam_unlocked", false))
+	data["ending_seen"] = bool(game_state.get("ending_seen", false))
+	data["twist_reveal_seen"] = bool(game_state.get("twist_reveal_seen", false))
+	if not data.has("last_saved_at") or str(data["last_saved_at"]).is_empty():
+		data["last_saved_at"] = str(game_state.get("save_timestamp", "Unknown"))
+	return data
+
+func _get_story_phase_label_from_data(data: Dictionary) -> String:
+	if bool(data.get("post_reveal_roam_unlocked", false)):
+		return "Post-Reveal Roam"
+	if bool(data.get("ending_seen", false)):
+		return "Ending"
+	if bool(data.get("twist_reveal_seen", false)):
+		return "Truth Revealed"
+	if bool(data.get("staff_room_unlocked", false)):
+		return "Staff Room"
+	if bool(data.get("story_puzzle_completed", false)):
+		return "Sync Door Solved"
+	if bool(data.get("lost_token_quest_completed", false)):
+		return "Lost Token Returned"
+	if bool(data.get("rockbyte_duel_completed", false)) or bool(data.get("lost_token_collected", false)):
+		return "Lost Token Found"
+	if bool(data.get("lost_token_quest_started", false)):
+		return "Cabinet 07"
+	if bool(data.get("story_started", false)):
+		return "Opening Night"
+	return "New Memory"
+
+func _get_games_completed_count_from_data(data: Dictionary) -> int:
+	var completed := 0
+	if bool(data.get("rockbyte_duel_completed", false)):
+		completed += 1
+	if bool(data.get("story_puzzle_completed", false)):
+		completed += 1
+	if bool(data.get("twist_reveal_seen", false)):
+		completed += 1
+	return completed
+
+func _get_secrets_found_count_from_data(data: Dictionary) -> int:
+	var found := 0
+	if bool(data.get("broken_cabinet_secret_found", false)):
+		found += 1
+	if bool(data.get("owner_portrait_secret_found", false)):
+		found += 1
+	if bool(data.get("employee_04_file_found", false)):
+		found += 1
+	if bool(data.get("vendo_memory_riddle_secret_found", false)):
+		found += 1
+	return found
 
 func _play_audio(method_name: String) -> void:
 	var audio_manager := get_node_or_null("/root/AudioManager")

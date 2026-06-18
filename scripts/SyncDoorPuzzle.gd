@@ -59,7 +59,7 @@ func _check_success() -> void:
 		GameState.unlock_staff_room()
 		_play_audio("play_ui_confirm")
 		door_label.text = "Staff Door: OPEN"
-		status_label.text = "Staff Door: \"TWO SIGNALS DETECTED.\"\nStaff Door: \"ORIGINAL: ABSENT.\"\nStaff Door: \"RESTORED: PRESENT.\"\nStaff Door: \"ACCESS GRANTED.\""
+		status_label.text = "TWO SIGNALS DETECTED.\nRESTORED SIGNAL PRESENT.\nACCESS GRANTED.\nReturn and enter the Staff Room."
 		switch_a_button.visible = false
 		switch_b_button.visible = false
 		exit_button.visible = true

@@ -41,7 +41,8 @@ custom_minimum_size = Vector2(0, 140)
 text = "Some memories have changed.
 The arcade is quiet now.
 But some machines are still awake.
-Return to Pixel Haven to hear what the others remember now."
+Return to Pixel Haven.
+Hear what the others remember."
 horizontal_alignment = 1
 autowrap_mode = 3
 

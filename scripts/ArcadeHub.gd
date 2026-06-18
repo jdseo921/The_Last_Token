@@ -5,6 +5,7 @@ extends Node2D
 @onready var prompt_label: Label = $InteractionPrompt
 @onready var hint_label: Label = $HintLabel
 @onready var post_reveal_hint_label: Label = $PostRevealHintLabel
+@onready var objective_hint_label: Label = $ObjectiveHintLabel
 
 var save_slot_menu: Control = null
 var choice_box: CanvasLayer = null
@@ -13,10 +14,17 @@ var pending_after_dialogue: Callable = Callable()
 func _ready() -> void:
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
-	if GameState.rockbyte_duel_completed and not GameState.twist_reveal_seen:
-		player.global_position = Vector2(240, 96)
+	_apply_spawn_position()
 	_on_prompt_changed("")
 	_refresh_hint()
+	_refresh_objective_hint()
+
+func _apply_spawn_position() -> void:
+	if GameState.post_reveal_roam_unlocked:
+		player.global_position = Vector2(72, 178)
+		return
+	if GameState.rockbyte_duel_completed and not GameState.twist_reveal_seen:
+		player.global_position = Vector2(272, 118)
 
 func _on_prompt_changed(text: String) -> void:
 	prompt_label.text = text
@@ -27,6 +35,8 @@ func start_dialogue(lines: Array, after_dialogue: Callable = Callable()) -> void
 	if player and player.has_method("set_control_enabled"):
 		player.set_control_enabled(false)
 	dialogue_box.start_dialogue(lines)
+	_refresh_hint()
+	_refresh_objective_hint()
 
 func _on_dialogue_finished() -> void:
 	if pending_after_dialogue.is_valid():
@@ -35,13 +45,43 @@ func _on_dialogue_finished() -> void:
 	if player and player.has_method("set_control_enabled") and not _choice_box_is_open():
 		player.set_control_enabled(true)
 	_refresh_hint()
+	_refresh_objective_hint()
 
 func _choice_box_is_open() -> bool:
 	return choice_box != null and is_instance_valid(choice_box) and choice_box.visible
 
 func _refresh_hint() -> void:
 	hint_label.visible = not GameState.story_started
-	post_reveal_hint_label.visible = GameState.post_reveal_roam_unlocked
+	post_reveal_hint_label.visible = GameState.post_reveal_roam_unlocked and not _dialogue_is_active() and not _choice_box_is_open() and not _save_slot_menu_is_open()
+
+func _refresh_objective_hint() -> void:
+	objective_hint_label.text = _get_objective_hint_text()
+	objective_hint_label.visible = not objective_hint_label.text.is_empty() and not _dialogue_is_active() and not _choice_box_is_open() and not _save_slot_menu_is_open()
+
+func _get_objective_hint_text() -> String:
+	if not GameState.story_started:
+		return "Objective: Talk to Mira."
+	if GameState.lost_token_quest_started and not GameState.rockbyte_duel_completed:
+		return "Objective: Play Cabinet 07."
+	if GameState.rockbyte_duel_completed and not GameState.lost_token_quest_completed:
+		return "Objective: Return the Lost Token to Mira."
+	if GameState.lost_token_quest_completed and not GameState.story_puzzle_completed:
+		return "Objective: Check the Staff Door."
+	if GameState.story_puzzle_completed and GameState.staff_room_unlocked and not GameState.twist_reveal_seen:
+		return "Objective: Enter the Staff Room."
+	if GameState.twist_reveal_seen and not GameState.post_reveal_roam_unlocked:
+		return "Objective: Finish the memory."
+	if GameState.post_reveal_roam_unlocked:
+		return "Objective: Talk to those who remembered you."
+	return ""
+
+func _dialogue_is_active() -> bool:
+	if dialogue_box == null:
+		return false
+	return dialogue_box.get("active") == true
+
+func _save_slot_menu_is_open() -> bool:
+	return save_slot_menu != null and is_instance_valid(save_slot_menu) and save_slot_menu.visible
 
 func handle_hub_interaction(interactable: Node, player_node: Node = null) -> void:
 	match str(interactable.interactable_kind):
@@ -79,24 +119,25 @@ func _handle_mira() -> void:
 	if not GameState.lost_token_quest_started:
 		GameState.mira_intro_seen = true
 		start_dialogue([
-			{"speaker": "Mira", "text": "Welcome to Pixel Haven. You're late again."},
+			{"speaker": "Mira", "text": "Welcome back to Pixel Haven."},
+			{"speaker": "Mira", "text": "You're late again."},
 			{"speaker": "Player", "text": "Again?"},
-			{"speaker": "Mira", "text": "Never mind. Find the Lost Token before the lights go out."},
-			{"speaker": "Mira", "text": "Cabinet 07 has been waiting for it."},
+			{"speaker": "Mira", "text": "Start with the Lost Token."},
+			{"speaker": "Mira", "text": "Cabinet 07 has been waiting."},
 		], Callable(GameState, "start_lost_token_quest"))
 		return
 	if GameState.lost_token_quest_started and not GameState.lost_token_collected:
 		start_dialogue([
-			{"speaker": "Mira", "text": "Cabinet 07 is awake."},
-			{"speaker": "Mira", "text": "It does not recognize customers. Only employees."},
+			{"speaker": "Mira", "text": "Go to Cabinet 07."},
+			{"speaker": "Mira", "text": "It remembers employees better than customers."},
 		])
 		return
 	if GameState.lost_token_collected and not GameState.lost_token_quest_completed:
 		start_dialogue([
 			{"speaker": "Player", "text": "I found the token."},
-			{"speaker": "Mira", "text": "Good. One memory is awake now."},
-			{"speaker": "Mira", "text": "You really do not remember, do you?"},
-			{"speaker": "Mira", "text": "Try the Staff Door. It listens better after a machine remembers you."},
+			{"speaker": "Mira", "text": "Thank you."},
+			{"speaker": "Mira", "text": "One memory came back."},
+			{"speaker": "Mira", "text": "The Staff Door may listen now."},
 		], Callable(GameState, "complete_lost_token_quest"))
 		return
 	start_dialogue([{"speaker": "Mira", "text": "Welcome to Pixel Haven."}])
@@ -106,21 +147,20 @@ func _handle_gus() -> void:
 		GameState.gus_post_reveal_seen = true
 		start_dialogue([
 			{"speaker": "Gus", "text": "About time."},
-			{"speaker": "Gus", "text": "I was running out of ways to hint at it."},
-			{"speaker": "Gus", "text": "Next time a haunted door calls you by employee number, listen."},
+			{"speaker": "Gus", "text": "I was down to very obvious hints."},
+			{"speaker": "Gus", "text": "Next time a door knows your employee number, listen."},
 		])
 		return
 	if GameState.lost_token_quest_completed:
 		start_dialogue([
-			{"speaker": "Gus", "text": "You walked into that back room once."},
-			{"speaker": "Gus", "text": "You walked out different."},
-			{"speaker": "Gus", "text": "Then you did not walk out at all."},
+			{"speaker": "Gus", "text": "Staff Door is humming again."},
+			{"speaker": "Gus", "text": "Practical advice: do not ignore humming doors."},
 		])
 		return
 	GameState.gus_intro_seen = true
 	start_dialogue([
-		{"speaker": "Gus", "text": "You again? Great. The floor just stopped bleeding quarters."},
-		{"speaker": "Gus", "text": "Try not to step in the glowing stuff. Last time, it learned your shoe size."},
+		{"speaker": "Gus", "text": "You again. Great."},
+		{"speaker": "Gus", "text": "I just finished cleaning up the previous session."},
 	])
 
 func _handle_vendo() -> void:
@@ -128,15 +168,15 @@ func _handle_vendo() -> void:
 		GameState.vendo_post_reveal_seen = true
 		start_dialogue([
 			{"speaker": "Vendo", "text": "Turns out MEMORY COLA was not a metaphor."},
-			{"speaker": "Vendo", "text": "Legally, I should have put that on the label."},
+			{"speaker": "Vendo", "text": "Legally, that should have been on the label."},
 		])
 		return
 	if _is_post_reveal():
 		GameState.vendo_post_reveal_seen = true
 		start_dialogue([
-			{"speaker": "Vendo", "text": "Congratulations."},
-			{"speaker": "Vendo", "text": "You are officially both a customer and a stored file."},
-			{"speaker": "Vendo", "text": "That means you qualify for neither refund nor warranty."},
+			{"speaker": "Vendo", "text": "Congratulations, valued stored file."},
+			{"speaker": "Vendo", "text": "You remembered enough to void the warranty."},
+			{"speaker": "Vendo", "text": "That is almost healing."},
 		])
 		return
 	if GameState.vendo_memory_riddle_secret_found:
@@ -156,8 +196,8 @@ func _handle_vendo() -> void:
 		return
 	GameState.vendo_intro_seen = true
 	start_dialogue([
-		{"speaker": "Vendo", "text": "Welcome, thirsty mortal. I sell soda, secrets, and emotionally unstable peanuts."},
-		{"speaker": "Vendo", "text": "Please do not shake me. I contain carbonated beverages and unresolved trauma."},
+		{"speaker": "Vendo", "text": "Welcome, valued almost-customer."},
+		{"speaker": "Vendo", "text": "Please select a beverage or a coping mechanism."},
 		{"speaker": "Vendo", "text": "Care for a beverage-based psychological evaluation?"},
 	], Callable(self, "_open_vendo_memory_riddle"))
 
@@ -179,6 +219,8 @@ func _open_vendo_memory_riddle() -> void:
 			"TOKEN TEA",
 			"REGRET JUICE",
 		])
+	_refresh_hint()
+	_refresh_objective_hint()
 
 func _on_vendo_riddle_choice_selected(index: int) -> void:
 	if choice_box and is_instance_valid(choice_box):
@@ -205,15 +247,15 @@ func _handle_mr_byte() -> void:
 		GameState.employee_04_file_found = true
 		start_dialogue([
 			{"speaker": "Mr. Byte", "text": "Identity conflict resolved."},
-			{"speaker": "Mr. Byte", "text": "Emotional damage remains unresolved."},
-			{"speaker": "Mr. Byte", "text": "Recommended action: talk to everyone who remembered you."},
+			{"speaker": "Mr. Byte", "text": "Memory damage remains tender."},
+			{"speaker": "Mr. Byte", "text": "Recommended action: talk to those who remembered you."},
 		])
 		return
 	GameState.mr_byte_intro_seen = true
 	start_dialogue([
 		{"speaker": "Mr. Byte", "text": "HELP MENU LOADED."},
-		{"speaker": "Mr. Byte", "text": "Tip 1: Press buttons to cause consequences."},
-		{"speaker": "Mr. Byte", "text": "Tip 2: Avoid consequences when possible."},
+		{"speaker": "Mr. Byte", "text": "Tip: Mira has your first objective."},
+		{"speaker": "Mr. Byte", "text": "Warning: Machines remember things."},
 	])
 
 func _handle_cabinet_07() -> void:
@@ -228,7 +270,7 @@ func _handle_cabinet_07() -> void:
 	if not GameState.lost_token_quest_started:
 		GameState.cabinet07_employee_hint_seen = true
 		start_dialogue([
-			{"speaker": "Cabinet 07", "text": "INSERT PURPOSE."},
+			{"speaker": "Cabinet 07", "text": "CUSTOMER PROFILE: UNKNOWN."},
 			{"speaker": "Cabinet 07", "text": "LOST TOKEN REQUIRED."},
 		])
 		return
@@ -239,7 +281,7 @@ func _handle_cabinet_07() -> void:
 		{"speaker": "Cabinet 07", "text": "TOKEN ACCEPTED."},
 		{"speaker": "Cabinet 07", "text": "PLAYER RECOGNIZED."},
 		{"speaker": "Cabinet 07", "text": "WELCOME BACK, EMPLOYEE --"},
-		{"speaker": "Cabinet 07", "text": "IDENTITY RECORD CORRUPTED. STAFF ACCESS RECOMMENDED."},
+		{"speaker": "Cabinet 07", "text": "RETURN TOKEN TO MIRA."},
 	])
 
 func _handle_memory_terminal() -> void:
@@ -253,11 +295,15 @@ func _handle_memory_terminal() -> void:
 		save_slot_menu.menu_closed.connect(_on_save_slot_menu_closed, CONNECT_ONE_SHOT)
 	if save_slot_menu.has_method("open_menu"):
 		save_slot_menu.open_menu(true)
+	_refresh_hint()
+	_refresh_objective_hint()
 
 func _on_save_slot_menu_closed() -> void:
 	if player and player.has_method("set_control_enabled"):
 		player.set_control_enabled(true)
 	save_slot_menu = null
+	_refresh_hint()
+	_refresh_objective_hint()
 
 func _handle_staff_door() -> void:
 	if GameState.staff_room_unlocked:
@@ -267,8 +313,8 @@ func _handle_staff_door() -> void:
 		SceneChanger.go_to_sync_door_puzzle()
 		return
 	start_dialogue([
-		{"speaker": "Staff Door", "text": "TWO SIGNALS REQUIRED."},
-		{"speaker": "Staff Door", "text": "MEMORY TOKEN AND CABINET SIGNAL NOT VERIFIED."},
+		{"speaker": "Staff Door", "text": "STAFF ACCESS LOCKED."},
+		{"speaker": "Staff Door", "text": "MEMORY TOKEN SIGNAL MISSING."},
 	])
 
 func _handle_owner_portrait() -> void:
@@ -295,7 +341,7 @@ func _handle_broken_cabinet(interactable: Node) -> void:
 	interactable.broken_interaction_count += 1
 	if interactable.broken_interaction_count >= 5:
 		GameState.broken_cabinet_secret_found = true
-		start_dialogue([{"speaker": "Broken Cabinet", "text": "STOP PRESSING E. I AM TRYING TO REMEMBER MY CHILDHOOD."}])
+		start_dialogue([{"speaker": "Broken Cabinet", "text": "STOP PRESSING E. I AM TRYING TO REMEMBER."}])
 		return
 	if interactable.broken_interaction_count == 3:
 		start_dialogue([{"speaker": "Broken Cabinet", "text": "STILL OUT OF ORDER."}])

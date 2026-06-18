@@ -2,6 +2,7 @@
 
 ## Godot Version
 - Target engine: Godot 4.x
+- Godot 4.4.x is preferred for local testing/export.
 - Project config currently lists feature tag: `4.4`
 
 ## Main Scene
@@ -15,17 +16,19 @@
 
 ## Export Status
 - `export_presets.cfg` does not currently exist.
-- No platform-specific export settings have been created.
+- No platform-specific export settings have been created in the repo.
 - No generated binaries should be committed.
 
-## Manual Export Steps
-1. Open the project in Godot 4.x.
+## Manual Windows Export Steps
+1. Open the project in Godot 4.4.x.
 2. Go to `Project -> Export`.
 3. Choose `Add...`.
-4. Select the target platform.
-5. Configure the export template/settings for that platform.
+4. Select `Windows Desktop`.
+5. Install export templates if Godot prompts for them.
 6. Choose `Export Project`.
-7. Keep exported builds outside the repo or in an ignored build folder.
+7. Save the exported build outside the repo or in an ignored local build folder.
+
+Do not commit generated `.exe`, `.pck`, or large build output files.
 
 ## Manual Setup
 - Open `project.godot` in Godot 4.x.

@@ -2,9 +2,85 @@
 
 ## Test Rules
 - Test in Godot 4.x from `res://scenes/main/Main.tscn`.
+- Godot 4.4.x is preferred for local testing because the project feature tag is `4.4`.
 - Keep the test focused on the playable MVP path, not polish.
 - Fix blockers before adding new content.
 - Missing art/audio placeholders are acceptable if they do not break play.
+- This pass was statically reviewed from scripts and scene files. Live Godot runtime verification could not be completed here because `godot` is not available on PATH.
+
+## Local Run And Export Readiness
+1. Open Godot Project Manager.
+2. Import this folder's `project.godot`.
+3. Confirm the main scene is `res://scenes/main/Main.tscn`.
+4. Press Play and confirm the Title Menu appears.
+5. Confirm no required art/audio files are missing in a way that blocks launch.
+6. Open `Project -> Export`.
+7. If `export_presets.cfg` is absent, add a `Windows Desktop` preset manually.
+8. Install Godot export templates if prompted.
+9. Export a local Windows build outside the repo or into an ignored build folder.
+10. Do not commit generated `.exe`, `.pck`, or large build output files.
+
+## MVP QA Hardening Result
+
+### What Passed Static Review
+- Main scene launches through `Main.tscn` and instances `TitleMenu.tscn`.
+- Title Menu opens `SaveSlotMenu` in `new_game` and `load` modes.
+- New Memory Slot flow calls `SaveManager.start_new_memory(slot_id)`, resets `GameState`, assigns `active_slot_id`, writes the initial save, and opens ArcadeHub.
+- Save/load data includes story flags, NPC flags, secret flags, counters, story phase, active slot metadata, and current scene.
+- Loading a valid save clears the current `GameState`, applies the selected slot's `GameState`, sets `active_slot_id`, and restores a valid saved scene or falls back to ArcadeHub.
+- StaffRoom saves made after post-reveal roam normalize back to ArcadeHub, preventing restore into the reveal room after the ending.
+- Mira, Cabinet 07, Rockbyte Duel, Staff Door, Sync Door Puzzle, StaffRoom terminal, slideshow reveal, EndingPrompt, and post-reveal ArcadeHub dialogue all have connected script paths for the required MVP route.
+- Vendo's riddle flag is saved, loaded, and counted as a secret.
+- Completion counters match the intended totals: games `0-3 / 3`, secrets `0-4 / 4`.
+- SlideshowCutscene handles missing panel images with placeholder UI and emits `cutscene_finished` once.
+- Save and Continue marks ending/post-reveal state, saves when an active slot exists, and returns to ArcadeHub.
+
+### What Failed and Was Fixed
+- Fixed confusing SaveSlotMenu behavior where the visible mode control could be clicked to cycle between `Save Memory`, `Restore Memory`, and `New Memory`. This could let a title or ending flow perform the wrong slot action. The control now displays the active mode and is disabled as an informational label.
+
+### Remaining Known Issues
+- A full live playthrough in the Godot editor is still required to confirm collisions, focus behavior, and button input timing end-to-end.
+- Cutscene image files under `res://assets/cutscenes/twist/` may be missing by design and should show placeholder panels.
+- Audio files may be missing by design; AudioManager should keep gameplay non-breaking.
+- Player position/facing restoration is placeholder-level; the save system restores story state and scene path, not exact room placement.
+
+### End-to-End MVP Status
+- Static review result: no remaining script/path/state blocker was found for the required path.
+- Live runtime result: not completed in this shell because Godot is unavailable.
+- Current expected status: playable end-to-end after live Godot verification confirms no editor/runtime-only issues.
+
+### Exact Final MVP Path
+1. Launch game.
+2. Confirm Title Menu appears.
+3. New Memory -> Slot 1.
+4. Confirm ArcadeHub loads.
+5. Move player.
+6. Talk to Mira and start the Lost Token quest.
+7. Talk to Gus, Vendo, Mr. Byte, Cabinet 07, Owner Portrait, and Broken Cabinet.
+8. Play Vendo riddle once wrong and once correctly.
+9. Interact with Cabinet 07.
+10. Complete Rockbyte Duel.
+11. Return to ArcadeHub.
+12. Talk to Mira and complete Lost Token quest.
+13. Save at Memory Terminal.
+14. Return to Title or relaunch.
+15. Restore Slot 1.
+16. Confirm quest state persists.
+17. Interact with Staff Door.
+18. Complete Sync Door Puzzle.
+19. Return to ArcadeHub.
+20. Enter Staff Room.
+21. Interact with Employee 04 file before reveal.
+22. Interact with terminal.
+23. Advance through all 8 reveal slides.
+24. Confirm EndingPrompt appears.
+25. Choose Save and Continue.
+26. Confirm ArcadeHub loads in Post-Reveal Roam.
+27. Talk to all post-reveal NPCs.
+28. Save again.
+29. Return to Title.
+30. Restore Slot 1.
+31. Confirm post-reveal state persists.
 
 ## 1. Launch and Title Menu Test
 1. Launch the project.
@@ -34,6 +110,8 @@
 6. Confirm ArcadeHub loads, not the Title Menu shell.
 7. Confirm Mira quest state persists.
 8. Confirm slot summary shows a story phase, games count, secrets count, and last saved timestamp.
+9. Load a different slot if one exists and confirm old flags from the previous slot do not leak.
+10. Overwrite an existing slot with `New Memory` and confirm old story, secret, and post-reveal flags are gone.
 
 ## 4. Main Story Path Test
 1. Talk to Mira and start the Lost Token quest.

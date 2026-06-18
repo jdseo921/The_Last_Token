@@ -2,15 +2,16 @@
 
 ## Known Bugs / Risks
 - Final runtime click-through still needs to be completed in Godot on a machine with the editor installed.
-- Rockbyte Duel uses random cabinet moves, so winning may require retrying.
-- Save/load restores GameState flags, but player position restoration is not fully implemented yet.
+- Rockbyte Duel uses simple cabinet AI, so outcomes may vary and winning may require retrying.
+- Save/load restores GameState flags and safe scene paths, but exact player position/facing restoration is still placeholder-level. ArcadeHub uses simple state-based spawn positions instead of a full spawn marker system.
 - Save/load menu interaction should be manually tested with existing and empty slots.
+- No `export_presets.cfg` is included yet; Windows export presets must be created manually in Godot.
 
 ## Placeholder Limitations
 - Visuals are simple placeholder shapes and labels.
-- Slideshow reveal panels are placeholder/missing-image panels with captions.
-- Audio hooks exist, but no final sound effects or music are included.
-- No final title screen/export flow is present yet.
+- Slideshow reveal panels may be missing and should display `MEMORY PANEL / Image pending`.
+- Audio hooks exist, but final sound effects and music are not included. Missing audio files should not block play.
+- Title/Menu flow is functional for MVP testing, not final polish.
 - UI layout is functional placeholder UI, not final polish.
 
 ## Not Bugs
