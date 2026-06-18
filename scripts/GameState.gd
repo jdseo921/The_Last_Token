@@ -9,6 +9,9 @@ const ACTION_BINDINGS := {
 	"cancel": [KEY_ESCAPE, KEY_BACKSPACE],
 }
 
+const TOTAL_GAMES_COUNT := 3
+const TOTAL_SECRETS_COUNT := 4
+
 var story_started := false
 var lost_token_quest_started := false
 var lost_token_collected := false
@@ -59,51 +62,60 @@ func _ensure_input_actions() -> void:
 				InputMap.action_add_event(action_name, key_event)
 
 func get_games_completed_count() -> int:
+	return get_games_completed_count_from_data(to_save_data())
+
+func get_games_completed_count_from_data(data: Dictionary) -> int:
 	var completed := 0
-	if rockbyte_duel_completed:
+	if bool(data.get("rockbyte_duel_completed", false)):
 		completed += 1
-	if story_puzzle_completed:
+	if bool(data.get("story_puzzle_completed", false)):
 		completed += 1
-	if twist_reveal_seen:
+	if bool(data.get("twist_reveal_seen", false)):
 		completed += 1
 	return completed
 
 func get_total_games_count() -> int:
-	return 3
+	return TOTAL_GAMES_COUNT
 
 func get_secrets_found_count() -> int:
+	return get_secrets_found_count_from_data(to_save_data())
+
+func get_secrets_found_count_from_data(data: Dictionary) -> int:
 	var found := 0
-	if broken_cabinet_secret_found:
+	if bool(data.get("broken_cabinet_secret_found", false)):
 		found += 1
-	if owner_portrait_secret_found:
+	if bool(data.get("owner_portrait_secret_found", false)):
 		found += 1
-	if employee_04_file_found:
+	if bool(data.get("employee_04_file_found", false)):
 		found += 1
-	if vendo_memory_riddle_secret_found:
+	if bool(data.get("vendo_memory_riddle_secret_found", false)):
 		found += 1
 	return found
 
 func get_total_secrets_count() -> int:
-	return 4
+	return TOTAL_SECRETS_COUNT
 
 func get_story_phase_label() -> String:
-	if post_reveal_roam_unlocked:
+	return get_story_phase_label_from_data(to_save_data())
+
+func get_story_phase_label_from_data(data: Dictionary) -> String:
+	if bool(data.get("post_reveal_roam_unlocked", false)):
 		return "Post-Reveal Roam"
-	if ending_seen:
+	if bool(data.get("ending_seen", false)):
 		return "Ending"
-	if twist_reveal_seen:
+	if bool(data.get("twist_reveal_seen", false)):
 		return "Truth Revealed"
-	if staff_room_unlocked:
+	if bool(data.get("staff_room_unlocked", false)):
 		return "Staff Room"
-	if story_puzzle_completed:
+	if bool(data.get("story_puzzle_completed", false)):
 		return "Sync Door Solved"
-	if lost_token_quest_completed:
+	if bool(data.get("lost_token_quest_completed", false)):
 		return "Lost Token Returned"
-	if rockbyte_duel_completed or lost_token_collected:
+	if bool(data.get("rockbyte_duel_completed", false)) or bool(data.get("lost_token_collected", false)):
 		return "Lost Token Found"
-	if lost_token_quest_started:
+	if bool(data.get("lost_token_quest_started", false)):
 		return "Cabinet 07"
-	if story_started:
+	if bool(data.get("story_started", false)):
 		return "Opening Night"
 	return "New Memory"
 

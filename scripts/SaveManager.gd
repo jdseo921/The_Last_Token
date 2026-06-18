@@ -154,60 +154,17 @@ func _normalize_slot_summary(data: Dictionary, slot_id: int) -> Dictionary:
 	if not data.has("game_state") or typeof(data["game_state"]) != TYPE_DICTIONARY:
 		return data
 	var game_state: Dictionary = data["game_state"]
-	data["story_phase"] = _get_story_phase_label_from_data(game_state)
-	data["games_completed_count"] = _get_games_completed_count_from_data(game_state)
-	data["total_games_count"] = 3
-	data["secrets_found_count"] = _get_secrets_found_count_from_data(game_state)
-	data["total_secrets_count"] = 4
+	data["story_phase"] = GameState.get_story_phase_label_from_data(game_state)
+	data["games_completed_count"] = GameState.get_games_completed_count_from_data(game_state)
+	data["total_games_count"] = GameState.get_total_games_count()
+	data["secrets_found_count"] = GameState.get_secrets_found_count_from_data(game_state)
+	data["total_secrets_count"] = GameState.get_total_secrets_count()
 	data["post_reveal_roam_unlocked"] = bool(game_state.get("post_reveal_roam_unlocked", false))
 	data["ending_seen"] = bool(game_state.get("ending_seen", false))
 	data["twist_reveal_seen"] = bool(game_state.get("twist_reveal_seen", false))
 	if not data.has("last_saved_at") or str(data["last_saved_at"]).is_empty():
 		data["last_saved_at"] = str(game_state.get("save_timestamp", "Unknown"))
 	return data
-
-func _get_story_phase_label_from_data(data: Dictionary) -> String:
-	if bool(data.get("post_reveal_roam_unlocked", false)):
-		return "Post-Reveal Roam"
-	if bool(data.get("ending_seen", false)):
-		return "Ending"
-	if bool(data.get("twist_reveal_seen", false)):
-		return "Truth Revealed"
-	if bool(data.get("staff_room_unlocked", false)):
-		return "Staff Room"
-	if bool(data.get("story_puzzle_completed", false)):
-		return "Sync Door Solved"
-	if bool(data.get("lost_token_quest_completed", false)):
-		return "Lost Token Returned"
-	if bool(data.get("rockbyte_duel_completed", false)) or bool(data.get("lost_token_collected", false)):
-		return "Lost Token Found"
-	if bool(data.get("lost_token_quest_started", false)):
-		return "Cabinet 07"
-	if bool(data.get("story_started", false)):
-		return "Opening Night"
-	return "New Memory"
-
-func _get_games_completed_count_from_data(data: Dictionary) -> int:
-	var completed := 0
-	if bool(data.get("rockbyte_duel_completed", false)):
-		completed += 1
-	if bool(data.get("story_puzzle_completed", false)):
-		completed += 1
-	if bool(data.get("twist_reveal_seen", false)):
-		completed += 1
-	return completed
-
-func _get_secrets_found_count_from_data(data: Dictionary) -> int:
-	var found := 0
-	if bool(data.get("broken_cabinet_secret_found", false)):
-		found += 1
-	if bool(data.get("owner_portrait_secret_found", false)):
-		found += 1
-	if bool(data.get("employee_04_file_found", false)):
-		found += 1
-	if bool(data.get("vendo_memory_riddle_secret_found", false)):
-		found += 1
-	return found
 
 func _play_audio(method_name: String) -> void:
 	var audio_manager := get_node_or_null("/root/AudioManager")
