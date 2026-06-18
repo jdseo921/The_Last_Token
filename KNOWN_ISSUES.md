@@ -1,9 +1,12 @@
 # KNOWN_ISSUES.md
 
-## Known Bugs / Risks
+## Live Runtime Test Status
 - Final runtime click-through still needs to be completed in Godot on a machine with the editor installed.
+
+## Known Bugs / Risks
 - Rockbyte Duel uses simple cabinet AI, so outcomes may vary and winning may require retrying.
 - Save/load restores GameState flags and safe scene paths, but exact player position/facing restoration is still placeholder-level. ArcadeHub uses simple state-based spawn positions instead of a full spawn marker system.
+- Saves made from minigames, cutscenes, title flow, or post-reveal states restore safely to ArcadeHub instead of restoring the exact transient scene.
 - Save/load menu interaction should be manually tested with existing and empty slots.
 - No `export_presets.cfg` is included yet; Windows export presets must be created manually in Godot.
 

@@ -20,6 +20,49 @@
 9. Export a local Windows build outside the repo or into an ignored build folder.
 10. Do not commit generated `.exe`, `.pck`, or large build output files.
 
+## Live Runtime QA Result
+- Requested live route: Title Menu through Post-Reveal Roam save/load.
+- Result: blocked before step 1 in this environment.
+- Reason: no Godot executable was available on PATH, and no `Godot*.exe` was found in common local install/download locations.
+- Steps passed live: none. The game was not launched.
+- Runtime fixes made in this pass: none.
+- Remaining runtime issues: unknown until the project is opened and played in Godot.
+- Do not treat the MVP as live-verified until the full route below passes in the Godot runtime.
+
+## Final MVP Acceptance Pass
+- Date: 2026-06-18
+- Method: static script/scene/resource-path review only; live Godot launch was unavailable in this shell.
+- Final acceptance status: not live accepted yet.
+- Export readiness: ready for local test-build export preparation, but final exported build should be playtested before sharing broadly.
+- README status: kept as `MVP candidate pending final live playtest`.
+
+### Acceptance Criteria Status
+1. Title Menu appears on launch: static pass; `project.godot` main scene points to `res://scenes/main/Main.tscn`, which instances `TitleMenu`.
+2. New Memory works: static pass; Title Menu opens SaveSlotMenu in `new_game` mode and SaveManager starts/reset/saves a slot.
+3. Restore Memory works: static pass; Title Menu opens SaveSlotMenu in `load` mode and SaveManager applies valid slot data.
+4. SaveSlotMenu does not soft-lock: static pass; close signal and focus paths are present, but live input must still be verified.
+5. Player can move in ArcadeHub: static pass from scene/script wiring; live collision/input verification required.
+6. Player can interact with all required NPCs/objects: static pass from ArcadeHub interaction handlers; live trigger verification required.
+7. Objective hint updates correctly: static pass from GameState-driven `_refresh_objective_hint()`.
+8. Vendo riddle works and saves: static pass; riddle flag is set, saved, loaded, and counted as a secret.
+9. Rockbyte Duel works and saves completion: static pass; win sets Rockbyte completion and Lost Token flags.
+10. Mira accepts Lost Token: static pass; Mira completion handler sets quest completion.
+11. Staff Door gating works: static pass; route checks Lost Token and puzzle/staff flags.
+12. Sync Door works and unlocks Staff Room: static pass; puzzle success sets `story_puzzle_completed` and unlocks Staff Room.
+13. Staff Room reveal plays all 8 slides: static pass; StaffRoom passes 8 slide entries to SlideshowCutscene.
+14. EndingPrompt appears: static pass; StaffRoom instantiates EndingPrompt after reveal completion.
+15. Save and Continue returns to ArcadeHub: static pass; EndingPrompt marks post-reveal, saves active slot when present, and changes to ArcadeHub.
+16. Post-Reveal Roam dialogue appears: static pass; ArcadeHub branches on post-reveal/twist state.
+17. Post-reveal save/load works: static pass; SaveManager preserves post-reveal flags and restores safely to ArcadeHub.
+18. Completion counters are correct: static pass; only Rockbyte Duel, Sync Door, and reveal count as games.
+19. Secret counters are correct: static pass; only the four explicit secret flags count.
+20. Missing art/audio does not crash game: static pass by script behavior; live confirmation still required.
+
+### Remaining Known Issues For Acceptance
+- Full live acceptance route still needs to be run in Godot 4.4.x.
+- Runtime-only issues such as collision bounds, focus timing, input repeat, and exported-build packaging remain unknown until live testing.
+- Missing cutscene art and audio are expected placeholders and should not block acceptance if placeholder panels/audio-safe fallbacks work.
+
 ## MVP QA Hardening Result
 
 ### What Passed Static Review

@@ -39,10 +39,10 @@ horizontal_alignment = 1
 [node name="BodyLabel" type="Label" parent="Panel/VBox"]
 custom_minimum_size = Vector2(0, 140)
 text = "Some memories have changed.
-The arcade is quiet now.
+The loop is closed.
+Pixel Haven is quiet now.
 But some machines are still awake.
-Return to Pixel Haven.
-Hear what the others remember."
+Return and hear what they remember."
 horizontal_alignment = 1
 autowrap_mode = 3
 

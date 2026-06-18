@@ -33,3 +33,5 @@ func _on_save_slot_menu_closed() -> void:
 	save_slot_menu = null
 	if title_menu and is_instance_valid(title_menu):
 		title_menu.visible = true
+		if title_menu.has_method("focus_default"):
+			title_menu.focus_default()

@@ -3,7 +3,7 @@
 The Last Token is a 2D top-down retro arcade mystery about exploring Pixel Haven, talking to strange arcade regulars, recovering a lost token, unlocking the staff room, and uncovering who the player really is.
 
 ## Status
-The project is currently a playable MVP with placeholder visuals, placeholder slideshow panels, Memory Slots, post-reveal roam, and optional audio hooks. It is ready for local testing and feedback, not final release.
+The project is currently an MVP candidate pending final live playtest, with placeholder visuals, placeholder slideshow panels, Memory Slots, post-reveal roam, and optional audio hooks. It is ready to open in Godot and export as a local test build, but should not be called live-verified until the full acceptance route passes in the Godot runtime.
 
 ## Engine
 - Godot 4.x
@@ -31,9 +31,9 @@ No `export_presets.cfg` is currently included. Create the preset manually in God
 4. Select `Windows Desktop`.
 5. Install export templates if Godot prompts for them.
 6. Choose `Export Project`.
-7. Export builds outside this repo or into an ignored local build folder.
+7. Export builds outside this repo or into an ignored local build folder such as `builds/` or `exports/`.
 
-Do not commit generated `.exe`, `.pck`, or large build output files.
+Do not commit generated `.exe`, `.pck`, `.zip`, log files, or large build output files.
 
 ## Controls
 - Move: `WASD` / Arrow Keys

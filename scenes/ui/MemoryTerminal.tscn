@@ -16,9 +16,9 @@ polygon = PackedVector2Array(-14, -12, 14, -12, 14, 12, -14, 12)
 shape = SubResource("1")
 
 [node name="Label" type="Label" parent="."]
-offset_left = -54.0
+offset_left = -72.0
 offset_top = 16.0
-offset_right = 54.0
+offset_right = 72.0
 offset_bottom = 36.0
-text = "MEMORY"
+text = "MEMORY TERMINAL"
 horizontal_alignment = 1

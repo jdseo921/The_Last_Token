@@ -12,6 +12,7 @@ func _ready() -> void:
 	save_and_continue_button.pressed.connect(_on_save_and_continue_pressed)
 	return_to_title_button.pressed.connect(_on_return_to_title_pressed)
 	_build_return_to_title_confirm()
+	save_and_continue_button.grab_focus()
 
 func _on_save_and_continue_pressed() -> void:
 	_mark_post_reveal_state()
@@ -25,6 +26,7 @@ func _on_return_to_title_pressed() -> void:
 	_mark_post_reveal_state()
 	if SaveManager.active_slot_id > 0:
 		return_to_title_confirm.popup_centered()
+		call_deferred("_focus_return_to_title_confirm")
 		return
 	_return_to_title()
 
@@ -54,6 +56,7 @@ func _on_save_slot_menu_closed() -> void:
 		return
 	save_and_continue_button.disabled = false
 	return_to_title_button.disabled = false
+	save_and_continue_button.grab_focus()
 
 func _continue_to_arcade_hub() -> void:
 	SceneChanger.go_to_arcade_hub()
@@ -61,7 +64,7 @@ func _continue_to_arcade_hub() -> void:
 func _build_return_to_title_confirm() -> void:
 	return_to_title_confirm = ConfirmationDialog.new()
 	return_to_title_confirm.title = "Return to Title"
-	return_to_title_confirm.dialog_text = "Save before returning to title?"
+	return_to_title_confirm.dialog_text = "Save current memory before returning to title?"
 	return_to_title_confirm.ok_button_text = "Save"
 	return_to_title_confirm.cancel_button_text = "Do Not Save"
 	add_child(return_to_title_confirm)
@@ -78,3 +81,8 @@ func _on_return_to_title_save_canceled() -> void:
 
 func _return_to_title() -> void:
 	SceneChanger.go_to_title_or_main()
+
+func _focus_return_to_title_confirm() -> void:
+	var ok_button := return_to_title_confirm.get_ok_button()
+	if ok_button:
+		ok_button.grab_focus()

@@ -1,5 +1,7 @@
 extends Control
 
+const ROUND_END_INPUT_DELAY_MSEC := 250
+
 @onready var count_label: Label = $Panel/VBox/CountLabel
 @onready var turn_label: Label = $Panel/VBox/TurnLabel
 @onready var status_label: Label = $Panel/VBox/StatusLabel
@@ -14,6 +16,7 @@ var duel_finished := false
 var last_message := ""
 var player_won_last_round := false
 var loss_retry_count := 0
+var round_finished_msec := 0
 
 func _ready() -> void:
 	take_left_button.pressed.connect(_on_take_left_pressed)
@@ -24,6 +27,13 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if duel_finished and event.is_action_pressed("interact"):
+		if event is InputEventKey and event.echo:
+			get_viewport().set_input_as_handled()
+			return
+		if Time.get_ticks_msec() - round_finished_msec < ROUND_END_INPUT_DELAY_MSEC:
+			get_viewport().set_input_as_handled()
+			return
+		get_viewport().set_input_as_handled()
 		_on_exit_pressed()
 
 func _on_take_left_pressed() -> void:
@@ -130,6 +140,7 @@ func _apply_cabinet_move(choice: String) -> void:
 func _finish_duel(player_won: bool) -> void:
 	duel_finished = true
 	player_won_last_round = player_won
+	round_finished_msec = Time.get_ticks_msec()
 	turn_label.text = "Game over"
 	take_left_button.visible = false
 	take_right_button.visible = false
@@ -140,12 +151,14 @@ func _finish_duel(player_won: bool) -> void:
 		GameState.collect_lost_token()
 		_play_audio("play_token_get")
 		exit_button.text = "Exit"
-		status_label.text = "PATTERN BROKEN.\nMEMORY UNLOCKED.\nTWO VERSIONS REMAINED.\nONE WAS SAVED.\nONE WAS LOST.\n\nLost Token recovered.\nReturn it to Mira."
+		status_label.text = "PATTERN BROKEN.\nMEMORY UNLOCKED.\nTWO VERSIONS REMAINED.\nONE WAS SAVED.\nONE WAS LOST.\n\nLost Token recovered.\nReturn to Mira."
+		exit_button.grab_focus()
 		return
 	_play_audio("play_error")
 	loss_retry_count += 1
 	status_label.text = _get_loss_text()
 	exit_button.text = "Retry"
+	exit_button.grab_focus()
 
 func _on_exit_pressed() -> void:
 	if player_won_last_round:
@@ -158,6 +171,7 @@ func _reset_duel() -> void:
 	right_pile = 5
 	duel_finished = false
 	player_won_last_round = false
+	round_finished_msec = 0
 	last_message = "Choose one button. Take the final rock to win."
 	turn_label.text = "Your turn"
 	take_left_button.visible = true
@@ -168,6 +182,7 @@ func _reset_duel() -> void:
 	exit_button.text = "Exit"
 	_refresh_counts()
 	status_label.text = last_message
+	take_left_button.grab_focus()
 
 func _refresh_counts() -> void:
 	count_label.text = "LEFT PILE: %d        RIGHT PILE: %d" % [left_pile, right_pile]

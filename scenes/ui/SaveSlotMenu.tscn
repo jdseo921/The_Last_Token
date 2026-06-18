@@ -47,19 +47,20 @@ offset_top = 88.0
 offset_right = 520.0
 offset_bottom = 334.0
 
-[node name="ModeButton" type="Button" parent="Panel"]
+[node name="ModeLabel" type="Label" parent="Panel"]
 layout_mode = 0
 offset_left = 24.0
 offset_top = 356.0
-offset_right = 184.0
+offset_right = 244.0
 offset_bottom = 392.0
-text = "Restore Memory"
+text = "Mode: Save Memory"
+vertical_alignment = 1
 
 [node name="CloseButton" type="Button" parent="Panel"]
 layout_mode = 0
-offset_left = 200.0
+offset_left = 272.0
 offset_top = 356.0
-offset_right = 320.0
+offset_right = 392.0
 offset_bottom = 392.0
 text = "Back"
 

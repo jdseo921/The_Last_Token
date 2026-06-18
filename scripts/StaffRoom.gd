@@ -42,7 +42,7 @@ func _handle_employee_04_file() -> void:
 		return
 	_start_terminal_dialogue([
 		{"speaker": "Employee File", "text": "EMPLOYEE 04 // STATUS: ARCHIVED RESTORE PROFILE."},
-		{"speaker": "Employee File", "text": "The photo will not load."},
+		{"speaker": "Employee File", "text": "The photo is corrupted beyond recognition."},
 	], Callable(self, "_restore_player_control"))
 
 func _handle_terminal_interaction() -> void:
@@ -59,7 +59,7 @@ func _handle_terminal_interaction() -> void:
 	reveal_in_progress = true
 	_start_terminal_dialogue([
 		{"speaker": "Terminal", "text": "Employee file recovered."},
-		{"speaker": "Terminal", "text": "Restore subject found."},
+		{"speaker": "Terminal", "text": "Restoration subject found."},
 		{"speaker": "Terminal", "text": "Name: Employee 04."},
 	], Callable(self, "_start_reveal"))
 

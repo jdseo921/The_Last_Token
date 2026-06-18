@@ -2,6 +2,8 @@ extends CanvasLayer
 
 signal dialogue_finished
 
+const ADVANCE_COOLDOWN_MSEC := 180
+
 @onready var panel: Panel = $Panel
 @onready var speaker_name_label: Label = $Panel/SpeakerName
 @onready var dialogue_text_label: Label = $Panel/DialogueText
@@ -10,6 +12,7 @@ signal dialogue_finished
 var dialogue_lines: Array = []
 var current_index := 0
 var active := false
+var last_advance_msec := 0
 
 func _ready() -> void:
 	visible = false
@@ -20,12 +23,22 @@ func start_dialogue(lines: Array) -> void:
 	current_index = 0
 	active = not dialogue_lines.is_empty()
 	visible = active
+	last_advance_msec = Time.get_ticks_msec()
 	_refresh_line()
 
 func _input(event: InputEvent) -> void:
 	if not active:
 		return
 	if event.is_action_pressed("interact"):
+		if event is InputEventKey and event.echo:
+			get_viewport().set_input_as_handled()
+			return
+		var now := Time.get_ticks_msec()
+		if now - last_advance_msec < ADVANCE_COOLDOWN_MSEC:
+			get_viewport().set_input_as_handled()
+			return
+		last_advance_msec = now
+		get_viewport().set_input_as_handled()
 		_accept_current_line()
 
 func _accept_current_line() -> void:

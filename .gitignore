@@ -1,0 +1,14 @@
+# Godot local editor data
+.godot/
+
+# Local test builds and exported packages
+build/
+builds/
+export/
+exports/
+*.exe
+*.pck
+*.zip
+
+# Local logs
+*.log

@@ -21,6 +21,7 @@ func _ready() -> void:
 	switch_a_timer.timeout.connect(_on_switch_a_timeout)
 	switch_b_timer.timeout.connect(_on_switch_b_timeout)
 	_refresh_ui()
+	switch_a_button.grab_focus()
 
 func _on_switch_a_pressed() -> void:
 	if puzzle_solved:
@@ -59,10 +60,11 @@ func _check_success() -> void:
 		GameState.unlock_staff_room()
 		_play_audio("play_ui_confirm")
 		door_label.text = "Staff Door: OPEN"
-		status_label.text = "TWO SIGNALS DETECTED.\nRESTORED SIGNAL PRESENT.\nACCESS GRANTED.\nReturn and enter the Staff Room."
+		status_label.text = "TWO SIGNALS DETECTED.\nORIGINAL: ABSENT.\nRESTORED: PRESENT.\nACCESS GRANTED.\nEnter the Staff Room."
 		switch_a_button.visible = false
 		switch_b_button.visible = false
 		exit_button.visible = true
+		exit_button.grab_focus()
 
 func _on_exit_pressed() -> void:
 	SceneChanger.go_to_arcade_hub()

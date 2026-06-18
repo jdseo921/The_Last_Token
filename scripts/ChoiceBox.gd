@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 signal choice_selected(index: int)
+signal choice_cancelled
 
 @onready var question_label: Label = $Panel/QuestionLabel
 @onready var choice_buttons: Array[Button] = [
@@ -22,7 +23,22 @@ func open_choice(question: String, choices: Array[String]) -> void:
 		button.visible = index < choices.size()
 		button.text = choices[index] if index < choices.size() else ""
 	visible = true
+	_focus_first_visible_choice()
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not visible:
+		return
+	if event.is_action_pressed("cancel"):
+		get_viewport().set_input_as_handled()
+		visible = false
+		choice_cancelled.emit()
 
 func _on_choice_pressed(index: int) -> void:
 	visible = false
 	choice_selected.emit(index)
+
+func _focus_first_visible_choice() -> void:
+	for button in choice_buttons:
+		if button.visible:
+			button.grab_focus()
+			return

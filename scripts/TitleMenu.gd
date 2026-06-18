@@ -11,6 +11,10 @@ func _ready() -> void:
 	new_memory_button.pressed.connect(request_new_memory)
 	restore_memory_button.pressed.connect(request_restore_memory)
 	quit_button.pressed.connect(_on_quit_pressed)
+	focus_default()
+
+func focus_default() -> void:
+	new_memory_button.grab_focus()
 
 func request_new_memory() -> void:
 	new_memory_requested.emit()

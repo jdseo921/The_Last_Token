@@ -16,8 +16,10 @@
 
 ## Export Status
 - `export_presets.cfg` does not currently exist.
+- If a local `export_presets.cfg` is created manually, review it before sharing because it may contain machine-specific paths.
 - No platform-specific export settings have been created in the repo.
 - No generated binaries should be committed.
+- Local build folders such as `build/`, `builds/`, `export/`, and `exports/` are ignored by `.gitignore`.
 
 ## Manual Windows Export Steps
 1. Open the project in Godot 4.4.x.
@@ -26,9 +28,9 @@
 4. Select `Windows Desktop`.
 5. Install export templates if Godot prompts for them.
 6. Choose `Export Project`.
-7. Save the exported build outside the repo or in an ignored local build folder.
+7. Save the exported build outside the repo or in an ignored local build folder such as `builds/` or `exports/`.
 
-Do not commit generated `.exe`, `.pck`, or large build output files.
+Do not commit generated `.exe`, `.pck`, `.zip`, log files, or large build output files.
 
 ## Manual Setup
 - Open `project.godot` in Godot 4.x.

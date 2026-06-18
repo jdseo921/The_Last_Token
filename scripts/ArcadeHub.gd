@@ -119,11 +119,11 @@ func _handle_mira() -> void:
 	if not GameState.lost_token_quest_started:
 		GameState.mira_intro_seen = true
 		start_dialogue([
-			{"speaker": "Mira", "text": "Welcome back to Pixel Haven."},
-			{"speaker": "Mira", "text": "You're late again."},
+			{"speaker": "Mira", "text": "Pixel Haven kept the lights on for you."},
+			{"speaker": "Mira", "text": "You are late again."},
 			{"speaker": "Player", "text": "Again?"},
-			{"speaker": "Mira", "text": "Start with the Lost Token."},
-			{"speaker": "Mira", "text": "Cabinet 07 has been waiting."},
+			{"speaker": "Mira", "text": "Cabinet 07 has your Lost Token."},
+			{"speaker": "Mira", "text": "Please bring it back to me."},
 		], Callable(GameState, "start_lost_token_quest"))
 		return
 	if GameState.lost_token_quest_started and not GameState.lost_token_collected:
@@ -135,9 +135,10 @@ func _handle_mira() -> void:
 	if GameState.lost_token_collected and not GameState.lost_token_quest_completed:
 		start_dialogue([
 			{"speaker": "Player", "text": "I found the token."},
-			{"speaker": "Mira", "text": "Thank you."},
-			{"speaker": "Mira", "text": "One memory came back."},
-			{"speaker": "Mira", "text": "The Staff Door may listen now."},
+			{"speaker": "Mira", "text": "You found it."},
+			{"speaker": "Mira", "text": "I was afraid you would not."},
+			{"speaker": "Mira", "text": "The Staff Door should hear you now."},
+			{"speaker": "Mira", "text": "Please check it."},
 		], Callable(GameState, "complete_lost_token_quest"))
 		return
 	start_dialogue([{"speaker": "Mira", "text": "Welcome to Pixel Haven."}])
@@ -147,8 +148,8 @@ func _handle_gus() -> void:
 		GameState.gus_post_reveal_seen = true
 		start_dialogue([
 			{"speaker": "Gus", "text": "About time."},
-			{"speaker": "Gus", "text": "I was down to very obvious hints."},
-			{"speaker": "Gus", "text": "Next time a door knows your employee number, listen."},
+			{"speaker": "Gus", "text": "I was almost out of practical hints."},
+			{"speaker": "Gus", "text": "You came back anyway. Good."},
 		])
 		return
 	if GameState.lost_token_quest_completed:
@@ -175,8 +176,8 @@ func _handle_vendo() -> void:
 		GameState.vendo_post_reveal_seen = true
 		start_dialogue([
 			{"speaker": "Vendo", "text": "Congratulations, valued stored file."},
-			{"speaker": "Vendo", "text": "You remembered enough to void the warranty."},
-			{"speaker": "Vendo", "text": "That is almost healing."},
+			{"speaker": "Vendo", "text": "Your memory has been partially restored."},
+			{"speaker": "Vendo", "text": "Refunds remain impossible."},
 		])
 		return
 	if GameState.vendo_memory_riddle_secret_found:
@@ -212,6 +213,8 @@ func _open_vendo_memory_riddle() -> void:
 		player.set_control_enabled(false)
 	if choice_box.has_signal("choice_selected"):
 		choice_box.connect("choice_selected", _on_vendo_riddle_choice_selected, CONNECT_ONE_SHOT)
+	if choice_box.has_signal("choice_cancelled"):
+		choice_box.connect("choice_cancelled", _on_vendo_riddle_choice_cancelled, CONNECT_ONE_SHOT)
 	if choice_box.has_method("open_choice"):
 		choice_box.open_choice("What do you lose every time you return?", [
 			"STATIC SODA",
@@ -241,13 +244,22 @@ func _on_vendo_riddle_choice_selected(index: int) -> void:
 		{"speaker": "Vendo", "text": "Try again after your next identity crisis."},
 	])
 
+func _on_vendo_riddle_choice_cancelled() -> void:
+	if choice_box and is_instance_valid(choice_box):
+		choice_box.queue_free()
+	choice_box = null
+	if player and player.has_method("set_control_enabled"):
+		player.set_control_enabled(true)
+	_refresh_hint()
+	_refresh_objective_hint()
+
 func _handle_mr_byte() -> void:
 	if _is_post_reveal():
 		GameState.mr_byte_post_reveal_seen = true
 		GameState.employee_04_file_found = true
 		start_dialogue([
 			{"speaker": "Mr. Byte", "text": "Identity conflict resolved."},
-			{"speaker": "Mr. Byte", "text": "Memory damage remains tender."},
+			{"speaker": "Mr. Byte", "text": "Emotional cache remains unstable."},
 			{"speaker": "Mr. Byte", "text": "Recommended action: talk to those who remembered you."},
 		])
 		return
@@ -262,7 +274,7 @@ func _handle_cabinet_07() -> void:
 	if _is_post_reveal():
 		start_dialogue([
 			{"speaker": "Cabinet 07", "text": "EMPLOYEE 04 RESTORE STATUS: STABLE."},
-			{"speaker": "Cabinet 07", "text": "WELCOME BACK, ALMOST-YOU."},
+			{"speaker": "Cabinet 07", "text": "WELCOME BACK, EMPLOYEE 04."},
 			{"speaker": "Cabinet 07", "text": "PREVIOUS SESSION: CLOSED."},
 			{"speaker": "Cabinet 07", "text": "CURRENT SESSION: YOURS."},
 		])
@@ -279,8 +291,8 @@ func _handle_cabinet_07() -> void:
 		return
 	start_dialogue([
 		{"speaker": "Cabinet 07", "text": "TOKEN ACCEPTED."},
-		{"speaker": "Cabinet 07", "text": "PLAYER RECOGNIZED."},
-		{"speaker": "Cabinet 07", "text": "WELCOME BACK, EMPLOYEE --"},
+		{"speaker": "Cabinet 07", "text": "EMPLOYEE SIGNAL PARTIAL."},
+		{"speaker": "Cabinet 07", "text": "LOST TOKEN RECOVERED."},
 		{"speaker": "Cabinet 07", "text": "RETURN TOKEN TO MIRA."},
 	])
 

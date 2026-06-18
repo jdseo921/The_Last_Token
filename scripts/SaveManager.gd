@@ -62,6 +62,7 @@ func start_new_memory(slot_id: int) -> bool:
 		_play_audio("play_error")
 		return false
 	GameState.reset_for_new_game()
+	active_slot_id = slot_id
 	GameState.save_slot_index = slot_id
 	var saved := save_game(slot_id)
 	if not saved:
@@ -78,6 +79,8 @@ func get_slot_summary(slot_id: int) -> Dictionary:
 	var parsed := JSON.parse_string(save_file.get_as_text())
 	if typeof(parsed) != TYPE_DICTIONARY:
 		return {"slot_id": slot_id, "save_exists": false}
+	if not _is_valid_save_data(parsed):
+		return {"slot_id": slot_id, "save_exists": false}
 	return _normalize_slot_summary(parsed, slot_id)
 
 func delete_save(slot_id: int) -> void:
@@ -90,7 +93,14 @@ func delete_save(slot_id: int) -> void:
 func has_save(slot_id: int) -> bool:
 	if slot_id <= 0:
 		return false
-	return FileAccess.file_exists(_get_slot_path(slot_id))
+	var file_path := _get_slot_path(slot_id)
+	if not FileAccess.file_exists(file_path):
+		return false
+	var save_file := FileAccess.open(file_path, FileAccess.READ)
+	if save_file == null:
+		return false
+	var parsed := JSON.parse_string(save_file.get_as_text())
+	return _is_valid_save_data(parsed)
 
 func collect_save_data() -> Dictionary:
 	GameState.save_progress_stage = GameState.get_story_phase_label()
@@ -121,10 +131,22 @@ func apply_save_data(data: Dictionary) -> void:
 
 func load_saved_scene_or_default(data: Dictionary) -> void:
 	var scene_path := str(data.get("current_scene", ""))
+	if GameState.post_reveal_roam_unlocked:
+		SceneChanger.go_to_arcade_hub()
+		return
 	if scene_path.is_empty() or scene_path == SceneChanger.TITLE_OR_MAIN_SCENE:
 		SceneChanger.go_to_arcade_hub()
 		return
-	if scene_path == SceneChanger.STAFF_ROOM_SCENE and GameState.post_reveal_roam_unlocked:
+	if scene_path == SceneChanger.ROCKBYTE_DUEL_SCENE or scene_path == SceneChanger.SYNC_DOOR_PUZZLE_SCENE:
+		SceneChanger.go_to_arcade_hub()
+		return
+	if scene_path.begins_with("res://scenes/cutscenes/"):
+		SceneChanger.go_to_arcade_hub()
+		return
+	if scene_path == SceneChanger.STAFF_ROOM_SCENE:
+		if GameState.staff_room_unlocked and not GameState.twist_reveal_seen:
+			SceneChanger.change_scene(scene_path)
+			return
 		SceneChanger.go_to_arcade_hub()
 		return
 	if ResourceLoader.exists(scene_path):
@@ -136,10 +158,16 @@ func _get_current_save_scene_path() -> String:
 	var current_scene := get_tree().current_scene
 	if current_scene == null:
 		return SceneChanger.ARCADE_HUB_SCENE
+	if GameState.post_reveal_roam_unlocked:
+		return SceneChanger.ARCADE_HUB_SCENE
 	var scene_path := current_scene.scene_file_path
 	if scene_path == SceneChanger.TITLE_OR_MAIN_SCENE:
 		return SceneChanger.ARCADE_HUB_SCENE
-	if scene_path == SceneChanger.STAFF_ROOM_SCENE and GameState.post_reveal_roam_unlocked:
+	if scene_path == SceneChanger.ROCKBYTE_DUEL_SCENE or scene_path == SceneChanger.SYNC_DOOR_PUZZLE_SCENE:
+		return SceneChanger.ARCADE_HUB_SCENE
+	if scene_path.begins_with("res://scenes/cutscenes/"):
+		return SceneChanger.ARCADE_HUB_SCENE
+	if scene_path == SceneChanger.STAFF_ROOM_SCENE and (not GameState.staff_room_unlocked or GameState.twist_reveal_seen):
 		return SceneChanger.ARCADE_HUB_SCENE
 	if scene_path.is_empty():
 		return SceneChanger.ARCADE_HUB_SCENE
@@ -165,6 +193,13 @@ func _normalize_slot_summary(data: Dictionary, slot_id: int) -> Dictionary:
 	if not data.has("last_saved_at") or str(data["last_saved_at"]).is_empty():
 		data["last_saved_at"] = str(game_state.get("save_timestamp", "Unknown"))
 	return data
+
+func _is_valid_save_data(data) -> bool:
+	if typeof(data) != TYPE_DICTIONARY:
+		return false
+	if not data.has("game_state") or typeof(data["game_state"]) != TYPE_DICTIONARY:
+		return false
+	return true
 
 func _play_audio(method_name: String) -> void:
 	var audio_manager := get_node_or_null("/root/AudioManager")
