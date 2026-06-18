@@ -126,7 +126,7 @@ func _finish_duel(player_won: bool) -> void:
 		GameState.collect_lost_token()
 		_play_audio("play_token_get")
 		exit_button.text = "Exit"
-		status_label.text = "PATTERN BROKEN.\nMEMORY UNLOCKED.\nTWO REMAINED.\nONE WAS SAVED.\nONE WAS LOST."
+		status_label.text = "PATTERN BROKEN.\nMEMORY UNLOCKED.\nTWO VERSIONS REMAINED.\nONE WAS SAVED.\nONE WAS LOST."
 		return
 	_play_audio("play_error")
 	status_label.text = "YOU LOST THIS GAME BEFORE.\nMANY TIMES.\nBEGIN AGAIN?"

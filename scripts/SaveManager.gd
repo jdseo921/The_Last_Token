@@ -105,6 +105,9 @@ func load_saved_scene_or_default(data: Dictionary) -> void:
 	if scene_path.is_empty() or scene_path == SceneChanger.TITLE_OR_MAIN_SCENE:
 		SceneChanger.go_to_arcade_hub()
 		return
+	if scene_path == SceneChanger.STAFF_ROOM_SCENE and GameState.post_reveal_roam_unlocked:
+		SceneChanger.go_to_arcade_hub()
+		return
 	if ResourceLoader.exists(scene_path):
 		SceneChanger.change_scene(scene_path)
 		return
@@ -115,7 +118,9 @@ func _get_current_save_scene_path() -> String:
 	if current_scene == null:
 		return SceneChanger.ARCADE_HUB_SCENE
 	var scene_path := current_scene.scene_file_path
-	if scene_path == SceneChanger.TITLE_OR_MAIN_SCENE and current_scene.has_node("ArcadeHub"):
+	if scene_path == SceneChanger.TITLE_OR_MAIN_SCENE:
+		return SceneChanger.ARCADE_HUB_SCENE
+	if scene_path == SceneChanger.STAFF_ROOM_SCENE and GameState.post_reveal_roam_unlocked:
 		return SceneChanger.ARCADE_HUB_SCENE
 	if scene_path.is_empty():
 		return SceneChanger.ARCADE_HUB_SCENE

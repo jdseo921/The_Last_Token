@@ -74,6 +74,12 @@ text = "TICKET COUNTER"
 position = Vector2(16, 252)
 text = "Start: talk to Mira"
 
+[node name="PostRevealHintLabel" type="Label" parent="."]
+position = Vector2(20, 44)
+text = "The arcade is quiet now.
+But some machines are still awake."
+autowrap_mode = 3
+
 [node name="Mira" parent="." instance=ExtResource("5")]
 position = Vector2(72, 136)
 interactable_kind = "mira"

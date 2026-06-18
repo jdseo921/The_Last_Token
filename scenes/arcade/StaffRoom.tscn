@@ -27,6 +27,11 @@ polygon = PackedVector2Array(64, 132, 116, 132, 116, 164, 64, 164)
 position = Vector2(52, 168)
 text = "EMPLOYEE 04 FILE"
 
+[node name="Employee04File" parent="." instance=ExtResource("3")]
+position = Vector2(90, 148)
+interactable_kind = "employee_04_file"
+label_text = "FILE"
+
 [node name="Player" parent="." instance=ExtResource("2")]
 position = Vector2(144, 176)
 

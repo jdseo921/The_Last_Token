@@ -22,14 +22,14 @@ layout_mode = 0
 offset_left = 80.0
 offset_top = 72.0
 offset_right = 560.0
-offset_bottom = 340.0
+offset_bottom = 376.0
 
 [node name="VBox" type="VBoxContainer" parent="Panel"]
 layout_mode = 0
 offset_left = 24.0
 offset_top = 24.0
 offset_right = 456.0
-offset_bottom = 232.0
+offset_bottom = 280.0
 
 [node name="TitleLabel" type="Label" parent="Panel/VBox"]
 custom_minimum_size = Vector2(0, 42)
@@ -37,11 +37,18 @@ text = "THE END"
 horizontal_alignment = 1
 
 [node name="BodyLabel" type="Label" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 96)
-text = "The reveal is complete. Continue exploring Pixel Haven with the truth restored."
+custom_minimum_size = Vector2(0, 140)
+text = "Some memories have changed.
+The arcade is quiet now.
+But some machines are still awake.
+Return to Pixel Haven to hear what the others remember now."
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="ContinueButton" type="Button" parent="Panel/VBox"]
+[node name="SaveAndContinueButton" type="Button" parent="Panel/VBox"]
 custom_minimum_size = Vector2(180, 40)
-text = "Continue"
+text = "Save and Continue"
+
+[node name="ReturnToTitleButton" type="Button" parent="Panel/VBox"]
+custom_minimum_size = Vector2(180, 40)
+text = "Return to Title"

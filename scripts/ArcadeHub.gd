@@ -4,6 +4,7 @@ extends Node2D
 @onready var dialogue_box: CanvasLayer = $DialogueBox
 @onready var prompt_label: Label = $InteractionPrompt
 @onready var hint_label: Label = $HintLabel
+@onready var post_reveal_hint_label: Label = $PostRevealHintLabel
 
 var save_slot_menu: Control = null
 var choice_box: CanvasLayer = null
@@ -40,6 +41,7 @@ func _choice_box_is_open() -> bool:
 
 func _refresh_hint() -> void:
 	hint_label.visible = not GameState.story_started
+	post_reveal_hint_label.visible = GameState.post_reveal_roam_unlocked
 
 func handle_hub_interaction(interactable: Node, player_node: Node = null) -> void:
 	match str(interactable.interactable_kind):
@@ -65,11 +67,13 @@ func handle_hub_interaction(interactable: Node, player_node: Node = null) -> voi
 			start_dialogue([{"speaker": "System", "text": "Nothing happens."}])
 
 func _handle_mira() -> void:
-	if GameState.twist_reveal_seen:
+	if _is_post_reveal():
 		GameState.mira_post_reveal_seen = true
 		start_dialogue([
 			{"speaker": "Mira", "text": "You finally remembered."},
 			{"speaker": "Mira", "text": "I was worried you would choose to disappear again."},
+			{"speaker": "Mira", "text": "But you are still here."},
+			{"speaker": "Mira", "text": "That counts for something."},
 		])
 		return
 	if not GameState.lost_token_quest_started:
@@ -78,6 +82,7 @@ func _handle_mira() -> void:
 			{"speaker": "Mira", "text": "Welcome to Pixel Haven. You're late again."},
 			{"speaker": "Player", "text": "Again?"},
 			{"speaker": "Mira", "text": "Never mind. Find the Lost Token before the lights go out."},
+			{"speaker": "Mira", "text": "Cabinet 07 has been waiting for it."},
 		], Callable(GameState, "start_lost_token_quest"))
 		return
 	if GameState.lost_token_quest_started and not GameState.lost_token_collected:
@@ -91,16 +96,18 @@ func _handle_mira() -> void:
 			{"speaker": "Player", "text": "I found the token."},
 			{"speaker": "Mira", "text": "Good. One memory is awake now."},
 			{"speaker": "Mira", "text": "You really do not remember, do you?"},
+			{"speaker": "Mira", "text": "Try the Staff Door. It listens better after a machine remembers you."},
 		], Callable(GameState, "complete_lost_token_quest"))
 		return
 	start_dialogue([{"speaker": "Mira", "text": "Welcome to Pixel Haven."}])
 
 func _handle_gus() -> void:
-	if GameState.twist_reveal_seen:
+	if _is_post_reveal():
 		GameState.gus_post_reveal_seen = true
 		start_dialogue([
 			{"speaker": "Gus", "text": "About time."},
 			{"speaker": "Gus", "text": "I was running out of ways to hint at it."},
+			{"speaker": "Gus", "text": "Next time a haunted door calls you by employee number, listen."},
 		])
 		return
 	if GameState.lost_token_quest_completed:
@@ -124,11 +131,12 @@ func _handle_vendo() -> void:
 			{"speaker": "Vendo", "text": "Legally, I should have put that on the label."},
 		])
 		return
-	if GameState.twist_reveal_seen:
+	if _is_post_reveal():
 		GameState.vendo_post_reveal_seen = true
 		start_dialogue([
 			{"speaker": "Vendo", "text": "Congratulations."},
 			{"speaker": "Vendo", "text": "You are officially both a customer and a stored file."},
+			{"speaker": "Vendo", "text": "That means you qualify for neither refund nor warranty."},
 		])
 		return
 	if GameState.vendo_memory_riddle_secret_found:
@@ -192,12 +200,13 @@ func _on_vendo_riddle_choice_selected(index: int) -> void:
 	])
 
 func _handle_mr_byte() -> void:
-	if GameState.twist_reveal_seen:
+	if _is_post_reveal():
 		GameState.mr_byte_post_reveal_seen = true
 		GameState.employee_04_file_found = true
 		start_dialogue([
 			{"speaker": "Mr. Byte", "text": "Identity conflict resolved."},
 			{"speaker": "Mr. Byte", "text": "Emotional damage remains unresolved."},
+			{"speaker": "Mr. Byte", "text": "Recommended action: talk to everyone who remembered you."},
 		])
 		return
 	GameState.mr_byte_intro_seen = true
@@ -208,9 +217,20 @@ func _handle_mr_byte() -> void:
 	])
 
 func _handle_cabinet_07() -> void:
+	if _is_post_reveal():
+		start_dialogue([
+			{"speaker": "Cabinet 07", "text": "EMPLOYEE 04 RESTORE STATUS: STABLE."},
+			{"speaker": "Cabinet 07", "text": "WELCOME BACK, ALMOST-YOU."},
+			{"speaker": "Cabinet 07", "text": "PREVIOUS SESSION: CLOSED."},
+			{"speaker": "Cabinet 07", "text": "CURRENT SESSION: YOURS."},
+		])
+		return
 	if not GameState.lost_token_quest_started:
 		GameState.cabinet07_employee_hint_seen = true
-		start_dialogue([{"speaker": "Cabinet 07", "text": "INSERT PURPOSE."}])
+		start_dialogue([
+			{"speaker": "Cabinet 07", "text": "INSERT PURPOSE."},
+			{"speaker": "Cabinet 07", "text": "LOST TOKEN REQUIRED."},
+		])
 		return
 	if not GameState.rockbyte_duel_completed:
 		SceneChanger.go_to_rockbyte_duel()
@@ -218,7 +238,8 @@ func _handle_cabinet_07() -> void:
 	start_dialogue([
 		{"speaker": "Cabinet 07", "text": "TOKEN ACCEPTED."},
 		{"speaker": "Cabinet 07", "text": "PLAYER RECOGNIZED."},
-		{"speaker": "Cabinet 07", "text": "WELCOME BACK, EMPLOYEE 04."},
+		{"speaker": "Cabinet 07", "text": "WELCOME BACK, EMPLOYEE --"},
+		{"speaker": "Cabinet 07", "text": "IDENTITY RECORD CORRUPTED. STAFF ACCESS RECOMMENDED."},
 	])
 
 func _handle_memory_terminal() -> void:
@@ -247,16 +268,30 @@ func _handle_staff_door() -> void:
 		return
 	start_dialogue([
 		{"speaker": "Staff Door", "text": "TWO SIGNALS REQUIRED."},
-		{"speaker": "Staff Door", "text": "MEMORY TOKEN NOT VERIFIED."},
+		{"speaker": "Staff Door", "text": "MEMORY TOKEN AND CABINET SIGNAL NOT VERIFIED."},
 	])
 
 func _handle_owner_portrait() -> void:
-	GameState.owner_portrait_secret_found = true
+	if _is_post_reveal():
+		GameState.owner_portrait_secret_found = true
+		start_dialogue([
+			{"speaker": "Owner Portrait", "text": "The scratched nameplate is readable now."},
+			{"speaker": "Owner Portrait", "text": "It does not name the owner."},
+			{"speaker": "Owner Portrait", "text": "It says: EMPLOYEE 04."},
+		])
+		return
 	start_dialogue([
 		{"speaker": "Owner Portrait", "text": "The frame is cracked and the nameplate is scratched blank."},
 	])
 
 func _handle_broken_cabinet(interactable: Node) -> void:
+	if _is_post_reveal():
+		start_dialogue([
+			{"speaker": "Broken Cabinet", "text": "I remember your first quarter."},
+			{"speaker": "Broken Cabinet", "text": "You looked happier then."},
+			{"speaker": "Broken Cabinet", "text": "Not better. Just earlier."},
+		])
+		return
 	interactable.broken_interaction_count += 1
 	if interactable.broken_interaction_count >= 5:
 		GameState.broken_cabinet_secret_found = true
@@ -266,3 +301,6 @@ func _handle_broken_cabinet(interactable: Node) -> void:
 		start_dialogue([{"speaker": "Broken Cabinet", "text": "STILL OUT OF ORDER."}])
 		return
 	start_dialogue([{"speaker": "Broken Cabinet", "text": "OUT OF ORDER."}])
+
+func _is_post_reveal() -> bool:
+	return GameState.post_reveal_roam_unlocked or GameState.twist_reveal_seen
