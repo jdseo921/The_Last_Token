@@ -112,4 +112,10 @@ func _restore_player_control() -> void:
 		player.set_control_enabled(true)
 
 func _on_return_pressed() -> void:
+	_play_audio("play_ui_confirm")
 	SceneChanger.go_to_arcade_hub()
+
+func _play_audio(method_name: String) -> void:
+	var audio_manager := get_node_or_null("/root/AudioManager")
+	if audio_manager and audio_manager.has_method(method_name):
+		audio_manager.call(method_name)

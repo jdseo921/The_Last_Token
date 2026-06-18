@@ -53,24 +53,28 @@ func _take_player_turn(choice: String) -> void:
 		"left":
 			if left_pile <= 0:
 				status_label.text = "That pile is empty."
+				_play_audio("play_error")
 				return
 			left_pile -= 1
 			player_message = "You took 1 from the left pile."
 		"right":
 			if right_pile <= 0:
 				status_label.text = "That pile is empty."
+				_play_audio("play_error")
 				return
 			right_pile -= 1
 			player_message = "You took 1 from the right pile."
 		"both":
 			if left_pile <= 0 and right_pile <= 0:
 				status_label.text = "Both piles are empty."
+				_play_audio("play_error")
 				return
 			if left_pile > 0:
 				left_pile -= 1
 			if right_pile > 0:
 				right_pile -= 1
 			player_message = "You took 1 from both piles."
+	_play_audio("play_ui_confirm")
 	last_message = player_message
 	_refresh_counts()
 	status_label.text = player_message
@@ -150,17 +154,18 @@ func _finish_duel(player_won: bool) -> void:
 		GameState.rockbyte_duel_completed = true
 		GameState.collect_lost_token()
 		_play_audio("play_token_get")
-		exit_button.text = "Exit"
+		exit_button.text = "Return to Arcade"
 		status_label.text = "PATTERN BROKEN.\nMEMORY UNLOCKED.\nTWO VERSIONS REMAINED.\nONE WAS SAVED.\nONE WAS LOST.\n\nLost Token recovered.\nReturn to Mira."
 		exit_button.grab_focus()
 		return
 	_play_audio("play_error")
 	loss_retry_count += 1
 	status_label.text = _get_loss_text()
-	exit_button.text = "Retry"
+	exit_button.text = "Retry Duel"
 	exit_button.grab_focus()
 
 func _on_exit_pressed() -> void:
+	_play_audio("play_ui_confirm")
 	if player_won_last_round:
 		SceneChanger.go_to_arcade_hub()
 		return
@@ -172,7 +177,7 @@ func _reset_duel() -> void:
 	duel_finished = false
 	player_won_last_round = false
 	round_finished_msec = 0
-	last_message = "Choose one button. Take the final rock to win."
+	last_message = "Choose one move each turn. Take the final rock to win."
 	turn_label.text = "Your turn"
 	take_left_button.visible = true
 	take_right_button.visible = true
@@ -190,11 +195,11 @@ func _refresh_counts() -> void:
 func _get_loss_text() -> String:
 	match loss_retry_count:
 		1:
-			return "YOU LOST THIS GAME BEFORE.\nMANY TIMES.\nBEGIN AGAIN?"
+			return "YOU LOST THIS GAME BEFORE.\nMANY TIMES.\nPress Retry Duel to begin again."
 		2:
-			return "Hint: Two piles do not mean two choices.\nSometimes both must change together."
+			return "Hint: Two piles do not mean two choices.\nSometimes both must change together.\nPress Retry Duel to try again."
 		_:
-			return "Cabinet 07: HELP UNLOCKED.\nTry leaving both piles with the same count."
+			return "Cabinet 07: HELP UNLOCKED.\nTry leaving both piles with the same count.\nPress Retry Duel to try again."
 
 func _set_move_buttons_enabled(enabled: bool) -> void:
 	take_left_button.disabled = not enabled

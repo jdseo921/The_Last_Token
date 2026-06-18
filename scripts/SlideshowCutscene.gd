@@ -4,7 +4,7 @@ signal cutscene_finished
 
 const ADVANCE_COOLDOWN_MSEC := 250
 const MIN_SLIDE_DELAY_SEC := 0.25
-const FINAL_MEMORY_DELAY_SEC := 0.65
+const FINAL_MEMORY_DELAY_SEC := 1.0
 
 @onready var panel_texture: TextureRect = $PanelTexture
 @onready var missing_panel: Panel = $MissingPanel
@@ -95,7 +95,7 @@ func _apply_image(image_path: String) -> void:
 	if image_path.is_empty() or not ResourceLoader.exists(image_path):
 		panel_texture.texture = null
 		missing_panel.visible = true
-		missing_panel_label.text = "MEMORY PANEL\nImage pending"
+		missing_panel_label.text = "MEMORY PANEL\nPlaceholder image pending"
 		return
 	var texture := load(image_path)
 	if texture is Texture2D:
@@ -104,7 +104,7 @@ func _apply_image(image_path: String) -> void:
 	else:
 		panel_texture.texture = null
 		missing_panel.visible = true
-		missing_panel_label.text = "MEMORY PANEL\nImage pending"
+		missing_panel_label.text = "MEMORY PANEL\nPlaceholder image pending"
 
 func _apply_effect(effect: String, duration: float) -> void:
 	active_tween = create_tween()
@@ -131,6 +131,7 @@ func _show_final_memory_prompt() -> void:
 	waiting_for_final_input = true
 	can_advance = false
 	advance_generation += 1
+	caption_label.text = "The memory settles."
 	prompt_label.text = "Press E / Space to finish memory"
 	_enable_advance_after_delay(FINAL_MEMORY_DELAY_SEC, advance_generation)
 

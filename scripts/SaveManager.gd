@@ -42,7 +42,7 @@ func load_game(slot_id: int) -> bool:
 	if save_file == null:
 		_play_audio("play_error")
 		return false
-	var parsed := JSON.parse_string(save_file.get_as_text())
+	var parsed: Variant = JSON.parse_string(save_file.get_as_text())
 	if typeof(parsed) != TYPE_DICTIONARY:
 		_play_audio("play_error")
 		return false
@@ -76,7 +76,7 @@ func get_slot_summary(slot_id: int) -> Dictionary:
 	var save_file := FileAccess.open(file_path, FileAccess.READ)
 	if save_file == null:
 		return {"slot_id": slot_id, "save_exists": false}
-	var parsed := JSON.parse_string(save_file.get_as_text())
+	var parsed: Variant = JSON.parse_string(save_file.get_as_text())
 	if typeof(parsed) != TYPE_DICTIONARY:
 		return {"slot_id": slot_id, "save_exists": false}
 	if not _is_valid_save_data(parsed):
@@ -99,7 +99,7 @@ func has_save(slot_id: int) -> bool:
 	var save_file := FileAccess.open(file_path, FileAccess.READ)
 	if save_file == null:
 		return false
-	var parsed := JSON.parse_string(save_file.get_as_text())
+	var parsed: Variant = JSON.parse_string(save_file.get_as_text())
 	return _is_valid_save_data(parsed)
 
 func collect_save_data() -> Dictionary:

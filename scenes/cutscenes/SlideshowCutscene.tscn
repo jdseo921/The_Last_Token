@@ -37,7 +37,7 @@ offset_right = 376.0
 offset_bottom = 164.0
 theme_override_font_sizes/font_size = 18
 text = "MEMORY PANEL
-Image pending"
+Placeholder image pending"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
@@ -54,17 +54,17 @@ horizontal_alignment = 2
 [node name="CaptionBacking" type="ColorRect" parent="."]
 layout_mode = 0
 offset_left = 48.0
-offset_top = 306.0
+offset_top = 300.0
 offset_right = 592.0
-offset_bottom = 374.0
+offset_bottom = 380.0
 color = Color(0, 0, 0, 0.62)
 
 [node name="CaptionLabel" type="Label" parent="."]
 layout_mode = 0
 offset_left = 64.0
-offset_top = 314.0
+offset_top = 308.0
 offset_right = 576.0
-offset_bottom = 366.0
+offset_bottom = 372.0
 theme_override_font_sizes/font_size = 18
 text = ""
 horizontal_alignment = 1
@@ -74,8 +74,8 @@ autowrap_mode = 3
 [node name="PromptLabel" type="Label" parent="."]
 layout_mode = 0
 offset_left = 64.0
-offset_top = 376.0
+offset_top = 386.0
 offset_right = 576.0
-offset_bottom = 404.0
+offset_bottom = 414.0
 text = "Press E / Space to continue"
 horizontal_alignment = 1

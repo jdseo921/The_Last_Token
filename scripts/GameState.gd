@@ -47,6 +47,8 @@ var save_player_position_x := 0.0
 var save_player_position_y := 0.0
 var save_player_facing := "down"
 var save_progress_stage := "New Game"
+var has_arcade_return_position := false
+var arcade_return_position := Vector2.ZERO
 
 func _ready() -> void:
 	_ensure_input_actions()
@@ -152,6 +154,15 @@ func reset_for_new_game() -> void:
 	save_player_position_y = 0.0
 	save_player_facing = "down"
 	save_progress_stage = "New Memory"
+	clear_arcade_return_position()
+
+func set_arcade_return_position(position: Vector2) -> void:
+	arcade_return_position = position
+	has_arcade_return_position = true
+
+func clear_arcade_return_position() -> void:
+	arcade_return_position = Vector2.ZERO
+	has_arcade_return_position = false
 
 func start_lost_token_quest() -> void:
 	story_started = true

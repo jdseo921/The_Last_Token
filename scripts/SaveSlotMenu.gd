@@ -14,13 +14,14 @@ var pending_mode := ""
 @onready var slots_vbox: VBoxContainer = $Panel/SlotsVBox
 @onready var title_label: Label = $Panel/TitleLabel
 @onready var subtitle_label: Label = $Panel/SubtitleLabel
+@onready var status_label: Label = $Panel/StatusLabel
 @onready var mode_label: Label = $Panel/ModeLabel
 @onready var close_button: Button = $Panel/CloseButton
 @onready var confirm_overwrite: ConfirmationDialog = $ConfirmOverwrite
 
 func _ready() -> void:
 	visible = false
-	close_button.pressed.connect(close_menu)
+	close_button.pressed.connect(_on_close_pressed)
 	confirm_overwrite.confirmed.connect(_on_overwrite_confirmed)
 	confirm_overwrite.canceled.connect(_on_overwrite_canceled)
 	_build_slots()
@@ -29,6 +30,7 @@ func open_menu(mode = MODE_SAVE) -> void:
 	current_mode = _normalize_mode(mode)
 	visible = true
 	title_label.text = "MEMORY TERMINAL"
+	status_label.text = ""
 	_refresh_slots()
 	_focus_first_slot()
 
@@ -39,7 +41,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event.is_action_pressed("cancel"):
 		get_viewport().set_input_as_handled()
+		_play_audio("play_ui_cancel")
 		close_menu()
+
+func _on_close_pressed() -> void:
+	_play_audio("play_ui_cancel")
+	close_menu()
 
 func close_menu() -> void:
 	if not visible:
@@ -54,7 +61,7 @@ func _build_slots() -> void:
 	for slot_id in range(1, 4):
 		var button := Button.new()
 		button.text = "Memory Slot %d" % slot_id
-		button.custom_minimum_size = Vector2(0, 78)
+		button.custom_minimum_size = Vector2(0, 88)
 		button.pressed.connect(_on_slot_pressed.bind(slot_id))
 		slots_vbox.add_child(button)
 		slot_buttons.append(button)
@@ -66,11 +73,12 @@ func _refresh_slots() -> void:
 		var button := slot_buttons[slot_id - 1]
 		var summary := SaveManager.get_slot_summary(slot_id)
 		var save_exists := bool(summary.get("save_exists", false))
-		button.disabled = current_mode == MODE_LOAD and not save_exists
+		button.disabled = false
 		if not save_exists:
-			button.text = "Memory Slot %d\nEmpty Memory" % slot_id
+			var empty_action := "Choose to begin" if current_mode == MODE_NEW_GAME else "Cannot restore"
+			button.text = "Memory Slot %d\nEMPTY MEMORY\n%s" % [slot_id, empty_action]
 		else:
-			button.text = "Memory Slot %d\nStatus: %s\nGames: %d / %d\nSecrets: %d / %d\nLast Saved: %s" % [
+			button.text = "Memory Slot %d\nStatus: %s\nGames: %d / %d    Secrets: %d / %d\nLast Saved: %s" % [
 				slot_id,
 				summary.get("story_phase", "Unknown"),
 				int(summary.get("games_completed_count", 0)),
@@ -90,37 +98,55 @@ func _on_slot_pressed(slot_id: int) -> void:
 			_handle_save_slot(slot_id)
 
 func _handle_new_game_slot(slot_id: int) -> void:
+	_play_audio("play_ui_confirm")
 	if SaveManager.has_save(slot_id):
 		_confirm_overwrite(slot_id, MODE_NEW_GAME)
 		return
 	if SaveManager.start_new_memory(slot_id):
+		status_label.text = "New Memory saved in Slot %d." % slot_id
 		close_menu()
 		SceneChanger.go_to_arcade_hub()
+		return
+	_show_failure("Could not create Memory Slot %d." % slot_id)
 
 func _handle_load_slot(slot_id: int) -> void:
 	if not SaveManager.has_save(slot_id):
 		_play_audio("play_error")
+		_show_failure("Memory Slot %d is empty. Nothing to restore." % slot_id)
 		return
+	_play_audio("play_ui_confirm")
 	if SaveManager.load_game(slot_id):
+		status_label.text = "Restored Memory Slot %d." % slot_id
 		close_menu()
+		return
+	_show_failure("Could not restore Memory Slot %d." % slot_id)
 
 func _handle_save_slot(slot_id: int) -> void:
+	_play_audio("play_ui_confirm")
 	if SaveManager.has_save(slot_id):
 		_confirm_overwrite(slot_id, MODE_SAVE)
 		return
 	if SaveManager.save_game(slot_id):
+		status_label.text = "Saved Memory Slot %d." % slot_id
+		await get_tree().create_timer(0.25).timeout
 		close_menu()
+		return
+	_show_failure("Could not save Memory Slot %d." % slot_id)
 
 func _confirm_overwrite(slot_id: int, mode: String) -> void:
 	pending_slot_id = slot_id
 	pending_mode = mode
-	confirm_overwrite.dialog_text = "Overwrite Memory Slot %d?\nThis will replace that memory's saved progress." % slot_id
+	confirm_overwrite.title = "Overwrite Memory Slot %d" % slot_id
+	confirm_overwrite.ok_button_text = "Overwrite"
+	confirm_overwrite.cancel_button_text = "Keep Slot"
+	confirm_overwrite.dialog_text = "Replace Memory Slot %d?\nThe old memory in this slot will be lost." % slot_id
 	confirm_overwrite.popup_centered()
 	call_deferred("_focus_overwrite_confirm")
 
 func _on_overwrite_confirmed() -> void:
 	if pending_slot_id <= 0:
 		return
+	_play_audio("play_ui_confirm")
 	var slot_id := pending_slot_id
 	var mode := pending_mode
 	pending_slot_id = 0
@@ -128,15 +154,24 @@ func _on_overwrite_confirmed() -> void:
 	match mode:
 		MODE_NEW_GAME:
 			if SaveManager.start_new_memory(slot_id):
+				status_label.text = "Memory Slot %d overwritten." % slot_id
 				close_menu()
 				SceneChanger.go_to_arcade_hub()
+				return
+			_show_failure("Could not overwrite Memory Slot %d." % slot_id)
 		MODE_SAVE:
 			if SaveManager.save_game(slot_id):
+				status_label.text = "Memory Slot %d overwritten." % slot_id
+				await get_tree().create_timer(0.25).timeout
 				close_menu()
+				return
+			_show_failure("Could not overwrite Memory Slot %d." % slot_id)
 
 func _on_overwrite_canceled() -> void:
+	_play_audio("play_ui_cancel")
 	pending_slot_id = 0
 	pending_mode = ""
+	status_label.text = "Overwrite canceled. Slot was kept."
 	_focus_first_slot()
 
 func _normalize_mode(mode) -> String:
@@ -176,6 +211,11 @@ func _focus_overwrite_confirm() -> void:
 	var ok_button := confirm_overwrite.get_ok_button()
 	if ok_button:
 		ok_button.grab_focus()
+
+func _show_failure(message: String) -> void:
+	status_label.text = message
+	_refresh_slots()
+	_focus_first_slot()
 
 func _play_audio(method_name: String) -> void:
 	var audio_manager := get_node_or_null("/root/AudioManager")

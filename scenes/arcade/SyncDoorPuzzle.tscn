@@ -37,7 +37,8 @@ text = "SYNC DOOR"
 
 [node name="InstructionLabel" type="Label" parent="Panel/VBox"]
 custom_minimum_size = Vector2(0, 70)
-text = "Open the staff door by turning both switches ON at the same time. Each switch stays active for 5 seconds."
+text = "Both switches must be ON at the same time.
+Each switch stays active for 5 seconds."
 autowrap_mode = 3
 
 [node name="DoorLabel" type="Label" parent="Panel/VBox"]
@@ -46,7 +47,7 @@ text = "Staff Door: Locked"
 horizontal_alignment = 1
 
 [node name="StatusLabel" type="Label" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 90)
+custom_minimum_size = Vector2(0, 104)
 text = "Activate both switches to open the door."
 autowrap_mode = 3
 
@@ -64,7 +65,7 @@ text = "Switch B"
 [node name="ExitButton" type="Button" parent="Panel/VBox"]
 visible = false
 custom_minimum_size = Vector2(160, 36)
-text = "Return"
+text = "Return to Arcade"
 
 [node name="SwitchATimer" type="Timer" parent="."]
 one_shot = true

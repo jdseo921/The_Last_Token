@@ -26,6 +26,7 @@ func _ready() -> void:
 func _on_switch_a_pressed() -> void:
 	if puzzle_solved:
 		return
+	_play_audio("play_ui_confirm")
 	switch_a_active = true
 	switch_a_timer.start()
 	_refresh_ui()
@@ -34,6 +35,7 @@ func _on_switch_a_pressed() -> void:
 func _on_switch_b_pressed() -> void:
 	if puzzle_solved:
 		return
+	_play_audio("play_ui_confirm")
 	switch_b_active = true
 	switch_b_timer.start()
 	_refresh_ui()
@@ -60,20 +62,21 @@ func _check_success() -> void:
 		GameState.unlock_staff_room()
 		_play_audio("play_ui_confirm")
 		door_label.text = "Staff Door: OPEN"
-		status_label.text = "TWO SIGNALS DETECTED.\nORIGINAL: ABSENT.\nRESTORED: PRESENT.\nACCESS GRANTED.\nEnter the Staff Room."
+		status_label.text = "TWO SWITCHES ACTIVE.\nACCESS GRANTED.\nReturn to the arcade, then enter the Staff Room."
 		switch_a_button.visible = false
 		switch_b_button.visible = false
 		exit_button.visible = true
 		exit_button.grab_focus()
 
 func _on_exit_pressed() -> void:
+	_play_audio("play_ui_confirm")
 	SceneChanger.go_to_arcade_hub()
 
 func _refresh_ui() -> void:
 	if puzzle_solved:
 		return
 	door_label.text = "Staff Door: LOCKED"
-	status_label.text = "Switch A: %s\nSwitch B: %s" % ["ON" if switch_a_active else "OFF", "ON" if switch_b_active else "OFF"]
+	status_label.text = "Both switches must be ON at the same time.\nSwitch A: %s\nSwitch B: %s" % ["ON" if switch_a_active else "OFF", "ON" if switch_b_active else "OFF"]
 
 func _play_audio(method_name: String) -> void:
 	var audio_manager := get_node_or_null("/root/AudioManager")

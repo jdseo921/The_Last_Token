@@ -29,6 +29,13 @@
 - Remaining runtime issues: unknown until the project is opened and played in Godot.
 - Do not treat the MVP as live-verified until the full route below passes in the Godot runtime.
 
+## Publish-Readiness Polish Pass
+- Date: 2026-06-19
+- Scope: title menu, memory slots, ArcadeHub hints/labels, dialogue box, Rockbyte Duel, Sync Door, reveal slideshow, and ending prompt.
+- Live full-route result: not completed; the 31-step interactive route still needs a human viewport playthrough.
+- Headless smoke result: passed with Godot 4.7 console using project open, brief default run, and direct `res://scenes/main/Main.tscn` launch.
+- README status: unchanged because the full live route has not passed.
+
 ## Live Godot Acceptance Fix Pass
 - Date: 2026-06-18
 - Requested route: full 32-step acceptance route from `res://scenes/main/Main.tscn` through post-reveal restore.

@@ -7,28 +7,30 @@ script = ExtResource("1")
 
 [node name="Panel" type="Panel" parent="."]
 offset_left = 24.0
-offset_top = 206.0
+offset_top = 198.0
 offset_right = 616.0
-offset_bottom = 350.0
+offset_bottom = 360.0
 
 [node name="SpeakerName" type="Label" parent="Panel"]
 offset_left = 16.0
 offset_top = 10.0
 offset_right = 560.0
-offset_bottom = 34.0
+offset_bottom = 36.0
+theme_override_font_sizes/font_size = 18
 text = "Speaker"
 
 [node name="DialogueText" type="Label" parent="Panel"]
 offset_left = 16.0
-offset_top = 42.0
+offset_top = 44.0
 offset_right = 560.0
-offset_bottom = 98.0
+offset_bottom = 114.0
 text = "Dialogue goes here."
 autowrap_mode = 3
 
 [node name="ContinuePrompt" type="Label" parent="Panel"]
 offset_left = 16.0
-offset_top = 110.0
+offset_top = 124.0
 offset_right = 560.0
-offset_bottom = 134.0
+offset_bottom = 150.0
 text = "Press E / Space to continue"
+horizontal_alignment = 2

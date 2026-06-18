@@ -20,11 +20,15 @@ func _ready() -> void:
 	_refresh_objective_hint()
 
 func _apply_spawn_position() -> void:
+	if GameState.has_arcade_return_position:
+		player.global_position = GameState.arcade_return_position
+		GameState.clear_arcade_return_position()
+		return
 	if GameState.post_reveal_roam_unlocked:
-		player.global_position = Vector2(72, 178)
+		player.global_position = Vector2(178, 246)
 		return
 	if GameState.rockbyte_duel_completed and not GameState.twist_reveal_seen:
-		player.global_position = Vector2(272, 118)
+		player.global_position = Vector2(430, 204)
 
 func _on_prompt_changed(text: String) -> void:
 	prompt_label.text = text
@@ -287,6 +291,7 @@ func _handle_cabinet_07() -> void:
 		])
 		return
 	if not GameState.rockbyte_duel_completed:
+		_store_arcade_return_position()
 		SceneChanger.go_to_rockbyte_duel()
 		return
 	start_dialogue([
@@ -322,6 +327,7 @@ func _handle_staff_door() -> void:
 		SceneChanger.go_to_staff_room()
 		return
 	if GameState.lost_token_quest_completed and GameState.rockbyte_duel_completed:
+		_store_arcade_return_position()
 		SceneChanger.go_to_sync_door_puzzle()
 		return
 	start_dialogue([
@@ -362,3 +368,7 @@ func _handle_broken_cabinet(interactable: Node) -> void:
 
 func _is_post_reveal() -> bool:
 	return GameState.post_reveal_roam_unlocked or GameState.twist_reveal_seen
+
+func _store_arcade_return_position() -> void:
+	if player:
+		GameState.set_arcade_return_position(player.global_position)

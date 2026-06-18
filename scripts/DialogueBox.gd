@@ -3,6 +3,17 @@ extends CanvasLayer
 signal dialogue_finished
 
 const ADVANCE_COOLDOWN_MSEC := 180
+const LETTERS_PER_SECOND := 42.0
+const WORDS_PER_SECOND := 7.0
+const MACHINE_SPEAKERS := [
+	"Cabinet 07",
+	"Staff Door",
+	"Vendo",
+	"Mr. Byte",
+	"Broken Cabinet",
+	"Terminal",
+	"Memory Terminal",
+]
 
 @onready var panel: Panel = $Panel
 @onready var speaker_name_label: Label = $Panel/SpeakerName
@@ -13,10 +24,30 @@ var dialogue_lines: Array = []
 var current_index := 0
 var active := false
 var last_advance_msec := 0
+var current_reveal_mode := "instant"
+var current_full_text := ""
+var current_words: Array[String] = []
+var reveal_progress := 0.0
+var line_complete := true
 
 func _ready() -> void:
 	visible = false
 	continue_prompt_label.text = "Press E / Space to continue"
+
+func _process(delta: float) -> void:
+	if not active or line_complete:
+		return
+	if current_reveal_mode == "letters":
+		reveal_progress += LETTERS_PER_SECOND * delta
+		var visible_count := mini(int(reveal_progress), current_full_text.length())
+		dialogue_text_label.visible_characters = visible_count
+		line_complete = visible_count >= current_full_text.length()
+		return
+	if current_reveal_mode == "words":
+		reveal_progress += WORDS_PER_SECOND * delta
+		var visible_words := mini(int(reveal_progress), current_words.size())
+		dialogue_text_label.text = _join_visible_words(visible_words)
+		line_complete = visible_words >= current_words.size()
 
 func start_dialogue(lines: Array) -> void:
 	dialogue_lines = lines
@@ -39,6 +70,9 @@ func _input(event: InputEvent) -> void:
 			return
 		last_advance_msec = now
 		get_viewport().set_input_as_handled()
+		if not line_complete:
+			_complete_current_line()
+			return
 		_accept_current_line()
 
 func _accept_current_line() -> void:
@@ -57,8 +91,56 @@ func _refresh_line() -> void:
 		dialogue_text_label.text = ""
 		return
 	var line: Dictionary = dialogue_lines[current_index]
-	speaker_name_label.text = str(line.get("speaker", ""))
-	dialogue_text_label.text = str(line.get("text", ""))
+	var speaker := str(line.get("speaker", ""))
+	var text := str(line.get("text", ""))
+	speaker_name_label.text = speaker
+	current_reveal_mode = _get_reveal_mode(speaker)
+	if current_reveal_mode == "words":
+		current_full_text = text.to_upper()
+	else:
+		current_full_text = text
+	reveal_progress = 0.0
+	line_complete = current_reveal_mode == "instant" or current_full_text.is_empty()
+	dialogue_text_label.visible_characters = -1
+	if current_reveal_mode == "instant":
+		dialogue_text_label.text = current_full_text
+		return
+	if current_reveal_mode == "words":
+		current_words = _split_words(current_full_text)
+		dialogue_text_label.text = ""
+		return
+	current_words.clear()
+	dialogue_text_label.text = current_full_text
+	dialogue_text_label.visible_characters = 0
+
+func _complete_current_line() -> void:
+	if current_reveal_mode == "words":
+		dialogue_text_label.text = current_full_text
+	else:
+		dialogue_text_label.text = current_full_text
+		dialogue_text_label.visible_characters = -1
+	line_complete = true
+
+func _get_reveal_mode(speaker: String) -> String:
+	if speaker == "Player":
+		return "instant"
+	if speaker in MACHINE_SPEAKERS:
+		return "words"
+	return "letters"
+
+func _split_words(text: String) -> Array[String]:
+	var words: Array[String] = []
+	for word in text.split(" ", false):
+		words.append(word)
+	return words
+
+func _join_visible_words(visible_words: int) -> String:
+	var visible_text := ""
+	for index in range(visible_words):
+		if index > 0:
+			visible_text += " "
+		visible_text += current_words[index]
+	return visible_text
 
 func _play_audio(method_name: String) -> void:
 	var audio_manager := get_node_or_null("/root/AudioManager")

@@ -38,18 +38,17 @@ horizontal_alignment = 1
 
 [node name="BodyLabel" type="Label" parent="Panel/VBox"]
 custom_minimum_size = Vector2(0, 140)
-text = "Some memories have changed.
-The loop is closed.
-Pixel Haven is quiet now.
-But some machines are still awake.
-Return and hear what they remember."
+text = "The loop is closed.
+Your memory has changed.
+Pixel Haven is quiet now, but the arcade will remember you differently.
+Save and continue to hear what changed."
 horizontal_alignment = 1
 autowrap_mode = 3
 
 [node name="SaveAndContinueButton" type="Button" parent="Panel/VBox"]
-custom_minimum_size = Vector2(180, 40)
+custom_minimum_size = Vector2(220, 42)
 text = "Save and Continue"
 
 [node name="ReturnToTitleButton" type="Button" parent="Panel/VBox"]
-custom_minimum_size = Vector2(180, 40)
+custom_minimum_size = Vector2(220, 42)
 text = "Return to Title"

@@ -4,9 +4,12 @@ signal interaction_prompt_changed(text: String)
 
 @export var speed: float = 120.0
 
+const INTERACT_REENABLE_LOCKOUT_MSEC := 140
+
 var can_control := true
 var nearby_interactables: Array = []
 var active_dialogue_box: Node = null
+var interact_locked_until_msec := 0
 
 @onready var interaction_area: Area2D = $InteractionArea
 
@@ -28,13 +31,16 @@ func _physics_process(delta: float) -> void:
 	velocity = input_vector.normalized() * speed
 	move_and_slide()
 
-	if Input.is_action_just_pressed("interact"):
+	if Input.is_action_just_pressed("interact") and Time.get_ticks_msec() >= interact_locked_until_msec:
 		_interact_with_nearest()
 
 func set_control_enabled(enabled: bool) -> void:
+	var was_control_enabled := can_control
 	can_control = enabled
 	if not enabled:
 		velocity = Vector2.ZERO
+	if enabled and not was_control_enabled:
+		interact_locked_until_msec = Time.get_ticks_msec() + INTERACT_REENABLE_LOCKOUT_MSEC
 	_set_prompt()
 
 func open_dialogue(dialogue_box: Node, lines: Array) -> void:

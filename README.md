@@ -40,6 +40,7 @@ Do not commit generated `.exe`, `.pck`, `.zip`, log files, or large build output
 - Interact / Continue: `E` / Space
 - Cancel / Back: Esc / Backspace
 - Menus: mouse click / keyboard focus where supported
+- Title Menu: `Window Size` cycles same-ratio test windows: `640 x 440`, `960 x 660`, `1280 x 880`
 
 ## Core Gameplay Loop
 Explore the arcade, talk to Mira and the other core NPCs, play Rockbyte Duel, solve the Sync Door puzzle, enter the Staff Room, watch the reveal slideshow, and continue into post-reveal roam.
@@ -52,7 +53,7 @@ After the ending prompt, the player returns to ArcadeHub with post-reveal state 
 
 ## Current Placeholders
 - Visuals are simple shapes and labels.
-- Cutscene panels may be missing and display `MEMORY PANEL / Image pending`.
+- Cutscene panels may be missing and display `MEMORY PANEL / Placeholder image pending`.
 - Audio hooks are present, but final sound effects and music are not included.
 - Exact player position restore is placeholder-level; story state and safe scene paths are restored.
 - Rockbyte Duel uses simple AI for MVP testing.

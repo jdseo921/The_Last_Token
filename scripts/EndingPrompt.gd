@@ -15,6 +15,7 @@ func _ready() -> void:
 	save_and_continue_button.grab_focus()
 
 func _on_save_and_continue_pressed() -> void:
+	_play_audio("play_ui_confirm")
 	_mark_post_reveal_state()
 	if SaveManager.active_slot_id > 0:
 		SaveManager.save_game(SaveManager.active_slot_id)
@@ -23,6 +24,7 @@ func _on_save_and_continue_pressed() -> void:
 	_open_save_menu_before_continue()
 
 func _on_return_to_title_pressed() -> void:
+	_play_audio("play_ui_cancel")
 	_mark_post_reveal_state()
 	if SaveManager.active_slot_id > 0:
 		return_to_title_confirm.popup_centered()
@@ -72,11 +74,13 @@ func _build_return_to_title_confirm() -> void:
 	return_to_title_confirm.canceled.connect(_on_return_to_title_save_canceled)
 
 func _on_return_to_title_save_confirmed() -> void:
+	_play_audio("play_save")
 	if SaveManager.active_slot_id > 0:
 		SaveManager.save_game(SaveManager.active_slot_id)
 	_return_to_title()
 
 func _on_return_to_title_save_canceled() -> void:
+	_play_audio("play_ui_cancel")
 	_return_to_title()
 
 func _return_to_title() -> void:
@@ -86,3 +90,8 @@ func _focus_return_to_title_confirm() -> void:
 	var ok_button := return_to_title_confirm.get_ok_button()
 	if ok_button:
 		ok_button.grab_focus()
+
+func _play_audio(method_name: String) -> void:
+	var audio_manager := get_node_or_null("/root/AudioManager")
+	if audio_manager and audio_manager.has_method(method_name):
+		audio_manager.call(method_name)

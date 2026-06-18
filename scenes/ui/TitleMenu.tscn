@@ -19,31 +19,41 @@ color = Color(0.025, 0.025, 0.04, 1)
 
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 0
-offset_left = 128.0
-offset_top = 72.0
-offset_right = 512.0
-offset_bottom = 352.0
+offset_left = 112.0
+offset_top = 42.0
+offset_right = 528.0
+offset_bottom = 398.0
 
 [node name="VBox" type="VBoxContainer" parent="Panel"]
 layout_mode = 0
 offset_left = 48.0
-offset_top = 36.0
-offset_right = 336.0
-offset_bottom = 244.0
+offset_top = 30.0
+offset_right = 368.0
+offset_bottom = 326.0
 
 [node name="TitleLabel" type="Label" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 56)
+custom_minimum_size = Vector2(0, 64)
+theme_override_font_sizes/font_size = 28
 text = "THE LAST TOKEN"
 horizontal_alignment = 1
 
+[node name="SubtitleLabel" type="Label" parent="Panel/VBox"]
+custom_minimum_size = Vector2(0, 44)
+text = "A memory arcade mystery"
+horizontal_alignment = 1
+
 [node name="NewMemoryButton" type="Button" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 38)
+custom_minimum_size = Vector2(0, 44)
 text = "New Memory"
 
 [node name="RestoreMemoryButton" type="Button" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 38)
+custom_minimum_size = Vector2(0, 44)
 text = "Restore Memory"
 
+[node name="WindowSizeButton" type="Button" parent="Panel/VBox"]
+custom_minimum_size = Vector2(0, 44)
+text = "Window Size: 960 x 660"
+
 [node name="QuitButton" type="Button" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 38)
+custom_minimum_size = Vector2(0, 44)
 text = "Quit"
