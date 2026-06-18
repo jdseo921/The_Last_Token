@@ -9,13 +9,41 @@
 [node name="ArcadeHub" type="Node2D"]
 script = ExtResource("1")
 
+[node name="Floor" type="Polygon2D" parent="."]
+color = Color(0.045, 0.045, 0.065, 1)
+polygon = PackedVector2Array(0, 0, 360, 0, 360, 300, 0, 300)
+
+[node name="TicketCounterArea" type="Polygon2D" parent="."]
+color = Color(0.13, 0.08, 0.11, 1)
+polygon = PackedVector2Array(24, 88, 128, 88, 128, 168, 24, 168)
+
+[node name="CabinetArea" type="Polygon2D" parent="."]
+color = Color(0.08, 0.1, 0.16, 1)
+polygon = PackedVector2Array(196, 56, 304, 56, 304, 132, 196, 132)
+
+[node name="StaffDoorArea" type="Polygon2D" parent="."]
+color = Color(0.11, 0.07, 0.08, 1)
+polygon = PackedVector2Array(224, 148, 328, 148, 328, 208, 224, 208)
+
+[node name="NpcObjectArea" type="Polygon2D" parent="."]
+color = Color(0.07, 0.11, 0.1, 1)
+polygon = PackedVector2Array(96, 32, 200, 32, 200, 196, 96, 196)
+
+[node name="MemoryArea" type="Polygon2D" parent="."]
+color = Color(0.08, 0.13, 0.12, 1)
+polygon = PackedVector2Array(20, 196, 132, 196, 132, 252, 20, 252)
+
+[node name="WalkPath" type="Polygon2D" parent="."]
+color = Color(0.09, 0.09, 0.1, 1)
+polygon = PackedVector2Array(136, 120, 224, 120, 224, 220, 136, 220)
+
 [node name="Player" parent="." instance=ExtResource("2")]
 position = Vector2(160, 160)
 
 [node name="DialogueBox" parent="." instance=ExtResource("3")]
 
 [node name="InteractionPrompt" type="Label" parent="."]
-position = Vector2(24, 272)
+position = Vector2(16, 268)
 text = ""
 
 [node name="PIXEL HAVEN" type="Label" parent="."]
@@ -27,19 +55,27 @@ position = Vector2(20, 28)
 text = "FINAL NIGHT"
 
 [node name="STAFF ONLY" type="Label" parent="."]
-position = Vector2(236, 24)
-text = "STAFF ONLY"
+position = Vector2(236, 152)
+text = "STAFF DOOR"
 
 [node name="CABINET 07" type="Label" parent="."]
-position = Vector2(236, 92)
+position = Vector2(220, 64)
 text = "CABINET 07"
 
 [node name="MEMORY TERMINAL" type="Label" parent="."]
-position = Vector2(20, 224)
+position = Vector2(28, 200)
 text = "MEMORY TERMINAL"
 
+[node name="TicketCounterLabel" type="Label" parent="."]
+position = Vector2(32, 94)
+text = "TICKET COUNTER"
+
+[node name="HintLabel" type="Label" parent="."]
+position = Vector2(16, 252)
+text = "Start: talk to Mira"
+
 [node name="Mira" parent="." instance=ExtResource("5")]
-position = Vector2(72, 128)
+position = Vector2(72, 136)
 interactable_kind = "mira"
 label_text = "MIRA"
 
@@ -49,12 +85,12 @@ interactable_kind = "gus"
 label_text = "GUS"
 
 [node name="Vendo" parent="." instance=ExtResource("5")]
-position = Vector2(216, 128)
+position = Vector2(112, 176)
 interactable_kind = "vendo"
 label_text = "VENDO"
 
 [node name="Cabinet07" parent="." instance=ExtResource("5")]
-position = Vector2(240, 96)
+position = Vector2(248, 96)
 interactable_kind = "cabinet07"
 label_text = "CABINET 07"
 
@@ -69,7 +105,7 @@ interactable_kind = "broken_cabinet"
 label_text = "BROKEN CABINET"
 
 [node name="StaffDoor" parent="." instance=ExtResource("5")]
-position = Vector2(272, 168)
+position = Vector2(276, 180)
 interactable_kind = "staff_door"
 label_text = "STAFF DOOR"
 
@@ -79,4 +115,4 @@ interactable_kind = "owner_portrait"
 label_text = "OWNER PORTRAIT"
 
 [node name="MemoryTerminal" parent="." instance=ExtResource("4")]
-position = Vector2(56, 216)
+position = Vector2(64, 228)

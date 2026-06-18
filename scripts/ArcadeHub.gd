@@ -3,8 +3,10 @@ extends Node2D
 @onready var player: CharacterBody2D = $Player
 @onready var dialogue_box: CanvasLayer = $DialogueBox
 @onready var prompt_label: Label = $InteractionPrompt
+@onready var hint_label: Label = $HintLabel
 
 var save_slot_menu: Control = null
+var choice_box: CanvasLayer = null
 var pending_after_dialogue: Callable = Callable()
 
 func _ready() -> void:
@@ -13,6 +15,7 @@ func _ready() -> void:
 	if GameState.rockbyte_duel_completed and not GameState.twist_reveal_seen:
 		player.global_position = Vector2(240, 96)
 	_on_prompt_changed("")
+	_refresh_hint()
 
 func _on_prompt_changed(text: String) -> void:
 	prompt_label.text = text
@@ -28,8 +31,15 @@ func _on_dialogue_finished() -> void:
 	if pending_after_dialogue.is_valid():
 		pending_after_dialogue.call()
 		pending_after_dialogue = Callable()
-	if player and player.has_method("set_control_enabled"):
+	if player and player.has_method("set_control_enabled") and not _choice_box_is_open():
 		player.set_control_enabled(true)
+	_refresh_hint()
+
+func _choice_box_is_open() -> bool:
+	return choice_box != null and is_instance_valid(choice_box) and choice_box.visible
+
+func _refresh_hint() -> void:
+	hint_label.visible = not GameState.story_started
 
 func handle_hub_interaction(interactable: Node, player_node: Node = null) -> void:
 	match str(interactable.interactable_kind):
@@ -107,6 +117,13 @@ func _handle_gus() -> void:
 	])
 
 func _handle_vendo() -> void:
+	if GameState.post_reveal_roam_unlocked and GameState.vendo_memory_riddle_secret_found:
+		GameState.vendo_post_reveal_seen = true
+		start_dialogue([
+			{"speaker": "Vendo", "text": "Turns out MEMORY COLA was not a metaphor."},
+			{"speaker": "Vendo", "text": "Legally, I should have put that on the label."},
+		])
+		return
 	if GameState.twist_reveal_seen:
 		GameState.vendo_post_reveal_seen = true
 		start_dialogue([
@@ -114,17 +131,64 @@ func _handle_vendo() -> void:
 			{"speaker": "Vendo", "text": "You are officially both a customer and a stored file."},
 		])
 		return
+	if GameState.vendo_memory_riddle_secret_found:
+		GameState.vendo_intro_seen = true
+		start_dialogue([
+			{"speaker": "Vendo", "text": "Memory Cola is sold out."},
+			{"speaker": "Vendo", "text": "Mostly because you keep losing it."},
+		])
+		return
 	if GameState.lost_token_quest_started:
 		GameState.vendo_intro_seen = true
 		start_dialogue([
 			{"speaker": "Vendo", "text": "Cabinet 07 does not recognize customers."},
 			{"speaker": "Vendo", "text": "Only employees."},
-		])
+			{"speaker": "Vendo", "text": "Care for a beverage-based psychological evaluation?"},
+		], Callable(self, "_open_vendo_memory_riddle"))
 		return
 	GameState.vendo_intro_seen = true
 	start_dialogue([
 		{"speaker": "Vendo", "text": "Welcome, thirsty mortal. I sell soda, secrets, and emotionally unstable peanuts."},
 		{"speaker": "Vendo", "text": "Please do not shake me. I contain carbonated beverages and unresolved trauma."},
+		{"speaker": "Vendo", "text": "Care for a beverage-based psychological evaluation?"},
+	], Callable(self, "_open_vendo_memory_riddle"))
+
+func _open_vendo_memory_riddle() -> void:
+	if GameState.vendo_memory_riddle_secret_found:
+		return
+	if choice_box and is_instance_valid(choice_box):
+		choice_box.queue_free()
+	choice_box = load("res://scenes/ui/ChoiceBox.tscn").instantiate()
+	add_child(choice_box)
+	if player and player.has_method("set_control_enabled"):
+		player.set_control_enabled(false)
+	if choice_box.has_signal("choice_selected"):
+		choice_box.connect("choice_selected", _on_vendo_riddle_choice_selected, CONNECT_ONE_SHOT)
+	if choice_box.has_method("open_choice"):
+		choice_box.open_choice("What do you lose every time you return?", [
+			"STATIC SODA",
+			"MEMORY COLA",
+			"TOKEN TEA",
+			"REGRET JUICE",
+		])
+
+func _on_vendo_riddle_choice_selected(index: int) -> void:
+	if choice_box and is_instance_valid(choice_box):
+		choice_box.queue_free()
+	choice_box = null
+	if index == 1:
+		GameState.vendo_memory_riddle_secret_found = true
+		start_dialogue([
+			{"speaker": "Vendo", "text": "Correct."},
+			{"speaker": "Vendo", "text": "You lose memory."},
+			{"speaker": "Vendo", "text": "I lose coins."},
+			{"speaker": "Vendo", "text": "We all suffer in our own branded containers."},
+		])
+		return
+	start_dialogue([
+		{"speaker": "Vendo", "text": "Incorrect."},
+		{"speaker": "Vendo", "text": "But emotionally marketable."},
+		{"speaker": "Vendo", "text": "Try again after your next identity crisis."},
 	])
 
 func _handle_mr_byte() -> void:

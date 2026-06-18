@@ -33,6 +33,7 @@
 - `broken_cabinet_secret_found`
 - `owner_portrait_secret_found`
 - `employee_04_file_found`
+- `vendo_memory_riddle_secret_found`
 
 ## Save Slot Fields
 - `slot_id`

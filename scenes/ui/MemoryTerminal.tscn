@@ -8,5 +8,17 @@ script = ExtResource("1")
 [sub_resource type="CircleShape2D" id="1"]
 radius = 12.0
 
+[node name="Visual" type="Polygon2D" parent="."]
+color = Color(0.2, 0.8, 0.65, 1)
+polygon = PackedVector2Array(-14, -12, 14, -12, 14, 12, -14, 12)
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("1")
+
+[node name="Label" type="Label" parent="."]
+offset_left = -54.0
+offset_top = 16.0
+offset_right = 54.0
+offset_bottom = 36.0
+text = "MEMORY"
+horizontal_alignment = 1

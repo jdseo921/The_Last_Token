@@ -29,6 +29,7 @@ func _input(event: InputEvent) -> void:
 		_accept_current_line()
 
 func _accept_current_line() -> void:
+	_play_audio("play_dialogue_advance")
 	current_index += 1
 	if current_index >= dialogue_lines.size():
 		active = false
@@ -45,3 +46,8 @@ func _refresh_line() -> void:
 	var line: Dictionary = dialogue_lines[current_index]
 	speaker_name_label.text = str(line.get("speaker", ""))
 	dialogue_text_label.text = str(line.get("text", ""))
+
+func _play_audio(method_name: String) -> void:
+	var audio_manager := get_node_or_null("/root/AudioManager")
+	if audio_manager and audio_manager.has_method(method_name):
+		audio_manager.call(method_name)

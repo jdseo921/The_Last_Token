@@ -33,6 +33,7 @@ var mr_byte_post_reveal_seen := false
 var broken_cabinet_secret_found := false
 var owner_portrait_secret_found := false
 var employee_04_file_found := false
+var vendo_memory_riddle_secret_found := false
 
 var save_slot_index := 0
 var save_slot_name := ""
@@ -78,10 +79,12 @@ func get_secrets_found_count() -> int:
 		found += 1
 	if employee_04_file_found:
 		found += 1
+	if vendo_memory_riddle_secret_found:
+		found += 1
 	return found
 
 func get_total_secrets_count() -> int:
-	return 3
+	return 4
 
 func get_story_phase_label() -> String:
 	if ending_seen:
@@ -154,6 +157,7 @@ func to_save_data() -> Dictionary:
 		"broken_cabinet_secret_found": broken_cabinet_secret_found,
 		"owner_portrait_secret_found": owner_portrait_secret_found,
 		"employee_04_file_found": employee_04_file_found,
+		"vendo_memory_riddle_secret_found": vendo_memory_riddle_secret_found,
 	}
 
 func apply_save_data(data: Dictionary) -> void:
@@ -188,3 +192,4 @@ func apply_save_data(data: Dictionary) -> void:
 	broken_cabinet_secret_found = data.get("broken_cabinet_secret_found", broken_cabinet_secret_found)
 	owner_portrait_secret_found = data.get("owner_portrait_secret_found", owner_portrait_secret_found)
 	employee_04_file_found = data.get("employee_04_file_found", employee_04_file_found)
+	vendo_memory_riddle_secret_found = data.get("vendo_memory_riddle_secret_found", vendo_memory_riddle_secret_found)

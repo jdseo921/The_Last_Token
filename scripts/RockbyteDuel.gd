@@ -124,9 +124,11 @@ func _finish_duel(player_won: bool) -> void:
 	if player_won:
 		GameState.rockbyte_duel_completed = true
 		GameState.collect_lost_token()
+		_play_audio("play_token_get")
 		exit_button.text = "Exit"
 		status_label.text = "PATTERN BROKEN.\nMEMORY UNLOCKED.\nTWO REMAINED.\nONE WAS SAVED.\nONE WAS LOST."
 		return
+	_play_audio("play_error")
 	status_label.text = "YOU LOST THIS GAME BEFORE.\nMANY TIMES.\nBEGIN AGAIN?"
 	exit_button.text = "Retry"
 
@@ -137,6 +139,11 @@ func _on_exit_pressed() -> void:
 	SceneChanger.go_to_rockbyte_duel()
 
 func _refresh_ui() -> void:
-	count_label.text = "Left: %d | Right: %d" % [left_pile, right_pile]
+	count_label.text = "LEFT PILE: %d        RIGHT PILE: %d" % [left_pile, right_pile]
 	if not duel_finished:
-		status_label.text = "Choose your move."
+		status_label.text = "Choose one button. Take the final rock to win."
+
+func _play_audio(method_name: String) -> void:
+	var audio_manager := get_node_or_null("/root/AudioManager")
+	if audio_manager and audio_manager.has_method(method_name):
+		audio_manager.call(method_name)

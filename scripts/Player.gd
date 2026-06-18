@@ -52,6 +52,7 @@ func _interact_with_nearest() -> void:
 		return
 	var target = nearby_interactables[0]
 	if is_instance_valid(target) and target.has_method("interact"):
+		_play_audio("play_interact")
 		target.interact(self)
 
 func _set_prompt() -> void:
@@ -85,3 +86,8 @@ func _on_interaction_area_body_entered(body: Node) -> void:
 
 func _on_interaction_area_body_exited(body: Node) -> void:
 	_unregister_interactable(body)
+
+func _play_audio(method_name: String) -> void:
+	var audio_manager := get_node_or_null("/root/AudioManager")
+	if audio_manager and audio_manager.has_method(method_name):
+		audio_manager.call(method_name)

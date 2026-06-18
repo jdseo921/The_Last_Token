@@ -3,17 +3,65 @@
 [ext_resource type="Script" path="res://scripts/SaveSlotMenu.gd" id="1"]
 
 [node name="SaveSlotMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1")
 
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 640.0
+offset_bottom = 440.0
+color = Color(0, 0, 0, 0.72)
+
 [node name="Panel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 48.0
+offset_right = 592.0
+offset_bottom = 392.0
 
 [node name="TitleLabel" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 20.0
+offset_right = 520.0
+offset_bottom = 48.0
 text = "MEMORY TERMINAL"
 
 [node name="SubtitleLabel" type="Label" parent="Panel"]
-text = "Save restored progress?"
+layout_mode = 0
+offset_left = 24.0
+offset_top = 56.0
+offset_right = 520.0
+offset_bottom = 84.0
+text = "Save Memory - choose a slot"
 
 [node name="SlotsVBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 104.0
+offset_right = 520.0
+offset_bottom = 236.0
+
+[node name="ModeButton" type="Button" parent="Panel"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 264.0
+offset_right = 184.0
+offset_bottom = 300.0
+text = "Restore Memory"
+
+[node name="CloseButton" type="Button" parent="Panel"]
+layout_mode = 0
+offset_left = 200.0
+offset_top = 264.0
+offset_right = 320.0
+offset_bottom = 300.0
+text = "Back"
 
 [node name="ConfirmOverwrite" type="ConfirmationDialog" parent="."]
 dialog_text = "Overwrite this Memory Slot?"

@@ -14,7 +14,11 @@ shape = SubResource("2")
 
 [node name="BodyVisual" type="Polygon2D" parent="."]
 color = Color(0.2, 0.9, 0.9, 1)
-polygon = PackedVector2Array(-6, -7, 6, -7, 6, 7, -6, 7)
+polygon = PackedVector2Array(-7, -8, 7, -8, 7, 8, -7, 8)
+
+[node name="FacingDot" type="Polygon2D" parent="."]
+color = Color(1, 1, 1, 1)
+polygon = PackedVector2Array(-2, -7, 2, -7, 2, -3, -2, -3)
 
 [node name="InteractionArea" type="Area2D" parent="."]
 

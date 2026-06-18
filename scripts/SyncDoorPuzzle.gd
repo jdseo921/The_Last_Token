@@ -57,6 +57,7 @@ func _check_success() -> void:
 		switch_b_timer.stop()
 		GameState.story_puzzle_completed = true
 		GameState.unlock_staff_room()
+		_play_audio("play_ui_confirm")
 		door_label.text = "Staff Door: OPEN"
 		status_label.text = "Staff Door: \"TWO SIGNALS DETECTED.\"\nStaff Door: \"ORIGINAL: ABSENT.\"\nStaff Door: \"RESTORED: PRESENT.\"\nStaff Door: \"ACCESS GRANTED.\""
 		switch_a_button.visible = false
@@ -69,5 +70,10 @@ func _on_exit_pressed() -> void:
 func _refresh_ui() -> void:
 	if puzzle_solved:
 		return
-	door_label.text = "Staff Door: Locked"
-	status_label.text = "Switch A: %s | Switch B: %s" % ["ACTIVE" if switch_a_active else "OFF", "ACTIVE" if switch_b_active else "OFF"]
+	door_label.text = "Staff Door: LOCKED"
+	status_label.text = "Switch A: %s\nSwitch B: %s" % ["ON" if switch_a_active else "OFF", "ON" if switch_b_active else "OFF"]
+
+func _play_audio(method_name: String) -> void:
+	var audio_manager := get_node_or_null("/root/AudioManager")
+	if audio_manager and audio_manager.has_method(method_name):
+		audio_manager.call(method_name)

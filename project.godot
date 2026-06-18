@@ -13,3 +13,4 @@ config/features=PackedStringArray("4.4", "Forward Plus")
 GameState="*res://scripts/GameState.gd"
 SceneChanger="*res://scripts/SceneChanger.gd"
 SaveManager="*res://scripts/SaveManager.gd"
+AudioManager="*res://scripts/AudioManager.gd"

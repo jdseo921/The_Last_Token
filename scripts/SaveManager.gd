@@ -13,24 +13,30 @@ func save_game(slot_id: int) -> void:
 	var file_path := _get_slot_path(slot_id)
 	var save_file := FileAccess.open(file_path, FileAccess.WRITE)
 	if save_file == null:
+		_play_audio("play_error")
 		return
 	var save_data := collect_save_data()
 	save_data["slot_id"] = slot_id
 	save_data["save_exists"] = true
 	save_data["last_saved_at"] = Time.get_datetime_string_from_system()
 	save_file.store_string(JSON.stringify(save_data, "\t"))
+	_play_audio("play_save")
 
 func load_game(slot_id: int) -> void:
 	var file_path := _get_slot_path(slot_id)
 	if not FileAccess.file_exists(file_path):
+		_play_audio("play_error")
 		return
 	var save_file := FileAccess.open(file_path, FileAccess.READ)
 	if save_file == null:
+		_play_audio("play_error")
 		return
 	var parsed := JSON.parse_string(save_file.get_as_text())
 	if typeof(parsed) != TYPE_DICTIONARY:
+		_play_audio("play_error")
 		return
 	apply_save_data(parsed)
+	_play_audio("play_ui_confirm")
 
 func get_slot_summary(slot_id: int) -> Dictionary:
 	var file_path := _get_slot_path(slot_id)
@@ -78,3 +84,8 @@ func apply_save_data(data: Dictionary) -> void:
 
 func _get_slot_path(slot_id: int) -> String:
 	return "%s/slot_%d.json" % [SAVE_DIR, slot_id]
+
+func _play_audio(method_name: String) -> void:
+	var audio_manager := get_node_or_null("/root/AudioManager")
+	if audio_manager and audio_manager.has_method(method_name):
+		audio_manager.call(method_name)

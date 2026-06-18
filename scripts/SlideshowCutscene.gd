@@ -69,6 +69,7 @@ func _apply_effect(effect: String, duration: float) -> void:
 			panel_texture.scale = Vector2(1.0, 1.0)
 			active_tween.tween_property(panel_texture, "scale", Vector2(1.08, 1.08), max(duration, 0.1))
 		"glitch_flash":
+			_play_audio("play_glitch")
 			panel_texture.modulate = Color(1, 1, 1, 0.25)
 			active_tween.tween_property(panel_texture, "modulate", Color(1, 1, 1, 1), max(duration * 0.5, 0.05))
 			active_tween.tween_property(panel_texture, "modulate", Color(0.85, 0.95, 1.0, 1), max(duration * 0.25, 0.05))
@@ -76,3 +77,8 @@ func _apply_effect(effect: String, duration: float) -> void:
 		_:
 			panel_texture.modulate = Color(1, 1, 1, 0)
 			active_tween.tween_property(panel_texture, "modulate", Color(1, 1, 1, 1), max(duration, 0.1))
+
+func _play_audio(method_name: String) -> void:
+	var audio_manager := get_node_or_null("/root/AudioManager")
+	if audio_manager and audio_manager.has_method(method_name):
+		audio_manager.call(method_name)
