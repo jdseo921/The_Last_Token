@@ -114,6 +114,10 @@ func collect_save_data() -> Dictionary:
 		"story_phase": GameState.save_progress_stage,
 		"games_completed_count": GameState.get_games_completed_count(),
 		"total_games_count": GameState.get_total_games_count(),
+		"required_progress_count": GameState.get_required_progress_count(),
+		"total_required_progress_count": GameState.get_total_required_progress_count(),
+		"optional_games_completed_count": GameState.get_optional_games_completed_count(),
+		"total_optional_games_count": GameState.get_total_optional_games_count(),
 		"secrets_found_count": GameState.get_secrets_found_count(),
 		"total_secrets_count": GameState.get_total_secrets_count(),
 		"post_reveal_roam_unlocked": GameState.post_reveal_roam_unlocked,
@@ -137,6 +141,15 @@ func load_saved_scene_or_default(data: Dictionary) -> void:
 		return
 	if scene_path.is_empty() or scene_path == SceneChanger.TITLE_OR_MAIN_SCENE:
 		SceneChanger.go_to_arcade_hub()
+		return
+	if scene_path == SceneChanger.SECURITY_TAPE_ASSEMBLY_SCENE:
+		SceneChanger.go_to_staff_corridor()
+		return
+	if scene_path == SceneChanger.STATIC_SERVICE_RUN_SCENE:
+		SceneChanger.go_to_maintenance_hall()
+		return
+	if scene_path == SceneChanger.FINAL_NIGHT_WALK_SCENE:
+		SceneChanger.go_to_staff_corridor()
 		return
 	if scene_path == SceneChanger.ROCKBYTE_DUEL_SCENE or scene_path == SceneChanger.TRUTH_FILTER_SCENE or scene_path == SceneChanger.SYNC_DOOR_PUZZLE_SCENE:
 		SceneChanger.go_to_arcade_hub()
@@ -164,6 +177,12 @@ func _get_current_save_scene_path() -> String:
 	var scene_path := current_scene.scene_file_path
 	if scene_path == SceneChanger.TITLE_OR_MAIN_SCENE:
 		return SceneChanger.ARCADE_HUB_SCENE
+	if scene_path == SceneChanger.SECURITY_TAPE_ASSEMBLY_SCENE:
+		return SceneChanger.STAFF_CORRIDOR_SCENE
+	if scene_path == SceneChanger.STATIC_SERVICE_RUN_SCENE:
+		return SceneChanger.MAINTENANCE_HALL_SCENE
+	if scene_path == SceneChanger.FINAL_NIGHT_WALK_SCENE:
+		return SceneChanger.STAFF_CORRIDOR_SCENE
 	if scene_path == SceneChanger.ROCKBYTE_DUEL_SCENE or scene_path == SceneChanger.TRUTH_FILTER_SCENE or scene_path == SceneChanger.SYNC_DOOR_PUZZLE_SCENE:
 		return SceneChanger.ARCADE_HUB_SCENE
 	if scene_path.begins_with("res://scenes/cutscenes/"):
@@ -186,6 +205,10 @@ func _normalize_slot_summary(data: Dictionary, slot_id: int) -> Dictionary:
 	data["story_phase"] = GameState.get_story_phase_label_from_data(game_state)
 	data["games_completed_count"] = GameState.get_games_completed_count_from_data(game_state)
 	data["total_games_count"] = GameState.get_total_games_count()
+	data["required_progress_count"] = GameState.get_required_progress_count_from_data(game_state)
+	data["total_required_progress_count"] = GameState.get_total_required_progress_count()
+	data["optional_games_completed_count"] = GameState.get_optional_games_completed_count_from_data(game_state)
+	data["total_optional_games_count"] = GameState.get_total_optional_games_count()
 	data["secrets_found_count"] = GameState.get_secrets_found_count_from_data(game_state)
 	data["total_secrets_count"] = GameState.get_total_secrets_count()
 	data["post_reveal_roam_unlocked"] = bool(game_state.get("post_reveal_roam_unlocked", false))

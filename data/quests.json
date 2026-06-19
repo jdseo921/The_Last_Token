@@ -63,7 +63,7 @@
 			"details": "Vendo routed the signal, but the Staff Door still needs two unstable signals to line up. Gus says the door is listening for something doubled.",
 			"minigame": "Maintenance Sync",
 			"required": true,
-			"starts_after": "circuit_soda_completed",
+			"starts_after": "lost_shift_file_completed",
 			"completion_dialogue": [
 				{"speaker": "Gus", "text": "Door's listening now."},
 				{"speaker": "Gus", "text": "I do not like doors that listen."},
@@ -71,6 +71,40 @@
 				{"speaker": "Gus", "text": "Door heard both knocks. Yours, and the one you forgot making."}
 			],
 			"memory_signal_after": "Overloaded"
+		},
+		"lost_shift_file": {
+			"id": "lost_shift_file",
+			"title": "Lost Shift File",
+			"owner": "Mira / Gus / Mr. Byte",
+			"location": "ArcadeHub, Maintenance Hall, Cabinet Row",
+			"summary": "Read the records from the Final Night.",
+			"details": "The signal is routed, but the Staff Door still refuses to open. Three records from the Final Night may explain why.",
+			"minigame": "None",
+			"required": true,
+			"starts_after": "circuit_soda_completed",
+			"completion_dialogue": [
+				{"speaker": "Quest", "text": "LOST SHIFT FILE COMPLETE"},
+				{"speaker": "Quest", "text": "Employee 04 was assigned to Cabinet shutdown."}
+			],
+			"memory_signal_after": "Fractured"
+		},
+		"static_service_run": {
+			"id": "static_service_run",
+			"title": "Static Service Run",
+			"owner": "Gus",
+			"location": "Maintenance Hall",
+			"summary": "Restore service power for the Staff Door systems.",
+			"details": "The Lost Shift File gave Gus enough context to work with the door, but the maintenance system still needs power. Run the service route and recover the Signal Fuses.",
+			"minigame": "Static Service Run",
+			"required": true,
+			"starts_after": "lost_shift_file_completed",
+			"completion_dialogue": [
+				{"speaker": "Gus", "text": "Power's back."},
+				{"speaker": "Gus", "text": "Door's awake."},
+				{"speaker": "Gus", "text": "That is usually good news, except when the door is smarter than the staff."},
+				{"speaker": "Gus", "text": "Now we can sync the two signals."}
+			],
+			"memory_signal_after": "Fractured"
 		},
 		"staff_corridor": {
 			"id": "staff_corridor",
@@ -86,6 +120,40 @@
 				{"speaker": "Memory Echo", "text": "Echo stabilized."},
 				{"speaker": "Memory Echo", "text": "The arcade stops arguing with itself."},
 				{"speaker": "Memory Echo", "text": "That might be worse."}
+			],
+			"memory_signal_after": "Overloaded"
+		},
+		"security_tape_assembly": {
+			"id": "security_tape_assembly",
+			"title": "Assemble the Security Tape",
+			"owner": "Staff Door / Mr. Byte",
+			"location": "Staff Corridor",
+			"summary": "Restore the damaged Final Night sequence.",
+			"details": "The Staff Door recorded two signals, but the tape is damaged. Assemble the fragments before confronting the Memory Echo.",
+			"minigame": "Security Tape Assembly",
+			"required": true,
+			"starts_after": "maintenance_sync_completed",
+			"completion_dialogue": [
+				{"speaker": "Mr. Byte", "text": "Tape order restored."},
+				{"speaker": "Staff Door", "text": "The Staff Door did not record a customer."}
+			],
+			"memory_signal_after": "Overloaded"
+		},
+		"final_night_walk": {
+			"id": "final_night_walk",
+			"title": "Final Night Walk",
+			"owner": "Staff Door / Memory System",
+			"location": "Staff Corridor",
+			"summary": "Walk through the reconstructed Final Night.",
+			"details": "The security tape is assembled, but the memory is still too unstable to play back. Walk the reconstructed route before confronting the Memory Echo.",
+			"minigame": "Final Night Walk",
+			"required": true,
+			"starts_after": "security_tape_assembly_completed",
+			"completion_dialogue": [
+				{"speaker": "Staff Door", "text": "ROUTE ACCEPTED."},
+				{"speaker": "Staff Door", "text": "FINAL NIGHT SEQUENCE STABILIZED."},
+				{"speaker": "Staff Door", "text": "ONE WALKED IN."},
+				{"speaker": "Staff Door", "text": "TWO SIGNALS ANSWERED."}
 			],
 			"memory_signal_after": "Overloaded"
 		},
@@ -121,6 +189,38 @@
 				{"speaker": "Pip", "text": "Some rewards remember their owner before the owner remembers them."}
 			],
 			"memory_signal_after": "No Change"
+		},
+		"staff_records_chain": {
+			"id": "staff_records_chain",
+			"title": "Staff Records Chain",
+			"owner": "Staff Records",
+			"location": "Cabinet Row, Maintenance Hall, Staff Corridor",
+			"summary": "Read three optional staff records after the Truth Filter.",
+			"details": "The arcade preserved small system notes around the Final Night. They deepen the identity mystery without blocking the required route.",
+			"minigame": "None",
+			"required": false,
+			"starts_after": "lying_cabinets_completed",
+			"completion_dialogue": [
+				{"speaker": "Quest", "text": "STAFF RECORDS CHAIN COMPLETE"},
+				{"speaker": "Quest", "text": "The arcade knew the number before it knew the name."}
+			],
+			"memory_signal_after": "No Change"
+		},
+		"post_reveal_witness_route": {
+			"id": "post_reveal_witness_route",
+			"title": "Post-Reveal Witness Route",
+			"owner": "Mira / Gus / Vendo / Mr. Byte / Cabinet 07 / Roxy / Pip",
+			"location": "ArcadeHub, Cabinet Row, Prize Corner",
+			"summary": "Speak with the witnesses after the reveal.",
+			"details": "Pixel Haven remembers the protagonist in pieces. Speak with the witnesses after post-reveal roam unlocks.",
+			"minigame": "None",
+			"required": false,
+			"starts_after": "post_reveal_roam_unlocked",
+			"completion_dialogue": [
+				{"speaker": "Quest", "text": "POST-REVEAL WITNESSES COMPLETE"},
+				{"speaker": "Quest", "text": "Pixel Haven remembers you in pieces. Together, they almost make a person."}
+			],
+			"memory_signal_after": "Restored"
 		}
 	}
 }

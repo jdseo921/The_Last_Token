@@ -38,40 +38,40 @@ layout_mode = 0
 offset_left = 24.0
 offset_top = 44.0
 offset_right = 552.0
-offset_bottom = 72.0
+offset_bottom = 66.0
 text = "Save File - choose a slot"
 
 [node name="SlotsVBox" type="VBoxContainer" parent="Panel"]
 layout_mode = 0
 offset_left = 24.0
-offset_top = 82.0
+offset_top = 68.0
 offset_right = 552.0
-offset_bottom = 348.0
+offset_bottom = 358.0
 
 [node name="StatusLabel" type="Label" parent="Panel"]
 layout_mode = 0
 offset_left = 24.0
-offset_top = 348.0
+offset_top = 358.0
 offset_right = 552.0
-offset_bottom = 370.0
+offset_bottom = 380.0
 text = ""
 horizontal_alignment = 1
 
 [node name="ModeLabel" type="Label" parent="Panel"]
 layout_mode = 0
 offset_left = 24.0
-offset_top = 374.0
+offset_top = 386.0
 offset_right = 280.0
-offset_bottom = 408.0
+offset_bottom = 416.0
 text = "Mode: Save File"
 vertical_alignment = 1
 
 [node name="CloseButton" type="Button" parent="Panel"]
 layout_mode = 0
 offset_left = 384.0
-offset_top = 374.0
+offset_top = 386.0
 offset_right = 520.0
-offset_bottom = 408.0
+offset_bottom = 416.0
 text = "Back"
 
 [node name="ConfirmOverwrite" type="ConfirmationDialog" parent="."]

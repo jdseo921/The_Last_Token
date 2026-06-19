@@ -43,7 +43,21 @@ Do not commit generated `.exe`, `.pck`, `.zip`, log files, or large build output
 - Title Menu: `Window Size` cycles same-ratio test windows: `640 x 440`, `960 x 660`, `1280 x 880`
 
 ## Core Gameplay Loop
-Explore the arcade, talk to Mira and the other core NPCs, play Rockbyte Duel, solve the Sync Door puzzle, enter the Staff Room, watch the reveal slideshow, and continue into post-reveal roam.
+Explore the arcade, talk to Mira and the other core NPCs, play required arcade stages, investigate the Lost Shift File, restore service power, assemble the Security Tape, walk the Final Night reconstruction, stabilize Memory Echo, enter the Staff Room, watch the reveal slideshow, and continue into post-reveal roam.
+
+Current required route:
+1. Rockbyte Duel
+2. Truth Filter
+3. Circuit Soda
+4. Lost Shift File
+5. Static Service Run
+6. Maintenance Sync
+7. Security Tape Assembly
+8. Final Night Walk
+9. Memory Echo
+10. Staff Room Reveal
+
+Save slots display required progress as `Main: x / 10`, plus optional games, secrets, and Memory Signal.
 
 ## Save Files
 The Esc pause menu opens save/load options with three save slots. Saves are stored under `user://saves/slot_1.json`, `slot_2.json`, and `slot_3.json`.

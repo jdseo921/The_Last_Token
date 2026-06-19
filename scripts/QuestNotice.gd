@@ -46,6 +46,20 @@ func show_notification(quest_data: Dictionary) -> void:
 	hide_tween.tween_property(panel, "modulate:a", 0.0, NOTIFICATION_FADE_OUT_SECONDS)
 	hide_tween.tween_callback(hide)
 
+func show_custom_notification(eyebrow: String, title: String, body: String) -> void:
+	notification_token += 1
+	_configure_window(eyebrow, title, body, false)
+	visible = true
+	panel.modulate.a = 0.0
+	_play_audio("play_quest_update")
+	if hide_tween and hide_tween.is_valid():
+		hide_tween.kill()
+	hide_tween = create_tween()
+	hide_tween.tween_property(panel, "modulate:a", 1.0, NOTIFICATION_FADE_IN_SECONDS)
+	hide_tween.tween_interval(NOTIFICATION_HOLD_SECONDS)
+	hide_tween.tween_property(panel, "modulate:a", 0.0, NOTIFICATION_FADE_OUT_SECONDS)
+	hide_tween.tween_callback(hide)
+
 func show_details(quest_data: Dictionary) -> void:
 	notification_token += 1
 	if hide_tween and hide_tween.is_valid():

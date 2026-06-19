@@ -1,291 +1,164 @@
 # Map Expansion Plan
 
 ## Purpose
-This document defines how The Last Token can expand from the current ArcadeHub into a compact 45-60 minute layout.
+Plan multiple compact maps for a 45-75 minute arcade mystery while avoiding maze growth.
 
-This is planning only. Do not create new scenes from this document until the required content gate for the previous area passes.
+This is planning only. Each map expansion must preserve the playable loop and save/load stability.
 
-## Map Design Rules
-- Every map needs a story reason.
-- Every map needs a clear owner, landmark, and exit.
-- Maps should be small and atmospheric.
-- Do not add maze-like navigation.
-- Do not split content across many rooms if one readable room works.
-- Every new map must support save/load return positions.
-- Every new map must remain readable at supported resolutions.
+## Map Rules
+- Each map has one clear purpose, one primary landmark, and one obvious exit.
+- No sprawling maze.
+- No room exists only to pad walking time.
+- Required content should be near the map's main landmark.
+- Optional content should sit off to the side, not behind confusing navigation.
+- If a map cannot justify at least one story beat, fold the content into an existing map.
 
-## Planned Map List
+## Map Matrix
 
-| Map | Purpose | Primary NPC/Object | Required Content | Optional Content |
-| --- | --- | --- | --- | --- |
-| ArcadeHub | Starting hub and emotional anchor | Mira / Cabinet 07 | Lost Token | Owner Portrait, Broken Cabinet |
-| Cabinet Row | Machine record area | Mr. Byte | Truth Filter | Roxy / Broken High Score |
-| Snack Alcove | Signal routing and comic contrast | Vendo | Circuit Soda | Snack machine lore |
-| Prize Corner | Optional secret area | Pip | None | Prize Counter secret |
-| Maintenance Hall | Staff access preparation | Gus | Maintenance Sync / Sync Door | Maintenance notes |
-| Staff Corridor | Pre-reveal pressure | Staff Door / memory echoes | Memory Echo | Owner Portrait final clue |
-| Staff Room | Reveal and ending | Memory system | Reveal slideshow | Post-reveal reflections |
+| Map | Required Content | Optional Content | Owner / Landmark | Unlock | Exit Rule | Est. Route Time |
+| --- | --- | --- | --- | --- | --- | --- |
+| ArcadeHub | Rockbyte Duel, start of Lost Shift File, Staff Room return path | Owner Portrait Chain, Broken Cabinet Chain, Vendo Memory Cola Riddle | Mira, Cabinet 07, Staff Door | Start | Exits to Cabinet Row, Snack Alcove, Maintenance Hall, Staff Corridor when unlocked. | 10-14 min total across visits |
+| Cabinet Row | Truth Filter, Lost Shift File record step | Broken High Score, Staff Records Chain | Mr. Byte, Truth Filter cabinet | After Lost Token | Clear return to ArcadeHub. | 8-12 min |
+| Snack Alcove | Circuit Soda | Vendo Memory Cola Riddle, snack note flavor | Vendo, Circuit Soda machine | After Truth Filter | Clear return to ArcadeHub or Cabinet Row. | 6-9 min |
+| Prize Corner | None required | Prize Sort, post-reveal Pip witness | Pip, prize counter | After Truth Filter or as optional side path | Clear return to ArcadeHub. | 4-8 min |
+| Maintenance Hall | Lost Shift File repair-note step, Static Service Run, Maintenance Sync | Broken Cabinet or maintenance note echoes | Gus, Sync Door | After Circuit Soda | Clear return to ArcadeHub; later opens Staff Corridor. | 14-20 min |
+| Staff Corridor | Security Tape Assembly, Final Night Walk, Memory Echo | Owner Portrait final clue, Staff Records Chain | Staff Door, tape terminal, Final Night terminal, Memory Echo | After Maintenance Sync | Straight route: Maintenance Hall/Hub side -> Staff Room door. | 16-24 min |
+| Staff Room | Staff Room reveal | Post-reveal inspection details | Reveal panels, staff table | After Memory Echo | Exit returns to ArcadeHub or ending prompt. | 6-10 min |
 
-## Area Details
+## Area Plans
 
 ### ArcadeHub
-Role:
-- Main starting area.
-- Emotional base.
-- First quest route.
-- Return point between early quests.
+Purpose:
+- Starting emotional anchor.
+- Teaches interactions and first minigame return.
+- Hosts recurring object clues.
 
-Required contents:
-- Player spawn.
-- Mira near ticket counter.
-- Cabinet 07.
-- Staff Door access point.
-- Route to Cabinet Row, later Snack Alcove and Maintenance Hall.
+Required content:
+- Mira introduces the Lost Token.
+- Cabinet 07 launches Rockbyte Duel.
+- Lost Shift File starts when Mira admits an old shift record is missing.
 
-Optional contents:
-- Owner Portrait.
-- Broken Cabinet.
-- Post-reveal dialogue changes.
+Optional content:
+- Owner Portrait Chain.
+- Broken Cabinet Chain.
+- Vendo Memory Cola Riddle if Vendo is represented in hub dialogue.
 
-Visual identity:
-- Dark arcade floor.
-- Ticket counter glow.
-- Cabinet 07 visually obvious.
-- Staff Door visible but not immediately accessible.
-
-Story use:
-- The player starts confused.
-- Mira gives the first anchor.
-- The room becomes more reactive as Memory Signal rises.
-
-Expansion gate:
-- First quest vertical slice must pass before this area expands further.
+Expansion control:
+- Do not add more decorative cabinets unless they provide readable state changes.
 
 ### Cabinet Row
-Role:
-- Machine logic and record contradiction area.
-- Act 2 required route.
+Purpose:
+- Machine records and contradiction logic.
 
-Required contents:
-- Mr. Byte.
-- Truth Filter cabinet or terminal.
-- Clear route back to ArcadeHub.
+Required content:
+- Mr. Byte owns Truth Filter.
+- Mr. Byte contributes the "clock-in mismatch" page for Lost Shift File.
 
-Optional contents:
-- Roxy.
-- Broken High Score.
-- Additional machine flavor barks after Truth Filter.
+Optional content:
+- Roxy and Broken High Score.
+- Staff Records Chain after Lost Shift File.
 
-Visual identity:
-- Tighter cabinet corridor.
-- Many screens, some corrupted.
-- Mr. Byte should read as a help terminal or kiosk.
-- Truth Filter should stand apart from decorative cabinets.
-
-Story use:
-- The player learns that memory statements can be filtered.
-- Machine records become more personal.
-- Optional high-score content reinforces corrupted identity.
-
-Expansion gate:
-- Truth Filter must be complete, readable, and save/load stable before adding Roxy content.
+Expansion control:
+- Truth Filter and Broken High Score must remain visually distinct.
 
 ### Snack Alcove
-Role:
-- Vendo's required quest space.
-- A tonal breather that still advances the mystery.
+Purpose:
+- Signal routing and tonal breather.
 
-Required contents:
-- Vendo.
-- Circuit Soda puzzle access.
-- Route back to ArcadeHub or Cabinet Row.
+Required content:
+- Vendo owns Circuit Soda.
 
-Optional contents:
-- Snack signage.
-- Small lore notes about staff breaks and missing shifts.
+Optional content:
+- Vendo Memory Cola Riddle.
+- Short snack-break note that can support Staff Records Chain.
 
-Visual identity:
-- Vending machine glow.
-- Small seating or break-area details.
-- Brighter neon accents than Maintenance Hall.
-
-Story use:
-- Translate memory instability into signal flow.
-- Let Vendo joke while giving real guidance.
-- Prepare the player for Sync Door logic.
-
-Expansion gate:
-- Circuit Soda must be designed as a small standalone puzzle with clear rules before the area is built.
+Expansion control:
+- Keep this as one small room, not a full food court.
 
 ### Prize Corner
-Role:
-- Optional secret area.
-- Reward observation without blocking progress.
+Purpose:
+- Optional warmth and observation.
 
-Required contents:
-- None for main route.
+Required content:
+- None.
 
-Optional contents:
-- Pip.
-- Prize Counter secret quest.
-- Small prize displays and ticket references.
+Optional content:
+- Pip owns Prize Sort.
+- Pip can join Post-Reveal Witness Route.
 
-Visual identity:
-- Slightly warmer color palette.
-- Glass case, small prizes, ticket machines.
-- Still eerie, but more nostalgic than hostile.
-
-Story use:
-- Show the arcade had ordinary memories before it became haunted.
-- Give optional clues about tokens, prizes, and staff routines.
-- Provide post-reveal emotional callbacks.
-
-Expansion gate:
-- Add only after the required route through Maintenance Sync is stable.
+Expansion control:
+- Prize Sort must not require inventory or hauling items across maps.
 
 ### Maintenance Hall
-Role:
-- Practical systems area.
-- Bridge from arcade floor to Staff Door access.
+Purpose:
+- Practical systems and staff access.
 
-Required contents:
-- Gus.
-- Maintenance Sync puzzle or Sync Door interface.
-- Staff Door system access.
+Required content:
+- Gus contributes the repair note for Lost Shift File.
+- Gus owns Static Service Run after Lost Shift File.
+- Gus owns Maintenance Sync.
 
-Optional contents:
-- Maintenance notes.
-- Small mechanical echoes.
+Optional content:
+- Maintenance note echoes and broken cabinet callbacks.
 
-Visual identity:
-- Less neon, more utility lighting.
-- Exposed panels, cables, fuse boxes.
-- Gus should be easy to find.
-
-Story use:
-- Gus frames the two-signal problem.
-- The player sees that the arcade's staff systems recognize conflicting versions.
-- Success unlocks the Staff Corridor and changes Memory Signal to Overloaded.
-
-Expansion gate:
-- Truth Filter and Circuit Soda must both clearly prepare the player for signal logic.
+Expansion control:
+- The hall should be a short utility room, not a labyrinth.
 
 ### Staff Corridor
-Role:
-- Transition space before the reveal.
-- Short, intense, not a full maze.
+Purpose:
+- Final pressure before reveal.
 
-Required contents:
-- Staff-only hallway.
-- Memory Echo interactions.
-- Entrance to Staff Room.
+Required content:
+- Staff Door blocks access.
+- Security Tape Assembly reconstructs corrupted footage.
+- Final Night Walk reconstructs the route through the past.
+- Memory Echo stabilizes identity.
 
-Optional contents:
-- Owner Portrait final clue.
-- Staff notices with partial names.
+Optional content:
+- Owner Portrait final "04" clue.
+- Staff Records Chain terminal.
 
-Visual identity:
-- Stronger glitch pressure.
-- Narrower, quieter space.
-- Fewer arcade lights.
-- UI and effects must remain readable.
-
-Story use:
-- Slow the player down.
-- Let the player express confusion and recognition.
-- Make the Staff Room feel earned.
-
-Expansion gate:
-- Sync Door must be live-tested and save/load stable.
+Expansion control:
+- Keep the corridor straight and tense. No branching maze.
 
 ### Staff Room
-Role:
-- Reveal space.
-- Ending setup.
-- Post-reveal return point.
+Purpose:
+- Reveal and emotional resolution.
 
-Required contents:
-- Memory Echo or reveal slideshow.
+Required content:
 - Employee 04 reveal.
-- Ending prompt.
+- Ending prompt or return-to-roam handoff.
 
-Optional contents:
-- Post-reveal inspection details.
-- Changed dialogue if returning to hub.
+Optional content:
+- Short post-reveal object inspections.
+- Witness Route can point back out to NPCs.
 
-Visual identity:
-- Quiet back room.
-- Staff objects, monitors, memory panels.
-- Less arcade spectacle, more emotional specificity.
+Expansion control:
+- Do not expand into a large back-office zone before the reveal is working.
 
-Story use:
-- Explain the twist clearly.
-- Tie together token, records, missing staff, and Employee 04.
-- Unlock Restored Memory Signal and post-reveal roam.
+## Navigation Flow
+Main route:
+ArcadeHub -> Cabinet Row -> Snack Alcove -> ArcadeHub/Maintenance Hall -> Cabinet Row/Maintenance Hall for Lost Shift File -> Maintenance Hall for Static Service Run and Maintenance Sync -> Staff Corridor for Security Tape Assembly, Final Night Walk, and Memory Echo -> Staff Room.
 
-Expansion gate:
-- Do not expand the reveal until the required route to reach it is stable.
-
-## Route Flow
-
-### Early Game
-ArcadeHub -> Cabinet 07 -> ArcadeHub
-
-The player should learn:
-- Who Mira is.
-- What Cabinet 07 does.
-- How objectives work.
-- How minigame return works.
-
-### Mid Game
-ArcadeHub -> Cabinet Row -> Snack Alcove -> Maintenance Hall
-
-The player should learn:
-- Records conflict.
-- Signals can be routed.
-- The Staff Door needs two stable inputs.
-
-### Late Game
-Maintenance Hall -> Staff Corridor -> Staff Room
-
-The player should learn:
-- The arcade recognizes the player as more than one record.
-- Employee 04 is the missing staff identity.
-- The reveal resolves the Memory Signal.
-
-### Post-Reveal
-Staff Room -> ArcadeHub / optional areas
-
-The player can:
-- Revisit NPCs.
-- Read changed dialogue.
-- Resolve optional secrets.
-- Return to title or save and continue.
-
-## Navigation Guidance
-Each new route should use:
-- A clear objective update.
-- A temporary quest notice.
-- A small persistent hub objective when no menu/dialogue is open.
-- NPC nudges on repeated dialogue.
-- Visual landmarks, not only text.
+Optional route:
+Cabinet Row for Roxy, Prize Corner for Pip, ArcadeHub/Staff Corridor for object chains, all maps for Post-Reveal Witness Route.
 
 ## Save/Load Requirements
-Each map expansion must save:
+Each map must safely preserve:
 - Current map or safe return map.
 - Player return position.
-- Quest flags.
-- Minigame completion flags.
-- Optional secret flags.
-- Memory Signal state through progress flags.
+- Required quest flags.
+- Optional content flags.
+- Memory Signal state as derived from flags.
+- Whether owner completion anecdotes have already played.
 
-If a player saves inside a minigame or transition, loading should return them to a safe map position rather than a broken intermediate state.
+If a player saves inside a minigame, tape assembly, transition, or reveal, loading should return them to a safe map position.
 
-## Implementation Order Recommendation
-1. Finish first quest live gate.
-2. Stabilize Truth Filter in Cabinet Row.
-3. Add Snack Alcove only when Circuit Soda has a written puzzle plan.
-4. Add Maintenance Hall after Vendo's route is stable.
-5. Add Staff Corridor as a short transition, not a large map.
-6. Polish Staff Room reveal.
-7. Add optional Prize Corner / Roxy / Pip content after the ending route is complete.
+## Expansion Order
+1. Keep current route stable through Staff Room reveal.
+2. Add Lost Shift File as a lore-reading bridge before Maintenance Sync.
+3. Add Static Service Run in Maintenance Hall before Maintenance Sync.
+4. Add Security Tape Assembly in Staff Corridor before Final Night Walk.
+5. Add Final Night Walk in Staff Corridor before Memory Echo.
+4. Strengthen optional object chains.
+5. Add Post-Reveal Witness Route after the reveal is clear.

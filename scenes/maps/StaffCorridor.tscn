@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/StaffCorridor.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="5"]
 [ext_resource type="PackedScene" path="res://scenes/arcade/HubInteractable.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ReadableNote.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/ui/QuestNotice.tscn" id="8"]
 
 [node name="StaffCorridor" type="Node2D"]
 script = ExtResource("1")
@@ -22,6 +24,14 @@ polygon = PackedVector2Array(176, 0, 464, 0, 464, 440, 176, 440)
 color = Color(0.22, 0.68, 0.78, 0.25)
 polygon = PackedVector2Array(240, 126, 400, 126, 424, 220, 400, 314, 240, 314, 216, 220)
 
+[node name="SecurityTapePlaceholder" type="Polygon2D" parent="."]
+color = Color(0.14, 0.22, 0.3, 1)
+polygon = PackedVector2Array(224, 286, 416, 286, 416, 334, 224, 334)
+
+[node name="FinalNightWalkPlaceholder" type="Polygon2D" parent="."]
+color = Color(0.24, 0.18, 0.34, 1)
+polygon = PackedVector2Array(438, 276, 548, 276, 548, 334, 438, 334)
+
 [node name="StaffRoomDoorPlaceholder" type="Polygon2D" parent="."]
 color = Color(0.36, 0.08, 0.1, 1)
 polygon = PackedVector2Array(286, 40, 354, 40, 354, 126, 286, 126)
@@ -34,6 +44,12 @@ position = Vector2(320, 360)
 
 [node name="Spawn_FromMemoryEcho" type="Marker2D" parent="."]
 position = Vector2(320, 282)
+
+[node name="Spawn_FromSecurityTape" type="Marker2D" parent="."]
+position = Vector2(320, 348)
+
+[node name="Spawn_FromFinalNightWalk" type="Marker2D" parent="."]
+position = Vector2(492, 348)
 
 [node name="Player" parent="." instance=ExtResource("2")]
 position = Vector2(320, 360)
@@ -48,12 +64,33 @@ show_label = false
 use_placeholder_visual = false
 flicker_enabled = true
 
+[node name="SecurityTape" parent="InteractableLayer" instance=ExtResource("6")]
+position = Vector2(320, 322)
+interactable_kind = "security_tape"
+label_text = "SECURITY TAPE"
+show_label = false
+use_placeholder_visual = false
+flicker_enabled = true
+
+[node name="FinalNightWalk" parent="InteractableLayer" instance=ExtResource("6")]
+position = Vector2(492, 322)
+interactable_kind = "final_night_walk"
+label_text = "FINAL NIGHT"
+show_label = false
+use_placeholder_visual = false
+flicker_enabled = true
+
 [node name="StaffRoomDoor" parent="InteractableLayer" instance=ExtResource("6")]
 position = Vector2(320, 92)
 interactable_kind = "staff_room_door"
 label_text = "STAFF ROOM"
 show_label = false
 use_placeholder_visual = false
+
+[node name="StaffRecord03" parent="InteractableLayer" instance=ExtResource("7")]
+position = Vector2(440, 226)
+interactable_kind = "staff_record_03"
+label_text = "RECORD 03"
 
 [node name="ReturnToMaintenanceHall" parent="." instance=ExtResource("3")]
 position = Vector2(320, 412)
@@ -79,7 +116,7 @@ text = "STAFF CORRIDOR"
 position = Vector2(24, 48)
 size = Vector2(430, 42)
 theme_override_font_sizes/font_size = 10
-text = "Follow the Overloaded signal. Stabilize the Memory Echo before entering the Staff Room."
+text = "Follow the Overloaded signal. Restore the Security Tape, then walk the Final Night route before Memory Echo."
 autowrap_mode = 3
 
 [node name="EchoLabel" type="Label" parent="UILayer"]
@@ -87,6 +124,20 @@ position = Vector2(220, 320)
 size = Vector2(200, 20)
 theme_override_font_sizes/font_size = 10
 text = "MEMORY ECHO"
+horizontal_alignment = 1
+
+[node name="SecurityTapeLabel" type="Label" parent="UILayer"]
+position = Vector2(220, 342)
+size = Vector2(200, 20)
+theme_override_font_sizes/font_size = 10
+text = "SECURITY TAPE"
+horizontal_alignment = 1
+
+[node name="FinalNightWalkLabel" type="Label" parent="UILayer"]
+position = Vector2(432, 342)
+size = Vector2(120, 20)
+theme_override_font_sizes/font_size = 10
+text = "FINAL NIGHT"
 horizontal_alignment = 1
 
 [node name="DoorLabel" type="Label" parent="UILayer"]
@@ -115,3 +166,5 @@ text = ""
 horizontal_alignment = 1
 
 [node name="PauseMenu" parent="." instance=ExtResource("4")]
+
+[node name="QuestNotice" parent="." instance=ExtResource("8")]

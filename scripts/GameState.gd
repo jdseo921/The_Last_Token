@@ -12,7 +12,9 @@ const ACTION_BINDINGS := {
 }
 
 const TOTAL_GAMES_COUNT := 4
-const TOTAL_SECRETS_COUNT := 4
+const TOTAL_REQUIRED_PROGRESS_COUNT := 10
+const TOTAL_OPTIONAL_GAMES_COUNT := 2
+const TOTAL_SECRETS_COUNT := 5
 const MEMORY_SIGNAL_GROUNDED := 0
 const MEMORY_SIGNAL_UNEASY := 1
 const MEMORY_SIGNAL_FRACTURED := 2
@@ -30,11 +32,28 @@ var lying_cabinets_completed := false
 var second_memory_fragment_collected := false
 var circuit_soda_started := false
 var circuit_soda_completed := false
+var lost_shift_file_started := false
+var lost_shift_file_completed := false
+var closing_checklist_read := false
+var maintenance_note_read := false
+var staff_schedule_read := false
+var mira_lost_shift_intro_seen := false
+var gus_lost_shift_comment_seen := false
+var mr_byte_lost_shift_comment_seen := false
+var static_service_run_started := false
+var static_service_run_completed := false
+var gus_static_run_anecdote_seen := false
 var maintenance_sync_started := false
 var maintenance_sync_completed := false
 var story_puzzle_completed := false
 var staff_room_unlocked := false
 var staff_corridor_unlocked := false
+var security_tape_assembly_started := false
+var security_tape_assembly_completed := false
+var security_tape_wrong_order_count := 0
+var final_night_walk_started := false
+var final_night_walk_completed := false
+var staff_door_final_walk_anecdote_seen := false
 var memory_echo_started := false
 var memory_echo_completed := false
 var twist_reveal_seen := false
@@ -70,6 +89,19 @@ var broken_high_score_completed := false
 var owner_portrait_secret_found := false
 var employee_04_file_found := false
 var vendo_memory_riddle_secret_found := false
+var post_reveal_witness_route_completed := false
+var staff_record_01_read := false
+var staff_record_02_read := false
+var staff_record_03_read := false
+var staff_records_chain_completed := false
+var witness_mira_heard := false
+var witness_gus_heard := false
+var witness_vendo_heard := false
+var witness_mr_byte_heard := false
+var witness_cabinet07_heard := false
+var witness_roxy_heard := false
+var witness_pip_heard := false
+var witness_route_completed := false
 var echo_ticket_counter_seen := false
 var echo_cabinet07_seen := false
 var echo_owner_portrait_04_seen := false
@@ -121,6 +153,50 @@ func get_games_completed_count_from_data(data: Dictionary) -> int:
 func get_total_games_count() -> int:
 	return TOTAL_GAMES_COUNT
 
+func get_required_progress_count() -> int:
+	return get_required_progress_count_from_data(to_save_data())
+
+func get_required_progress_count_from_data(data: Dictionary) -> int:
+	var completed := 0
+	if bool(data.get("rockbyte_duel_completed", false)):
+		completed += 1
+	if bool(data.get("lying_cabinets_completed", false)) or bool(data.get("second_memory_fragment_collected", false)):
+		completed += 1
+	if bool(data.get("circuit_soda_completed", false)):
+		completed += 1
+	if bool(data.get("lost_shift_file_completed", false)) or bool(data.get("maintenance_sync_completed", false)) or bool(data.get("story_puzzle_completed", false)):
+		completed += 1
+	if bool(data.get("static_service_run_completed", false)) or bool(data.get("maintenance_sync_completed", false)) or bool(data.get("story_puzzle_completed", false)):
+		completed += 1
+	if bool(data.get("maintenance_sync_completed", false)) or bool(data.get("story_puzzle_completed", false)):
+		completed += 1
+	if bool(data.get("security_tape_assembly_completed", false)) or bool(data.get("memory_echo_completed", false)):
+		completed += 1
+	if bool(data.get("final_night_walk_completed", false)) or bool(data.get("memory_echo_completed", false)):
+		completed += 1
+	if bool(data.get("memory_echo_completed", false)):
+		completed += 1
+	if bool(data.get("twist_reveal_seen", false)):
+		completed += 1
+	return completed
+
+func get_total_required_progress_count() -> int:
+	return TOTAL_REQUIRED_PROGRESS_COUNT
+
+func get_optional_games_completed_count() -> int:
+	return get_optional_games_completed_count_from_data(to_save_data())
+
+func get_optional_games_completed_count_from_data(data: Dictionary) -> int:
+	var completed := 0
+	if bool(data.get("broken_high_score_completed", false)):
+		completed += 1
+	if bool(data.get("prize_sort_completed", false)) or bool(data.get("pip_secret_completed", false)):
+		completed += 1
+	return completed
+
+func get_total_optional_games_count() -> int:
+	return TOTAL_OPTIONAL_GAMES_COUNT
+
 func get_secrets_found_count() -> int:
 	return get_secrets_found_count_from_data(to_save_data())
 
@@ -133,6 +209,8 @@ func get_secrets_found_count_from_data(data: Dictionary) -> int:
 	if bool(data.get("employee_04_file_found", false)):
 		found += 1
 	if bool(data.get("vendo_memory_riddle_secret_found", false)):
+		found += 1
+	if bool(data.get("witness_route_completed", false)) or bool(data.get("post_reveal_witness_route_completed", false)):
 		found += 1
 	return found
 
@@ -152,10 +230,23 @@ func get_story_phase_label_from_data(data: Dictionary) -> String:
 		return "Truth Revealed"
 	if bool(data.get("memory_echo_completed", false)):
 		return "Staff Room"
+	if bool(data.get("final_night_walk_completed", false)):
+		return "Final Night Route Stable"
+	if bool(data.get("security_tape_assembly_completed", false)):
+		return "Security Tape Restored"
 	if bool(data.get("staff_corridor_unlocked", false)):
 		return "Staff Corridor"
 	if bool(data.get("story_puzzle_completed", false)):
 		return "Sync Door Solved"
+	if bool(data.get("static_service_run_completed", false)):
+		return "Service Power Restored"
+	if bool(data.get("lost_shift_file_completed", false)):
+		return "Static Service Run"
+	if bool(data.get("lost_shift_file_completed", false)) or (
+		bool(data.get("circuit_soda_completed", false)) and not bool(data.get("maintenance_sync_completed", false))
+		and not bool(data.get("story_puzzle_completed", false))
+	):
+		return "Lost Shift File"
 	if bool(data.get("circuit_soda_completed", false)):
 		return "Signal Stabilized"
 	if bool(data.get("second_memory_fragment_collected", false)) or bool(data.get("lying_cabinets_completed", false)):
@@ -197,11 +288,28 @@ func reset_for_new_game() -> void:
 	second_memory_fragment_collected = false
 	circuit_soda_started = false
 	circuit_soda_completed = false
+	lost_shift_file_started = false
+	lost_shift_file_completed = false
+	closing_checklist_read = false
+	maintenance_note_read = false
+	staff_schedule_read = false
+	mira_lost_shift_intro_seen = false
+	gus_lost_shift_comment_seen = false
+	mr_byte_lost_shift_comment_seen = false
+	static_service_run_started = false
+	static_service_run_completed = false
+	gus_static_run_anecdote_seen = false
 	maintenance_sync_started = false
 	maintenance_sync_completed = false
 	story_puzzle_completed = false
 	staff_room_unlocked = false
 	staff_corridor_unlocked = false
+	security_tape_assembly_started = false
+	security_tape_assembly_completed = false
+	security_tape_wrong_order_count = 0
+	final_night_walk_started = false
+	final_night_walk_completed = false
+	staff_door_final_walk_anecdote_seen = false
 	memory_echo_started = false
 	memory_echo_completed = false
 	twist_reveal_seen = false
@@ -235,6 +343,19 @@ func reset_for_new_game() -> void:
 	owner_portrait_secret_found = false
 	employee_04_file_found = false
 	vendo_memory_riddle_secret_found = false
+	post_reveal_witness_route_completed = false
+	staff_record_01_read = false
+	staff_record_02_read = false
+	staff_record_03_read = false
+	staff_records_chain_completed = false
+	witness_mira_heard = false
+	witness_gus_heard = false
+	witness_vendo_heard = false
+	witness_mr_byte_heard = false
+	witness_cabinet07_heard = false
+	witness_roxy_heard = false
+	witness_pip_heard = false
+	witness_route_completed = false
 	echo_ticket_counter_seen = false
 	echo_cabinet07_seen = false
 	echo_owner_portrait_04_seen = false
@@ -298,6 +419,38 @@ func start_circuit_soda() -> void:
 func complete_circuit_soda() -> void:
 	circuit_soda_started = true
 	circuit_soda_completed = true
+	lost_shift_file_started = true
+	update_memory_signal_from_progress()
+
+func start_lost_shift_file() -> void:
+	lost_shift_file_started = true
+
+func read_closing_checklist() -> void:
+	lost_shift_file_started = true
+	closing_checklist_read = true
+	_complete_lost_shift_file_if_ready()
+
+func read_maintenance_note() -> void:
+	lost_shift_file_started = true
+	maintenance_note_read = true
+	_complete_lost_shift_file_if_ready()
+
+func read_staff_schedule() -> void:
+	lost_shift_file_started = true
+	staff_schedule_read = true
+	_complete_lost_shift_file_if_ready()
+
+func _complete_lost_shift_file_if_ready() -> void:
+	if closing_checklist_read and maintenance_note_read and staff_schedule_read:
+		lost_shift_file_completed = true
+
+func start_static_service_run() -> void:
+	static_service_run_started = true
+	update_memory_signal_from_progress()
+
+func complete_static_service_run() -> void:
+	static_service_run_started = true
+	static_service_run_completed = true
 	update_memory_signal_from_progress()
 
 func start_maintenance_sync() -> void:
@@ -312,6 +465,28 @@ func complete_maintenance_sync() -> void:
 	staff_corridor_unlocked = true
 	update_memory_signal_from_progress()
 
+func start_security_tape_assembly() -> void:
+	security_tape_assembly_started = true
+	update_memory_signal_from_progress()
+
+func record_security_tape_wrong_order() -> void:
+	security_tape_assembly_started = true
+	security_tape_wrong_order_count += 1
+
+func complete_security_tape_assembly() -> void:
+	security_tape_assembly_started = true
+	security_tape_assembly_completed = true
+	update_memory_signal_from_progress()
+
+func start_final_night_walk() -> void:
+	final_night_walk_started = true
+	update_memory_signal_from_progress()
+
+func complete_final_night_walk() -> void:
+	final_night_walk_started = true
+	final_night_walk_completed = true
+	update_memory_signal_from_progress()
+
 func start_memory_echo() -> void:
 	memory_echo_started = true
 	update_memory_signal_from_progress()
@@ -319,6 +494,8 @@ func start_memory_echo() -> void:
 func complete_memory_echo() -> void:
 	memory_echo_started = true
 	memory_echo_completed = true
+	final_night_walk_started = true
+	final_night_walk_completed = true
 	update_memory_signal_from_progress()
 
 func complete_broken_high_score() -> void:
@@ -329,6 +506,55 @@ func complete_pip_secret() -> void:
 	pip_secret_completed = true
 	prize_sort_completed = true
 
+func read_staff_record_01() -> void:
+	staff_record_01_read = true
+	_complete_staff_records_chain_if_ready()
+
+func read_staff_record_02() -> void:
+	staff_record_02_read = true
+	_complete_staff_records_chain_if_ready()
+
+func read_staff_record_03() -> void:
+	staff_record_03_read = true
+	_complete_staff_records_chain_if_ready()
+
+func _complete_staff_records_chain_if_ready() -> void:
+	if staff_record_01_read and staff_record_02_read and staff_record_03_read:
+		staff_records_chain_completed = true
+
+func mark_witness_mira_heard() -> void:
+	witness_mira_heard = true
+	_complete_witness_route_if_ready()
+
+func mark_witness_gus_heard() -> void:
+	witness_gus_heard = true
+	_complete_witness_route_if_ready()
+
+func mark_witness_vendo_heard() -> void:
+	witness_vendo_heard = true
+	_complete_witness_route_if_ready()
+
+func mark_witness_mr_byte_heard() -> void:
+	witness_mr_byte_heard = true
+	_complete_witness_route_if_ready()
+
+func mark_witness_cabinet07_heard() -> void:
+	witness_cabinet07_heard = true
+	_complete_witness_route_if_ready()
+
+func mark_witness_roxy_heard() -> void:
+	witness_roxy_heard = true
+	_complete_witness_route_if_ready()
+
+func mark_witness_pip_heard() -> void:
+	witness_pip_heard = true
+	_complete_witness_route_if_ready()
+
+func _complete_witness_route_if_ready() -> void:
+	if witness_mira_heard and witness_gus_heard and witness_vendo_heard and witness_mr_byte_heard and witness_cabinet07_heard and witness_roxy_heard and witness_pip_heard:
+		witness_route_completed = true
+		post_reveal_witness_route_completed = true
+
 func unlock_staff_room() -> void:
 	staff_room_unlocked = true
 	staff_corridor_unlocked = true
@@ -338,6 +564,8 @@ func mark_twist_reveal_seen() -> void:
 	staff_corridor_unlocked = true
 	memory_echo_started = true
 	memory_echo_completed = true
+	final_night_walk_started = true
+	final_night_walk_completed = true
 	twist_reveal_seen = true
 	update_memory_signal_from_progress()
 
@@ -359,8 +587,18 @@ func get_current_quest_id() -> String:
 		return "truth_filter"
 	if lying_cabinets_completed and not circuit_soda_completed:
 		return "circuit_soda"
-	if circuit_soda_completed and not maintenance_sync_completed and not story_puzzle_completed:
+	if circuit_soda_completed and not lost_shift_file_completed and not maintenance_sync_completed and not story_puzzle_completed:
+		return "lost_shift_file"
+	if lost_shift_file_completed and not static_service_run_completed and not maintenance_sync_completed and not story_puzzle_completed:
+		return "static_service_run"
+	if static_service_run_completed and not maintenance_sync_completed and not story_puzzle_completed:
 		return "maintenance_sync"
+	if maintenance_sync_completed and not security_tape_assembly_completed and not memory_echo_completed:
+		return "security_tape_assembly"
+	if security_tape_assembly_completed and not final_night_walk_completed and not memory_echo_completed:
+		return "final_night_walk"
+	if final_night_walk_completed and not memory_echo_completed:
+		return "stabilize_memory_echo"
 	if maintenance_sync_completed and not memory_echo_completed:
 		return "staff_corridor"
 	if memory_echo_completed and not twist_reveal_seen:
@@ -401,6 +639,26 @@ func get_current_quest_data() -> Dictionary:
 				"summary": "Help Gus stabilize the Staff Door signals.",
 				"details": "Vendo routed the signal, but the Staff Door still needs two unstable signals to line up. Gus says the door is listening for something doubled.",
 			}, "maintenance_sync")
+		"static_service_run":
+			return _with_registry_quest_data({
+				"id": "static_service_run",
+				"title": "Static Service Run",
+				"summary": "Restore service power for the Staff Door systems.",
+				"details": "The Lost Shift File gave Gus enough context to work with the door, but the maintenance system still needs power. Run the service route and recover the Signal Fuses.",
+			}, "static_service_run")
+		"lost_shift_file":
+			return {
+				"id": "lost_shift_file",
+				"title": "Lost Shift File",
+				"owner": "Mira / Gus / Mr. Byte",
+				"location": "ArcadeHub, Maintenance Hall, Cabinet Row",
+				"summary": "Read the records from the Final Night.",
+				"details": "The signal is routed, but the Staff Door still refuses to open. Three records from the Final Night may explain why.",
+				"required": true,
+				"starts_after": "circuit_soda_completed",
+				"minigame": "None",
+				"memory_signal_after": "Fractured",
+			}
 		"staff_corridor":
 			return _with_registry_quest_data({
 				"id": "staff_corridor",
@@ -408,6 +666,39 @@ func get_current_quest_data() -> Dictionary:
 				"summary": "Follow the Overloaded signal past the Staff Door.",
 				"details": "Gus stabilized the door, but the arcade is not ready to show the Staff Room yet. Something is echoing in the corridor.",
 			}, "staff_corridor")
+		"security_tape_assembly":
+			return {
+				"id": "security_tape_assembly",
+				"title": "Assemble the Security Tape",
+				"owner": "Staff Door / Mr. Byte",
+				"location": "Staff Corridor",
+				"summary": "Restore the damaged Final Night sequence.",
+				"details": "The Staff Door recorded two signals, but the tape is damaged. Assemble the fragments before confronting the Memory Echo.",
+				"required": true,
+				"starts_after": "maintenance_sync_completed",
+				"minigame": "Security Tape Assembly",
+				"memory_signal_after": "Overloaded",
+			}
+		"final_night_walk":
+			return _with_registry_quest_data({
+				"id": "final_night_walk",
+				"title": "Final Night Walk",
+				"summary": "Walk through the reconstructed Final Night.",
+				"details": "The security tape is assembled, but the memory is still too unstable to play back. Walk the reconstructed route before confronting the Memory Echo.",
+			}, "final_night_walk")
+		"stabilize_memory_echo":
+			return {
+				"id": "stabilize_memory_echo",
+				"title": "Stabilize the Memory Echo",
+				"owner": "Memory Echo",
+				"location": "Staff Corridor",
+				"summary": "Stabilize the Memory Echo.",
+				"details": "The Final Night route is stable. The Memory Echo can now stabilize the signal before the Staff Room reveals what happened.",
+				"required": true,
+				"starts_after": "final_night_walk_completed",
+				"minigame": "Memory Echo",
+				"memory_signal_after": "Overloaded",
+			}
 		"circuit_soda":
 			return _with_registry_quest_data({
 				"id": "circuit_soda",
@@ -441,7 +732,7 @@ func get_current_quest_data() -> Dictionary:
 				"id": "talk_to_witnesses",
 				"title": "Talk to Those Who Remembered",
 				"summary": "Speak with the remaining witnesses.",
-				"details": "Pixel Haven remembers me differently now. Mira, Gus, Vendo, and Mr. Byte may have changed things to say.",
+				"details": "Pixel Haven remembers me differently now. Mira, Gus, Vendo, Mr. Byte, Cabinet 07, Roxy, and Pip may have changed things to say.",
 			}
 		_:
 			return {
@@ -522,11 +813,28 @@ func to_save_data() -> Dictionary:
 		"second_memory_fragment_collected": second_memory_fragment_collected,
 		"circuit_soda_started": circuit_soda_started,
 		"circuit_soda_completed": circuit_soda_completed,
+		"lost_shift_file_started": lost_shift_file_started,
+		"lost_shift_file_completed": lost_shift_file_completed,
+		"closing_checklist_read": closing_checklist_read,
+		"maintenance_note_read": maintenance_note_read,
+		"staff_schedule_read": staff_schedule_read,
+		"mira_lost_shift_intro_seen": mira_lost_shift_intro_seen,
+		"gus_lost_shift_comment_seen": gus_lost_shift_comment_seen,
+		"mr_byte_lost_shift_comment_seen": mr_byte_lost_shift_comment_seen,
+		"static_service_run_started": static_service_run_started,
+		"static_service_run_completed": static_service_run_completed,
+		"gus_static_run_anecdote_seen": gus_static_run_anecdote_seen,
 		"maintenance_sync_started": maintenance_sync_started,
 		"maintenance_sync_completed": maintenance_sync_completed,
 		"story_puzzle_completed": story_puzzle_completed,
 		"staff_room_unlocked": staff_room_unlocked,
 		"staff_corridor_unlocked": staff_corridor_unlocked,
+		"security_tape_assembly_started": security_tape_assembly_started,
+		"security_tape_assembly_completed": security_tape_assembly_completed,
+		"security_tape_wrong_order_count": security_tape_wrong_order_count,
+		"final_night_walk_started": final_night_walk_started,
+		"final_night_walk_completed": final_night_walk_completed,
+		"staff_door_final_walk_anecdote_seen": staff_door_final_walk_anecdote_seen,
 		"memory_echo_started": memory_echo_started,
 		"memory_echo_completed": memory_echo_completed,
 		"twist_reveal_seen": twist_reveal_seen,
@@ -560,6 +868,19 @@ func to_save_data() -> Dictionary:
 		"owner_portrait_secret_found": owner_portrait_secret_found,
 		"employee_04_file_found": employee_04_file_found,
 		"vendo_memory_riddle_secret_found": vendo_memory_riddle_secret_found,
+		"post_reveal_witness_route_completed": post_reveal_witness_route_completed,
+		"staff_record_01_read": staff_record_01_read,
+		"staff_record_02_read": staff_record_02_read,
+		"staff_record_03_read": staff_record_03_read,
+		"staff_records_chain_completed": staff_records_chain_completed,
+		"witness_mira_heard": witness_mira_heard,
+		"witness_gus_heard": witness_gus_heard,
+		"witness_vendo_heard": witness_vendo_heard,
+		"witness_mr_byte_heard": witness_mr_byte_heard,
+		"witness_cabinet07_heard": witness_cabinet07_heard,
+		"witness_roxy_heard": witness_roxy_heard,
+		"witness_pip_heard": witness_pip_heard,
+		"witness_route_completed": witness_route_completed,
 		"echo_ticket_counter_seen": echo_ticket_counter_seen,
 		"echo_cabinet07_seen": echo_cabinet07_seen,
 		"echo_owner_portrait_04_seen": echo_owner_portrait_04_seen,
@@ -594,19 +915,68 @@ func apply_save_data(data: Dictionary) -> void:
 	second_memory_fragment_collected = bool(data.get("second_memory_fragment_collected", second_memory_fragment_collected))
 	circuit_soda_started = bool(data.get("circuit_soda_started", circuit_soda_started))
 	circuit_soda_completed = bool(data.get("circuit_soda_completed", circuit_soda_completed))
+	lost_shift_file_started = bool(data.get("lost_shift_file_started", false))
+	lost_shift_file_completed = bool(data.get("lost_shift_file_completed", false))
+	closing_checklist_read = bool(data.get("closing_checklist_read", false))
+	maintenance_note_read = bool(data.get("maintenance_note_read", false))
+	staff_schedule_read = bool(data.get("staff_schedule_read", false))
+	mira_lost_shift_intro_seen = bool(data.get("mira_lost_shift_intro_seen", false))
+	gus_lost_shift_comment_seen = bool(data.get("gus_lost_shift_comment_seen", false))
+	mr_byte_lost_shift_comment_seen = bool(data.get("mr_byte_lost_shift_comment_seen", false))
+	if closing_checklist_read or maintenance_note_read or staff_schedule_read:
+		lost_shift_file_started = true
+	if closing_checklist_read and maintenance_note_read and staff_schedule_read:
+		lost_shift_file_completed = true
+	static_service_run_started = bool(data.get("static_service_run_started", false))
+	static_service_run_completed = bool(data.get("static_service_run_completed", false))
+	gus_static_run_anecdote_seen = bool(data.get("gus_static_run_anecdote_seen", false))
 	maintenance_sync_started = bool(data.get("maintenance_sync_started", maintenance_sync_started))
 	maintenance_sync_completed = bool(data.get("maintenance_sync_completed", maintenance_sync_completed))
 	story_puzzle_completed = data.get("story_puzzle_completed", story_puzzle_completed)
 	if story_puzzle_completed:
+		static_service_run_started = true
+		static_service_run_completed = true
 		maintenance_sync_started = true
 		maintenance_sync_completed = true
+	if maintenance_sync_completed:
+		lost_shift_file_completed = true
+		static_service_run_started = true
+		static_service_run_completed = true
 	staff_room_unlocked = data.get("staff_room_unlocked", staff_room_unlocked)
 	staff_corridor_unlocked = bool(data.get("staff_corridor_unlocked", staff_room_unlocked or story_puzzle_completed))
+	security_tape_assembly_started = bool(data.get("security_tape_assembly_started", false))
+	security_tape_assembly_completed = bool(data.get("security_tape_assembly_completed", false))
+	security_tape_wrong_order_count = int(data.get("security_tape_wrong_order_count", security_tape_wrong_order_count))
+	final_night_walk_started = bool(data.get("final_night_walk_started", false))
+	final_night_walk_completed = bool(data.get("final_night_walk_completed", false))
+	staff_door_final_walk_anecdote_seen = bool(data.get("staff_door_final_walk_anecdote_seen", false))
 	memory_echo_started = bool(data.get("memory_echo_started", memory_echo_started))
 	memory_echo_completed = bool(data.get("memory_echo_completed", memory_echo_completed))
+	if memory_echo_completed:
+		lost_shift_file_completed = true
+		static_service_run_started = true
+		static_service_run_completed = true
+		maintenance_sync_started = true
+		maintenance_sync_completed = true
+		story_puzzle_completed = true
+		staff_corridor_unlocked = true
+		security_tape_assembly_started = true
+		security_tape_assembly_completed = true
+		final_night_walk_started = true
+		final_night_walk_completed = true
 	twist_reveal_seen = data.get("twist_reveal_seen", twist_reveal_seen)
 	if twist_reveal_seen:
+		lost_shift_file_completed = true
+		static_service_run_started = true
+		static_service_run_completed = true
+		maintenance_sync_started = true
+		maintenance_sync_completed = true
+		story_puzzle_completed = true
 		staff_corridor_unlocked = true
+		security_tape_assembly_started = true
+		security_tape_assembly_completed = true
+		final_night_walk_started = true
+		final_night_walk_completed = true
 		memory_echo_started = true
 		memory_echo_completed = true
 	ending_seen = data.get("ending_seen", ending_seen)
@@ -641,6 +1011,25 @@ func apply_save_data(data: Dictionary) -> void:
 	owner_portrait_secret_found = data.get("owner_portrait_secret_found", owner_portrait_secret_found)
 	employee_04_file_found = data.get("employee_04_file_found", employee_04_file_found)
 	vendo_memory_riddle_secret_found = data.get("vendo_memory_riddle_secret_found", vendo_memory_riddle_secret_found)
+	post_reveal_witness_route_completed = bool(data.get("post_reveal_witness_route_completed", false))
+	staff_record_01_read = bool(data.get("staff_record_01_read", false))
+	staff_record_02_read = bool(data.get("staff_record_02_read", false))
+	staff_record_03_read = bool(data.get("staff_record_03_read", false))
+	staff_records_chain_completed = bool(data.get("staff_records_chain_completed", false))
+	if staff_record_01_read and staff_record_02_read and staff_record_03_read:
+		staff_records_chain_completed = true
+	witness_mira_heard = bool(data.get("witness_mira_heard", false))
+	witness_gus_heard = bool(data.get("witness_gus_heard", false))
+	witness_vendo_heard = bool(data.get("witness_vendo_heard", false))
+	witness_mr_byte_heard = bool(data.get("witness_mr_byte_heard", false))
+	witness_cabinet07_heard = bool(data.get("witness_cabinet07_heard", false))
+	witness_roxy_heard = bool(data.get("witness_roxy_heard", false))
+	witness_pip_heard = bool(data.get("witness_pip_heard", false))
+	witness_route_completed = bool(data.get("witness_route_completed", post_reveal_witness_route_completed))
+	if witness_mira_heard and witness_gus_heard and witness_vendo_heard and witness_mr_byte_heard and witness_cabinet07_heard and witness_roxy_heard and witness_pip_heard:
+		witness_route_completed = true
+	if witness_route_completed:
+		post_reveal_witness_route_completed = true
 	echo_ticket_counter_seen = bool(data.get("echo_ticket_counter_seen", echo_ticket_counter_seen))
 	echo_cabinet07_seen = bool(data.get("echo_cabinet07_seen", echo_cabinet07_seen))
 	echo_owner_portrait_04_seen = bool(data.get("echo_owner_portrait_04_seen", echo_owner_portrait_04_seen))

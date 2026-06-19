@@ -1,0 +1,16 @@
+{
+	"title": "Security Tape Assembly",
+	"owner": "Staff Door / Mr. Byte",
+	"fragments": [
+		"Counter lights shut off.",
+		"Cabinet 07 remains powered.",
+		"A staff member enters the back hall.",
+		"The Staff Door records two signals."
+	],
+	"correct_order": [
+		"Counter lights shut off.",
+		"Cabinet 07 remains powered.",
+		"A staff member enters the back hall.",
+		"The Staff Door records two signals."
+	]
+}

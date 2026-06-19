@@ -27,10 +27,14 @@
   1. Opening intro and Lost Token / Rockbyte Duel with Mira.
   2. Truth Filter with Mr. Byte in Cabinet Row.
   3. Circuit Soda with Vendo in Snack Alcove.
-  4. Maintenance Sync with Gus in Maintenance Hall.
-  5. Memory Echo dialogue-choice sequence in Staff Corridor.
-  6. Staff Room reveal, EndingPrompt, and Post-Reveal Roam.
-- Save/load checkpoints are required after Lost Token, Truth Filter, Circuit Soda, Maintenance Sync, Memory Echo, and the reveal.
+  4. Lost Shift File with Mira, Gus, and Mr. Byte.
+  5. Static Service Run with Gus in Maintenance Hall.
+  6. Maintenance Sync with Gus in Maintenance Hall.
+  7. Security Tape Assembly in Staff Corridor.
+  8. Final Night Walk in Staff Corridor.
+  9. Memory Echo dialogue-choice sequence in Staff Corridor.
+  10. Staff Room reveal, EndingPrompt, and Post-Reveal Roam.
+- Save/load checkpoints are required after Lost Token, Truth Filter, Circuit Soda, Lost Shift File, Static Service Run, Maintenance Sync, Security Tape Assembly, Final Night Walk, Memory Echo, and the reveal.
 - Pass criteria:
   - No scene path errors.
   - No missing GameState flags.
@@ -180,6 +184,74 @@ Run this after Truth Filter completion, when Memory Signal is `Fractured`.
 14. Save and load.
 15. Confirm `circuit_soda_completed` and `vendo_circuit_anecdote_seen` persist.
 
+## Lost Shift File Required Lore Quest Test
+Run this after Circuit Soda completion and before Maintenance Sync.
+
+1. Complete Circuit Soda.
+2. Confirm the objective reads `Objective: Find the Lost Shift File.`
+3. Talk to Mira and confirm:
+   `Vendo routed the signal, but something is still missing.`
+   `Gus keeps old maintenance notes.`
+   `Mr. Byte can read staff records the machines refuse to say out loud.`
+   `Find the Lost Shift File before you ask the door to listen.`
+4. Interact with the Closing Checklist near the ticket counter or Staff Door.
+5. Confirm it reads:
+   `CLOSING CHECKLIST`
+   `Final Night`
+   `- Count tokens`
+   `- Lock Cabinet Row`
+   `- Check Staff Door`
+   `- Employee 04: signature missing`
+6. Confirm `closing_checklist_read` is true.
+7. Go to Maintenance Hall.
+8. Talk to Gus and confirm he points to the maintenance note instead of launching Maintenance Sync.
+9. Interact with the Maintenance Note.
+10. Confirm it reads:
+   `MAINTENANCE NOTE`
+   `Staff Door reported two signals after closing.`
+   `One signal entered.`
+   `One signal remained.`
+   `Gus note: I do not get paid enough for doors with opinions.`
+11. Confirm `maintenance_note_read` is true.
+12. Go to Cabinet Row.
+13. Talk to Mr. Byte and confirm he points to the staff schedule.
+14. Interact with the Staff Schedule.
+15. Confirm it reads:
+   `STAFF SCHEDULE`
+   `Final Night`
+   `Mira - Counter`
+   `Gus - Maintenance`
+   `Employee 04 - Cabinet shutdown`
+   `Status: unresolved`
+16. Confirm `staff_schedule_read` is true.
+17. After all three notes are read, confirm:
+   `lost_shift_file_completed` is true.
+   The completion text appears:
+   `LOST SHIFT FILE COMPLETE`
+   `Employee 04 was assigned to Cabinet shutdown.`
+18. Confirm the objective becomes `Objective: Find Gus in Maintenance Hall.`
+19. Talk to Mira and confirm:
+   `That was the shift we stopped talking about.`
+   `I am sorry you had to read it before you remembered it.`
+20. Talk to Gus after completion and confirm:
+   `Employee 04. Cabinet shutdown.`
+   `Yeah. That is where the night went bad.`
+21. Talk to Mr. Byte after completion and confirm:
+   `Lost Shift File reconstructed.`
+   `Identity reference remains restricted.`
+22. Save and load.
+23. Confirm these flags persist:
+   `lost_shift_file_started`
+   `lost_shift_file_completed`
+   `closing_checklist_read`
+   `maintenance_note_read`
+   `staff_schedule_read`
+   `mira_lost_shift_intro_seen`
+   `gus_lost_shift_comment_seen`
+   `mr_byte_lost_shift_comment_seen`
+24. Confirm Maintenance Sync is available only after `lost_shift_file_completed`.
+25. Confirm the quest does not reveal that the player is Employee 04.
+
 ## Act 2 Aftermath Echo Test
 Run this after Truth Filter completion and before entering the Staff Room reveal.
 
@@ -203,66 +275,221 @@ Run this after Truth Filter completion and before entering the Staff Room reveal
 13. Save and load.
 14. Confirm the echo flags do not replay if already seen.
 
-## Maintenance Sync: Gus Required Quest Test
-Run this after Circuit Soda completion, when Memory Signal is still `Fractured`.
+## Static Service Run Required Arcade-Adventure Test
+Run this after Lost Shift File completion and before Maintenance Sync, when Memory Signal is still `Fractured`.
 
 1. Go to Maintenance Hall.
-2. Talk to Gus and confirm:
-   `Truth got filtered, soda got routed, and somehow I am still the janitor.`
-   `Maintenance Hall is next.`
+2. If Lost Shift File is not complete, talk to Gus and confirm Maintenance Sync does not launch.
+3. Complete Lost Shift File.
+4. Talk to Gus and confirm Static Service Run starts.
+5. Confirm `res://scenes/minigames/StaticServiceRun.tscn` opens.
+6. Confirm title and objective text explain:
+   `STATIC SERVICE RUN`
+   `Collect 3 Signal Fuses.`
+   `Avoid static leaks.`
+   `Reach the breaker panel.`
+7. Collect 3 Signal Fuses.
+8. Touch a static leak once and confirm:
+   `STATIC DISCHARGE.`
+   `Signal reset.`
+9. Reach the breaker panel.
+10. Confirm completion text:
+   `SERVICE POWER RESTORED.`
+   `STAFF DOOR SYSTEMS ONLINE.`
+   `MAINTENANCE SYNC AVAILABLE.`
+11. Confirm `static_service_run_started` is true.
+12. Confirm `static_service_run_completed` is true.
+13. Return to Maintenance Hall.
+14. Talk to Gus and confirm:
+   `Power's back.`
+   `Door's awake.`
+   `That is usually good news, except when the door is smarter than the staff.`
+   `Now we can sync the two signals.`
+15. Save and load.
+16. Confirm Static Service Run completion and `gus_static_run_anecdote_seen` persist.
+17. Confirm Maintenance Sync is now available.
+
+## Maintenance Sync: Gus Required Quest Test
+Run this after Static Service Run completion, when Memory Signal is still `Fractured`.
+
+1. Go to Maintenance Hall.
+2. If Lost Shift File is not complete, talk to Gus and confirm Maintenance Sync does not launch.
+3. If Static Service Run is not complete, interact with Maintenance Sync and confirm it blocks with:
+   `MAINTENANCE SYNC LOCKED.`
+   `STATIC SERVICE REQUIRED.`
+4. Talk to Gus and confirm:
+   `Power's back. Door's listening.`
+   `I still hate that sentence.`
    `Two signals are fighting in the door.`
-3. Confirm `res://scenes/arcade/SyncDoorPuzzle.tscn` opens as Maintenance Sync.
-4. Confirm title reads `MAINTENANCE SYNC`.
-5. Confirm instructions say:
+5. Confirm `res://scenes/arcade/SyncDoorPuzzle.tscn` opens as Maintenance Sync.
+6. Confirm title reads `MAINTENANCE SYNC`.
+7. Confirm instructions say:
    `MAINTENANCE SYNC`
    `Two signals must be active together.`
    `One signal remembers.`
    `One signal returns.`
-6. Phase 1: activate Switch A and Switch B within 5 seconds.
-7. Confirm Phase 2 begins and displays `WARNING: ONE LABEL IS REVERSED.`
-8. Phase 2: observe Switch A label is reversed, then activate both real switches.
-9. Confirm Phase 3 begins.
-10. Phase 3: activate A, then B, then press `Confirm Sync` before either expires.
-11. Let the timer expire once if practical and confirm:
+8. Phase 1: activate Switch A and Switch B within 5 seconds.
+9. Confirm Phase 2 begins and displays `WARNING: ONE LABEL IS REVERSED.`
+10. Phase 2: observe Switch A label is reversed, then activate both real switches.
+11. Confirm Phase 3 begins.
+12. Phase 3: activate A, then B, then press `Confirm Sync` before either expires.
+13. Let the timer expire once if practical and confirm:
    `Signal lost.`
    `Try again.`
-12. Complete Phase 3 successfully.
-13. Confirm success text:
+14. Complete Phase 3 successfully.
+15. Confirm success text:
    `TWO SIGNALS DETECTED.`
    `RESTORED SIGNAL PRESENT.`
    `MEMORY SIGNAL: OVERLOADED.`
    `ACCESS GRANTED.`
-14. Confirm `GameState.maintenance_sync_started` is true.
-15. Confirm `GameState.maintenance_sync_completed` is true.
-16. Confirm `GameState.story_puzzle_completed` is true.
-17. Confirm `GameState.staff_room_unlocked` is true.
-18. Confirm Memory Signal reads `Overloaded`.
-19. Return to Maintenance Hall.
-20. Talk to Gus and confirm:
+16. Confirm `GameState.maintenance_sync_started` is true.
+17. Confirm `GameState.maintenance_sync_completed` is true.
+18. Confirm `GameState.story_puzzle_completed` is true.
+19. Confirm `GameState.staff_room_unlocked` is true.
+20. Confirm Memory Signal reads `Overloaded`.
+21. Return to Maintenance Hall.
+22. Talk to Gus and confirm:
    `Door's listening now.`
    `I do not like doors that listen.`
    `But if it opens, part of you matched something it lost.`
    `Door heard both knocks. Yours, and the one you forgot making.`
-21. Talk to Gus again and confirm shorter repeat lines appear.
-22. Confirm the objective reads `Objective: Enter the Staff Corridor.`
-23. Confirm Staff Corridor unlocks.
-24. Enter Staff Corridor and interact with Memory Echo.
-25. Confirm `res://scenes/cutscenes/MemoryEcho.tscn` opens.
-26. Choose one wrong answer and confirm:
-   `MEMORY SIGNAL SPIKED.`
-   `TRY AGAIN.`
-27. Complete the three Memory Echo questions.
-28. Confirm:
-   `MEMORY ECHO STABILIZED.`
-   `RESTORE PLAYBACK AVAILABLE.`
-29. Return to Staff Corridor and interact with Memory Echo again.
-30. Confirm:
-   `Echo stabilized.`
-   `The arcade stops arguing with itself.`
-   `That might be worse.`
-31. Interact with Memory Echo again and confirm shorter repeat lines appear.
-32. Save and load.
-33. Confirm Maintenance Sync completion, Staff Corridor unlock, Memory Echo completion, `gus_sync_anecdote_seen`, and `memory_echo_anecdote_seen` persist.
+23. Talk to Gus again and confirm shorter repeat lines appear.
+24. Confirm the objective reads `Objective: Enter the Staff Corridor.`
+25. Confirm Staff Corridor unlocks.
+26. Save and load.
+27. Confirm Maintenance Sync completion, Staff Corridor unlock, Staff Corridor objective, and `gus_sync_anecdote_seen` persist.
+
+## Security Tape Assembly Required Puzzle Test
+Run this after Maintenance Sync completion and before Memory Echo.
+
+1. Complete Maintenance Sync.
+2. Enter Staff Corridor.
+3. Interact with Memory Echo before Security Tape Assembly.
+4. Confirm Memory Echo blocks with:
+   `MEMORY ECHO LOCKED.`
+   `SECURITY TAPE REQUIRED.`
+5. Interact with the Security Tape terminal.
+6. Confirm `res://scenes/minigames/SecurityTapeAssembly.tscn` opens.
+7. Confirm instructions say:
+   `SECURITY TAPE ASSEMBLY`
+   `Arrange the fragments in the order they happened.`
+   `The tape is damaged, but not silent.`
+8. Select a wrong order and submit.
+9. Confirm:
+   `TIMESTAMP CONFLICT.`
+   `The tape rewinds.`
+10. Confirm retry is available.
+11. Submit a second wrong order if practical.
+12. Confirm the hint appears:
+   `The counter went dark before Cabinet 07 stayed awake.`
+13. Submit the correct order:
+   `Counter lights shut off.`
+   `Cabinet 07 remains powered.`
+   `A staff member enters the back hall.`
+   `The Staff Door records two signals.`
+14. Confirm completion text:
+   `TAPE ORDER RESTORED.`
+   `FINAL NIGHT SEQUENCE PARTIAL.`
+   `THE STAFF DOOR DID NOT RECORD A CUSTOMER.`
+15. Confirm `security_tape_assembly_started` is true.
+16. Confirm `security_tape_assembly_completed` is true.
+17. Confirm `security_tape_wrong_order_count` preserves wrong attempts.
+18. Return to Staff Corridor.
+19. Save and load.
+20. Confirm Security Tape completion persists.
+21. Confirm Final Night Walk is now available.
+22. Confirm Employee 04 and the player's name are not fully revealed by this puzzle.
+
+## Final Night Walk Required Arcade-Adventure Test
+Run this after Security Tape Assembly completion and before Memory Echo.
+
+1. Complete Security Tape Assembly.
+2. Enter Staff Corridor.
+3. Interact with Memory Echo before Final Night Walk.
+4. Confirm Memory Echo blocks with:
+   `MEMORY ECHO LOCKED.`
+   `FINAL NIGHT WALK REQUIRED.`
+5. Interact with the Final Night Walk terminal.
+6. Confirm `res://scenes/minigames/FinalNightWalk.tscn` opens.
+7. Confirm title and objective text explain:
+   `FINAL NIGHT WALK`
+   `Collect the Memory Frames.`
+   `Do not let the rewind static touch you.`
+8. Try collecting a Memory Frame out of order.
+9. Confirm:
+   `TIMESTAMP CONFLICT.`
+   `The memory rewinds.`
+10. Collect the Memory Frames in order:
+   `Counter lights shut off.`
+   `Cabinet 07 stayed awake.`
+   `A staff member entered the back hall.`
+   `The Staff Door recorded two signals.`
+11. Reach the exit.
+12. Confirm completion text:
+   `FINAL NIGHT ROUTE STABILIZED.`
+   `MEMORY ECHO AVAILABLE.`
+   `THE STAFF DOOR DID NOT RECORD A CUSTOMER.`
+13. Confirm `final_night_walk_started` is true.
+14. Confirm `final_night_walk_completed` is true.
+15. Return to Staff Corridor.
+16. Interact with Final Night Walk again and confirm Staff Door completion dialogue:
+   `ROUTE ACCEPTED.`
+   `FINAL NIGHT SEQUENCE STABILIZED.`
+   `ONE WALKED IN.`
+   `TWO SIGNALS ANSWERED.`
+17. Save and load.
+18. Confirm Final Night Walk completion and `staff_door_final_walk_anecdote_seen` persist.
+19. Confirm Memory Echo is now available.
+
+## Optional Staff Records Chain Test
+Run this after Truth Filter completion. This quest is optional and must not block the required route.
+
+1. Complete Truth Filter.
+2. Go to Cabinet Row and read Record 01.
+3. Confirm it reads:
+   `RESTORE SYSTEM NOTE`
+   `Subject memory incomplete.`
+   `Do not repeat name until signal stabilizes.`
+4. Confirm `staff_record_01_read` is true.
+5. Go to Maintenance Hall and read Record 02.
+6. Confirm it reads:
+   `MAINTENANCE WARNING`
+   `Door responds to two signatures.`
+   `One physical. One stored.`
+7. Confirm `staff_record_02_read` is true.
+8. When Staff Corridor is reachable, read Record 03.
+9. Confirm it reads:
+   `STAFF CORRIDOR LOG`
+   `Employee number readable after overload.`
+   `04`
+10. Confirm `staff_record_03_read` is true.
+11. After all three records are read, confirm:
+   `staff_records_chain_completed` is true.
+   The completion text appears:
+   `STAFF RECORDS CHAIN COMPLETE`
+   `The arcade knew the number before it knew the name.`
+12. Save and load.
+13. Confirm all three read flags and `staff_records_chain_completed` persist.
+14. Confirm Staff Records Chain does not change Main progress and does not block Maintenance Sync, Security Tape Assembly, Memory Echo, or the Staff Room reveal.
+
+## Optional Post-Reveal Witness Route Test
+Run this after `post_reveal_roam_unlocked` is true. This route is optional and must not block saving, restoring, or ending flow.
+
+1. Talk to Mira and confirm `witness_mira_heard` is true.
+2. Talk to Gus and confirm `witness_gus_heard` is true.
+3. Talk to Vendo and confirm `witness_vendo_heard` is true.
+4. Talk to Mr. Byte and confirm `witness_mr_byte_heard` is true.
+5. Talk to Cabinet 07 and confirm `witness_cabinet07_heard` is true.
+6. Go to Cabinet Row, talk to Roxy, and confirm `witness_roxy_heard` is true.
+7. Go to Prize Corner, talk to Pip, and confirm `witness_pip_heard` is true.
+8. Confirm the completion text appears:
+   `POST-REVEAL WITNESSES COMPLETE`
+   `Pixel Haven remembers you in pieces. Together, they almost make a person.`
+9. Confirm `witness_route_completed` is true.
+10. Confirm `post_reveal_witness_route_completed` is also true for old save compatibility.
+11. Save and load.
+12. Confirm all witness flags and route completion persist.
+13. Confirm the route counts as the fifth secret but does not change Main or Optional game counters.
 
 ## First Quest Vertical Slice Test
 This is the active quality gate before adding more NPCs, minigames, endings, story branches, combat, inventory, or cabinet games. Run this from `res://scenes/main/Main.tscn` in Godot.
@@ -336,14 +563,14 @@ Pass condition: every step above passes in a live Godot playthrough. If any step
 9. Rockbyte Duel works and saves completion: static pass; win sets Rockbyte completion and Lost Token flags.
 10. Mira accepts Lost Token: static pass; Mira completion handler sets quest completion.
 11. Staff Door gating works: static pass; route checks required puzzle and Staff Corridor flags.
-12. Maintenance Sync works and unlocks Staff Corridor: static pass; puzzle success sets `story_puzzle_completed` and unlocks the route toward Staff Room.
+12. Maintenance Sync works and unlocks Staff Corridor: static pass; puzzle success sets `story_puzzle_completed` and unlocks the route toward Security Tape Assembly.
 13. Staff Room reveal plays all 8 slides: static pass; StaffRoom passes 8 slide entries to SlideshowCutscene.
 14. EndingPrompt appears: static pass; StaffRoom instantiates EndingPrompt after reveal completion.
 15. Save and Continue returns to ArcadeHub: static pass; EndingPrompt marks post-reveal, saves active slot when present, and changes to ArcadeHub.
 16. Post-Reveal Roam dialogue appears: static pass; ArcadeHub branches on post-reveal/twist state.
 17. Post-reveal save/load works: static pass; SaveManager preserves post-reveal flags and restores safely to ArcadeHub.
-18. Completion counters are correct: static pass; Rockbyte Duel, Circuit Soda, Maintenance Sync, and reveal count as games.
-19. Secret counters are correct: static pass; only the four explicit secret flags count.
+18. Completion counters are correct: static pass target is now Main `0-10 / 10`, Optional `0-2 / 2`, and Secrets `0-5 / 5`.
+19. Secret counters are correct: static pass target includes Broken Cabinet, Owner Portrait, Vendo Memory Cola, Employee 04 file, and the future post-reveal witness route flag.
 20. Missing art/audio does not crash game: static pass by script behavior; live confirmation still required.
 
 ### Remaining Known Issues For Acceptance
@@ -360,9 +587,9 @@ Pass condition: every step above passes in a live Godot playthrough. If any step
 - Save/load data includes story flags, NPC flags, secret flags, counters, story phase, active slot metadata, and current scene.
 - Loading a valid save clears the current `GameState`, applies the selected slot's `GameState`, sets `active_slot_id`, and restores a valid saved scene or falls back to ArcadeHub.
 - StaffRoom saves made after post-reveal roam normalize back to ArcadeHub, preventing restore into the reveal room after the ending.
-- Mira, Cabinet 07, Rockbyte Duel, Truth Filter, Circuit Soda, Maintenance Sync, Staff Corridor, StaffRoom terminal, slideshow reveal, EndingPrompt, and post-reveal ArcadeHub dialogue all have connected script paths for the required expanded route.
+- Mira, Cabinet 07, Rockbyte Duel, Truth Filter, Circuit Soda, Lost Shift File, Maintenance Sync, Security Tape Assembly, Staff Corridor, StaffRoom terminal, slideshow reveal, EndingPrompt, and post-reveal ArcadeHub dialogue all have connected script paths for the required expanded route.
 - Vendo's riddle flag is saved, loaded, and counted as a secret.
-- Completion counters match the intended totals: games `0-4 / 4`, secrets `0-4 / 4`.
+- Completion counters match the expanded intended totals: main `0-10 / 10`, optional `0-2 / 2`, secrets `0-5 / 5`.
 - SlideshowCutscene handles missing panel images with placeholder UI and emits `cutscene_finished` once.
 - Save and Continue marks ending/post-reveal state, saves when an active slot exists, and returns to ArcadeHub.
 
@@ -400,23 +627,29 @@ Pass condition: every step above passes in a live Godot playthrough. If any step
 17. Complete Circuit Soda in Snack Alcove.
 18. Save/load and confirm Circuit Soda state persists.
 19. Confirm the objective points to Maintenance Hall / Gus.
-20. Complete Maintenance Sync in Maintenance Hall.
-21. Confirm Memory Signal becomes `Overloaded`.
-22. Confirm Staff Corridor unlocks.
-23. Save/load and confirm Maintenance Sync state persists.
-24. Complete Memory Echo in Staff Corridor.
-25. Save/load and confirm Memory Echo state persists.
-26. Enter Staff Room.
-27. Interact with Employee 04 file before reveal.
-28. Interact with terminal.
-29. Advance through all reveal slides.
-30. Confirm EndingPrompt appears.
-31. Choose Save and Continue.
-32. Confirm ArcadeHub loads in Post-Reveal Roam.
-33. Save again.
-34. Return to Title.
-35. Restore Slot 1.
-36. Confirm post-reveal state persists.
+20. Complete Static Service Run in Maintenance Hall.
+21. Save/load and confirm Static Service Run state persists.
+22. Complete Maintenance Sync in Maintenance Hall.
+23. Confirm Memory Signal becomes `Overloaded`.
+24. Confirm Staff Corridor unlocks.
+25. Save/load and confirm Maintenance Sync state persists.
+26. Complete Security Tape Assembly in Staff Corridor.
+27. Save/load and confirm Security Tape state persists.
+28. Complete Final Night Walk in Staff Corridor.
+29. Save/load and confirm Final Night Walk state persists.
+30. Complete Memory Echo in Staff Corridor.
+31. Save/load and confirm Memory Echo state persists.
+32. Enter Staff Room.
+33. Interact with Employee 04 file before reveal.
+34. Interact with terminal.
+35. Advance through all reveal slides.
+36. Confirm EndingPrompt appears.
+37. Choose Save and Continue.
+38. Confirm ArcadeHub loads in Post-Reveal Roam.
+39. Save again.
+40. Return to Title.
+41. Restore Slot 1.
+42. Confirm post-reveal state persists.
 
 ## 1. Launch and Title Menu Test
 1. Launch the project.
@@ -445,7 +678,7 @@ Pass condition: every step above passes in a live Godot playthrough. If any step
 5. Load `Memory Slot 1`.
 6. Confirm ArcadeHub loads, not the Title Menu shell.
 7. Confirm Mira quest state persists.
-8. Confirm slot summary shows a story phase, games count, secrets count, and last saved timestamp.
+8. Confirm slot summary shows story phase, main progress count, optional games count, secrets count, Memory Signal, and last saved timestamp.
 9. Load a different slot if one exists and confirm old flags from the previous slot do not leak.
 10. Overwrite an existing slot with `New Memory` and confirm old story, secret, and post-reveal flags are gone.
 
@@ -462,8 +695,9 @@ Pass condition: every step above passes in a live Godot playthrough. If any step
 10. Confirm the objective points to Maintenance Hall / Gus.
 11. Complete Maintenance Sync.
 12. Confirm Staff Corridor unlocks.
-13. Complete Memory Echo.
-14. Enter Staff Room.
+13. Complete Security Tape Assembly.
+14. Complete Memory Echo.
+15. Enter Staff Room.
 
 ## 5. Staff Room Reveal Test
 1. In Staff Room, interact with the Employee 04 file before the reveal.
@@ -499,18 +733,42 @@ Pass condition: every step above passes in a live Godot playthrough. If any step
 7. Restore the same slot.
 8. Confirm post-reveal state and hint persist.
 
-## 8. Completion Counter Test
+## 8. Save Slot Progress Counter Test
 1. Start a new memory.
-2. Confirm games completed begins at `0 / 4`.
-3. Complete Rockbyte Duel and save.
-4. Confirm games completed is `1 / 4`.
-5. Complete Circuit Soda and save.
-6. Confirm games completed is `2 / 4`.
-7. Complete Maintenance Sync and save.
-8. Confirm games completed is `3 / 4`.
-9. Complete the reveal and save.
-10. Confirm games completed is `4 / 4`.
-11. Confirm Lost Token quest completion, Truth Filter completion, and Memory Echo do not count as games.
+2. Save.
+3. Confirm the slot displays:
+   `Memory Slot 1`
+   `Status: New Memory` or the current earliest story phase
+   `Main: 0 / 10`
+   `Optional: 0 / 2`
+   `Secrets: 0 / 5`
+   `Signal: Grounded`
+   `Last Saved: [timestamp]`
+4. Complete Rockbyte Duel and save.
+5. Confirm Main increments to `1 / 10`.
+6. Complete Truth Filter and save.
+7. Confirm Main increments to `2 / 10`.
+8. Complete Circuit Soda and save.
+9. Confirm Main increments to `3 / 10`.
+10. Complete Lost Shift File and save.
+11. Confirm Main increments to `4 / 10`.
+12. Complete Static Service Run and save.
+13. Confirm Main increments to `5 / 10`.
+14. Complete Maintenance Sync and save.
+15. Confirm Main increments to `6 / 10`.
+16. Complete Security Tape Assembly and save.
+17. Confirm Main increments to `7 / 10`.
+18. Complete Final Night Walk and save.
+19. Confirm Main increments to `8 / 10`.
+20. Complete Memory Echo and save.
+21. Confirm Main increments to `9 / 10`.
+22. Complete the Staff Room reveal and save.
+23. Confirm Main increments to `10 / 10`.
+24. Complete optional Broken High Score if available and save.
+25. Confirm Optional increments to `1 / 2`.
+26. Complete Prize Sort if available and save.
+27. Confirm Optional increments to `2 / 2`.
+28. Confirm optional games do not change Main.
 
 ## 9. Optional Broken High Score Test
 Run this after Cabinet Row is reachable. This content is optional and must not block the required route.
@@ -581,7 +839,7 @@ Run this after Prize Corner is reachable. This content is optional and must not 
 
 ## 11. Secret Counter Test
 1. Start a new memory.
-2. Confirm secrets begin at `0 / 4`.
+2. Confirm secrets begin at `0 / 5`.
 3. Trigger Broken Cabinet secret and save.
 4. Confirm secrets increase by 1.
 5. See post-reveal Owner Portrait text and save.
@@ -590,11 +848,44 @@ Run this after Prize Corner is reachable. This content is optional and must not 
 8. Confirm Employee 04 secret is counted.
 9. Solve Vendo's Memory Riddle with `MEMORY COLA`.
 10. Confirm Vendo riddle secret is counted.
-11. Confirm total secrets is `4 / 4`.
-12. Confirm Broken High Score is optional content and does not change the secret counter unless that is intentionally changed later.
-13. Confirm Prize Sort is optional content and does not change the secret counter unless that is intentionally changed later.
+11. Complete the optional post-reveal witness route.
+12. Confirm the witness route is counted as the fifth secret.
+13. Confirm Staff Records Chain is optional lore and does not change the secret counter unless that is intentionally changed later.
+14. Confirm Broken High Score is optional content and does not change the secret counter unless that is intentionally changed later.
+15. Confirm Prize Sort is optional content and does not change the secret counter unless that is intentionally changed later.
 
-## 12. Known Placeholders
+## 12. Expanded Save Compatibility Test
+1. Load an old save that does not include the new future flags.
+2. Confirm missing flags default safely to false:
+   `security_tape_assembly_started`
+   `security_tape_assembly_completed`
+   `static_service_run_started`
+   `static_service_run_completed`
+   `gus_static_run_anecdote_seen`
+   `final_night_walk_started`
+   `final_night_walk_completed`
+   `staff_door_final_walk_anecdote_seen`
+   `lost_shift_file_started`
+   `lost_shift_file_completed`
+   `staff_record_01_read`
+   `staff_record_02_read`
+   `staff_record_03_read`
+   `staff_records_chain_completed`
+   `witness_mira_heard`
+   `witness_gus_heard`
+   `witness_vendo_heard`
+   `witness_mr_byte_heard`
+   `witness_cabinet07_heard`
+   `witness_roxy_heard`
+   `witness_pip_heard`
+   `witness_route_completed`
+3. Confirm the save slot displays Main, Optional, Secrets, Signal, and Last Saved.
+4. Confirm old saves with Rockbyte Duel completed show Main at least `1 / 10`.
+5. Confirm old saves with Broken High Score completed show Optional at least `1 / 2`.
+6. Save again and reload.
+7. Confirm the expanded counters remain stable.
+
+## 13. Known Placeholders
 - Cutscene panel images under `res://assets/cutscenes/twist/` may be missing and should show placeholder panels.
 - Audio files may be missing; AudioManager should fail silently.
 - Visuals are placeholder shapes and labels.

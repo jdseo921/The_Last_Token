@@ -1,0 +1,142 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/SecurityTapeAssembly.gd" id="1"]
+
+[node name="SecurityTapeAssembly" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.022, 0.03, 1)
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 22.0
+offset_right = 592.0
+offset_bottom = 418.0
+
+[node name="TitleLabel" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 18.0
+offset_right = 520.0
+offset_bottom = 44.0
+theme_override_font_sizes/font_size = 20
+text = "SECURITY TAPE ASSEMBLY"
+horizontal_alignment = 1
+
+[node name="InstructionsLabel" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 42.0
+offset_top = 50.0
+offset_right = 502.0
+offset_bottom = 94.0
+theme_override_font_sizes/font_size = 12
+text = "Arrange the fragments in the order they happened.
+The tape is damaged, but not silent."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Fragments" type="VBoxContainer" parent="Panel"]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 104.0
+offset_right = 258.0
+offset_bottom = 264.0
+theme_override_constants/separation = 8
+
+[node name="FragmentA" type="Button" parent="Panel/Fragments"]
+layout_mode = 2
+text = "Fragment"
+
+[node name="FragmentB" type="Button" parent="Panel/Fragments"]
+layout_mode = 2
+text = "Fragment"
+
+[node name="FragmentC" type="Button" parent="Panel/Fragments"]
+layout_mode = 2
+text = "Fragment"
+
+[node name="FragmentD" type="Button" parent="Panel/Fragments"]
+layout_mode = 2
+text = "Fragment"
+
+[node name="SelectedTitle" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 296.0
+offset_top = 104.0
+offset_right = 508.0
+offset_bottom = 124.0
+theme_override_font_sizes/font_size = 12
+text = "RESTORED ORDER"
+horizontal_alignment = 1
+
+[node name="SelectedLabel" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 296.0
+offset_top = 130.0
+offset_right = 508.0
+offset_bottom = 220.0
+theme_override_font_sizes/font_size = 11
+text = "1. [empty]"
+autowrap_mode = 3
+
+[node name="HintLabel" type="Label" parent="Panel"]
+visible = false
+layout_mode = 0
+offset_left = 296.0
+offset_top = 224.0
+offset_right = 508.0
+offset_bottom = 266.0
+theme_override_font_sizes/font_size = 11
+text = "Hint: The counter went dark before Cabinet 07 stayed awake."
+autowrap_mode = 3
+
+[node name="Controls" type="HBoxContainer" parent="Panel"]
+layout_mode = 0
+offset_left = 124.0
+offset_top = 286.0
+offset_right = 420.0
+offset_bottom = 322.0
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="ResetButton" type="Button" parent="Panel/Controls"]
+layout_mode = 2
+text = "Reset"
+
+[node name="SubmitButton" type="Button" parent="Panel/Controls"]
+layout_mode = 2
+text = "Submit"
+
+[node name="StatusLabel" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 334.0
+offset_right = 496.0
+offset_bottom = 374.0
+theme_override_font_sizes/font_size = 12
+text = ""
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ReturnButton" type="Button" parent="Panel"]
+visible = false
+layout_mode = 0
+offset_left = 204.0
+offset_top = 374.0
+offset_right = 340.0
+offset_bottom = 404.0
+text = "Return"

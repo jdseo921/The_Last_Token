@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/ArcadeHub.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/QuestNotice.tscn" id="7"]
 [ext_resource type="PackedScene" path="res://scenes/common/MapTransition.tscn" id="8"]
 [ext_resource type="PackedScene" path="res://scenes/common/AnimatedAmbientProp.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ReadableNote.tscn" id="10"]
 
 [node name="ArcadeHub" type="Node2D"]
 script = ExtResource("1")
@@ -338,6 +339,11 @@ interactable_kind = "ticket_counter"
 label_text = "TICKET COUNTER"
 show_label = false
 use_placeholder_visual = false
+
+[node name="ClosingChecklist" parent="InteractableLayer" instance=ExtResource("10")]
+position = Vector2(220, 158)
+interactable_kind = "closing_checklist"
+label_text = "CHECKLIST"
 
 [node name="Gus" parent="InteractableLayer" instance=ExtResource("5")]
 position = Vector2(300, 130)

@@ -14,6 +14,7 @@ const PRIZE_SORT_ORDER := [
 @onready var dialogue_box: CanvasLayer = $UILayer/DialogueBox
 @onready var prompt_label: Label = $UILayer/InteractionPrompt
 @onready var prompt_background: ColorRect = $UILayer/InteractionPromptBackground
+@onready var quest_notice: CanvasLayer = $QuestNotice
 
 var pending_after_dialogue: Callable = Callable()
 var choice_box: CanvasLayer = null
@@ -75,12 +76,14 @@ func _handle_pip() -> void:
 	var was_pip_met := GameState.pip_met
 	GameState.pip_met = true
 	if _is_post_reveal():
+		var was_completed := _was_witness_route_completed()
 		GameState.pip_post_reveal_secret_seen = true
+		GameState.mark_witness_pip_heard()
 		start_dialogue([
 			{"speaker": "Pip", "text": "There you are."},
 			{"speaker": "Pip", "text": "Yep. Still not the original."},
 			{"speaker": "Pip", "text": "But you wave nicer now."},
-		])
+		], _get_witness_completion_callback(was_completed))
 		return
 	if not _is_prize_sort_completed() and _prize_sort_unlocked():
 		var lines := _get_optional_first_meeting_lines(was_pip_met)
@@ -205,6 +208,23 @@ func _is_prize_sort_completed() -> bool:
 
 func _is_post_reveal() -> bool:
 	return GameState.post_reveal_roam_unlocked or GameState.twist_reveal_seen
+
+func _was_witness_route_completed() -> bool:
+	return GameState.witness_route_completed or GameState.post_reveal_witness_route_completed
+
+func _get_witness_completion_callback(was_completed: bool) -> Callable:
+	if not was_completed and _was_witness_route_completed():
+		return Callable(self, "_show_witness_route_complete_notice")
+	return Callable()
+
+func _show_witness_route_complete_notice() -> void:
+	if quest_notice and quest_notice.has_method("show_custom_notification"):
+		quest_notice.call(
+			"show_custom_notification",
+			"QUEST COMPLETE",
+			"POST-REVEAL WITNESSES COMPLETE",
+			"Pixel Haven remembers you in pieces. Together, they almost make a person."
+		)
 
 func _apply_background_art() -> void:
 	var loaded := _apply_sprite_texture(background_art, BACKGROUND_ART_PATH)

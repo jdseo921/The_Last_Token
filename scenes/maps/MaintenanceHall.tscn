@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/MaintenanceHall.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="5"]
 [ext_resource type="PackedScene" path="res://scenes/arcade/HubInteractable.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://scenes/common/AnimatedAmbientProp.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ReadableNote.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/ui/QuestNotice.tscn" id="9"]
 
 [node name="MaintenanceHall" type="Node2D"]
 script = ExtResource("1")
@@ -80,6 +82,16 @@ idle_animation_enabled = false
 visual_scale = 1.1
 use_placeholder_visual = false
 
+[node name="MaintenanceNote" parent="InteractableLayer" instance=ExtResource("8")]
+position = Vector2(254, 166)
+interactable_kind = "maintenance_note"
+label_text = "NOTE"
+
+[node name="StaffRecord02" parent="InteractableLayer" instance=ExtResource("8")]
+position = Vector2(366, 250)
+interactable_kind = "staff_record_02"
+label_text = "RECORD 02"
+
 [node name="MaintenanceSync" parent="InteractableLayer" instance=ExtResource("6")]
 position = Vector2(478, 166)
 interactable_kind = "maintenance_sync"
@@ -143,3 +155,5 @@ text = ""
 horizontal_alignment = 1
 
 [node name="PauseMenu" parent="." instance=ExtResource("4")]
+
+[node name="QuestNotice" parent="." instance=ExtResource("9")]

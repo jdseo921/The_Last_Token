@@ -8,6 +8,7 @@ const BACKGROUND_ART_PATH := "res://assets/art/maps/cabinet_row/cabinet_row_back
 @onready var prompt_label: Label = $UILayer/InteractionPrompt
 @onready var prompt_background: ColorRect = $UILayer/InteractionPromptBackground
 @onready var truth_filter_glow: Polygon2D = $TruthFilterGlow
+@onready var quest_notice: CanvasLayer = $QuestNotice
 
 var pending_after_dialogue: Callable = Callable()
 
@@ -62,6 +63,10 @@ func handle_hub_interaction(interactable: Node, _player_node: Node = null) -> vo
 			_handle_roxy()
 		"broken_high_score":
 			_handle_broken_high_score()
+		"staff_schedule":
+			_handle_staff_schedule()
+		"staff_record_01":
+			_handle_staff_record_01()
 		_:
 			start_dialogue([{"speaker": "System", "text": "Nothing happens."}])
 
@@ -91,6 +96,21 @@ func _handle_mr_byte() -> void:
 			{"speaker": "Mr. Byte", "text": "Record conflict reduced. Identity conflict remains."},
 		])
 		return
+	if GameState.circuit_soda_completed and not GameState.lost_shift_file_completed and not GameState.story_puzzle_completed:
+		GameState.start_lost_shift_file()
+		start_dialogue([
+			{"speaker": "Mr. Byte", "text": "Staff schedule access: damaged but readable."},
+			{"speaker": "Mr. Byte", "text": "Machines refuse the name. Records retain the assignment."},
+			{"speaker": "Mr. Byte", "text": "Read the schedule near this kiosk."},
+		])
+		return
+	if GameState.lost_shift_file_completed and not GameState.maintenance_sync_completed and not GameState.story_puzzle_completed:
+		GameState.mr_byte_lost_shift_comment_seen = true
+		start_dialogue([
+			{"speaker": "Mr. Byte", "text": "Lost Shift File reconstructed."},
+			{"speaker": "Mr. Byte", "text": "Identity reference remains restricted."},
+		])
+		return
 	start_dialogue([
 		{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
 		{"speaker": "Mr. Byte", "text": "Identity conflict remains."},
@@ -117,11 +137,13 @@ func _handle_truth_filter() -> void:
 func _handle_roxy() -> void:
 	GameState.roxy_met = true
 	if _is_post_reveal():
+		var was_completed := _was_witness_route_completed()
+		GameState.mark_witness_roxy_heard()
 		start_dialogue([
 			{"speaker": "Roxy", "text": "So you were Employee 04."},
 			{"speaker": "Roxy", "text": "That explains the blank high score."},
 			{"speaker": "Roxy", "text": "Hard to rank a memory."},
-		])
+		], _get_witness_completion_callback(was_completed))
 		return
 	if GameState.broken_high_score_completed:
 		if not GameState.roxy_high_score_anecdote_seen:
@@ -154,6 +176,95 @@ func _handle_broken_high_score() -> void:
 	GameState.roxy_met = true
 	GameState.set_pending_spawn_id("Spawn_FromBrokenHighScore")
 	SceneChanger.go_to_broken_high_score()
+
+func _handle_staff_schedule() -> void:
+	if not GameState.circuit_soda_completed:
+		start_dialogue([
+			{"speaker": "Staff Schedule", "text": "The schedule screen is scrambled."},
+			{"speaker": "Staff Schedule", "text": "Mr. Byte has not unlocked staff records yet."},
+		])
+		return
+	var was_completed := GameState.lost_shift_file_completed
+	GameState.read_staff_schedule()
+	var lines: Array = [
+		{"speaker": "Staff Schedule", "text": "STAFF SCHEDULE"},
+		{"speaker": "Staff Schedule", "text": "Final Night"},
+		{"speaker": "Staff Schedule", "text": "Mira - Counter"},
+		{"speaker": "Staff Schedule", "text": "Gus - Maintenance"},
+		{"speaker": "Staff Schedule", "text": "Employee 04 - Cabinet shutdown"},
+		{"speaker": "Staff Schedule", "text": "Status: unresolved"},
+	]
+	lines.append_array(_get_lost_shift_completion_lines())
+	var after_dialogue := Callable(self, "_show_lost_shift_complete_notice") if not was_completed and GameState.lost_shift_file_completed else Callable()
+	start_dialogue(lines, after_dialogue)
+
+func _handle_staff_record_01() -> void:
+	if not GameState.lying_cabinets_completed:
+		start_dialogue([
+			{"speaker": "Staff Record", "text": "The record terminal is still filtering contradictions."},
+		])
+		return
+	var was_completed := GameState.staff_records_chain_completed
+	GameState.read_staff_record_01()
+	var lines: Array = [
+		{"speaker": "Staff Record", "text": "RESTORE SYSTEM NOTE"},
+		{"speaker": "Staff Record", "text": "Subject memory incomplete."},
+		{"speaker": "Staff Record", "text": "Do not repeat name until signal stabilizes."},
+	]
+	lines.append_array(_get_staff_records_completion_lines())
+	var after_dialogue := Callable(self, "_show_staff_records_complete_notice") if not was_completed and GameState.staff_records_chain_completed else Callable()
+	start_dialogue(lines, after_dialogue)
+
+func _get_lost_shift_completion_lines() -> Array:
+	if not GameState.lost_shift_file_completed:
+		return []
+	return [
+		{"speaker": "Quest", "text": "LOST SHIFT FILE COMPLETE"},
+		{"speaker": "Quest", "text": "Employee 04 was assigned to Cabinet shutdown."},
+	]
+
+func _show_lost_shift_complete_notice() -> void:
+	if quest_notice and quest_notice.has_method("show_custom_notification"):
+		quest_notice.call(
+			"show_custom_notification",
+			"QUEST COMPLETE",
+			"LOST SHIFT FILE COMPLETE",
+			"Employee 04 was assigned to Cabinet shutdown."
+		)
+
+func _get_staff_records_completion_lines() -> Array:
+	if not GameState.staff_records_chain_completed:
+		return []
+	return [
+		{"speaker": "Quest", "text": "STAFF RECORDS CHAIN COMPLETE"},
+		{"speaker": "Quest", "text": "The arcade knew the number before it knew the name."},
+	]
+
+func _show_staff_records_complete_notice() -> void:
+	if quest_notice and quest_notice.has_method("show_custom_notification"):
+		quest_notice.call(
+			"show_custom_notification",
+			"QUEST COMPLETE",
+			"STAFF RECORDS CHAIN COMPLETE",
+			"The arcade knew the number before it knew the name."
+		)
+
+func _was_witness_route_completed() -> bool:
+	return GameState.witness_route_completed or GameState.post_reveal_witness_route_completed
+
+func _get_witness_completion_callback(was_completed: bool) -> Callable:
+	if not was_completed and _was_witness_route_completed():
+		return Callable(self, "_show_witness_route_complete_notice")
+	return Callable()
+
+func _show_witness_route_complete_notice() -> void:
+	if quest_notice and quest_notice.has_method("show_custom_notification"):
+		quest_notice.call(
+			"show_custom_notification",
+			"QUEST COMPLETE",
+			"POST-REVEAL WITNESSES COMPLETE",
+			"Pixel Haven remembers you in pieces. Together, they almost make a person."
+		)
 
 func _is_post_reveal() -> bool:
 	return GameState.post_reveal_roam_unlocked or GameState.twist_reveal_seen

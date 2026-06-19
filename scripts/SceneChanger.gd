@@ -4,6 +4,9 @@ const ARCADE_HUB_SCENE := "res://scenes/arcade/ArcadeHub.tscn"
 const ROCKBYTE_DUEL_SCENE := "res://scenes/minigames/RockbyteDuel.tscn"
 const TRUTH_FILTER_SCENE := "res://scenes/minigames/TruthFilter.tscn"
 const CIRCUIT_SODA_SCENE := "res://scenes/minigames/CircuitSoda.tscn"
+const STATIC_SERVICE_RUN_SCENE := "res://scenes/minigames/StaticServiceRun.tscn"
+const SECURITY_TAPE_ASSEMBLY_SCENE := "res://scenes/minigames/SecurityTapeAssembly.tscn"
+const FINAL_NIGHT_WALK_SCENE := "res://scenes/minigames/FinalNightWalk.tscn"
 const BROKEN_HIGH_SCORE_SCENE := "res://scenes/minigames/BrokenHighScore.tscn"
 const SYNC_DOOR_PUZZLE_SCENE := "res://scenes/arcade/SyncDoorPuzzle.tscn"
 const STAFF_ROOM_SCENE := "res://scenes/arcade/StaffRoom.tscn"
@@ -39,6 +42,15 @@ func go_to_truth_filter() -> void:
 
 func go_to_circuit_soda() -> void:
 	change_scene(CIRCUIT_SODA_SCENE)
+
+func go_to_static_service_run() -> void:
+	change_scene(STATIC_SERVICE_RUN_SCENE)
+
+func go_to_security_tape_assembly() -> void:
+	change_scene(SECURITY_TAPE_ASSEMBLY_SCENE)
+
+func go_to_final_night_walk() -> void:
+	change_scene(FINAL_NIGHT_WALK_SCENE)
 
 func go_to_broken_high_score() -> void:
 	change_scene(BROKEN_HIGH_SCORE_SCENE)
