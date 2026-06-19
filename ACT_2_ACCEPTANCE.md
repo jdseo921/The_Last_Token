@@ -80,16 +80,35 @@
    - `But if it opens, part of you matched something it lost.`
    - `Door heard both knocks. Yours, and the one you forgot making.`
 37. Enter Staff Corridor and interact with Memory Echo.
-38. Confirm:
+38. Confirm `res://scenes/cutscenes/MemoryEcho.tscn` opens.
+39. Choose one wrong answer and confirm:
+   - `MEMORY SIGNAL SPIKED.`
+   - `TRY AGAIN.`
+40. Complete the three Memory Echo questions:
+   - `Maybe. I do not remember.`
+   - `Because I was not ready.`
+   - `Both, somehow.`
+41. Confirm completion text:
+   - `MEMORY ECHO STABILIZED.`
+   - `RESTORE PLAYBACK AVAILABLE.`
+42. Return to Staff Corridor.
+43. Interact with Memory Echo again and confirm:
    - `Echo stabilized.`
    - `The arcade stops arguing with itself.`
    - `That might be worse.`
-39. Save.
-40. Load.
-41. Confirm Truth Filter, Circuit Soda, Maintenance Sync, and all required anecdote flags persist.
-42. Confirm no full Employee 04 reveal happens during Act 2.
-43. Confirm Mira, Gus, Vendo, Mr. Byte, Cabinet 07, and Staff Door have Act 2 foreshadowing dialogue.
-44. Confirm the first quest still works from a clean New Memory.
+44. Interact with Memory Echo again and confirm shorter repeat lines appear.
+45. Save.
+46. Load.
+47. Confirm Truth Filter, Circuit Soda, Maintenance Sync, Memory Echo, and all required anecdote flags persist.
+48. Interact with the Staff Room door and confirm:
+   - `RESTORE PLAYBACK AVAILABLE.`
+   - `ENTER STAFF ROOM?`
+49. Force-enter Staff Room before Memory Echo on a separate debug/old-save check and confirm the terminal says:
+   - `RESTORE PLAYBACK LOCKED.`
+   - `MEMORY ECHO REQUIRED.`
+50. Confirm no full Employee 04 reveal happens before Memory Echo completion.
+51. Confirm Mira, Gus, Vendo, Mr. Byte, Cabinet 07, and Staff Door have Act 2 foreshadowing dialogue.
+52. Confirm the first quest still works from a clean New Memory.
 
 ## Pass Criteria
 - No script errors.
@@ -99,6 +118,7 @@
 - Truth Filter is required before Circuit Soda.
 - Circuit Soda is required after Truth Filter and before Maintenance Hall progression.
 - Maintenance Sync is required after Circuit Soda and before Staff Corridor access.
+- Memory Echo is required after Maintenance Sync and before Staff Room reveal playback.
 - Memory Signal visibly changes from `Uneasy` to `Fractured` to `Overloaded`.
 
 ## Known Pending Verification
@@ -107,4 +127,5 @@
 - Manual save/load after Truth Filter completion.
 - Manual save/load after Circuit Soda completion.
 - Manual save/load after Maintenance Sync completion.
+- Manual save/load after Memory Echo completion.
 - Full first quest regression after this Act 2 insertion.

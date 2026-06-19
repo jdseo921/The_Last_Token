@@ -145,7 +145,7 @@ func load_saved_scene_or_default(data: Dictionary) -> void:
 		SceneChanger.go_to_arcade_hub()
 		return
 	if scene_path == SceneChanger.STAFF_ROOM_SCENE:
-		if GameState.staff_room_unlocked and not GameState.twist_reveal_seen:
+		if GameState.memory_echo_completed and not GameState.twist_reveal_seen:
 			SceneChanger.change_scene(scene_path)
 			return
 		SceneChanger.go_to_arcade_hub()
@@ -168,7 +168,7 @@ func _get_current_save_scene_path() -> String:
 		return SceneChanger.ARCADE_HUB_SCENE
 	if scene_path.begins_with("res://scenes/cutscenes/"):
 		return SceneChanger.ARCADE_HUB_SCENE
-	if scene_path == SceneChanger.STAFF_ROOM_SCENE and (not GameState.staff_room_unlocked or GameState.twist_reveal_seen):
+	if scene_path == SceneChanger.STAFF_ROOM_SCENE and (not GameState.memory_echo_completed or GameState.twist_reveal_seen):
 		return SceneChanger.ARCADE_HUB_SCENE
 	if scene_path.is_empty():
 		return SceneChanger.ARCADE_HUB_SCENE

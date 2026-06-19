@@ -37,7 +37,7 @@ The route should feel like a compact mystery, not a stretched MVP. Every require
 8. Vendo owns Circuit Soda puzzle
 9. Gus owns Maintenance Sync puzzle
 10. Staff Corridor opens
-11. Memory Echo sequence
+11. Memory Echo dialogue-choice sequence
 12. Staff Room reveal
 13. Ending
 14. Post-Reveal Roam / secrets
@@ -50,7 +50,7 @@ The route should feel like a compact mystery, not a stretched MVP. Every require
 | 2 | Truth Filter | Mr. Byte | Cabinet Row | Truth Filter | Uneasy -> Fractured | Yes |
 | 3 | Circuit Soda | Vendo | Snack Alcove | Signal flow / drink routing puzzle | Fractured, deepens pressure | Yes |
 | 4 | Maintenance Sync | Gus | Maintenance Hall | Sync Door / two-signal puzzle | Fractured -> Overloaded | Yes |
-| 5 | Memory Echo | Staff Door / Arcade | Staff Corridor | Short observation sequence | Overloaded | Yes |
+| 5 | Memory Echo | Memory Echo | Staff Corridor | Dialogue-choice sequence | Overloaded | Yes |
 | 6 | Staff Room Reveal | Staff Room | Staff Room | Reveal slideshow / final choice prompt | Overloaded -> Restored | Yes |
 
 ## Optional Content Chain
@@ -148,11 +148,11 @@ Required sequence:
 - Staff Corridor.
 - Memory Echo.
 
-Possible interactions:
-- Staff notices with missing names.
-- Reflections that do not match the player.
-- Arcade sounds muffled behind the door.
-- One or two forced dialogue beats from the player.
+Implemented interaction:
+- Three short Memory Echo prompts.
+- Wrong choices spike the signal and retry the same prompt.
+- Correct choices stabilize the identity conflict without revealing Employee 04.
+- Completion unlocks Staff Room playback.
 
 ### Finale: Staff Room Reveal
 Memory Signal: Overloaded -> Restored
@@ -372,9 +372,10 @@ Use `EXPANDED_REQUIRED_ROUTE_ACCEPTANCE.md` as the live acceptance gate for the 
 
 The route must verify:
 - New Memory through Lost Token, Truth Filter, Circuit Soda, Maintenance Sync, Memory Echo, Staff Room reveal, and ending.
-- Save/load after Rockbyte, Truth Filter, Circuit Soda, Maintenance Sync, Memory Echo, and reveal.
+- Save/load after Lost Token, Truth Filter, Circuit Soda, Maintenance Sync, Memory Echo, and reveal.
 - Objective text always points to the next required owner and location.
 - Required owner completion anecdotes play once, then switch to shorter repeat lines.
+- Staff Room reveal cannot happen before Memory Echo completion.
 - Optional NPCs, optional minigames, and optional secrets are not required.
 - The route is meaningfully longer than the original MVP without feeling padded.
 

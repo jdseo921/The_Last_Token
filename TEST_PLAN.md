@@ -24,18 +24,20 @@
 - Current end-to-end acceptance gate: `EXPANDED_REQUIRED_ROUTE_ACCEPTANCE.md`.
 - Run this from a clean `New Memory` after the smaller Act 2 slice tests pass.
 - The route is:
-  1. Lost Token / Rockbyte Duel with Mira.
+  1. Opening intro and Lost Token / Rockbyte Duel with Mira.
   2. Truth Filter with Mr. Byte in Cabinet Row.
   3. Circuit Soda with Vendo in Snack Alcove.
   4. Maintenance Sync with Gus in Maintenance Hall.
-  5. Memory Echo in Staff Corridor.
-  6. Staff Room reveal and ending.
-- Save/load checkpoints are required after Rockbyte, Truth Filter, Circuit Soda, Maintenance Sync, Memory Echo, and the reveal.
+  5. Memory Echo dialogue-choice sequence in Staff Corridor.
+  6. Staff Room reveal, EndingPrompt, and Post-Reveal Roam.
+- Save/load checkpoints are required after Lost Token, Truth Filter, Circuit Soda, Maintenance Sync, Memory Echo, and the reveal.
 - Pass criteria:
   - No scene path errors.
+  - No missing GameState flags.
   - No save/load regression.
   - Objective text always points to the next required owner and location.
   - Each quest owner gives completion dialogue, then shorter repeat lines.
+  - Staff Room reveal cannot happen before Memory Echo completion.
   - Optional content is not required.
   - The expanded route feels longer than the original MVP without feeling padded.
 
@@ -245,13 +247,22 @@ Run this after Circuit Soda completion, when Memory Signal is still `Fractured`.
 22. Confirm the objective reads `Objective: Enter the Staff Corridor.`
 23. Confirm Staff Corridor unlocks.
 24. Enter Staff Corridor and interact with Memory Echo.
-25. Confirm:
+25. Confirm `res://scenes/cutscenes/MemoryEcho.tscn` opens.
+26. Choose one wrong answer and confirm:
+   `MEMORY SIGNAL SPIKED.`
+   `TRY AGAIN.`
+27. Complete the three Memory Echo questions.
+28. Confirm:
+   `MEMORY ECHO STABILIZED.`
+   `RESTORE PLAYBACK AVAILABLE.`
+29. Return to Staff Corridor and interact with Memory Echo again.
+30. Confirm:
    `Echo stabilized.`
    `The arcade stops arguing with itself.`
    `That might be worse.`
-26. Interact with Memory Echo again and confirm shorter repeat lines appear.
-27. Save and load.
-28. Confirm Maintenance Sync completion, Staff Corridor unlock, `gus_sync_anecdote_seen`, and `memory_echo_anecdote_seen` persist.
+31. Interact with Memory Echo again and confirm shorter repeat lines appear.
+32. Save and load.
+33. Confirm Maintenance Sync completion, Staff Corridor unlock, Memory Echo completion, `gus_sync_anecdote_seen`, and `memory_echo_anecdote_seen` persist.
 
 ## First Quest Vertical Slice Test
 This is the active quality gate before adding more NPCs, minigames, endings, story branches, combat, inventory, or cabinet games. Run this from `res://scenes/main/Main.tscn` in Godot.

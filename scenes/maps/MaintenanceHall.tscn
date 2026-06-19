@@ -96,7 +96,7 @@ target_spawn_id = "Spawn_FromMaintenanceHall"
 position = Vector2(606, 260)
 target_scene_path = "res://scenes/maps/StaffCorridor.tscn"
 target_spawn_id = "Spawn_FromMaintenanceHall"
-required_flag = "staff_room_unlocked"
+required_flag = "staff_corridor_unlocked"
 locked_dialogue = Array[String](["STAFF CORRIDOR LOCKED.", "SYNC DOOR ACCESS REQUIRED."])
 
 [node name="UILayer" type="Node2D" parent="."]

@@ -72,6 +72,23 @@
 			],
 			"memory_signal_after": "Overloaded"
 		},
+		"staff_corridor": {
+			"id": "staff_corridor",
+			"title": "Enter the Staff Corridor",
+			"owner": "Memory Echo",
+			"location": "Staff Corridor",
+			"summary": "Follow the Overloaded signal past the Staff Door.",
+			"details": "Gus stabilized the door, but the arcade is not ready to show the Staff Room yet. Something is echoing in the corridor.",
+			"minigame": "Memory Echo",
+			"required": true,
+			"starts_after": "maintenance_sync_completed",
+			"completion_dialogue": [
+				{"speaker": "Memory Echo", "text": "Echo stabilized."},
+				{"speaker": "Memory Echo", "text": "The arcade stops arguing with itself."},
+				{"speaker": "Memory Echo", "text": "That might be worse."}
+			],
+			"memory_signal_after": "Overloaded"
+		},
 		"broken_high_score": {
 			"id": "broken_high_score",
 			"title": "Broken High Score",

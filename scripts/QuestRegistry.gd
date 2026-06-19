@@ -20,8 +20,10 @@ static func get_active_main_quest_id() -> String:
 		return "circuit_soda"
 	if not GameState.story_puzzle_completed:
 		return "maintenance_sync"
+	if not GameState.memory_echo_completed:
+		return "staff_corridor"
 	if not GameState.twist_reveal_seen:
-		return "maintenance_sync"
+		return "staff_corridor"
 	return ""
 
 static func get_active_main_quest_data() -> Dictionary:
@@ -130,6 +132,23 @@ static func _fallback_quests() -> Dictionary:
 				{"speaker": "Gus", "text": "I do not like doors that listen."},
 				{"speaker": "Gus", "text": "But if it opens, part of you matched something it lost."},
 				{"speaker": "Gus", "text": "Door heard both knocks. Yours, and the one you forgot making."},
+			],
+			"memory_signal_after": "Overloaded",
+		},
+		"staff_corridor": {
+			"id": "staff_corridor",
+			"title": "Enter the Staff Corridor",
+			"owner": "Memory Echo",
+			"location": "Staff Corridor",
+			"summary": "Follow the Overloaded signal past the Staff Door.",
+			"details": "Gus stabilized the door, but the arcade is not ready to show the Staff Room yet. Something is echoing in the corridor.",
+			"minigame": "Memory Echo",
+			"required": true,
+			"starts_after": "maintenance_sync_completed",
+			"completion_dialogue": [
+				{"speaker": "Memory Echo", "text": "Echo stabilized."},
+				{"speaker": "Memory Echo", "text": "The arcade stops arguing with itself."},
+				{"speaker": "Memory Echo", "text": "That might be worse."},
 			],
 			"memory_signal_after": "Overloaded",
 		},

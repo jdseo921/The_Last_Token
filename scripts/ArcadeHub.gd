@@ -183,8 +183,10 @@ func _get_objective_hint_text() -> String:
 		return "Objective: Find Vendo in the Snack Alcove."
 	if GameState.lying_cabinets_completed and not GameState.story_puzzle_completed:
 		return "Objective: Find Gus in Maintenance Hall."
-	if GameState.story_puzzle_completed and GameState.staff_room_unlocked and not GameState.twist_reveal_seen:
+	if GameState.maintenance_sync_completed and not GameState.memory_echo_completed:
 		return "Objective: Enter the Staff Corridor."
+	if GameState.memory_echo_completed and not GameState.twist_reveal_seen:
+		return "Objective: Enter the Staff Room."
 	if GameState.twist_reveal_seen and not GameState.post_reveal_roam_unlocked:
 		return "Objective: Finish the memory."
 	if GameState.post_reveal_roam_unlocked:
@@ -323,6 +325,22 @@ func _handle_mira() -> void:
 			{"speaker": "Mira", "text": "That counts for something."},
 		])
 		return
+	if GameState.lost_token_quest_completed and not GameState.mira_rockbyte_anecdote_seen:
+		GameState.mira_rockbyte_anecdote_seen = true
+		start_dialogue([
+			{"speaker": "Mira", "text": "You brought it back.", "portrait": PORTRAIT_MIRA_WORRIED},
+			{"speaker": "Mira", "text": "That token used to be just a prize."},
+			{"speaker": "Mira", "text": "Then it became proof that part of you could still return."},
+			{"speaker": "Mira", "text": "It remembered you before you did."},
+		])
+		return
+	if GameState.memory_echo_completed and not GameState.twist_reveal_seen:
+		start_dialogue([
+			{"speaker": "Mira", "text": "If the Staff Room opens, do not rush past what it shows you.", "portrait": PORTRAIT_MIRA_WORRIED},
+			{"speaker": "Mira", "text": "You have already survived not knowing."},
+			{"speaker": "Mira", "text": "Now you have to survive remembering."},
+		])
+		return
 	if _can_show_act2_echo() and not GameState.echo_ticket_counter_seen:
 		start_dialogue(_get_ticket_counter_echo_lines())
 		return
@@ -371,15 +389,6 @@ func _handle_mira() -> void:
 		], Callable(self, "_complete_lost_token_with_mira_anecdote"))
 		return
 	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
-		if not GameState.mira_rockbyte_anecdote_seen:
-			GameState.mira_rockbyte_anecdote_seen = true
-			start_dialogue([
-				{"speaker": "Mira", "text": "You brought it back.", "portrait": PORTRAIT_MIRA_WORRIED},
-				{"speaker": "Mira", "text": "That token used to be just a prize."},
-				{"speaker": "Mira", "text": "Then it became proof that part of you could still return."},
-				{"speaker": "Mira", "text": "It remembered you before you did."},
-			])
-			return
 		start_dialogue(_select_repeat_dialogue("mira", [
 			[
 				{"speaker": "Mira", "text": "The token woke something."},
@@ -849,6 +858,13 @@ func _handle_cabinet_07() -> void:
 			{"speaker": "Cabinet 07", "text": "WELCOME BACK, EMPLOYEE 04.", "portrait": PORTRAIT_CABINET_07_SCREEN},
 			{"speaker": "Cabinet 07", "text": "PREVIOUS SESSION: CLOSED.", "portrait": PORTRAIT_CABINET_07_SCREEN},
 			{"speaker": "Cabinet 07", "text": "CURRENT SESSION: YOURS.", "portrait": PORTRAIT_CABINET_07_SCREEN},
+		])
+		return
+	if GameState.memory_echo_completed and not GameState.twist_reveal_seen:
+		start_dialogue([
+			{"speaker": "Cabinet 07", "text": "ECHO STABILIZED.", "portrait": PORTRAIT_CABINET_07_SCREEN},
+			{"speaker": "Cabinet 07", "text": "RESTORE PLAYBACK READY.", "portrait": PORTRAIT_CABINET_07_SCREEN},
+			{"speaker": "Cabinet 07", "text": "EMPLOYEE SIGNAL: NEAR-COMPLETE.", "portrait": PORTRAIT_CABINET_07_SCREEN},
 		])
 		return
 	if not GameState.lost_token_quest_started:

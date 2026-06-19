@@ -59,6 +59,12 @@ func _handle_terminal_interaction() -> void:
 			{"speaker": "Terminal", "text": "MEMORY LOOP CLOSED."},
 		], Callable(self, "_restore_player_control"))
 		return
+	if not GameState.memory_echo_completed:
+		_start_terminal_dialogue([
+			{"speaker": "Terminal", "text": "RESTORE PLAYBACK LOCKED."},
+			{"speaker": "Terminal", "text": "MEMORY ECHO REQUIRED."},
+		], Callable(self, "_restore_player_control"))
+		return
 	reveal_in_progress = true
 	_start_terminal_dialogue([
 		{"speaker": "Terminal", "text": "Employee file recovered."},

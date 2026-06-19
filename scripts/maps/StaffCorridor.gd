@@ -49,10 +49,23 @@ func handle_hub_interaction(interactable: Node, _player_node: Node = null) -> vo
 	match str(interactable.interactable_kind):
 		"memory_echo":
 			_handle_memory_echo()
+		"staff_room_door":
+			_handle_staff_room_door()
 		_:
 			start_dialogue([{"speaker": "System", "text": "Nothing happens."}])
 
 func _handle_memory_echo() -> void:
+	if not GameState.maintenance_sync_completed:
+		start_dialogue([
+			{"speaker": "Memory Echo", "text": "SIGNAL TOO QUIET."},
+			{"speaker": "Memory Echo", "text": "MAINTENANCE SYNC REQUIRED."},
+		])
+		return
+	if not GameState.memory_echo_completed:
+		GameState.start_memory_echo()
+		GameState.set_pending_spawn_id("Spawn_FromMemoryEcho")
+		SceneChanger.go_to_memory_echo()
+		return
 	if not GameState.memory_echo_anecdote_seen:
 		GameState.memory_echo_anecdote_seen = true
 		start_dialogue([
@@ -65,3 +78,21 @@ func _handle_memory_echo() -> void:
 		{"speaker": "Memory Echo", "text": "Echo stable."},
 		{"speaker": "Memory Echo", "text": "Quiet is not always better."},
 	])
+
+func _handle_staff_room_door() -> void:
+	if not GameState.memory_echo_completed:
+		start_dialogue([
+			{"speaker": "Staff Room Door", "text": "STAFF ROOM LOCKED."},
+			{"speaker": "Staff Room Door", "text": "MEMORY ECHO REQUIRED."},
+		])
+		return
+	if GameState.twist_reveal_seen:
+		start_dialogue([
+			{"speaker": "Staff Room Door", "text": "RESTORE PLAYBACK COMPLETE."},
+			{"speaker": "Staff Room Door", "text": "RETURN NOT REQUIRED."},
+		])
+		return
+	start_dialogue([
+		{"speaker": "Staff Room Door", "text": "RESTORE PLAYBACK AVAILABLE."},
+		{"speaker": "Staff Room Door", "text": "ENTER STAFF ROOM?"},
+	], Callable(SceneChanger, "go_to_staff_room"))

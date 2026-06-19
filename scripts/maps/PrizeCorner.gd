@@ -92,7 +92,6 @@ func _handle_pip() -> void:
 		lines.append_array([
 			{"speaker": "Pip", "text": "You are softer this time."},
 			{"speaker": "Pip", "text": "Less screaming."},
-			{"speaker": "Pip", "text": "Want to sort prizes by how old the memory feels?"},
 		])
 		start_dialogue(lines, Callable(self, "_start_prize_sort"))
 		return

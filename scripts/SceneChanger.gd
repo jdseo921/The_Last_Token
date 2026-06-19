@@ -7,6 +7,7 @@ const CIRCUIT_SODA_SCENE := "res://scenes/minigames/CircuitSoda.tscn"
 const BROKEN_HIGH_SCORE_SCENE := "res://scenes/minigames/BrokenHighScore.tscn"
 const SYNC_DOOR_PUZZLE_SCENE := "res://scenes/arcade/SyncDoorPuzzle.tscn"
 const STAFF_ROOM_SCENE := "res://scenes/arcade/StaffRoom.tscn"
+const MEMORY_ECHO_SCENE := "res://scenes/cutscenes/MemoryEcho.tscn"
 const TITLE_OR_MAIN_SCENE := "res://scenes/main/Main.tscn"
 const CABINET_ROW_SCENE := "res://scenes/maps/CabinetRow.tscn"
 const SNACK_ALCOVE_SCENE := "res://scenes/maps/SnackAlcove.tscn"
@@ -50,6 +51,9 @@ func go_to_maintenance_sync() -> void:
 
 func go_to_staff_room() -> void:
 	change_scene(STAFF_ROOM_SCENE)
+
+func go_to_memory_echo() -> void:
+	change_scene(MEMORY_ECHO_SCENE)
 
 func go_to_title_or_main() -> void:
 	change_scene(TITLE_OR_MAIN_SCENE)

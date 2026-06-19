@@ -85,6 +85,13 @@ func _handle_gus() -> void:
 			{"speaker": "Gus", "text": "Door heard both knocks. Yours, and the one you forgot making."},
 		])
 		return
+	if GameState.memory_echo_completed and not GameState.twist_reveal_seen:
+		start_dialogue([
+			{"speaker": "Gus", "text": "Hallway stopped buzzing."},
+			{"speaker": "Gus", "text": "That means it is either fixed or waiting."},
+			{"speaker": "Gus", "text": "I hate both options."},
+		])
+		return
 	start_dialogue([
 		{"speaker": "Gus", "text": "Door still listens."},
 		{"speaker": "Gus", "text": "Still hate that."},

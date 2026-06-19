@@ -34,6 +34,9 @@ var maintenance_sync_started := false
 var maintenance_sync_completed := false
 var story_puzzle_completed := false
 var staff_room_unlocked := false
+var staff_corridor_unlocked := false
+var memory_echo_started := false
+var memory_echo_completed := false
 var twist_reveal_seen := false
 var ending_seen := false
 var post_reveal_roam_unlocked := false
@@ -147,8 +150,10 @@ func get_story_phase_label_from_data(data: Dictionary) -> String:
 		return "Ending"
 	if bool(data.get("twist_reveal_seen", false)):
 		return "Truth Revealed"
-	if bool(data.get("staff_room_unlocked", false)):
+	if bool(data.get("memory_echo_completed", false)):
 		return "Staff Room"
+	if bool(data.get("staff_corridor_unlocked", false)):
+		return "Staff Corridor"
 	if bool(data.get("story_puzzle_completed", false)):
 		return "Sync Door Solved"
 	if bool(data.get("circuit_soda_completed", false)):
@@ -196,6 +201,9 @@ func reset_for_new_game() -> void:
 	maintenance_sync_completed = false
 	story_puzzle_completed = false
 	staff_room_unlocked = false
+	staff_corridor_unlocked = false
+	memory_echo_started = false
+	memory_echo_completed = false
 	twist_reveal_seen = false
 	ending_seen = false
 	post_reveal_roam_unlocked = false
@@ -301,6 +309,16 @@ func complete_maintenance_sync() -> void:
 	maintenance_sync_completed = true
 	story_puzzle_completed = true
 	staff_room_unlocked = true
+	staff_corridor_unlocked = true
+	update_memory_signal_from_progress()
+
+func start_memory_echo() -> void:
+	memory_echo_started = true
+	update_memory_signal_from_progress()
+
+func complete_memory_echo() -> void:
+	memory_echo_started = true
+	memory_echo_completed = true
 	update_memory_signal_from_progress()
 
 func complete_broken_high_score() -> void:
@@ -313,9 +331,13 @@ func complete_pip_secret() -> void:
 
 func unlock_staff_room() -> void:
 	staff_room_unlocked = true
+	staff_corridor_unlocked = true
 	update_memory_signal_from_progress()
 
 func mark_twist_reveal_seen() -> void:
+	staff_corridor_unlocked = true
+	memory_echo_started = true
+	memory_echo_completed = true
 	twist_reveal_seen = true
 	update_memory_signal_from_progress()
 
@@ -339,7 +361,9 @@ func get_current_quest_id() -> String:
 		return "circuit_soda"
 	if circuit_soda_completed and not maintenance_sync_completed and not story_puzzle_completed:
 		return "maintenance_sync"
-	if story_puzzle_completed and staff_room_unlocked and not twist_reveal_seen:
+	if maintenance_sync_completed and not memory_echo_completed:
+		return "staff_corridor"
+	if memory_echo_completed and not twist_reveal_seen:
 		return "enter_staff_room"
 	if twist_reveal_seen and not post_reveal_roam_unlocked:
 		return "finish_memory"
@@ -377,6 +401,13 @@ func get_current_quest_data() -> Dictionary:
 				"summary": "Help Gus stabilize the Staff Door signals.",
 				"details": "Vendo routed the signal, but the Staff Door still needs two unstable signals to line up. Gus says the door is listening for something doubled.",
 			}, "maintenance_sync")
+		"staff_corridor":
+			return _with_registry_quest_data({
+				"id": "staff_corridor",
+				"title": "Enter the Staff Corridor",
+				"summary": "Follow the Overloaded signal past the Staff Door.",
+				"details": "Gus stabilized the door, but the arcade is not ready to show the Staff Room yet. Something is echoing in the corridor.",
+			}, "staff_corridor")
 		"circuit_soda":
 			return _with_registry_quest_data({
 				"id": "circuit_soda",
@@ -394,10 +425,10 @@ func get_current_quest_data() -> Dictionary:
 		"enter_staff_room":
 			return _with_registry_quest_data({
 				"id": "enter_staff_room",
-				"title": "Enter the Staff Corridor",
-				"summary": "Enter the Staff Corridor.",
-				"details": "Both switches are active and the Staff Corridor is unlocked. I should go inside.",
-			}, "maintenance_sync")
+				"title": "Enter the Staff Room",
+				"summary": "Enter the Staff Room.",
+				"details": "The echo in the corridor stabilized. The Staff Room door is ready.",
+			}, "staff_corridor")
 		"finish_memory":
 			return {
 				"id": "finish_memory",
@@ -495,6 +526,9 @@ func to_save_data() -> Dictionary:
 		"maintenance_sync_completed": maintenance_sync_completed,
 		"story_puzzle_completed": story_puzzle_completed,
 		"staff_room_unlocked": staff_room_unlocked,
+		"staff_corridor_unlocked": staff_corridor_unlocked,
+		"memory_echo_started": memory_echo_started,
+		"memory_echo_completed": memory_echo_completed,
 		"twist_reveal_seen": twist_reveal_seen,
 		"ending_seen": ending_seen,
 		"post_reveal_roam_unlocked": post_reveal_roam_unlocked,
@@ -567,7 +601,14 @@ func apply_save_data(data: Dictionary) -> void:
 		maintenance_sync_started = true
 		maintenance_sync_completed = true
 	staff_room_unlocked = data.get("staff_room_unlocked", staff_room_unlocked)
+	staff_corridor_unlocked = bool(data.get("staff_corridor_unlocked", staff_room_unlocked or story_puzzle_completed))
+	memory_echo_started = bool(data.get("memory_echo_started", memory_echo_started))
+	memory_echo_completed = bool(data.get("memory_echo_completed", memory_echo_completed))
 	twist_reveal_seen = data.get("twist_reveal_seen", twist_reveal_seen)
+	if twist_reveal_seen:
+		staff_corridor_unlocked = true
+		memory_echo_started = true
+		memory_echo_completed = true
 	ending_seen = data.get("ending_seen", ending_seen)
 	post_reveal_roam_unlocked = data.get("post_reveal_roam_unlocked", post_reveal_roam_unlocked)
 	set_memory_signal_level(int(data.get("memory_signal_level", memory_signal_level)))
