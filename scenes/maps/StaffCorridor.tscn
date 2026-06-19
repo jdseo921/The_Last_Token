@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/StaffCorridor.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/common/MapTransition.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/arcade/HubInteractable.tscn" id="6"]
 
 [node name="StaffCorridor" type="Node2D"]
 script = ExtResource("1")
@@ -33,12 +35,29 @@ position = Vector2(320, 360)
 [node name="Player" parent="." instance=ExtResource("2")]
 position = Vector2(320, 360)
 
+[node name="InteractableLayer" type="Node2D" parent="."]
+
+[node name="MemoryEcho" parent="InteractableLayer" instance=ExtResource("6")]
+position = Vector2(320, 226)
+interactable_kind = "memory_echo"
+label_text = "MEMORY ECHO"
+show_label = false
+use_placeholder_visual = false
+flicker_enabled = true
+
 [node name="ReturnToMaintenanceHall" parent="." instance=ExtResource("3")]
 position = Vector2(320, 412)
 target_scene_path = "res://scenes/maps/MaintenanceHall.tscn"
 target_spawn_id = "Spawn_FromStaffCorridor"
 
+[node name="ReturnToArcadeHub" parent="." instance=ExtResource("3")]
+position = Vector2(34, 360)
+target_scene_path = "res://scenes/arcade/ArcadeHub.tscn"
+target_spawn_id = "Spawn_FromStaffCorridor"
+
 [node name="UILayer" type="Node2D" parent="."]
+
+[node name="DialogueBox" parent="UILayer" instance=ExtResource("5")]
 
 [node name="TitleLabel" type="Label" parent="UILayer"]
 position = Vector2(24, 20)
@@ -66,6 +85,12 @@ size = Vector2(140, 20)
 theme_override_font_sizes/font_size = 10
 text = "STAFF ROOM"
 horizontal_alignment = 1
+
+[node name="HubReturnLabel" type="Label" parent="UILayer"]
+position = Vector2(46, 338)
+size = Vector2(120, 20)
+theme_override_font_sizes/font_size = 10
+text = "ARCADE HUB"
 
 [node name="InteractionPromptBackground" type="ColorRect" parent="UILayer"]
 visible = false

@@ -13,7 +13,8 @@
 			"completion_dialogue": [
 				{"speaker": "Mira", "text": "You brought it back."},
 				{"speaker": "Mira", "text": "That token used to be just a prize."},
-				{"speaker": "Mira", "text": "Then it became proof that part of you could still return."}
+				{"speaker": "Mira", "text": "Then it became proof that part of you could still return."},
+				{"speaker": "Mira", "text": "It remembered you before you did."}
 			],
 			"memory_signal_after": "Uneasy"
 		},
@@ -22,32 +23,34 @@
 			"title": "Truth Filter",
 			"owner": "Mr. Byte",
 			"location": "Cabinet Row",
-			"summary": "Meet Mr. Byte in Cabinet Row and open the Truth Filter.",
-			"details": "The Lost Token woke a memory, but the arcade is still filtering the truth. Mr. Byte can open the Truth Filter from Cabinet Row.",
+			"summary": "Find Mr. Byte in Cabinet Row and open the Truth Filter.",
+			"details": "The Lost Token woke something. Now the arcade has to decide which memories are true. Mr. Byte can open the Truth Filter in Cabinet Row.",
 			"minigame": "Truth Filter",
 			"required": true,
 			"starts_after": "lost_token_quest_completed",
 			"completion_dialogue": [
 				{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
 				{"speaker": "Mr. Byte", "text": "Contradictions remain."},
-				{"speaker": "Mr. Byte", "text": "That means the memory is alive enough to argue."}
+				{"speaker": "Mr. Byte", "text": "That means the memory is alive enough to argue."},
+				{"speaker": "Mr. Byte", "text": "Record conflict reduced. Identity conflict remains."}
 			],
 			"memory_signal_after": "Fractured"
 		},
 		"circuit_soda": {
 			"id": "circuit_soda",
-			"title": "Circuit Soda",
+			"title": "Route the Signal",
 			"owner": "Vendo",
 			"location": "Snack Alcove",
-			"summary": "Route the fractured Memory Signal through Vendo's machine.",
-			"details": "Vendo claims the player's signal is being routed through the wrong channels. Circuit Soda should stabilize the fractured signal before the staff systems will trust it.",
+			"summary": "Help Vendo stabilize the memory signal.",
+			"details": "The Truth Filter recovered a second fragment, but the signal is still misrouted. Vendo says the arcade can move a memory through the wrong machine and still recognize the flavor.",
 			"minigame": "Circuit Soda",
 			"required": true,
 			"starts_after": "lying_cabinets_completed",
 			"completion_dialogue": [
 				{"speaker": "Vendo", "text": "Signal routed."},
 				{"speaker": "Vendo", "text": "You successfully became beverage-adjacent data."},
-				{"speaker": "Vendo", "text": "I would offer a receipt, but the printer remembers too much."}
+				{"speaker": "Vendo", "text": "I would offer a receipt, but the printer remembers too much."},
+				{"speaker": "Vendo", "text": "Your label is still missing, but the machine knows what shelf you go on."}
 			],
 			"memory_signal_after": "Fractured"
 		},
@@ -56,15 +59,16 @@
 			"title": "Maintenance Sync",
 			"owner": "Gus",
 			"location": "Maintenance Hall",
-			"summary": "Stabilize the two signals needed by the Staff Door.",
-			"details": "Gus says the Staff Door listens for two stable signals. The maintenance system needs both signals active before the Staff Room can open.",
+			"summary": "Help Gus stabilize the Staff Door signals.",
+			"details": "Vendo routed the signal, but the Staff Door still needs two unstable signals to line up. Gus says the door is listening for something doubled.",
 			"minigame": "Maintenance Sync",
 			"required": true,
 			"starts_after": "circuit_soda_completed",
 			"completion_dialogue": [
 				{"speaker": "Gus", "text": "Door's listening now."},
 				{"speaker": "Gus", "text": "I do not like doors that listen."},
-				{"speaker": "Gus", "text": "But if it opens, part of you matched something it lost."}
+				{"speaker": "Gus", "text": "But if it opens, part of you matched something it lost."},
+				{"speaker": "Gus", "text": "Door heard both knocks. Yours, and the one you forgot making."}
 			],
 			"memory_signal_after": "Overloaded"
 		},
@@ -80,7 +84,8 @@
 			"starts_after": "rockbyte_duel_completed",
 			"completion_dialogue": [
 				{"speaker": "Roxy", "text": "Huh. Your score came back."},
-				{"speaker": "Roxy", "text": "That usually does not happen after a reset."}
+				{"speaker": "Roxy", "text": "That usually does not happen after a reset."},
+				{"speaker": "Roxy", "text": "Do not let it go to your head. You still walk like a tutorial."}
 			],
 			"memory_signal_after": "No Change"
 		},
@@ -95,8 +100,8 @@
 			"required": false,
 			"starts_after": "lying_cabinets_completed",
 			"completion_dialogue": [
-				{"speaker": "Pip", "text": "Prizes remember hands."},
-				{"speaker": "Pip", "text": "Yours feel familiar."}
+				{"speaker": "Pip", "text": "Prizes sorted."},
+				{"speaker": "Pip", "text": "Some rewards remember their owner before the owner remembers them."}
 			],
 			"memory_signal_after": "No Change"
 		}

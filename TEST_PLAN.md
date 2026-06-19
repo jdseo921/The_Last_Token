@@ -20,6 +20,25 @@
 9. Export a local Windows build outside the repo or into an ignored build folder.
 10. Do not commit generated `.exe`, `.pck`, or large build output files.
 
+## Expanded Required Route Acceptance
+- Current end-to-end acceptance gate: `EXPANDED_REQUIRED_ROUTE_ACCEPTANCE.md`.
+- Run this from a clean `New Memory` after the smaller Act 2 slice tests pass.
+- The route is:
+  1. Lost Token / Rockbyte Duel with Mira.
+  2. Truth Filter with Mr. Byte in Cabinet Row.
+  3. Circuit Soda with Vendo in Snack Alcove.
+  4. Maintenance Sync with Gus in Maintenance Hall.
+  5. Memory Echo in Staff Corridor.
+  6. Staff Room reveal and ending.
+- Save/load checkpoints are required after Rockbyte, Truth Filter, Circuit Soda, Maintenance Sync, Memory Echo, and the reveal.
+- Pass criteria:
+  - No scene path errors.
+  - No save/load regression.
+  - Objective text always points to the next required owner and location.
+  - Each quest owner gives completion dialogue, then shorter repeat lines.
+  - Optional content is not required.
+  - The expanded route feels longer than the original MVP without feeling padded.
+
 ## Live Runtime QA Result
 - Requested live route: Title Menu through Post-Reveal Roam save/load.
 - Result: blocked before step 1 in this environment.
@@ -80,8 +99,9 @@
 ### Case D - Quest Completed
 - Static result: expected pass.
 - Mira's token-return dialogue still calls `GameState.complete_lost_token_quest`.
-- `lost_token_quest_completed`, `lost_token_collected`, and `rockbyte_duel_completed` are saved and restored.
-- Loading after completion should make `GameState.get_current_quest_id()` return `check_staff_door`, with objective `Objective: Check the Staff Door.`
+- Talking to Mira again after completion should show the one-time Rockbyte anecdote, then shorter repeat lines after `mira_rockbyte_anecdote_seen`.
+- `lost_token_quest_completed`, `lost_token_collected`, `rockbyte_duel_completed`, and `mira_rockbyte_anecdote_seen` are saved and restored.
+- Loading after completion should make `GameState.get_current_quest_id()` return `truth_filter`, with objective `Objective: Find Mr. Byte in Cabinet Row.`
 - Because `rockbyte_duel_completed` persists, Cabinet 07 should not replay as incomplete.
 - Live result: still needs manual confirmation.
 
@@ -105,19 +125,58 @@ Run this only after confirming the first quest still works.
 
 1. Complete the Lost Token quest.
 2. Confirm Memory Signal reads `Uneasy`.
-3. Confirm the objective reads `Objective: Find the Truth Filter.`
-4. Interact with Staff Door and confirm it blocks until Truth Filter is cleared.
-5. Interact with the `TRUTH FILTER` cabinet.
-6. Confirm `res://scenes/minigames/TruthFilter.tscn` opens.
-7. Confirm instructions, rule text, three cabinet statements, and choice buttons are readable.
-8. Pick one wrong answer and confirm retry works without hard-fail.
-9. Complete all four rounds.
-10. Confirm `lying_cabinets_completed` and `second_memory_fragment_collected` are true.
-11. Confirm Memory Signal reads `Fractured`.
-12. Return to ArcadeHub.
-13. Save and load.
-14. Confirm Truth Filter completion and Memory Signal persist.
-15. Confirm Staff Door now routes to Sync Door.
+3. Confirm the objective reads `Objective: Find Mr. Byte in Cabinet Row.`
+4. Go to Cabinet Row.
+5. Talk to Mr. Byte and confirm:
+   - `Contradiction threshold reached.`
+   - `Truth Filter is ready.`
+   - `Please choose the least broken answer.`
+6. Interact with the `TRUTH FILTER` cabinet.
+7. Confirm `res://scenes/minigames/TruthFilter.tscn` opens.
+8. Confirm instructions, rule text, three cabinet statements, and choice buttons are readable.
+9. Pick one wrong answer and confirm retry works without hard-fail.
+10. Complete all four rounds.
+11. Confirm `lying_cabinets_completed` and `second_memory_fragment_collected` are true.
+12. Confirm Memory Signal reads `Fractured`.
+13. Return to Cabinet Row or ArcadeHub cleanly.
+14. Confirm the objective reads `Objective: Find Vendo in the Snack Alcove.`
+15. Talk to Mr. Byte and confirm the first-time anecdote:
+   - `Truth Filter passed.`
+   - `Contradictions remain.`
+   - `That means the memory is alive enough to argue.`
+   - `Record conflict reduced. Identity conflict remains.`
+16. Talk to Mr. Byte again and confirm shorter repeat lines appear.
+17. Save and load.
+18. Confirm Truth Filter completion, Memory Signal, and `mr_byte_truth_filter_anecdote_seen` persist.
+
+## Act 2 Circuit Soda Test
+Run this after Truth Filter completion, when Memory Signal is `Fractured`.
+
+1. Go to Snack Alcove.
+2. Talk to Vendo.
+3. Confirm Vendo introduces:
+   - `Memory Signal: Fractured.`
+   - `Your signal is going everywhere except where it should.`
+   - `Luckily, I am a licensed beverage-adjacent routing system.`
+4. Interact with the Circuit Soda machine.
+5. Confirm `res://scenes/minigames/CircuitSoda.tscn` opens.
+6. Rotate tiles in the 3x3 grid.
+7. Confirm an incomplete route shows `Signal still misrouted.`
+8. Complete all three rounds.
+9. Confirm completion text:
+   - `MEMORY FLOW RESTORED.`
+   - `CARBONATION LEVEL: UNRELATED.`
+   - `IDENTITY SIGNAL ROUTED.`
+10. Return to Snack Alcove.
+11. Talk to Vendo and confirm:
+   - `Signal routed.`
+   - `You successfully became beverage-adjacent data.`
+   - `I would offer a receipt, but the printer remembers too much.`
+   - `Your label is still missing, but the machine knows what shelf you go on.`
+12. Talk to Vendo again and confirm shorter repeat lines appear.
+13. Confirm the objective reads `Objective: Find Gus in Maintenance Hall.`
+14. Save and load.
+15. Confirm `circuit_soda_completed` and `vendo_circuit_anecdote_seen` persist.
 
 ## Act 2 Aftermath Echo Test
 Run this after Truth Filter completion and before entering the Staff Room reveal.
@@ -127,8 +186,8 @@ Run this after Truth Filter completion and before entering the Staff Room reveal
 3. Talk to Mira and confirm Fractured-state dialogue or the ticket counter echo appears.
 4. Interact with the Ticket Counter and confirm the reflection echo appears if it has not already been seen.
 5. Talk to Gus and confirm he warns not to pick the loudest memory.
-6. Talk to Vendo and confirm `Memory Signal: Fractured.` appears.
-7. Talk to Mr. Byte and confirm `Truth Filter passed.` appears.
+6. Talk to Vendo and confirm `Signal routed.` appears after Circuit Soda completion.
+7. Talk to Mr. Byte in Cabinet Row and confirm `Truth Filter passed.` appears after Truth Filter completion.
 8. Talk to Cabinet 07 and confirm its normal Fractured-state dialogue appears.
 9. Confirm Cabinet 07's optional echo appears once:
    `PREVIOUS PLAYER PROFILE FOUND.`
@@ -138,38 +197,61 @@ Run this after Truth Filter completion and before entering the Staff Room reveal
 11. Interact with Staff Door and confirm:
    `FRACTURED SIGNAL ACCEPTED.`
    `TWO-SIGNAL SYNC REQUIRED.`
-12. Confirm Staff Door routes to Sync Door after the dialogue.
+12. Confirm Staff Door does not bypass the required Vendo and Gus route.
 13. Save and load.
 14. Confirm the echo flags do not replay if already seen.
 
-## Sync Door: Two Signals Test
-Run this after Truth Filter completion, when Memory Signal is `Fractured`.
+## Maintenance Sync: Gus Required Quest Test
+Run this after Circuit Soda completion, when Memory Signal is still `Fractured`.
 
-1. Enter Sync Door from the Staff Door.
-2. Confirm title reads `SYNC DOOR: TWO SIGNALS`.
-3. Confirm instructions say:
-   `Two switches must be active together.`
-   `Fractured signals do not stay stable for long.`
-   `Watch the signal labels before pressing.`
-4. Phase 1: activate Switch A and Switch B within 5 seconds.
-5. Confirm Phase 2 begins and displays `WARNING: ONE LABEL IS REVERSED.`
-6. Phase 2: observe Switch A label is reversed, then activate both real switches.
-7. Confirm Phase 3 begins.
-8. Phase 3: activate A, then B, then press `Confirm Sync` before either expires.
-9. Let the timer expire once if practical and confirm:
-   `SIGNAL LOST.`
-   `TRY AGAIN.`
-10. Complete Phase 3 successfully.
-11. Confirm success text:
+1. Go to Maintenance Hall.
+2. Talk to Gus and confirm:
+   `Truth got filtered, soda got routed, and somehow I am still the janitor.`
+   `Maintenance Hall is next.`
+   `Two signals are fighting in the door.`
+3. Confirm `res://scenes/arcade/SyncDoorPuzzle.tscn` opens as Maintenance Sync.
+4. Confirm title reads `MAINTENANCE SYNC`.
+5. Confirm instructions say:
+   `MAINTENANCE SYNC`
+   `Two signals must be active together.`
+   `One signal remembers.`
+   `One signal returns.`
+6. Phase 1: activate Switch A and Switch B within 5 seconds.
+7. Confirm Phase 2 begins and displays `WARNING: ONE LABEL IS REVERSED.`
+8. Phase 2: observe Switch A label is reversed, then activate both real switches.
+9. Confirm Phase 3 begins.
+10. Phase 3: activate A, then B, then press `Confirm Sync` before either expires.
+11. Let the timer expire once if practical and confirm:
+   `Signal lost.`
+   `Try again.`
+12. Complete Phase 3 successfully.
+13. Confirm success text:
    `TWO SIGNALS DETECTED.`
    `RESTORED SIGNAL PRESENT.`
    `MEMORY SIGNAL: OVERLOADED.`
    `ACCESS GRANTED.`
-12. Confirm `GameState.story_puzzle_completed` is true.
-13. Confirm `GameState.staff_room_unlocked` is true.
-14. Return to ArcadeHub.
-15. Save and load.
-16. Confirm Staff Room remains unlocked and Sync Door solved state persists.
+14. Confirm `GameState.maintenance_sync_started` is true.
+15. Confirm `GameState.maintenance_sync_completed` is true.
+16. Confirm `GameState.story_puzzle_completed` is true.
+17. Confirm `GameState.staff_room_unlocked` is true.
+18. Confirm Memory Signal reads `Overloaded`.
+19. Return to Maintenance Hall.
+20. Talk to Gus and confirm:
+   `Door's listening now.`
+   `I do not like doors that listen.`
+   `But if it opens, part of you matched something it lost.`
+   `Door heard both knocks. Yours, and the one you forgot making.`
+21. Talk to Gus again and confirm shorter repeat lines appear.
+22. Confirm the objective reads `Objective: Enter the Staff Corridor.`
+23. Confirm Staff Corridor unlocks.
+24. Enter Staff Corridor and interact with Memory Echo.
+25. Confirm:
+   `Echo stabilized.`
+   `The arcade stops arguing with itself.`
+   `That might be worse.`
+26. Interact with Memory Echo again and confirm shorter repeat lines appear.
+27. Save and load.
+28. Confirm Maintenance Sync completion, Staff Corridor unlock, `gus_sync_anecdote_seen`, and `memory_echo_anecdote_seen` persist.
 
 ## First Quest Vertical Slice Test
 This is the active quality gate before adding more NPCs, minigames, endings, story branches, combat, inventory, or cabinet games. Run this from `res://scenes/main/Main.tscn` in Godot.
@@ -242,14 +324,14 @@ Pass condition: every step above passes in a live Godot playthrough. If any step
 8. Vendo riddle works and saves: static pass; riddle flag is set, saved, loaded, and counted as a secret.
 9. Rockbyte Duel works and saves completion: static pass; win sets Rockbyte completion and Lost Token flags.
 10. Mira accepts Lost Token: static pass; Mira completion handler sets quest completion.
-11. Staff Door gating works: static pass; route checks Lost Token and puzzle/staff flags.
-12. Sync Door works and unlocks Staff Room: static pass; puzzle success sets `story_puzzle_completed` and unlocks Staff Room.
+11. Staff Door gating works: static pass; route checks required puzzle and Staff Corridor flags.
+12. Maintenance Sync works and unlocks Staff Corridor: static pass; puzzle success sets `story_puzzle_completed` and unlocks the route toward Staff Room.
 13. Staff Room reveal plays all 8 slides: static pass; StaffRoom passes 8 slide entries to SlideshowCutscene.
 14. EndingPrompt appears: static pass; StaffRoom instantiates EndingPrompt after reveal completion.
 15. Save and Continue returns to ArcadeHub: static pass; EndingPrompt marks post-reveal, saves active slot when present, and changes to ArcadeHub.
 16. Post-Reveal Roam dialogue appears: static pass; ArcadeHub branches on post-reveal/twist state.
 17. Post-reveal save/load works: static pass; SaveManager preserves post-reveal flags and restores safely to ArcadeHub.
-18. Completion counters are correct: static pass; only Rockbyte Duel, Sync Door, and reveal count as games.
+18. Completion counters are correct: static pass; Rockbyte Duel, Circuit Soda, Maintenance Sync, and reveal count as games.
 19. Secret counters are correct: static pass; only the four explicit secret flags count.
 20. Missing art/audio does not crash game: static pass by script behavior; live confirmation still required.
 
@@ -267,9 +349,9 @@ Pass condition: every step above passes in a live Godot playthrough. If any step
 - Save/load data includes story flags, NPC flags, secret flags, counters, story phase, active slot metadata, and current scene.
 - Loading a valid save clears the current `GameState`, applies the selected slot's `GameState`, sets `active_slot_id`, and restores a valid saved scene or falls back to ArcadeHub.
 - StaffRoom saves made after post-reveal roam normalize back to ArcadeHub, preventing restore into the reveal room after the ending.
-- Mira, Cabinet 07, Rockbyte Duel, Staff Door, Sync Door Puzzle, StaffRoom terminal, slideshow reveal, EndingPrompt, and post-reveal ArcadeHub dialogue all have connected script paths for the required MVP route.
+- Mira, Cabinet 07, Rockbyte Duel, Truth Filter, Circuit Soda, Maintenance Sync, Staff Corridor, StaffRoom terminal, slideshow reveal, EndingPrompt, and post-reveal ArcadeHub dialogue all have connected script paths for the required expanded route.
 - Vendo's riddle flag is saved, loaded, and counted as a secret.
-- Completion counters match the intended totals: games `0-3 / 3`, secrets `0-4 / 4`.
+- Completion counters match the intended totals: games `0-4 / 4`, secrets `0-4 / 4`.
 - SlideshowCutscene handles missing panel images with placeholder UI and emits `cutscene_finished` once.
 - Save and Continue marks ending/post-reveal state, saves when an active slot exists, and returns to ArcadeHub.
 
@@ -287,38 +369,43 @@ Pass condition: every step above passes in a live Godot playthrough. If any step
 - Live runtime result: not completed in this shell because Godot is unavailable.
 - Current expected status: playable end-to-end after live Godot verification confirms no editor/runtime-only issues.
 
-### Exact Final MVP Path
+### Exact Expanded Required Path
 1. Launch game.
 2. Confirm Title Menu appears.
 3. New Memory -> Slot 1.
 4. Confirm ArcadeHub loads.
 5. Move player.
 6. Talk to Mira and start the Lost Token quest.
-7. Talk to Gus, Vendo, Mr. Byte, Cabinet 07, Owner Portrait, and Broken Cabinet.
-8. Play Vendo riddle once wrong and once correctly.
-9. Interact with Cabinet 07.
-10. Complete Rockbyte Duel.
-11. Return to ArcadeHub.
-12. Talk to Mira and complete Lost Token quest.
-13. Save at Memory Terminal.
-14. Return to Title or relaunch.
-15. Restore Slot 1.
-16. Confirm quest state persists.
-17. Interact with Staff Door.
-18. Complete Sync Door Puzzle.
-19. Return to ArcadeHub.
-20. Enter Staff Room.
-21. Interact with Employee 04 file before reveal.
-22. Interact with terminal.
-23. Advance through all 8 reveal slides.
-24. Confirm EndingPrompt appears.
-25. Choose Save and Continue.
-26. Confirm ArcadeHub loads in Post-Reveal Roam.
-27. Talk to all post-reveal NPCs.
-28. Save again.
-29. Return to Title.
-30. Restore Slot 1.
-31. Confirm post-reveal state persists.
+7. Interact with Cabinet 07.
+8. Complete Rockbyte Duel.
+9. Return to ArcadeHub.
+10. Save/load and confirm Rockbyte state persists.
+11. Talk to Mira and complete Lost Token quest.
+12. Confirm the objective points to Cabinet Row / Mr. Byte.
+13. Complete Truth Filter in Cabinet Row.
+14. Confirm Memory Signal becomes `Fractured`.
+15. Save/load and confirm Truth Filter state persists.
+16. Confirm the objective points to Snack Alcove / Vendo.
+17. Complete Circuit Soda in Snack Alcove.
+18. Save/load and confirm Circuit Soda state persists.
+19. Confirm the objective points to Maintenance Hall / Gus.
+20. Complete Maintenance Sync in Maintenance Hall.
+21. Confirm Memory Signal becomes `Overloaded`.
+22. Confirm Staff Corridor unlocks.
+23. Save/load and confirm Maintenance Sync state persists.
+24. Complete Memory Echo in Staff Corridor.
+25. Save/load and confirm Memory Echo state persists.
+26. Enter Staff Room.
+27. Interact with Employee 04 file before reveal.
+28. Interact with terminal.
+29. Advance through all reveal slides.
+30. Confirm EndingPrompt appears.
+31. Choose Save and Continue.
+32. Confirm ArcadeHub loads in Post-Reveal Roam.
+33. Save again.
+34. Return to Title.
+35. Restore Slot 1.
+36. Confirm post-reveal state persists.
 
 ## 1. Launch and Title Menu Test
 1. Launch the project.
@@ -353,15 +440,19 @@ Pass condition: every step above passes in a live Godot playthrough. If any step
 
 ## 4. Main Story Path Test
 1. Talk to Mira and start the Lost Token quest.
-2. Talk to Gus, Vendo, Mr. Byte, Broken Cabinet, and Owner Portrait.
-3. Interact with Cabinet 07.
-4. Complete Rockbyte Duel.
-5. Return to ArcadeHub.
-6. Talk to Mira and return the Lost Token.
-7. Interact with Staff Door.
-8. Complete Sync Door Puzzle.
-9. Return to ArcadeHub.
-10. Interact with Staff Door again and confirm Staff Room loads.
+2. Interact with Cabinet 07.
+3. Complete Rockbyte Duel.
+4. Return to ArcadeHub.
+5. Talk to Mira and return the Lost Token.
+6. Confirm the objective points to Cabinet Row / Mr. Byte.
+7. Complete Truth Filter.
+8. Confirm the objective points to Snack Alcove / Vendo.
+9. Complete Circuit Soda.
+10. Confirm the objective points to Maintenance Hall / Gus.
+11. Complete Maintenance Sync.
+12. Confirm Staff Corridor unlocks.
+13. Complete Memory Echo.
+14. Enter Staff Room.
 
 ## 5. Staff Room Reveal Test
 1. In Staff Room, interact with the Employee 04 file before the reveal.
@@ -399,16 +490,85 @@ Pass condition: every step above passes in a live Godot playthrough. If any step
 
 ## 8. Completion Counter Test
 1. Start a new memory.
-2. Confirm games completed begins at `0 / 3`.
+2. Confirm games completed begins at `0 / 4`.
 3. Complete Rockbyte Duel and save.
-4. Confirm games completed is `1 / 3`.
-5. Complete Sync Door Puzzle and save.
-6. Confirm games completed is `2 / 3`.
-7. Complete the reveal and save.
-8. Confirm games completed is `3 / 3`.
-9. Confirm Lost Token quest completion does not count as a game.
+4. Confirm games completed is `1 / 4`.
+5. Complete Circuit Soda and save.
+6. Confirm games completed is `2 / 4`.
+7. Complete Maintenance Sync and save.
+8. Confirm games completed is `3 / 4`.
+9. Complete the reveal and save.
+10. Confirm games completed is `4 / 4`.
+11. Confirm Lost Token quest completion, Truth Filter completion, and Memory Echo do not count as games.
 
-## 9. Secret Counter Test
+## 9. Optional Broken High Score Test
+Run this after Cabinet Row is reachable. This content is optional and must not block the required route.
+
+1. Go to Cabinet Row.
+2. Talk to Roxy and confirm:
+   `Finally. Player Two showed up.`
+   `You look like someone who loses to menus.`
+   `Try the Broken High Score cabinet.`
+   `The screen lies, but badly.`
+3. Interact with the Broken High Score cabinet.
+4. Confirm `res://scenes/minigames/BrokenHighScore.tscn` opens.
+5. Confirm instructions say:
+   `BROKEN HIGH SCORE`
+   `The target says 9999.`
+   `Some digits are broken.`
+   `Reach the real score.`
+6. Press `+10 Score` until score reaches at least `99`.
+7. Confirm completion text:
+   `PREVIOUS SCORE FOUND.`
+   `EMPLOYEE 04 — 000000.`
+   `RECORD RESTORED.`
+8. Return to Cabinet Row.
+9. Talk to Roxy and confirm:
+   `Huh. Your score came back.`
+   `That usually does not happen after a reset.`
+   `Do not let it go to your head. You still walk like a tutorial.`
+10. Talk to Roxy again and confirm shorter repeat lines appear.
+11. Save and load.
+12. Confirm `roxy_met`, `broken_high_score_completed`, and `roxy_high_score_anecdote_seen` persist.
+13. Continue the required route and confirm Staff Corridor and Staff Room are still reachable without completing Broken High Score on a separate save.
+14. After the reveal, return to Roxy and confirm:
+   `So you were Employee 04.`
+   `That explains the blank high score.`
+   `Hard to rank a memory.`
+
+## 10. Optional Prize Sort Test
+Run this after Prize Corner is reachable. This content is optional and must not block the required route.
+
+1. Go to Prize Corner.
+2. Talk to Pip before Lost Token completion if practical and confirm:
+   `Hi! I am a legally distinct prize animal.`
+   `I am filled with cotton and confidential information.`
+3. After Lost Token completion, talk to Pip and confirm:
+   `You used to want the blue one.`
+   `You never had enough tickets.`
+4. After Truth Filter completion, talk to Pip and confirm:
+   `You are softer this time.`
+   `Less screaming.`
+5. Confirm Prize Sort opens with:
+   `Arrange the prizes from oldest memory to newest memory.`
+6. Choose the correct order:
+   `Ticket Stub`
+   `Lost Token`
+   `Blank Employee Badge`
+7. Confirm completion text:
+   `Prizes sorted.`
+   `Some rewards remember their owner before the owner remembers them.`
+8. Save and load.
+9. Confirm `pip_met`, `prize_sort_completed`, and `pip_post_reveal_secret_seen` save/load correctly at their relevant checkpoints.
+10. Continue the required route on a separate save and confirm Prize Sort is not required for Staff Corridor, Staff Room, reveal, or ending.
+11. After the reveal, return to Pip and confirm:
+   `There you are.`
+   `Yep. Still not the original.`
+   `But you wave nicer now.`
+12. Save and load.
+13. Confirm `pip_post_reveal_secret_seen` persists.
+
+## 11. Secret Counter Test
 1. Start a new memory.
 2. Confirm secrets begin at `0 / 4`.
 3. Trigger Broken Cabinet secret and save.
@@ -420,8 +580,10 @@ Pass condition: every step above passes in a live Godot playthrough. If any step
 9. Solve Vendo's Memory Riddle with `MEMORY COLA`.
 10. Confirm Vendo riddle secret is counted.
 11. Confirm total secrets is `4 / 4`.
+12. Confirm Broken High Score is optional content and does not change the secret counter unless that is intentionally changed later.
+13. Confirm Prize Sort is optional content and does not change the secret counter unless that is intentionally changed later.
 
-## 10. Known Placeholders
+## 12. Known Placeholders
 - Cutscene panel images under `res://assets/cutscenes/twist/` may be missing and should show placeholder panels.
 - Audio files may be missing; AudioManager should fail silently.
 - Visuals are placeholder shapes and labels.

@@ -98,11 +98,6 @@ position = Vector2(34, 260)
 target_scene_path = "res://scenes/maps/CabinetRow.tscn"
 target_spawn_id = "Spawn_FromSnackAlcove"
 
-[node name="ToPrizeCorner" parent="." instance=ExtResource("3")]
-position = Vector2(606, 260)
-target_scene_path = "res://scenes/maps/PrizeCorner.tscn"
-target_spawn_id = "Spawn_FromSnackAlcove"
-
 [node name="UILayer" type="Node2D" parent="."]
 
 [node name="DialogueBox" parent="UILayer" instance=ExtResource("5")]

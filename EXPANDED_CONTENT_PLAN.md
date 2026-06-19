@@ -280,15 +280,23 @@ Story purpose:
 
 Completion reward:
 - Previous score restored.
-- Optional lore line about Employee 04's blank record.
+- Optional lore line about Employee 04's blank score record.
 
 Completion anecdote:
-> "High score came back. Name did not. That is either tragic or excellent branding."
+- "Huh. Your score came back."
+- "That usually does not happen after a reset."
+- "Do not let it go to your head. You still walk like a tutorial."
 
 Memory Signal effect:
 - No required state change. Can add optional Fractured/Restored dialogue variants.
 
 Required or optional: Optional
+
+Acceptance notes:
+- Real target is `99`; fake target display remains `9999`.
+- Completion saves `broken_high_score_completed`.
+- Roxy's completion anecdote saves `roxy_high_score_anecdote_seen`.
+- This content must not block Staff Corridor, Staff Room, reveal, or ending.
 
 ### Prize Counter Secret
 Quest giver: Pip
@@ -303,16 +311,27 @@ Story purpose:
 - Foreshadow that tokens, prizes, and staff records were once connected.
 
 Completion reward:
-- Optional secret flag.
+- Prize Sort completion flag.
 - A small post-reveal line or memory object reference.
 
 Completion anecdote:
-> "Funny thing about prizes. The cheap ones remember who wanted them."
+- "Prizes sorted."
+- "Some rewards remember their owner before the owner remembers them."
 
 Memory Signal effect:
 - No required state change.
 
 Required or optional: Optional
+
+Prize Sort order:
+1. Ticket Stub
+2. Lost Token
+3. Blank Employee Badge
+
+Acceptance notes:
+- Completion saves `prize_sort_completed`.
+- Pip's post-reveal callback saves `pip_post_reveal_secret_seen`.
+- This content must not block Staff Corridor, Staff Room, reveal, or ending.
 
 ### Owner Portrait Chain
 Quest giver: Owner Portrait / environment
@@ -347,6 +366,17 @@ Every required game or puzzle must end with:
 - Save/load preserving the new state.
 
 The player should never finish a puzzle and wonder why it mattered.
+
+## Expanded Route Acceptance Gate
+Use `EXPANDED_REQUIRED_ROUTE_ACCEPTANCE.md` as the live acceptance gate for the required expanded route.
+
+The route must verify:
+- New Memory through Lost Token, Truth Filter, Circuit Soda, Maintenance Sync, Memory Echo, Staff Room reveal, and ending.
+- Save/load after Rockbyte, Truth Filter, Circuit Soda, Maintenance Sync, Memory Echo, and reveal.
+- Objective text always points to the next required owner and location.
+- Required owner completion anecdotes play once, then switch to shorter repeat lines.
+- Optional NPCs, optional minigames, and optional secrets are not required.
+- The route is meaningfully longer than the original MVP without feeling padded.
 
 ## Expansion Gates
 Before adding each major piece:

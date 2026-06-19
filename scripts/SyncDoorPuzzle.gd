@@ -160,7 +160,7 @@ func _complete_puzzle() -> void:
 
 func _signal_lost() -> void:
 	_play_audio("play_error")
-	status_label.text = "SIGNAL LOST.\nTRY AGAIN."
+	status_label.text = "Signal lost.\nTry again."
 	_reset_switches()
 	confirm_sync_button.visible = false
 	confirm_sync_button.disabled = true

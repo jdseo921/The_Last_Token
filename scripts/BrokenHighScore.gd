@@ -79,6 +79,7 @@ func _refresh_score() -> void:
 
 func _on_exit_pressed() -> void:
 	_play_audio("play_ui_confirm")
+	GameState.set_pending_spawn_id("Spawn_FromBrokenHighScore")
 	SceneChanger.go_to_cabinet_row()
 
 func _play_audio(method_name: String) -> void:

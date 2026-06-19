@@ -65,18 +65,17 @@ func _handle_vendo() -> void:
 	GameState.vendo_intro_seen = true
 	if not GameState.lying_cabinets_completed:
 		start_dialogue([
-			{"speaker": "Vendo", "text": "Circuit Soda unavailable."},
-			{"speaker": "Vendo", "text": "Please acquire one fractured identity signal first."},
+			{"speaker": "Vendo", "text": "SNACK ALCOVE LOCKED."},
+			{"speaker": "Vendo", "text": "TRUTH FILTER REQUIRED."},
 		])
 		return
 	if not GameState.circuit_soda_completed:
 		GameState.start_circuit_soda()
 		start_dialogue([
-			{"speaker": "Vendo", "text": "CIRCUIT SODA"},
-			{"speaker": "Vendo", "text": "Rotate the pipes."},
-			{"speaker": "Vendo", "text": "Connect Memory Input to Restore Output."},
-			{"speaker": "Vendo", "text": "Do not spill identity."},
-		], Callable(self, "_go_to_circuit_soda"))
+			{"speaker": "Vendo", "text": "Memory Signal: Fractured."},
+			{"speaker": "Vendo", "text": "Your signal is going everywhere except where it should."},
+			{"speaker": "Vendo", "text": "Luckily, I am a licensed beverage-adjacent routing system."},
+		])
 		return
 	if not GameState.vendo_circuit_anecdote_seen:
 		GameState.vendo_circuit_anecdote_seen = true
@@ -84,17 +83,18 @@ func _handle_vendo() -> void:
 			{"speaker": "Vendo", "text": "Signal routed."},
 			{"speaker": "Vendo", "text": "You successfully became beverage-adjacent data."},
 			{"speaker": "Vendo", "text": "I would offer a receipt, but the printer remembers too much."},
+			{"speaker": "Vendo", "text": "Your label is still missing, but the machine knows what shelf you go on."},
 		])
 		return
 	start_dialogue([
-		{"speaker": "Vendo", "text": "Signal remains routed."},
-		{"speaker": "Vendo", "text": "Fractured signal stabilized. Refreshingly unsettling."},
+		{"speaker": "Vendo", "text": "Signal routed."},
+		{"speaker": "Vendo", "text": "Still not a drink."},
 	])
 
 func _handle_circuit_soda() -> void:
 	if not GameState.lying_cabinets_completed:
 		start_dialogue([
-			{"speaker": "Circuit Soda", "text": "MEMORY INPUT MISSING."},
+			{"speaker": "Circuit Soda", "text": "SNACK ALCOVE LOCKED."},
 			{"speaker": "Circuit Soda", "text": "TRUTH FILTER REQUIRED."},
 		])
 		return

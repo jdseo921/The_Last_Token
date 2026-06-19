@@ -178,13 +178,13 @@ func _get_objective_hint_text() -> String:
 	if GameState.rockbyte_duel_completed and not GameState.lost_token_quest_completed:
 		return "Objective: Return the Lost Token to Mira."
 	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
-		return "Objective: Go to Cabinet Row. Talk to Mr. Byte."
+		return "Objective: Find Mr. Byte in Cabinet Row."
 	if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
-		return "Objective: Go to Snack Alcove. Talk to Vendo."
+		return "Objective: Find Vendo in the Snack Alcove."
 	if GameState.lying_cabinets_completed and not GameState.story_puzzle_completed:
-		return "Objective: Go to Maintenance Hall. Talk to Gus."
+		return "Objective: Find Gus in Maintenance Hall."
 	if GameState.story_puzzle_completed and GameState.staff_room_unlocked and not GameState.twist_reveal_seen:
-		return "Objective: Enter the Staff Room."
+		return "Objective: Enter the Staff Corridor."
 	if GameState.twist_reveal_seen and not GameState.post_reveal_roam_unlocked:
 		return "Objective: Finish the memory."
 	if GameState.post_reveal_roam_unlocked:
@@ -365,20 +365,26 @@ func _handle_mira() -> void:
 	if GameState.lost_token_collected and not GameState.lost_token_quest_completed:
 		start_dialogue([
 			{"speaker": "Player", "text": "I found the Lost Token. It felt like it already belonged to me.", "portrait": PORTRAIT_PLAYER_NEUTRAL},
-			{"speaker": "Mira", "text": "You brought it back.", "portrait": PORTRAIT_MIRA_WORRIED},
-			{"speaker": "Mira", "text": "That token used to be just a prize."},
-			{"speaker": "Mira", "text": "Then it became proof that part of you could still return."},
-			{"speaker": "Mira", "text": "The token woke something."},
+			{"speaker": "Mira", "text": "The token woke something.", "portrait": PORTRAIT_MIRA_WORRIED},
 			{"speaker": "Mira", "text": "Now the arcade has to decide which memories are true."},
-			{"speaker": "Mira", "text": "Mr. Byte can open the Truth Filter."},
+			{"speaker": "Mira", "text": "Mr. Byte can open the Truth Filter in Cabinet Row."},
 		], Callable(self, "_complete_lost_token_with_mira_anecdote"))
 		return
 	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
+		if not GameState.mira_rockbyte_anecdote_seen:
+			GameState.mira_rockbyte_anecdote_seen = true
+			start_dialogue([
+				{"speaker": "Mira", "text": "You brought it back.", "portrait": PORTRAIT_MIRA_WORRIED},
+				{"speaker": "Mira", "text": "That token used to be just a prize."},
+				{"speaker": "Mira", "text": "Then it became proof that part of you could still return."},
+				{"speaker": "Mira", "text": "It remembered you before you did."},
+			])
+			return
 		start_dialogue(_select_repeat_dialogue("mira", [
 			[
 				{"speaker": "Mira", "text": "The token woke something."},
 				{"speaker": "Mira", "text": "Now the arcade has to decide which memories are true."},
-				{"speaker": "Mira", "text": "Mr. Byte can open the Truth Filter."},
+				{"speaker": "Mira", "text": "Mr. Byte can open the Truth Filter in Cabinet Row."},
 			],
 			[
 				{"speaker": "Mira", "text": "Memory Signal feels different now.", "portrait": PORTRAIT_MIRA_WORRIED},
@@ -444,7 +450,6 @@ func _handle_mira() -> void:
 	]))
 
 func _complete_lost_token_with_mira_anecdote() -> void:
-	GameState.mira_rockbyte_anecdote_seen = true
 	GameState.complete_lost_token_quest()
 
 func _handle_ticket_counter() -> void:
@@ -935,7 +940,7 @@ func _handle_staff_door() -> void:
 		start_dialogue([
 			{"speaker": "Staff Door", "text": "ACCESS GRANTED."},
 			{"speaker": "Staff Door", "text": "EMPLOYEE SIGNAL ACCEPTED."},
-		], Callable(SceneChanger, "go_to_staff_room"))
+		], Callable(SceneChanger, "go_to_staff_corridor"))
 		return
 	if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
 		start_dialogue([

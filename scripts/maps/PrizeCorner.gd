@@ -80,11 +80,9 @@ func _handle_pip() -> void:
 			{"speaker": "Pip", "text": "There you are."},
 			{"speaker": "Pip", "text": "Yep. Still not the original."},
 			{"speaker": "Pip", "text": "But you wave nicer now."},
-			{"speaker": "Pip", "text": "Still not the original."},
-			{"speaker": "Pip", "text": "Still worth talking to."},
 		])
 		return
-	if not GameState.pip_secret_completed and _prize_sort_unlocked():
+	if not _is_prize_sort_completed() and _prize_sort_unlocked():
 		var lines: Array = []
 		if not was_pip_met:
 			lines.append_array([
@@ -98,7 +96,7 @@ func _handle_pip() -> void:
 		])
 		start_dialogue(lines, Callable(self, "_start_prize_sort"))
 		return
-	if GameState.pip_secret_completed:
+	if _is_prize_sort_completed():
 		_show_pip_prize_completion_dialogue()
 		return
 	if GameState.lost_token_quest_completed:
@@ -120,7 +118,7 @@ func _handle_pip() -> void:
 	])
 
 func _handle_prize_counter() -> void:
-	if GameState.pip_secret_completed:
+	if _is_prize_sort_completed():
 		start_dialogue([
 			{"speaker": "Prize Counter", "text": "The prize labels are neatly sorted."},
 			{"speaker": "Prize Counter", "text": "Ticket Stub. Lost Token. Blank Employee Badge."},
@@ -164,7 +162,7 @@ func _on_prize_sort_choice_selected(index: int) -> void:
 	if index < 0 or index >= prize_sort_remaining.size():
 		_finish_failed_prize_sort()
 		return
-	var selected_item := prize_sort_remaining[index]
+	var selected_item: String = str(prize_sort_remaining[index])
 	prize_sort_selected.append(selected_item)
 	prize_sort_remaining.remove_at(index)
 	if prize_sort_selected.size() < PRIZE_SORT_ORDER.size():
@@ -180,13 +178,13 @@ func _show_pip_prize_completion_dialogue() -> void:
 	if not GameState.pip_prize_anecdote_seen:
 		GameState.pip_prize_anecdote_seen = true
 		start_dialogue([
-			{"speaker": "Pip", "text": "Prizes remember hands."},
-			{"speaker": "Pip", "text": "Yours feel familiar."},
+			{"speaker": "Pip", "text": "Prizes sorted."},
+			{"speaker": "Pip", "text": "Some rewards remember their owner before the owner remembers them."},
 		])
 		return
 	start_dialogue([
 		{"speaker": "Pip", "text": "Prizes sorted."},
-		{"speaker": "Pip", "text": "Familiar hands. Familiar order."},
+		{"speaker": "Pip", "text": "Ticket Stub. Lost Token. Blank Employee Badge."},
 	])
 
 func _finish_failed_prize_sort() -> void:
@@ -204,6 +202,9 @@ func _on_prize_sort_choice_cancelled() -> void:
 
 func _prize_sort_unlocked() -> bool:
 	return GameState.lying_cabinets_completed or _is_post_reveal()
+
+func _is_prize_sort_completed() -> bool:
+	return GameState.prize_sort_completed or GameState.pip_secret_completed
 
 func _is_post_reveal() -> bool:
 	return GameState.post_reveal_roam_unlocked or GameState.twist_reveal_seen

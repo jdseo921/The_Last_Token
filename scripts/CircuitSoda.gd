@@ -27,9 +27,9 @@ const ROUNDS: Array[Dictionary] = [
 		"input": Vector2i(0, 1),
 		"output": Vector2i(2, 1),
 		"tiles": [
-			{"shape": "blocker", "rot": 0}, {"shape": "corner", "rot": 0}, {"shape": "blocker", "rot": 0},
+			{"shape": "corner", "rot": 0}, {"shape": "straight", "rot": 0}, {"shape": "corner", "rot": 1},
 			{"shape": "straight", "rot": 0}, {"shape": "straight", "rot": 0}, {"shape": "straight", "rot": 0},
-			{"shape": "blocker", "rot": 0}, {"shape": "corner", "rot": 2}, {"shape": "blocker", "rot": 0},
+			{"shape": "corner", "rot": 3}, {"shape": "straight", "rot": 0}, {"shape": "corner", "rot": 2},
 		],
 	},
 	{
@@ -124,8 +124,9 @@ func _on_tile_pressed(index: int) -> void:
 	moves_this_round += 1
 	if moves_this_round >= 4:
 		hint_button.disabled = false
-	status_label.text = "Pipe rotated. Identity containment acceptable."
 	_refresh_grid()
+	if not _has_connected_path():
+		status_label.text = "Signal still misrouted."
 	_check_win()
 
 func _reset_round() -> void:

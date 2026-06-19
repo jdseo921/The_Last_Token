@@ -36,13 +36,17 @@ polygon = PackedVector2Array(270, 88, 370, 88, 370, 172, 270, 172)
 color = Color(0.14, 0.34, 0.62, 1)
 polygon = PackedVector2Array(118, 104, 182, 104, 182, 172, 118, 172)
 
-[node name="BrokenHighScorePlaceholder" type="Polygon2D" parent="."]
+[node name="DecorativeCabinetPlaceholder" type="Polygon2D" parent="."]
 color = Color(0.18, 0.17, 0.22, 1)
-polygon = PackedVector2Array(444, 104, 508, 104, 508, 172, 444, 172)
+polygon = PackedVector2Array(396, 104, 448, 104, 448, 172, 396, 172)
 
 [node name="RoxyPlaceholder" type="Polygon2D" parent="."]
-color = Color(0.44, 0.16, 0.34, 1)
-polygon = PackedVector2Array(520, 118, 574, 118, 574, 174, 520, 174)
+color = Color(0.58, 0.18, 0.46, 1)
+polygon = PackedVector2Array(444, 244, 500, 244, 512, 312, 432, 312)
+
+[node name="BrokenHighScorePlaceholder" type="Polygon2D" parent="."]
+color = Color(0.28, 0.24, 0.34, 1)
+polygon = PackedVector2Array(462, 78, 536, 78, 536, 170, 462, 170)
 
 [node name="AmbientCabinetRowFlicker" parent="." instance=ExtResource("7")]
 position = Vector2(320, 132)
@@ -51,14 +55,6 @@ intensity = 0.06
 speed = 0.55
 prop_size = Vector2(520, 84)
 prop_color = Color(0.25, 0.68, 1, 0.08)
-
-[node name="AmbientRoxyAreaGlow" parent="." instance=ExtResource("7")]
-position = Vector2(548, 146)
-effect_type = "glow_pulse"
-intensity = 0.05
-speed = 0.5
-prop_size = Vector2(86, 64)
-prop_color = Color(0.95, 0.28, 0.7, 0.08)
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
 position = Vector2(320, 314)
@@ -73,7 +69,7 @@ position = Vector2(572, 254)
 position = Vector2(320, 258)
 
 [node name="Spawn_FromBrokenHighScore" type="Marker2D" parent="."]
-position = Vector2(476, 254)
+position = Vector2(500, 248)
 
 [node name="Player" parent="." instance=ExtResource("2")]
 position = Vector2(320, 314)
@@ -97,18 +93,20 @@ use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="Roxy" parent="InteractableLayer" instance=ExtResource("6")]
-position = Vector2(548, 166)
+position = Vector2(472, 292)
 interactable_kind = "roxy"
 label_text = "ROXY"
 idle_sheet_path = "res://assets/art/characters/roxy/roxy_idle_sheet.png"
-use_placeholder_visual = true
+visual_scale = 1.05
 idle_bob_enabled = true
+flicker_enabled = true
 
 [node name="BrokenHighScore" parent="InteractableLayer" instance=ExtResource("6")]
-position = Vector2(476, 158)
+position = Vector2(500, 158)
 interactable_kind = "broken_high_score"
-label_text = "BROKEN HIGH SCORE"
+label_text = "BROKEN SCORE"
 use_placeholder_visual = false
+flicker_enabled = true
 
 [node name="ReturnToArcadeHub" parent="." instance=ExtResource("3")]
 position = Vector2(320, 406)
@@ -119,6 +117,8 @@ target_spawn_id = "Spawn_FromCabinetRow"
 position = Vector2(606, 254)
 target_scene_path = "res://scenes/maps/SnackAlcove.tscn"
 target_spawn_id = "Spawn_FromCabinetRow"
+required_flag = "lying_cabinets_completed"
+locked_dialogue = Array[String](["SNACK ALCOVE LOCKED.", "TRUTH FILTER REQUIRED."])
 
 [node name="UILayer" type="Node2D" parent="."]
 
@@ -134,7 +134,7 @@ text = "CABINET ROW"
 position = Vector2(24, 48)
 size = Vector2(390, 42)
 theme_override_font_sizes/font_size = 10
-text = "Mr. Byte owns the Truth Filter. Roxy watches the Broken High Score cabinet."
+text = "Mr. Byte owns the Truth Filter. Other cabinets sleep in the dark."
 autowrap_mode = 3
 
 [node name="MrByteLabel" type="Label" parent="UILayer"]
@@ -151,16 +151,23 @@ theme_override_font_sizes/font_size = 10
 text = "TRUTH FILTER"
 horizontal_alignment = 1
 
+[node name="DecorativeCabinetLabel" type="Label" parent="UILayer"]
+position = Vector2(362, 178)
+size = Vector2(120, 20)
+theme_override_font_sizes/font_size = 10
+text = "INACTIVE"
+horizontal_alignment = 1
+
 [node name="BrokenHighScoreLabel" type="Label" parent="UILayer"]
-position = Vector2(404, 178)
-size = Vector2(124, 20)
+position = Vector2(450, 178)
+size = Vector2(116, 20)
 theme_override_font_sizes/font_size = 10
 text = "BROKEN SCORE"
 horizontal_alignment = 1
 
 [node name="RoxyLabel" type="Label" parent="UILayer"]
-position = Vector2(536, 178)
-size = Vector2(72, 20)
+position = Vector2(420, 318)
+size = Vector2(104, 20)
 theme_override_font_sizes/font_size = 10
 text = "ROXY"
 horizontal_alignment = 1

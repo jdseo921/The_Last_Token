@@ -3,6 +3,7 @@ extends Area2D
 @export var target_scene_path: String = ""
 @export var target_spawn_id: String = "Spawn_Default"
 @export var required_flag: String = ""
+@export var locked_message: Array[String] = []
 @export var locked_dialogue: Array[String] = []
 @export var auto_transition_on_body_entered := true
 
@@ -43,16 +44,17 @@ func _required_flag_is_met() -> bool:
 
 func _show_locked_dialogue() -> void:
 	var lines: Array = []
-	if locked_dialogue.is_empty():
+	var message_lines := locked_dialogue if not locked_dialogue.is_empty() else locked_message
+	if message_lines.is_empty():
 		lines.append({"speaker": "System", "text": "The path is locked."})
 	else:
-		for text in locked_dialogue:
+		for text in message_lines:
 			lines.append({"speaker": "System", "text": text})
 	var host := _find_dialogue_host()
 	if host != null and host.has_method("start_dialogue"):
 		host.call("start_dialogue", lines)
 	else:
-		push_warning("MapTransition locked: %s" % str(locked_dialogue))
+		push_warning("MapTransition locked: %s" % str(message_lines))
 
 func _find_dialogue_host() -> Node:
 	var cursor: Node = self

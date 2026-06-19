@@ -82,6 +82,7 @@ func _handle_gus() -> void:
 			{"speaker": "Gus", "text": "Door's listening now."},
 			{"speaker": "Gus", "text": "I do not like doors that listen."},
 			{"speaker": "Gus", "text": "But if it opens, part of you matched something it lost."},
+			{"speaker": "Gus", "text": "Door heard both knocks. Yours, and the one you forgot making."},
 		])
 		return
 	start_dialogue([
@@ -105,8 +106,9 @@ func _handle_maintenance_sync() -> void:
 	_go_to_maintenance_sync()
 
 func _go_to_maintenance_sync() -> void:
+	GameState.start_maintenance_sync()
 	GameState.set_pending_spawn_id("Spawn_FromMaintenanceSync")
-	SceneChanger.go_to_sync_door_puzzle()
+	SceneChanger.go_to_maintenance_sync()
 
 func _apply_background_art() -> void:
 	var loaded := _apply_sprite_texture(background_art, BACKGROUND_ART_PATH)
