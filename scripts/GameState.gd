@@ -47,6 +47,9 @@ var broken_cabinet_secret_found := false
 var owner_portrait_secret_found := false
 var employee_04_file_found := false
 var vendo_memory_riddle_secret_found := false
+var echo_ticket_counter_seen := false
+var echo_cabinet07_seen := false
+var echo_owner_portrait_04_seen := false
 
 var save_slot_index := 0
 var save_slot_name := ""
@@ -181,6 +184,9 @@ func reset_for_new_game() -> void:
 	owner_portrait_secret_found = false
 	employee_04_file_found = false
 	vendo_memory_riddle_secret_found = false
+	echo_ticket_counter_seen = false
+	echo_cabinet07_seen = false
+	echo_owner_portrait_04_seen = false
 	save_slot_index = 0
 	save_slot_name = ""
 	save_timestamp = ""
@@ -398,6 +404,9 @@ func to_save_data() -> Dictionary:
 		"owner_portrait_secret_found": owner_portrait_secret_found,
 		"employee_04_file_found": employee_04_file_found,
 		"vendo_memory_riddle_secret_found": vendo_memory_riddle_secret_found,
+		"echo_ticket_counter_seen": echo_ticket_counter_seen,
+		"echo_cabinet07_seen": echo_cabinet07_seen,
+		"echo_owner_portrait_04_seen": echo_owner_portrait_04_seen,
 		"opening_intro_seen": opening_intro_seen,
 		"last_announced_quest_id": last_announced_quest_id,
 		"npc_dialogue_counts": npc_dialogue_counts.duplicate(true),
@@ -446,6 +455,9 @@ func apply_save_data(data: Dictionary) -> void:
 	owner_portrait_secret_found = data.get("owner_portrait_secret_found", owner_portrait_secret_found)
 	employee_04_file_found = data.get("employee_04_file_found", employee_04_file_found)
 	vendo_memory_riddle_secret_found = data.get("vendo_memory_riddle_secret_found", vendo_memory_riddle_secret_found)
+	echo_ticket_counter_seen = bool(data.get("echo_ticket_counter_seen", echo_ticket_counter_seen))
+	echo_cabinet07_seen = bool(data.get("echo_cabinet07_seen", echo_cabinet07_seen))
+	echo_owner_portrait_04_seen = bool(data.get("echo_owner_portrait_04_seen", echo_owner_portrait_04_seen))
 	opening_intro_seen = data.get("opening_intro_seen", opening_intro_seen)
 	last_announced_quest_id = str(data.get("last_announced_quest_id", last_announced_quest_id))
 	var dialogue_counts_value: Variant = data.get("npc_dialogue_counts", npc_dialogue_counts)

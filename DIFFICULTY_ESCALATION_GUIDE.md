@@ -117,3 +117,18 @@ The current Act 2 scaffold uses four fixed rounds:
 - Hidden-statement rule.
 
 Wrong answers do not hard-fail. They show a wobble message and allow retry.
+
+## Sync Door: Two Signals
+The Sync Door transition puzzle is the next required step after Truth Filter.
+
+It escalates difficulty by adding:
+- A timed two-switch sync rule.
+- One reversed label in Phase 2.
+- A final confirmation step in Phase 3.
+
+It should remain fair because:
+- The instructions are visible.
+- Failure only resets the switches.
+- The player receives `SIGNAL LOST. TRY AGAIN.`
+- No story progress is removed.
+- The Confirm Sync button appears only when both signals are active.

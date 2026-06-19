@@ -119,6 +119,58 @@ Run this only after confirming the first quest still works.
 14. Confirm Truth Filter completion and Memory Signal persist.
 15. Confirm Staff Door now routes to Sync Door.
 
+## Act 2 Aftermath Echo Test
+Run this after Truth Filter completion and before entering the Staff Room reveal.
+
+1. Return to ArcadeHub after completing Truth Filter.
+2. Confirm Memory Signal reads `Fractured`.
+3. Talk to Mira and confirm Fractured-state dialogue or the ticket counter echo appears.
+4. Interact with the Ticket Counter and confirm the reflection echo appears if it has not already been seen.
+5. Talk to Gus and confirm he warns not to pick the loudest memory.
+6. Talk to Vendo and confirm `Memory Signal: Fractured.` appears.
+7. Talk to Mr. Byte and confirm `Truth Filter passed.` appears.
+8. Talk to Cabinet 07 and confirm its normal Fractured-state dialogue appears.
+9. Confirm Cabinet 07's optional echo appears once:
+   `PREVIOUS PLAYER PROFILE FOUND.`
+   `STATUS: DAMAGED.`
+   `RESTORE ATTEMPT: CONTINUING.`
+10. Interact with Owner Portrait and confirm the shifted nameplate text ends with `0 4`.
+11. Interact with Staff Door and confirm:
+   `FRACTURED SIGNAL ACCEPTED.`
+   `TWO-SIGNAL SYNC REQUIRED.`
+12. Confirm Staff Door routes to Sync Door after the dialogue.
+13. Save and load.
+14. Confirm the echo flags do not replay if already seen.
+
+## Sync Door: Two Signals Test
+Run this after Truth Filter completion, when Memory Signal is `Fractured`.
+
+1. Enter Sync Door from the Staff Door.
+2. Confirm title reads `SYNC DOOR: TWO SIGNALS`.
+3. Confirm instructions say:
+   `Two switches must be active together.`
+   `Fractured signals do not stay stable for long.`
+   `Watch the signal labels before pressing.`
+4. Phase 1: activate Switch A and Switch B within 5 seconds.
+5. Confirm Phase 2 begins and displays `WARNING: ONE LABEL IS REVERSED.`
+6. Phase 2: observe Switch A label is reversed, then activate both real switches.
+7. Confirm Phase 3 begins.
+8. Phase 3: activate A, then B, then press `Confirm Sync` before either expires.
+9. Let the timer expire once if practical and confirm:
+   `SIGNAL LOST.`
+   `TRY AGAIN.`
+10. Complete Phase 3 successfully.
+11. Confirm success text:
+   `TWO SIGNALS DETECTED.`
+   `RESTORED SIGNAL PRESENT.`
+   `MEMORY SIGNAL: OVERLOADED.`
+   `ACCESS GRANTED.`
+12. Confirm `GameState.story_puzzle_completed` is true.
+13. Confirm `GameState.staff_room_unlocked` is true.
+14. Return to ArcadeHub.
+15. Save and load.
+16. Confirm Staff Room remains unlocked and Sync Door solved state persists.
+
 ## First Quest Vertical Slice Test
 This is the active quality gate before adding more NPCs, minigames, endings, story branches, combat, inventory, or cabinet games. Run this from `res://scenes/main/Main.tscn` in Godot.
 

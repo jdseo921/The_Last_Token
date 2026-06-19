@@ -16,6 +16,9 @@ const PORTRAIT_PLAYER_NEUTRAL := "res://assets/art/portraits/player/player_neutr
 @onready var wall_layer: Node2D = $WallLayer
 @onready var ticket_counter_sprite: Sprite2D = $PropLayer/TicketCounterSprite
 @onready var owner_portrait_sprite: Sprite2D = $PropLayer/OwnerPortraitSprite
+@onready var staff_door_visual: Polygon2D = $PropLayer/StaffDoorVisual
+@onready var cabinet_07_screen: Polygon2D = $PropLayer/Cabinet07Screen
+@onready var truth_filter_screen: Polygon2D = $PropLayer/TruthFilterScreen
 @onready var cabinet_07_sprite: Sprite2D = $PropLayer/Cabinet07Sprite
 @onready var cabinet_07_flicker_sprite: AnimatedSprite2D = $PropLayer/Cabinet07FlickerSprite
 @onready var broken_cabinet_sprite: Sprite2D = $PropLayer/BrokenCabinetSprite
@@ -43,6 +46,7 @@ var intro_active := false
 var intro_fade_tween: Tween = null
 var last_dialogue_repeat_count := 0
 var memory_signal_tween: Tween = null
+var aftermath_pulse_tween: Tween = null
 
 func _ready() -> void:
 	_apply_hub_art()
@@ -261,6 +265,8 @@ func handle_hub_interaction(interactable: Node, player_node: Node = null) -> voi
 	match str(interactable.interactable_kind):
 		"mira":
 			_handle_mira()
+		"ticket_counter":
+			_handle_ticket_counter()
 		"gus":
 			_handle_gus()
 		"vendo":
@@ -280,6 +286,25 @@ func handle_hub_interaction(interactable: Node, player_node: Node = null) -> voi
 		_:
 			start_dialogue([{"speaker": "System", "text": "Nothing happens."}])
 
+func _can_show_act2_echo() -> bool:
+	return GameState.lying_cabinets_completed and not GameState.twist_reveal_seen
+
+func _get_ticket_counter_echo_lines() -> Array:
+	GameState.echo_ticket_counter_seen = true
+	return [
+		{"speaker": "Narrator", "text": "The ticket counter glass reflects someone standing beside you."},
+		{"speaker": "Narrator", "text": "For a moment, the reflection wears your shape."},
+		{"speaker": "Narrator", "text": "It mouths: 'not the first.'"},
+	]
+
+func _get_cabinet07_echo_lines() -> Array:
+	GameState.echo_cabinet07_seen = true
+	return [
+		{"speaker": "Cabinet 07", "text": "PREVIOUS PLAYER PROFILE FOUND.", "portrait": PORTRAIT_CABINET_07_SCREEN},
+		{"speaker": "Cabinet 07", "text": "STATUS: DAMAGED.", "portrait": PORTRAIT_CABINET_07_SCREEN},
+		{"speaker": "Cabinet 07", "text": "RESTORE ATTEMPT: CONTINUING.", "portrait": PORTRAIT_CABINET_07_SCREEN},
+	]
+
 func _handle_mira() -> void:
 	if _is_post_reveal():
 		GameState.mira_post_reveal_seen = true
@@ -289,6 +314,9 @@ func _handle_mira() -> void:
 			{"speaker": "Mira", "text": "But you are still here.", "portrait": PORTRAIT_MIRA_WORRIED},
 			{"speaker": "Mira", "text": "That counts for something."},
 		])
+		return
+	if _can_show_act2_echo() and not GameState.echo_ticket_counter_seen:
+		start_dialogue(_get_ticket_counter_echo_lines())
 		return
 	if not GameState.lost_token_quest_started:
 		GameState.mira_intro_seen = true
@@ -390,6 +418,14 @@ func _handle_mira() -> void:
 			{"speaker": "Mira", "text": "I will try not to look dramatically worried.", "portrait": PORTRAIT_MIRA_WORRIED},
 		],
 	]))
+
+func _handle_ticket_counter() -> void:
+	if _can_show_act2_echo() and not GameState.echo_ticket_counter_seen:
+		start_dialogue(_get_ticket_counter_echo_lines())
+		return
+	start_dialogue([
+		{"speaker": "Narrator", "text": "The ticket counter glass is dark and dusty."},
+	])
 
 func _handle_gus() -> void:
 	if _is_post_reveal():
@@ -766,7 +802,7 @@ func _handle_cabinet_07() -> void:
 			],
 		]))
 		return
-	start_dialogue(_select_repeat_dialogue("cabinet07", [
+	var cabinet_lines: Array = _select_repeat_dialogue("cabinet07", [
 		[
 			{"speaker": "Cabinet 07", "text": "SECOND FRAGMENT ACCEPTED."},
 			{"speaker": "Cabinet 07", "text": "EMPLOYEE SIGNAL LESS WRONG."},
@@ -783,7 +819,10 @@ func _handle_cabinet_07() -> void:
 			{"speaker": "Cabinet 07", "text": "REPEATED INPUT DETECTED."},
 			{"speaker": "Cabinet 07", "text": "NEXT VALID TARGET: STAFF DOOR."},
 		],
-	]))
+	])
+	if _can_show_act2_echo() and not GameState.echo_cabinet07_seen:
+		cabinet_lines.append_array(_get_cabinet07_echo_lines())
+	start_dialogue(cabinet_lines)
 
 func _handle_truth_filter() -> void:
 	if not GameState.lost_token_quest_completed:
@@ -822,13 +861,19 @@ func _handle_staff_door() -> void:
 		])
 		return
 	if GameState.lost_token_quest_completed and GameState.rockbyte_duel_completed and GameState.lying_cabinets_completed:
-		_store_arcade_return_position()
-		SceneChanger.go_to_sync_door_puzzle()
+		start_dialogue([
+			{"speaker": "Staff Door", "text": "FRACTURED SIGNAL ACCEPTED."},
+			{"speaker": "Staff Door", "text": "TWO-SIGNAL SYNC REQUIRED."},
+		], Callable(self, "_go_to_sync_door_from_staff"))
 		return
 	start_dialogue([
 		{"speaker": "Staff Door", "text": "STAFF ACCESS LOCKED."},
 		{"speaker": "Staff Door", "text": "MEMORY TOKEN SIGNAL MISSING."},
 	])
+
+func _go_to_sync_door_from_staff() -> void:
+	_store_arcade_return_position()
+	SceneChanger.go_to_sync_door_puzzle()
 
 func _handle_owner_portrait() -> void:
 	if _is_post_reveal():
@@ -837,6 +882,14 @@ func _handle_owner_portrait() -> void:
 			{"speaker": "Owner Portrait", "text": "The scratched nameplate is readable now."},
 			{"speaker": "Owner Portrait", "text": "It does not name the owner."},
 			{"speaker": "Owner Portrait", "text": "It says: EMPLOYEE 04."},
+		])
+		return
+	if _can_show_act2_echo():
+		GameState.echo_owner_portrait_04_seen = true
+		start_dialogue([
+			{"speaker": "Owner Portrait", "text": "The scratches on the nameplate have shifted."},
+			{"speaker": "Owner Portrait", "text": "Only two marks are readable."},
+			{"speaker": "Owner Portrait", "text": "0 4"},
 		])
 		return
 	start_dialogue([
@@ -912,10 +965,11 @@ func _refresh_hub_art_states() -> void:
 		[$PropLayer/OwnerPortraitVisual, $PropLayer/OwnerPortraitInner]
 	)
 	if truth_filter_glow != null:
-		truth_filter_glow.visible = GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed
-		var glow_alpha := 0.18 if GameState.memory_signal_level >= GameState.MEMORY_SIGNAL_FRACTURED else 0.12
+		truth_filter_glow.visible = GameState.lost_token_quest_completed and not GameState.story_puzzle_completed
+		var glow_alpha := 0.2 if GameState.memory_signal_level >= GameState.MEMORY_SIGNAL_FRACTURED else 0.12
 		truth_filter_glow.color = Color(0.8, 0.2, 1.0, glow_alpha)
 	_update_memory_signal_pulse()
+	_update_act2_aftermath_pulse()
 
 func _update_memory_signal_pulse() -> void:
 	if memory_signal_tween and memory_signal_tween.is_valid():
@@ -930,6 +984,26 @@ func _update_memory_signal_pulse() -> void:
 	memory_signal_tween.set_loops()
 	memory_signal_tween.tween_property(memory_signal_background, "modulate:a", low_alpha, 0.9)
 	memory_signal_tween.tween_property(memory_signal_background, "modulate:a", 1.0, 0.9)
+
+func _update_act2_aftermath_pulse() -> void:
+	if aftermath_pulse_tween and aftermath_pulse_tween.is_valid():
+		aftermath_pulse_tween.kill()
+	aftermath_pulse_tween = null
+	for item in [staff_door_visual, cabinet_07_screen, truth_filter_screen]:
+		if item is CanvasItem:
+			item.modulate = Color.WHITE
+	if not GameState.lying_cabinets_completed or GameState.story_puzzle_completed:
+		return
+	aftermath_pulse_tween = create_tween()
+	aftermath_pulse_tween.set_loops()
+	aftermath_pulse_tween.set_parallel(true)
+	aftermath_pulse_tween.tween_property(staff_door_visual, "modulate:a", 0.58, 0.72)
+	aftermath_pulse_tween.tween_property(cabinet_07_screen, "modulate:a", 0.5, 0.58)
+	aftermath_pulse_tween.tween_property(truth_filter_screen, "modulate:a", 0.48, 0.5)
+	aftermath_pulse_tween.chain().set_parallel(true)
+	aftermath_pulse_tween.tween_property(staff_door_visual, "modulate:a", 1.0, 0.72)
+	aftermath_pulse_tween.tween_property(cabinet_07_screen, "modulate:a", 1.0, 0.58)
+	aftermath_pulse_tween.tween_property(truth_filter_screen, "modulate:a", 1.0, 0.5)
 
 func _apply_prop_sprite(sprite_node: Sprite2D, path: String, placeholders: Array) -> void:
 	var loaded := _apply_sprite_texture(sprite_node, path)
