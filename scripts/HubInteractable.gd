@@ -3,7 +3,10 @@ extends Area2D
 @export var interactable_kind: String = "npc"
 @export var label_text: String = ""
 @export var sprite_texture_path: String = ""
+@export var idle_sheet_path: String = ""
 @export var idle_animation_name: String = "idle"
+@export var idle_frame_count: int = 2
+@export var idle_frame_duration: float = 0.45
 @export var show_label := true
 @export var use_placeholder_visual := true
 @export var idle_bob_enabled := false
@@ -15,6 +18,7 @@ var idle_time := 0.0
 
 @onready var visual_root: Node2D = $VisualRoot
 @onready var sprite: Sprite2D = $VisualRoot/Sprite
+@onready var animated_sprite: AnimatedSprite2D = $VisualRoot/AnimatedSprite
 @onready var placeholder_visual: Polygon2D = $VisualRoot/PlaceholderVisual
 @onready var label: Label = $Label
 
@@ -22,7 +26,7 @@ func _ready() -> void:
 	base_visual_position = visual_root.position
 	label.text = label_text
 	_apply_placeholder_style()
-	_apply_sprite_texture()
+	_apply_optional_sprite_art()
 	_refresh_visual_visibility()
 
 func _process(delta: float) -> void:
@@ -91,6 +95,44 @@ func _apply_sprite_texture() -> void:
 		sprite.texture = resource
 		sprite.visible = true
 
+func _apply_idle_sheet() -> void:
+	animated_sprite.visible = false
+	animated_sprite.sprite_frames = null
+	if idle_sheet_path.is_empty():
+		return
+	if not ResourceLoader.exists(idle_sheet_path):
+		return
+	var resource := load(idle_sheet_path)
+	if not resource is Texture2D:
+		return
+	var texture := resource as Texture2D
+	var frame_total := maxi(idle_frame_count, 1)
+	var frame_width := maxi(int(texture.get_width() / frame_total), 1)
+	var frame_height := maxi(texture.get_height(), 1)
+	var frames := SpriteFrames.new()
+	frames.add_animation(idle_animation_name)
+	frames.set_animation_loop(idle_animation_name, true)
+	frames.set_animation_speed(idle_animation_name, 1.0 / maxf(idle_frame_duration, 0.05))
+	for index in range(frame_total):
+		var atlas := AtlasTexture.new()
+		atlas.atlas = texture
+		atlas.region = Rect2(index * frame_width, 0, frame_width, frame_height)
+		frames.add_frame(idle_animation_name, atlas)
+	animated_sprite.sprite_frames = frames
+	animated_sprite.animation = idle_animation_name
+	animated_sprite.visible = true
+	animated_sprite.play(idle_animation_name)
+
+func _apply_optional_sprite_art() -> void:
+	_apply_idle_sheet()
+	if animated_sprite.visible:
+		sprite.visible = false
+		sprite.texture = null
+		return
+	_apply_sprite_texture()
+
 func _refresh_visual_visibility() -> void:
+	var has_sprite_art := sprite.texture != null or animated_sprite.visible
 	label.visible = show_label
-	placeholder_visual.visible = use_placeholder_visual or sprite.texture == null
+	label.modulate.a = 0.72 if has_sprite_art else 1.0
+	placeholder_visual.visible = use_placeholder_visual or not has_sprite_art

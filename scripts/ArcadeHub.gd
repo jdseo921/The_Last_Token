@@ -1,6 +1,27 @@
 extends Node2D
 
+const ASSET_PATHS := preload("res://scripts/AssetPaths.gd")
+const PLAYER_IDLE_SHEET_PATH := "res://assets/art/characters/player/player_idle_sheet.png"
+const MIRA_IDLE_SHEET_PATH := "res://assets/art/characters/mira/mira_idle_sheet.png"
+const GUS_IDLE_SHEET_PATH := "res://assets/art/characters/gus/gus_idle_sheet.png"
+const VENDO_IDLE_SHEET_PATH := "res://assets/art/characters/vendo/vendo_idle_sheet.png"
+const MR_BYTE_IDLE_SHEET_PATH := "res://assets/art/characters/mr_byte/mr_byte_idle_sheet.png"
+const PORTRAIT_MIRA_WORRIED := "res://assets/art/portraits/mira/mira_worried.png"
+const PORTRAIT_GUS_ANNOYED := "res://assets/art/portraits/gus/gus_annoyed.png"
+const PORTRAIT_CABINET_07_SCREEN := "res://assets/art/portraits/mr_byte/cabinet_07_screen.png"
+const PORTRAIT_PLAYER_NEUTRAL := "res://assets/art/portraits/player/player_neutral.png"
+
 @onready var player: CharacterBody2D = $Player
+@onready var background_sprite: Sprite2D = $BackgroundLayer/BackgroundSprite
+@onready var floor_layer: Node2D = $FloorLayer
+@onready var wall_layer: Node2D = $WallLayer
+@onready var ticket_counter_sprite: Sprite2D = $PropLayer/TicketCounterSprite
+@onready var owner_portrait_sprite: Sprite2D = $PropLayer/OwnerPortraitSprite
+@onready var cabinet_07_sprite: Sprite2D = $PropLayer/Cabinet07Sprite
+@onready var cabinet_07_flicker_sprite: AnimatedSprite2D = $PropLayer/Cabinet07FlickerSprite
+@onready var broken_cabinet_sprite: Sprite2D = $PropLayer/BrokenCabinetSprite
+@onready var staff_door_sprite: Sprite2D = $PropLayer/StaffDoorSprite
+@onready var memory_terminal_sprite: Sprite2D = $PropLayer/MemoryTerminalSprite
 @onready var ui_layer: Node2D = $UILayer
 @onready var dialogue_box: CanvasLayer = $UILayer/DialogueBox
 @onready var prompt_label: Label = $UILayer/InteractionPrompt
@@ -11,14 +32,19 @@ extends Node2D
 var save_slot_menu: Control = null
 var choice_box: CanvasLayer = null
 var pending_after_dialogue: Callable = Callable()
+var cabinet_glow_tween: Tween = null
+var player_idle_sprite: AnimatedSprite2D = null
 
 func _ready() -> void:
+	_apply_hub_art()
+	_apply_player_art()
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
 	_apply_spawn_position()
 	_on_prompt_changed("")
 	_refresh_hint()
 	_refresh_objective_hint()
+	_refresh_hub_art_states()
 
 func _apply_spawn_position() -> void:
 	if GameState.has_arcade_return_position:
@@ -42,6 +68,7 @@ func start_dialogue(lines: Array, after_dialogue: Callable = Callable()) -> void
 	dialogue_box.start_dialogue(lines)
 	_refresh_hint()
 	_refresh_objective_hint()
+	_refresh_hub_art_states()
 
 func _on_dialogue_finished() -> void:
 	if pending_after_dialogue.is_valid():
@@ -51,6 +78,7 @@ func _on_dialogue_finished() -> void:
 		player.set_control_enabled(true)
 	_refresh_hint()
 	_refresh_objective_hint()
+	_refresh_hub_art_states()
 
 func _choice_box_is_open() -> bool:
 	return choice_box != null and is_instance_valid(choice_box) and choice_box.visible
@@ -62,6 +90,7 @@ func _refresh_hint() -> void:
 func _refresh_objective_hint() -> void:
 	objective_hint_label.text = _get_objective_hint_text()
 	objective_hint_label.visible = not objective_hint_label.text.is_empty() and not _dialogue_is_active() and not _choice_box_is_open() and not _save_slot_menu_is_open()
+	_refresh_hub_art_states()
 
 func _get_objective_hint_text() -> String:
 	if not GameState.story_started:
@@ -116,8 +145,8 @@ func _handle_mira() -> void:
 		GameState.mira_post_reveal_seen = true
 		start_dialogue([
 			{"speaker": "Mira", "text": "You finally remembered."},
-			{"speaker": "Mira", "text": "I was worried you would choose to disappear again."},
-			{"speaker": "Mira", "text": "But you are still here."},
+			{"speaker": "Mira", "text": "I was worried you would choose to disappear again.", "portrait": PORTRAIT_MIRA_WORRIED},
+			{"speaker": "Mira", "text": "But you are still here.", "portrait": PORTRAIT_MIRA_WORRIED},
 			{"speaker": "Mira", "text": "That counts for something."},
 		])
 		return
@@ -126,7 +155,7 @@ func _handle_mira() -> void:
 		start_dialogue([
 			{"speaker": "Mira", "text": "Pixel Haven kept the lights on for you."},
 			{"speaker": "Mira", "text": "You are late again."},
-			{"speaker": "Player", "text": "Again?"},
+			{"speaker": "Player", "text": "Again?", "portrait": PORTRAIT_PLAYER_NEUTRAL},
 			{"speaker": "Mira", "text": "Cabinet 07 has your Lost Token."},
 			{"speaker": "Mira", "text": "Please bring it back to me."},
 		], Callable(GameState, "start_lost_token_quest"))
@@ -141,7 +170,7 @@ func _handle_mira() -> void:
 		start_dialogue([
 			{"speaker": "Player", "text": "I found the token."},
 			{"speaker": "Mira", "text": "You found it."},
-			{"speaker": "Mira", "text": "I was afraid you would not."},
+			{"speaker": "Mira", "text": "I was afraid you would not.", "portrait": PORTRAIT_MIRA_WORRIED},
 			{"speaker": "Mira", "text": "The Staff Door should hear you now."},
 			{"speaker": "Mira", "text": "Please check it."},
 		], Callable(GameState, "complete_lost_token_quest"))
@@ -152,20 +181,20 @@ func _handle_gus() -> void:
 	if _is_post_reveal():
 		GameState.gus_post_reveal_seen = true
 		start_dialogue([
-			{"speaker": "Gus", "text": "About time."},
-			{"speaker": "Gus", "text": "I was almost out of practical hints."},
+			{"speaker": "Gus", "text": "About time.", "portrait": PORTRAIT_GUS_ANNOYED},
+			{"speaker": "Gus", "text": "I was almost out of practical hints.", "portrait": PORTRAIT_GUS_ANNOYED},
 			{"speaker": "Gus", "text": "You came back anyway. Good."},
 		])
 		return
 	if GameState.lost_token_quest_completed:
 		start_dialogue([
 			{"speaker": "Gus", "text": "Staff Door is humming again."},
-			{"speaker": "Gus", "text": "Practical advice: do not ignore humming doors."},
+			{"speaker": "Gus", "text": "Practical advice: do not ignore humming doors.", "portrait": PORTRAIT_GUS_ANNOYED},
 		])
 		return
 	GameState.gus_intro_seen = true
 	start_dialogue([
-		{"speaker": "Gus", "text": "You again. Great."},
+		{"speaker": "Gus", "text": "You again. Great.", "portrait": PORTRAIT_GUS_ANNOYED},
 		{"speaker": "Gus", "text": "I just finished cleaning up the previous session."},
 	])
 
@@ -278,10 +307,10 @@ func _handle_mr_byte() -> void:
 func _handle_cabinet_07() -> void:
 	if _is_post_reveal():
 		start_dialogue([
-			{"speaker": "Cabinet 07", "text": "EMPLOYEE 04 RESTORE STATUS: STABLE."},
-			{"speaker": "Cabinet 07", "text": "WELCOME BACK, EMPLOYEE 04."},
-			{"speaker": "Cabinet 07", "text": "PREVIOUS SESSION: CLOSED."},
-			{"speaker": "Cabinet 07", "text": "CURRENT SESSION: YOURS."},
+			{"speaker": "Cabinet 07", "text": "EMPLOYEE 04 RESTORE STATUS: STABLE.", "portrait": PORTRAIT_CABINET_07_SCREEN},
+			{"speaker": "Cabinet 07", "text": "WELCOME BACK, EMPLOYEE 04.", "portrait": PORTRAIT_CABINET_07_SCREEN},
+			{"speaker": "Cabinet 07", "text": "PREVIOUS SESSION: CLOSED.", "portrait": PORTRAIT_CABINET_07_SCREEN},
+			{"speaker": "Cabinet 07", "text": "CURRENT SESSION: YOURS.", "portrait": PORTRAIT_CABINET_07_SCREEN},
 		])
 		return
 	if not GameState.lost_token_quest_started:
@@ -373,3 +402,145 @@ func _is_post_reveal() -> bool:
 func _store_arcade_return_position() -> void:
 	if player:
 		GameState.set_arcade_return_position(player.global_position)
+
+func _apply_hub_art() -> void:
+	var has_background := _apply_sprite_texture(background_sprite, ASSET_PATHS.HUB_BACKGROUND_ARCADE)
+	_set_children_visible(floor_layer, not has_background)
+	_set_children_visible(wall_layer, not has_background)
+	_apply_prop_sprite(
+		ticket_counter_sprite,
+		ASSET_PATHS.HUB_TICKET_COUNTER,
+		[$PropLayer/TicketCounterVisual]
+	)
+	_apply_prop_sprite(
+		memory_terminal_sprite,
+		ASSET_PATHS.HUB_MEMORY_TERMINAL,
+		[$PropLayer/MemoryTerminalVisual, $PropLayer/MemoryTerminalScreen]
+	)
+	_apply_prop_sprite(
+		cabinet_07_sprite,
+		ASSET_PATHS.HUB_CABINET_07_IDLE,
+		[$PropLayer/Cabinet07Visual, $PropLayer/Cabinet07Screen]
+	)
+	var has_cabinet_flicker := _apply_animated_sprite_sheet(cabinet_07_flicker_sprite, ASSET_PATHS.HUB_CABINET_07_FLICKER_SHEET, 3, 0.18)
+	if has_cabinet_flicker:
+		cabinet_07_sprite.visible = false
+	_apply_prop_sprite(
+		broken_cabinet_sprite,
+		ASSET_PATHS.HUB_BROKEN_CABINET,
+		[$PropLayer/BrokenCabinetVisual, $PropLayer/BrokenCabinetScreen]
+	)
+	_refresh_hub_art_states()
+	_start_cabinet_glow_pulse()
+
+func _refresh_hub_art_states() -> void:
+	if not is_node_ready():
+		return
+	var staff_door_path := ASSET_PATHS.HUB_STAFF_DOOR_OPEN if GameState.staff_room_unlocked else ASSET_PATHS.HUB_STAFF_DOOR_CLOSED
+	_apply_prop_sprite(
+		staff_door_sprite,
+		staff_door_path,
+		[$PropLayer/StaffDoorVisual, $PropLayer/StaffDoorHandle]
+	)
+	var owner_portrait_path := ASSET_PATHS.HUB_OWNER_PORTRAIT_EMPLOYEE04 if _is_post_reveal() else ASSET_PATHS.HUB_OWNER_PORTRAIT_BLANK
+	_apply_prop_sprite(
+		owner_portrait_sprite,
+		owner_portrait_path,
+		[$PropLayer/OwnerPortraitVisual, $PropLayer/OwnerPortraitInner]
+	)
+
+func _apply_player_art() -> void:
+	if not ASSET_PATHS.exists(PLAYER_IDLE_SHEET_PATH):
+		return
+	player_idle_sprite = _create_idle_sheet_sprite(PLAYER_IDLE_SHEET_PATH, 2, 0.45)
+	if player_idle_sprite == null:
+		return
+	player.add_child(player_idle_sprite)
+	player_idle_sprite.position = Vector2.ZERO
+	var body_visual := player.get_node_or_null("BodyVisual") as CanvasItem
+	if body_visual != null:
+		body_visual.visible = false
+	var facing_dot := player.get_node_or_null("FacingDot") as CanvasItem
+	if facing_dot != null:
+		facing_dot.visible = false
+
+func _apply_prop_sprite(sprite_node: Sprite2D, path: String, placeholders: Array) -> void:
+	var loaded := _apply_sprite_texture(sprite_node, path)
+	for placeholder in placeholders:
+		if placeholder is CanvasItem:
+			placeholder.visible = not loaded
+
+func _apply_sprite_texture(sprite_node: Sprite2D, path: String) -> bool:
+	sprite_node.visible = false
+	sprite_node.texture = null
+	var texture: Texture2D = ASSET_PATHS.load_texture_or_null(path)
+	if texture == null:
+		return false
+	sprite_node.texture = texture
+	sprite_node.visible = true
+	return true
+
+func _apply_animated_sprite_sheet(animated_sprite: AnimatedSprite2D, path: String, frame_count: int, frame_duration: float) -> bool:
+	animated_sprite.visible = false
+	animated_sprite.sprite_frames = null
+	var texture: Texture2D = ASSET_PATHS.load_texture_or_null(path)
+	if texture == null:
+		return false
+	var frame_total := maxi(frame_count, 1)
+	var frame_width := maxi(int(texture.get_width() / frame_total), 1)
+	var frame_height := maxi(texture.get_height(), 1)
+	var frames := SpriteFrames.new()
+	frames.add_animation("flicker")
+	frames.set_animation_loop("flicker", true)
+	frames.set_animation_speed("flicker", 1.0 / maxf(frame_duration, 0.05))
+	for index in range(frame_total):
+		var atlas := AtlasTexture.new()
+		atlas.atlas = texture
+		atlas.region = Rect2(index * frame_width, 0, frame_width, frame_height)
+		frames.add_frame("flicker", atlas)
+	animated_sprite.sprite_frames = frames
+	animated_sprite.animation = "flicker"
+	animated_sprite.visible = true
+	animated_sprite.play("flicker")
+	return true
+
+func _set_children_visible(parent_node: Node, visible: bool) -> void:
+	for child in parent_node.get_children():
+		if child is CanvasItem:
+			child.visible = visible
+
+func _start_cabinet_glow_pulse() -> void:
+	if cabinet_glow_tween and cabinet_glow_tween.is_valid():
+		cabinet_glow_tween.kill()
+	if not cabinet_07_flicker_sprite.visible and not cabinet_07_sprite.visible:
+		return
+	var glow_target: CanvasItem = cabinet_07_flicker_sprite if cabinet_07_flicker_sprite.visible else cabinet_07_sprite
+	glow_target.modulate = Color(1, 1, 1, 0.75)
+	cabinet_glow_tween = create_tween()
+	cabinet_glow_tween.set_loops()
+	cabinet_glow_tween.tween_property(glow_target, "modulate:a", 1.0, 0.42)
+	cabinet_glow_tween.tween_property(glow_target, "modulate:a", 0.45, 0.28)
+	cabinet_glow_tween.tween_property(glow_target, "modulate:a", 0.8, 0.55)
+
+func _create_idle_sheet_sprite(path: String, frame_count: int, frame_duration: float) -> AnimatedSprite2D:
+	var texture: Texture2D = ASSET_PATHS.load_texture_or_null(path)
+	if texture == null:
+		return null
+	var frame_total := maxi(frame_count, 1)
+	var frame_width := maxi(int(texture.get_width() / frame_total), 1)
+	var frame_height := maxi(texture.get_height(), 1)
+	var frames := SpriteFrames.new()
+	frames.add_animation("idle")
+	frames.set_animation_loop("idle", true)
+	frames.set_animation_speed("idle", 1.0 / maxf(frame_duration, 0.05))
+	for index in range(frame_total):
+		var atlas := AtlasTexture.new()
+		atlas.atlas = texture
+		atlas.region = Rect2(index * frame_width, 0, frame_width, frame_height)
+		frames.add_frame("idle", atlas)
+	var animated_sprite := AnimatedSprite2D.new()
+	animated_sprite.name = "OptionalIdleSprite"
+	animated_sprite.sprite_frames = frames
+	animated_sprite.animation = "idle"
+	animated_sprite.play("idle")
+	return animated_sprite

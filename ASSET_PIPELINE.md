@@ -4,25 +4,39 @@
 This pipeline prepares The Last Token for a later high-quality retro visual pass without changing gameplay now. The current placeholder scenes must remain playable while art is generated, reviewed, imported, and swapped in.
 
 ## Asset Folders
-Generated and final art should live under `assets/`.
+Generated and final art should live under `res://assets/art/`.
 
 Recommended structure:
-- `assets/sprites/player/`
-- `assets/sprites/npcs/`
-- `assets/sprites/props/`
-- `assets/sprites/tiles/`
-- `assets/portraits/`
-- `assets/cutscenes/twist/`
-- `assets/ui/`
-- `assets/effects/`
-- `assets/minigames/rockbyte_duel/`
-- `assets/minigames/sync_door/`
-- `assets/minigames/broken_high_score/`
+- `res://assets/art/ui/title/`
+- `res://assets/art/ui/menus/`
+- `res://assets/art/ui/dialogue/`
+- `res://assets/art/ui/crt/`
+- `res://assets/art/hub/backgrounds/`
+- `res://assets/art/hub/tiles/`
+- `res://assets/art/hub/props/`
+- `res://assets/art/hub/cabinets/`
+- `res://assets/art/hub/effects/`
+- `res://assets/art/characters/player/`
+- `res://assets/art/characters/mira/`
+- `res://assets/art/characters/gus/`
+- `res://assets/art/characters/vendo/`
+- `res://assets/art/characters/mr_byte/`
+- `res://assets/art/portraits/player/`
+- `res://assets/art/portraits/mira/`
+- `res://assets/art/portraits/gus/`
+- `res://assets/art/portraits/vendo/`
+- `res://assets/art/portraits/mr_byte/`
+- `res://assets/art/cutscenes/memory_reveal/`
+- `res://assets/art/minigames/rockbyte_duel/`
+- `res://assets/art/minigames/sync_door/`
+- `res://assets/art/minigames/broken_high_score/`
 
 Keep temporary references, rejected AI outputs, and prompt experiments outside the repo unless they are intentionally curated.
 
 ## Naming Assets
 Use lowercase snake_case. Include object name, purpose, and size when helpful.
+
+All generated visual assets for The Last Token should default to retro-style pixel art: dark arcade mood, clean silhouettes, limited neon cyan/magenta/green highlights, and no copyrighted characters, logos, cabinet art, or recognizable real game references.
 
 Examples:
 - `player_idle_down.png`
@@ -39,11 +53,11 @@ Avoid names like:
 - names copied from unrelated copyrighted works.
 
 ## Importing Into Godot
-1. Place PNG assets in the correct `assets/` subfolder.
+1. Place PNG assets in the correct `res://assets/art/` subfolder.
 2. Open Godot and let it import the files.
 3. For pixel art, use nearest-neighbor filtering or project/import settings that preserve crisp pixels.
 4. Verify transparency in the editor preview.
-5. Reference assets from scenes with `res://assets/...` paths.
+5. Reference assets from scenes with `res://assets/art/...` paths.
 6. Keep placeholder nodes or fallback labels until the replacement is confirmed in a live scene.
 
 ## Safe Placeholder Replacement

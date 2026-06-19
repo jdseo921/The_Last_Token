@@ -31,6 +31,7 @@ assets/art/portraits/mr_byte/
 assets/art/portraits/roxy/
 assets/art/portraits/pip/
 assets/art/hub/
+assets/art/hub/backgrounds/
 assets/art/hub/tiles/
 assets/art/hub/props/
 assets/art/hub/cabinets/
@@ -64,26 +65,49 @@ The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys t
 | Memory Terminal sprite | 48x32 or 64x48 | `assets/art/hub/props/` | Placeholder | Save terminal; clear interactable glow. |
 | Staff Door sprite | 64x96 | `assets/art/hub/props/` | Placeholder | Locked/open states eventually. |
 | Owner Portrait sprite | 32x32 or 48x48 | `assets/art/hub/props/` | Placeholder | Scratched nameplate, unsettling blankness. |
+| Arcade hub background | 640x440 or tiled | `assets/art/hub/backgrounds/arcade_hub_background_640x440.png` | Integrated | Optional full-scene backdrop; keep interactables readable. |
+| Ticket counter art | 96x48 or tiled | `assets/art/hub/props/ticket_counter.png` | Integrated | Replaces ticket counter placeholder when present. |
+| Memory terminal art | 48x32 or 64x48 | `assets/art/hub/props/memory_terminal.png` | Integrated | Replaces terminal placeholder when present. |
+| Staff door closed art | 64x96 | `assets/art/hub/props/staff_door_closed.png` | Integrated | Closed/locked staff door state. |
+| Staff door open art | 64x96 | `assets/art/hub/props/staff_door_open.png` | Planned | Open/unlocked staff door state. |
+| Owner portrait blank art | 48x48 | `assets/art/hub/props/owner_portrait_blank.png` | Integrated | Pre-reveal portrait state. |
+| Owner portrait Employee 04 art | 48x48 | `assets/art/hub/props/owner_portrait_employee04.png` | Planned | Post-reveal portrait state. |
+| Cabinet 07 idle art | 48x64 or 64x64 | `assets/art/hub/cabinets/cabinet_07_idle.png` | Integrated | Idle cabinet state. |
+| Cabinet 07 flicker art | 48x64 or 64x64 | `assets/art/hub/cabinets/cabinet_07_flicker.png` / `cabinet_07_flicker_sheet.png` | Integrated | Optional flicker overlay/state; sheet kept for future animation. |
+| Broken cabinet art | 48x48 or 64x48 | `assets/art/hub/cabinets/broken_cabinet.png` | Integrated | Replaces broken cabinet placeholder when present. |
 | Arcade floor tiles | 16x16 | `assets/art/hub/tiles/` | Placeholder | Dark carpet/tile pattern; low noise. |
 | Arcade wall tiles | 16x16 | `assets/art/hub/tiles/` | Placeholder | Dim walls, trim, posters optional later. |
 | Ticket counter | 96x48 or tiled | `assets/art/hub/props/` | Placeholder | Counter should not overpower Mira. |
 | Vending machine | 48x64 | `assets/art/hub/props/` | Placeholder | Could share Vendo visual if useful. |
+| Title background | 640x440 | `assets/art/ui/title/title_background_640x440.png` | Integrated | Retro arcade title backdrop; fallback stays dark. |
+| Title logo | Flexible, pixel-aligned | `assets/art/ui/title/the_last_token_logo.png` | Integrated | Replaces fallback `THE LAST TOKEN` text when present. |
+| Title menu frame | 416x270 or scalable | `assets/art/ui/title/title_menu_frame.png` | Integrated | Decorative frame behind menu buttons. |
+| Title scanline overlay | 640x440 | `assets/art/ui/title/title_scanline_overlay.png` | Integrated | Subtle overlay only; must not reduce readability. |
 | CRT overlay | 640x440 | `assets/art/ui/crt/` | Planned | Keep subtle; do not reduce readability. |
-| Dialogue portraits | 64x64 or 96x96 | `assets/art/portraits/` | Planned | Player, Mira, Gus, Vendo, Mr. Byte, machines as needed. |
+| Dialogue portraits | 64x64 or 96x96 | `assets/art/portraits/` | In Progress | First 96x96 portrait batch generated and wired through DialogueBox; keep pending until live Godot dialogue review passes. |
 | Memory recall panels | 320x180 or 640x360 | `assets/art/cutscenes/memory_reveal/` | Placeholder | 8 reveal panels currently support fallback. |
 | Rockbyte Duel screen art | 320x180 or UI pieces | `assets/art/minigames/rockbyte_duel/` | Placeholder | Keep rules and piles readable. |
 | Sync Door screen art | 320x180 or UI pieces | `assets/art/minigames/sync_door/` | Placeholder | Switch states must remain obvious. |
 | Future Broken High Score screen art | 320x180 or UI pieces | `assets/art/minigames/broken_high_score/` | Planned | Do not integrate until optional feature gate passes. |
 
+## Hub Character Idle Sheet Checklist
+| Sheet | Recommended Size | Folder | Status | Notes |
+|---|---:|---|---|---|
+| Player idle sheet | 2 frames, 32x32 each | `assets/art/characters/player/player_idle_sheet.png` | Integrated | Sheet is 64x32 total; optional hub-only visual, movement remains script-owned. |
+| Mira idle sheet | 2 frames, 32x32 each | `assets/art/characters/mira/mira_idle_sheet.png` | Integrated | Sheet is 64x32 total; can replace placeholder body when present. |
+| Gus idle sheet | 2 frames, 32x32 each | `assets/art/characters/gus/gus_idle_sheet.png` | Integrated | Sheet is 64x32 total; can replace placeholder body when present. |
+| Vendo idle sheet | 2 frames, 48x48 each | `assets/art/characters/vendo/vendo_idle_sheet.png` | Integrated | Sheet is 96x48 total; larger machine silhouette for readability. |
+| Mr. Byte idle sheet | 2 frames, 48x48 each | `assets/art/characters/mr_byte/mr_byte_idle_sheet.png` | Integrated | Sheet is 96x48 total; larger terminal silhouette for readability. |
+
 ## Dialogue Portrait Checklist
 | Portrait | Status | Notes |
 |---|---|---|
-| Player | Planned | Neutral/confused/restored variants later. |
-| Mira | Planned | Human, warm, worried. |
-| Gus | Planned | Human, dry/practical. |
-| Vendo | Planned | Machine face/display, word-by-word dialogue tone. |
-| Mr. Byte | Planned | Kiosk/helper display. |
-| Cabinet 07 | Planned | Could be screen portrait or cabinet close-up. |
+| Player | In Progress | `player_neutral.png`; default portrait wired, explicit confusion line added. |
+| Mira | In Progress | `mira_neutral.png`, `mira_worried.png`; default portrait wired, worried variant used on emotional lines. |
+| Gus | In Progress | `gus_neutral.png`, `gus_annoyed.png`; default portrait wired, annoyed variant used on joke/practical lines. |
+| Vendo | In Progress | `vendo_neutral.png`; machine face/display, word-by-word dialogue tone. |
+| Mr. Byte | In Progress | `mr_byte_neutral.png`; kiosk/helper display. |
+| Cabinet 07 | In Progress | `cabinet_07_screen.png`; default portrait wired, explicit recognition lines added. |
 | Staff Door | Planned | Optional mechanical portrait or no portrait. |
 | Owner Portrait | Planned | Scratched/blank portrait close-up. |
 | Employee 04 file | Planned | Corrupted file panel rather than face. |

@@ -5,6 +5,7 @@ This document defines the future visual direction for The Last Token. The curren
 
 ## Visual Direction
 - 2D pixel-art retro arcade mystery.
+- All generated sprites, portraits, props, backgrounds, UI art, overlays, and minigame assets for this project should be retro-style pixel art unless a future task explicitly says otherwise.
 - Dark arcade hub with neon accents, screen glow, worn carpet, old plastic, and dusty machines.
 - Nostalgic but unsettling: familiar arcade warmth with corrupted records, blank identity, and memory-loss unease.
 - Readable silhouettes matter more than dense detail.
@@ -45,14 +46,14 @@ This document defines the future visual direction for The Last Token. The curren
 Use lowercase snake_case paths and filenames.
 
 Examples:
-- `assets/sprites/player/player_idle_down.png`
-- `assets/sprites/npcs/mira_idle.png`
-- `assets/sprites/props/cabinet_07.png`
-- `assets/sprites/props/memory_terminal.png`
-- `assets/portraits/mira_neutral_96.png`
-- `assets/cutscenes/twist/panel_01_memory_restore_640x360.png`
-- `assets/ui/dialogue_frame.png`
-- `assets/effects/crt_overlay_640x440.png`
+- `assets/art/characters/player/player_idle_down.png`
+- `assets/art/characters/mira/mira_idle.png`
+- `assets/art/hub/cabinets/cabinet_07.png`
+- `assets/art/hub/props/memory_terminal.png`
+- `assets/art/portraits/mira/mira_neutral_96.png`
+- `assets/art/cutscenes/memory_reveal/panel_01_memory_restore_640x360.png`
+- `assets/art/ui/dialogue/dialogue_frame.png`
+- `assets/art/ui/crt/crt_overlay_640x440.png`
 
 Suggested suffixes:
 - `_idle`, `_walk`, `_blink`, `_screen`, `_portrait`, `_panel`.
