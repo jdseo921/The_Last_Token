@@ -11,6 +11,11 @@ const ACTION_BINDINGS := {
 
 const TOTAL_GAMES_COUNT := 3
 const TOTAL_SECRETS_COUNT := 4
+const MEMORY_SIGNAL_GROUNDED := 0
+const MEMORY_SIGNAL_UNEASY := 1
+const MEMORY_SIGNAL_FRACTURED := 2
+const MEMORY_SIGNAL_OVERLOADED := 3
+const MEMORY_SIGNAL_RESTORED := 4
 
 var story_started := false
 var lost_token_quest_started := false
@@ -18,11 +23,15 @@ var lost_token_collected := false
 var lost_token_quest_completed := false
 var rockbyte_duel_completed := false
 var rockbyte_duel_loss_count := 0
+var truth_filter_quest_started := false
+var lying_cabinets_completed := false
+var second_memory_fragment_collected := false
 var story_puzzle_completed := false
 var staff_room_unlocked := false
 var twist_reveal_seen := false
 var ending_seen := false
 var post_reveal_roam_unlocked := false
+var memory_signal_level := MEMORY_SIGNAL_GROUNDED
 
 var mira_intro_seen := false
 var mira_post_reveal_seen := false
@@ -102,6 +111,7 @@ func get_total_secrets_count() -> int:
 	return TOTAL_SECRETS_COUNT
 
 func get_story_phase_label() -> String:
+	update_memory_signal_from_progress()
 	return get_story_phase_label_from_data(to_save_data())
 
 func get_story_phase_label_from_data(data: Dictionary) -> String:
@@ -115,6 +125,10 @@ func get_story_phase_label_from_data(data: Dictionary) -> String:
 		return "Staff Room"
 	if bool(data.get("story_puzzle_completed", false)):
 		return "Sync Door Solved"
+	if bool(data.get("second_memory_fragment_collected", false)) or bool(data.get("lying_cabinets_completed", false)):
+		return "Truth Filter Cleared"
+	if bool(data.get("truth_filter_quest_started", false)) and not bool(data.get("lying_cabinets_completed", false)):
+		return "Truth Filter"
 	if bool(data.get("lost_token_quest_completed", false)):
 		return "Lost Token Returned"
 	if bool(data.get("rockbyte_duel_completed", false)) or bool(data.get("lost_token_collected", false)):
@@ -125,6 +139,19 @@ func get_story_phase_label_from_data(data: Dictionary) -> String:
 		return "Opening Night"
 	return "New Memory"
 
+func get_memory_signal_label_from_level(level: int) -> String:
+	match clampi(level, MEMORY_SIGNAL_GROUNDED, MEMORY_SIGNAL_RESTORED):
+		MEMORY_SIGNAL_UNEASY:
+			return "Uneasy"
+		MEMORY_SIGNAL_FRACTURED:
+			return "Fractured"
+		MEMORY_SIGNAL_OVERLOADED:
+			return "Overloaded"
+		MEMORY_SIGNAL_RESTORED:
+			return "Restored"
+		_:
+			return "Grounded"
+
 func reset_for_new_game() -> void:
 	story_started = false
 	lost_token_quest_started = false
@@ -132,11 +159,15 @@ func reset_for_new_game() -> void:
 	lost_token_quest_completed = false
 	rockbyte_duel_completed = false
 	rockbyte_duel_loss_count = 0
+	truth_filter_quest_started = false
+	lying_cabinets_completed = false
+	second_memory_fragment_collected = false
 	story_puzzle_completed = false
 	staff_room_unlocked = false
 	twist_reveal_seen = false
 	ending_seen = false
 	post_reveal_roam_unlocked = false
+	memory_signal_level = MEMORY_SIGNAL_GROUNDED
 	mira_intro_seen = false
 	mira_post_reveal_seen = false
 	gus_intro_seen = false
@@ -183,15 +214,26 @@ func complete_lost_token_quest() -> void:
 	lost_token_quest_started = true
 	lost_token_collected = true
 	lost_token_quest_completed = true
+	truth_filter_quest_started = true
+	update_memory_signal_from_progress()
+
+func complete_truth_filter() -> void:
+	truth_filter_quest_started = true
+	lying_cabinets_completed = true
+	second_memory_fragment_collected = true
+	update_memory_signal_from_progress()
 
 func unlock_staff_room() -> void:
 	staff_room_unlocked = true
+	update_memory_signal_from_progress()
 
 func mark_twist_reveal_seen() -> void:
 	twist_reveal_seen = true
+	update_memory_signal_from_progress()
 
 func unlock_post_reveal_roam() -> void:
 	post_reveal_roam_unlocked = true
+	update_memory_signal_from_progress()
 
 func mark_opening_intro_seen() -> void:
 	opening_intro_seen = true
@@ -203,7 +245,9 @@ func get_current_quest_id() -> String:
 		return "recover_lost_token"
 	if rockbyte_duel_completed and not lost_token_quest_completed:
 		return "return_lost_token"
-	if lost_token_quest_completed and not story_puzzle_completed:
+	if lost_token_quest_completed and not lying_cabinets_completed:
+		return "truth_filter"
+	if lying_cabinets_completed and not story_puzzle_completed:
 		return "check_staff_door"
 	if story_puzzle_completed and staff_room_unlocked and not twist_reveal_seen:
 		return "enter_staff_room"
@@ -241,7 +285,14 @@ func get_current_quest_data() -> Dictionary:
 				"id": "check_staff_door",
 				"title": "Check the Staff Door",
 				"summary": "Inspect the Staff Door.",
-				"details": "Mira remembered something when the token returned. The Staff Door should be listening now.",
+				"details": "The Truth Filter recovered a second memory fragment. The Staff Door should be listening now.",
+			}
+		"truth_filter":
+			return {
+				"id": "truth_filter",
+				"title": "Find the Truth Filter",
+				"summary": "Find the cabinet that tests broken memories.",
+				"details": "The Lost Token woke a memory, but Mira says the arcade is still filtering the truth. A cabinet nearby may know which memories are lying.",
 			}
 		"enter_staff_room":
 			return {
@@ -283,7 +334,29 @@ func increment_npc_dialogue_count(key: String) -> int:
 	npc_dialogue_counts[key] = next_count
 	return next_count
 
+func get_memory_signal_label() -> String:
+	return get_memory_signal_label_from_level(memory_signal_level)
+
+func set_memory_signal_level(value: int) -> void:
+	memory_signal_level = clampi(value, MEMORY_SIGNAL_GROUNDED, MEMORY_SIGNAL_RESTORED)
+
+func update_memory_signal_from_progress() -> void:
+	if post_reveal_roam_unlocked:
+		set_memory_signal_level(MEMORY_SIGNAL_RESTORED)
+		return
+	if staff_room_unlocked or story_puzzle_completed:
+		set_memory_signal_level(MEMORY_SIGNAL_OVERLOADED)
+		return
+	if lying_cabinets_completed or second_memory_fragment_collected:
+		set_memory_signal_level(MEMORY_SIGNAL_FRACTURED)
+		return
+	if lost_token_quest_completed:
+		set_memory_signal_level(MEMORY_SIGNAL_UNEASY)
+		return
+	set_memory_signal_level(MEMORY_SIGNAL_GROUNDED)
+
 func to_save_data() -> Dictionary:
+	update_memory_signal_from_progress()
 	return {
 		"save_slot_index": save_slot_index,
 		"save_slot_name": save_slot_name,
@@ -303,11 +376,15 @@ func to_save_data() -> Dictionary:
 		"lost_token_quest_completed": lost_token_quest_completed,
 		"rockbyte_duel_completed": rockbyte_duel_completed,
 		"rockbyte_duel_loss_count": rockbyte_duel_loss_count,
+		"truth_filter_quest_started": truth_filter_quest_started,
+		"lying_cabinets_completed": lying_cabinets_completed,
+		"second_memory_fragment_collected": second_memory_fragment_collected,
 		"story_puzzle_completed": story_puzzle_completed,
 		"staff_room_unlocked": staff_room_unlocked,
 		"twist_reveal_seen": twist_reveal_seen,
 		"ending_seen": ending_seen,
 		"post_reveal_roam_unlocked": post_reveal_roam_unlocked,
+		"memory_signal_level": memory_signal_level,
 		"mira_intro_seen": mira_intro_seen,
 		"mira_post_reveal_seen": mira_post_reveal_seen,
 		"gus_intro_seen": gus_intro_seen,
@@ -347,11 +424,15 @@ func apply_save_data(data: Dictionary) -> void:
 	lost_token_quest_completed = data.get("lost_token_quest_completed", lost_token_quest_completed)
 	rockbyte_duel_completed = data.get("rockbyte_duel_completed", rockbyte_duel_completed)
 	rockbyte_duel_loss_count = int(data.get("rockbyte_duel_loss_count", rockbyte_duel_loss_count))
+	truth_filter_quest_started = bool(data.get("truth_filter_quest_started", truth_filter_quest_started))
+	lying_cabinets_completed = bool(data.get("lying_cabinets_completed", lying_cabinets_completed))
+	second_memory_fragment_collected = bool(data.get("second_memory_fragment_collected", second_memory_fragment_collected))
 	story_puzzle_completed = data.get("story_puzzle_completed", story_puzzle_completed)
 	staff_room_unlocked = data.get("staff_room_unlocked", staff_room_unlocked)
 	twist_reveal_seen = data.get("twist_reveal_seen", twist_reveal_seen)
 	ending_seen = data.get("ending_seen", ending_seen)
 	post_reveal_roam_unlocked = data.get("post_reveal_roam_unlocked", post_reveal_roam_unlocked)
+	set_memory_signal_level(int(data.get("memory_signal_level", memory_signal_level)))
 	mira_intro_seen = data.get("mira_intro_seen", mira_intro_seen)
 	mira_post_reveal_seen = data.get("mira_post_reveal_seen", mira_post_reveal_seen)
 	gus_intro_seen = data.get("gus_intro_seen", gus_intro_seen)
@@ -370,3 +451,4 @@ func apply_save_data(data: Dictionary) -> void:
 	var dialogue_counts_value: Variant = data.get("npc_dialogue_counts", npc_dialogue_counts)
 	if dialogue_counts_value is Dictionary:
 		npc_dialogue_counts = dialogue_counts_value.duplicate(true)
+	update_memory_signal_from_progress()

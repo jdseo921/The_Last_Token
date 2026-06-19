@@ -76,6 +76,8 @@ func _apply_placeholder_style() -> void:
 			placeholder_visual.color = Color(0.32, 0.58, 0.92, 1)
 		"cabinet07":
 			placeholder_visual.color = Color(0.24, 0.32, 0.86, 1)
+		"truth_filter":
+			placeholder_visual.color = Color(0.38, 0.16, 0.58, 1)
 		"staff_door":
 			placeholder_visual.color = Color(0.72, 0.18, 0.22, 1)
 		"owner_portrait":

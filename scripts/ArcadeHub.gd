@@ -28,9 +28,12 @@ const PORTRAIT_PLAYER_NEUTRAL := "res://assets/art/portraits/player/player_neutr
 @onready var post_reveal_hint_label: Label = $UILayer/PostRevealHintLabel
 @onready var objective_hint_background: ColorRect = $UILayer/ObjectiveHintBackground
 @onready var objective_hint_label: Label = $UILayer/ObjectiveHintLabel
+@onready var memory_signal_background: ColorRect = $UILayer/MemorySignalBackground
+@onready var memory_signal_label: Label = $UILayer/MemorySignalLabel
 @onready var quest_notice: CanvasLayer = $QuestNotice
 @onready var intro_fade_overlay: ColorRect = $IntroFadeLayer/IntroFadeOverlay
 @onready var pause_menu: CanvasLayer = $PauseMenu
+@onready var truth_filter_glow: Polygon2D = $EffectsLayer/TruthFilterGlow
 
 var save_slot_menu: Control = null
 var choice_box: CanvasLayer = null
@@ -39,6 +42,7 @@ var cabinet_glow_tween: Tween = null
 var intro_active := false
 var intro_fade_tween: Tween = null
 var last_dialogue_repeat_count := 0
+var memory_signal_tween: Tween = null
 
 func _ready() -> void:
 	_apply_hub_art()
@@ -99,8 +103,10 @@ func _select_repeat_dialogue(npc_id: String, early_sets: Array, redirect_sets: A
 func _get_npc_dialogue_phase() -> String:
 	if _is_post_reveal():
 		return "post_reveal"
-	if GameState.lost_token_quest_completed:
-		return "lost_token_completed"
+	if GameState.lying_cabinets_completed:
+		return "truth_filter_cleared"
+	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
+		return "truth_filter_active"
 	if GameState.lost_token_collected:
 		return "lost_token_collected"
 	if GameState.lost_token_quest_started:
@@ -127,6 +133,7 @@ func _refresh_hint() -> void:
 
 func _refresh_objective_hint() -> void:
 	objective_hint_label.text = _get_objective_hint_text()
+	_refresh_memory_signal_label()
 	_refresh_objective_hint_visibility()
 	_refresh_hub_art_states()
 
@@ -136,6 +143,9 @@ func _refresh_objective_hint_visibility() -> void:
 	var should_show := _objective_hint_should_be_visible()
 	objective_hint_label.visible = should_show
 	objective_hint_background.visible = should_show
+	if memory_signal_label != null and memory_signal_background != null:
+		memory_signal_label.visible = should_show
+		memory_signal_background.visible = should_show
 
 func _objective_hint_should_be_visible() -> bool:
 	if _get_objective_hint_text().is_empty():
@@ -157,7 +167,9 @@ func _get_objective_hint_text() -> String:
 		return "Objective: Play Cabinet 07."
 	if GameState.rockbyte_duel_completed and not GameState.lost_token_quest_completed:
 		return "Objective: Return the Lost Token to Mira."
-	if GameState.lost_token_quest_completed and not GameState.story_puzzle_completed:
+	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
+		return "Objective: Find the Truth Filter."
+	if GameState.lying_cabinets_completed and not GameState.story_puzzle_completed:
 		return "Objective: Check the Staff Door."
 	if GameState.story_puzzle_completed and GameState.staff_room_unlocked and not GameState.twist_reveal_seen:
 		return "Objective: Enter the Staff Room."
@@ -166,6 +178,19 @@ func _get_objective_hint_text() -> String:
 	if GameState.post_reveal_roam_unlocked:
 		return "Objective: Talk to those who remembered you."
 	return ""
+
+func _refresh_memory_signal_label() -> void:
+	GameState.update_memory_signal_from_progress()
+	if memory_signal_label == null:
+		return
+	memory_signal_label.text = "Memory Signal: %s" % GameState.get_memory_signal_label()
+	match GameState.memory_signal_level:
+		GameState.MEMORY_SIGNAL_FRACTURED:
+			memory_signal_label.modulate = Color(1.0, 0.78, 1.0, 1.0)
+		GameState.MEMORY_SIGNAL_UNEASY:
+			memory_signal_label.modulate = Color(0.82, 0.95, 1.0, 1.0)
+		_:
+			memory_signal_label.modulate = Color.WHITE
 
 func _dialogue_is_active() -> bool:
 	if dialogue_box == null:
@@ -244,6 +269,8 @@ func handle_hub_interaction(interactable: Node, player_node: Node = null) -> voi
 			_handle_mr_byte()
 		"cabinet07":
 			_handle_cabinet_07()
+		"truth_filter":
+			_handle_truth_filter()
 		"staff_door":
 			_handle_staff_door()
 		"owner_portrait":
@@ -306,8 +333,47 @@ func _handle_mira() -> void:
 			{"speaker": "Mira", "text": "I remembered you handing me tickets after closing."},
 			{"speaker": "Mira", "text": "You looked scared then too. But you still helped."},
 			{"speaker": "Mira", "text": "Thank you for returning this."},
-			{"speaker": "Mira", "text": "The Staff Door should hear you now."},
+			{"speaker": "Mira", "text": "The token woke something."},
+			{"speaker": "Mira", "text": "Now the arcade has to decide which memories are true."},
+			{"speaker": "Mira", "text": "Find the Truth Filter cabinet."},
 		], Callable(GameState, "complete_lost_token_quest"))
+		return
+	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
+		start_dialogue(_select_repeat_dialogue("mira", [
+			[
+				{"speaker": "Mira", "text": "The token woke something."},
+				{"speaker": "Mira", "text": "Now the arcade has to decide which memories are true."},
+				{"speaker": "Mira", "text": "Find the Truth Filter cabinet."},
+			],
+			[
+				{"speaker": "Mira", "text": "Memory Signal feels different now.", "portrait": PORTRAIT_MIRA_WORRIED},
+				{"speaker": "Mira", "text": "Uneasy, but not broken."},
+				{"speaker": "Mira", "text": "The Truth Filter should know what changed."},
+			],
+		], [
+			[
+				{"speaker": "Mira", "text": "Truth Filter first. Staff Door after."},
+				{"speaker": "Mira", "text": "I know. The arcade makes terrible queues."},
+			],
+		]))
+		return
+	if GameState.lying_cabinets_completed and not GameState.story_puzzle_completed:
+		start_dialogue(_select_repeat_dialogue("mira", [
+			[
+				{"speaker": "Mira", "text": "You heard the contradictions and came back anyway.", "portrait": PORTRAIT_MIRA_WORRIED},
+				{"speaker": "Mira", "text": "That is good."},
+				{"speaker": "Mira", "text": "That is also worrying."},
+			],
+			[
+				{"speaker": "Mira", "text": "Your Memory Signal is Fractured now."},
+				{"speaker": "Mira", "text": "That means the Staff Door may finally listen."},
+			],
+		], [
+			[
+				{"speaker": "Mira", "text": "Go check the Staff Door."},
+				{"speaker": "Mira", "text": "I will try not to look dramatically worried.", "portrait": PORTRAIT_MIRA_WORRIED},
+			],
+		]))
 		return
 	start_dialogue(_select_repeat_dialogue("mira", [
 		[
@@ -333,6 +399,39 @@ func _handle_gus() -> void:
 			{"speaker": "Gus", "text": "I was almost out of practical hints.", "portrait": PORTRAIT_GUS_ANNOYED},
 			{"speaker": "Gus", "text": "You came back anyway. Good."},
 		])
+		return
+	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
+		start_dialogue(_select_repeat_dialogue("gus", [
+			[
+				{"speaker": "Gus", "text": "Careful now."},
+				{"speaker": "Gus", "text": "Once the machines start correcting memories, they get picky."},
+			],
+			[
+				{"speaker": "Gus", "text": "Truth Filter cabinet is the one acting like it grades homework."},
+				{"speaker": "Gus", "text": "So, naturally, I avoid eye contact."},
+			],
+		], [
+			[
+				{"speaker": "Gus", "text": "Truth Filter. Then Staff Door."},
+				{"speaker": "Gus", "text": "One weird chore at a time.", "portrait": PORTRAIT_GUS_ANNOYED},
+			],
+		]))
+		return
+	if GameState.lying_cabinets_completed and not GameState.story_puzzle_completed:
+		start_dialogue(_select_repeat_dialogue("gus", [
+			[
+				{"speaker": "Gus", "text": "If your memories start arguing, do not pick the loudest one."},
+			],
+			[
+				{"speaker": "Gus", "text": "Fractured, huh?"},
+				{"speaker": "Gus", "text": "That sounds expensive to clean up."},
+			],
+		], [
+			[
+				{"speaker": "Gus", "text": "Staff Door time."},
+				{"speaker": "Gus", "text": "Go before the hallway develops opinions.", "portrait": PORTRAIT_GUS_ANNOYED},
+			],
+		]))
 		return
 	if GameState.lost_token_quest_completed:
 		start_dialogue(_select_repeat_dialogue("gus", [
@@ -389,6 +488,42 @@ func _handle_vendo() -> void:
 			{"speaker": "Vendo", "text": "Your memory has been partially restored."},
 			{"speaker": "Vendo", "text": "Refunds remain impossible."},
 		])
+		return
+	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
+		GameState.vendo_intro_seen = true
+		start_dialogue(_select_repeat_dialogue("vendo", [
+			[
+				{"speaker": "Vendo", "text": "Memory Signal: Uneasy."},
+				{"speaker": "Vendo", "text": "Please enjoy a refreshing sense of doubt."},
+			],
+			[
+				{"speaker": "Vendo", "text": "Truth Filter is now available."},
+				{"speaker": "Vendo", "text": "Warning: contains truths. May be bitter."},
+			],
+		], [
+			[
+				{"speaker": "Vendo", "text": "Please proceed to Truth Filter."},
+				{"speaker": "Vendo", "text": "Lingering near vending units does not count as therapy."},
+			],
+		]))
+		return
+	if GameState.lying_cabinets_completed and not GameState.story_puzzle_completed:
+		GameState.vendo_intro_seen = true
+		start_dialogue(_select_repeat_dialogue("vendo", [
+			[
+				{"speaker": "Vendo", "text": "Memory Signal: Fractured."},
+				{"speaker": "Vendo", "text": "Would you like that in a can?"},
+			],
+			[
+				{"speaker": "Vendo", "text": "The Truth Filter says you passed."},
+				{"speaker": "Vendo", "text": "I say you look worse. Both may be true."},
+			],
+		], [
+			[
+				{"speaker": "Vendo", "text": "Next recommendation: Staff Door."},
+				{"speaker": "Vendo", "text": "Hydration status: emotionally irrelevant."},
+			],
+		]))
 		return
 	if GameState.vendo_memory_riddle_secret_found:
 		GameState.vendo_intro_seen = true
@@ -525,6 +660,42 @@ func _handle_mr_byte() -> void:
 			],
 		]))
 		return
+	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
+		GameState.mr_byte_intro_seen = true
+		start_dialogue(_select_repeat_dialogue("mr_byte", [
+			[
+				{"speaker": "Mr. Byte", "text": "Truth filter unavailable until contradiction threshold is reached."},
+				{"speaker": "Mr. Byte", "text": "Correction: threshold reached."},
+			],
+			[
+				{"speaker": "Mr. Byte", "text": "Memory Signal: Uneasy."},
+				{"speaker": "Mr. Byte", "text": "Recommended action: submit corrupted statements for filtering."},
+			],
+		], [
+			[
+				{"speaker": "Mr. Byte", "text": "Repeated help request logged."},
+				{"speaker": "Mr. Byte", "text": "Proceed to Truth Filter."},
+			],
+		]))
+		return
+	if GameState.lying_cabinets_completed and not GameState.story_puzzle_completed:
+		GameState.mr_byte_intro_seen = true
+		start_dialogue(_select_repeat_dialogue("mr_byte", [
+			[
+				{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
+				{"speaker": "Mr. Byte", "text": "Warning: restored subjects may now notice missing pieces."},
+			],
+			[
+				{"speaker": "Mr. Byte", "text": "Second memory fragment detected."},
+				{"speaker": "Mr. Byte", "text": "Staff Door access test recommended."},
+			],
+		], [
+			[
+				{"speaker": "Mr. Byte", "text": "Current objective unchanged."},
+				{"speaker": "Mr. Byte", "text": "Check Staff Door."},
+			],
+		]))
+		return
 	GameState.mr_byte_intro_seen = true
 	start_dialogue(_select_repeat_dialogue("mr_byte", [
 		[
@@ -571,25 +742,66 @@ func _handle_cabinet_07() -> void:
 		_store_arcade_return_position()
 		SceneChanger.go_to_rockbyte_duel()
 		return
+	if GameState.rockbyte_duel_completed and not GameState.lost_token_quest_completed:
+		start_dialogue([
+			{"speaker": "Cabinet 07", "text": "TOKEN RECOVERED."},
+			{"speaker": "Cabinet 07", "text": "RETURN TO MIRA."},
+		])
+		return
+	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
+		start_dialogue(_select_repeat_dialogue("cabinet07", [
+			[
+				{"speaker": "Cabinet 07", "text": "TOKEN RETURNED."},
+				{"speaker": "Cabinet 07", "text": "EMPLOYEE SIGNAL PARTIAL."},
+				{"speaker": "Cabinet 07", "text": "TRUTH FILTER RECOMMENDED."},
+			],
+			[
+				{"speaker": "Cabinet 07", "text": "TWO RECORDS DETECTED."},
+				{"speaker": "Cabinet 07", "text": "ONE RECORD CONTRADICTS."},
+				{"speaker": "Cabinet 07", "text": "TRUTH FILTER REQUIRED."},
+			],
+		], [
+			[
+				{"speaker": "Cabinet 07", "text": "NEXT VALID TARGET: TRUTH FILTER."},
+			],
+		]))
+		return
 	start_dialogue(_select_repeat_dialogue("cabinet07", [
 		[
-			{"speaker": "Cabinet 07", "text": "TOKEN RECOVERED."},
-			{"speaker": "Cabinet 07", "text": "EMPLOYEE SIGNAL: PARTIAL."},
-			{"speaker": "Cabinet 07", "text": "TWO RECORDS DETECTED."},
-			{"speaker": "Cabinet 07", "text": "RETURN TO MIRA."},
+			{"speaker": "Cabinet 07", "text": "SECOND FRAGMENT ACCEPTED."},
+			{"speaker": "Cabinet 07", "text": "EMPLOYEE SIGNAL LESS WRONG."},
+			{"speaker": "Cabinet 07", "text": "STAFF DOOR TARGET READY."},
 		],
 		[
 			{"speaker": "Cabinet 07", "text": "PREVIOUS SCORE: DAMAGED."},
 			{"speaker": "Cabinet 07", "text": "PREVIOUS STAFF FILE: DAMAGED."},
 			{"speaker": "Player", "text": "That is starting to feel less like coincidence.", "portrait": PORTRAIT_PLAYER_NEUTRAL},
-			{"speaker": "Cabinet 07", "text": "RETURN TO MIRA."},
+			{"speaker": "Cabinet 07", "text": "CHECK STAFF DOOR."},
 		],
 	], [
 		[
 			{"speaker": "Cabinet 07", "text": "REPEATED INPUT DETECTED."},
-			{"speaker": "Cabinet 07", "text": "NEXT VALID TARGET: MIRA."},
+			{"speaker": "Cabinet 07", "text": "NEXT VALID TARGET: STAFF DOOR."},
 		],
 	]))
+
+func _handle_truth_filter() -> void:
+	if not GameState.lost_token_quest_completed:
+		start_dialogue([
+			{"speaker": "Truth Filter", "text": "SIGNAL TOO QUIET."},
+			{"speaker": "Truth Filter", "text": "LOST TOKEN REQUIRED."},
+		])
+		return
+	if GameState.lying_cabinets_completed:
+		start_dialogue([
+			{"speaker": "Truth Filter", "text": "TRUTH FILTER PASSED."},
+			{"speaker": "Truth Filter", "text": "MEMORY SIGNAL: FRACTURED."},
+		])
+		return
+	GameState.truth_filter_quest_started = true
+	GameState.update_memory_signal_from_progress()
+	_store_arcade_return_position()
+	SceneChanger.go_to_truth_filter()
 
 func _on_save_slot_menu_closed() -> void:
 	if player and player.has_method("set_control_enabled"):
@@ -602,7 +814,14 @@ func _handle_staff_door() -> void:
 	if GameState.staff_room_unlocked:
 		SceneChanger.go_to_staff_room()
 		return
-	if GameState.lost_token_quest_completed and GameState.rockbyte_duel_completed:
+	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
+		start_dialogue([
+			{"speaker": "Staff Door", "text": "STAFF ACCESS LOCKED."},
+			{"speaker": "Staff Door", "text": "TRUTH FILTER REQUIRED."},
+			{"speaker": "Staff Door", "text": "MEMORY SIGNAL UNSTABLE."},
+		])
+		return
+	if GameState.lost_token_quest_completed and GameState.rockbyte_duel_completed and GameState.lying_cabinets_completed:
 		_store_arcade_return_position()
 		SceneChanger.go_to_sync_door_puzzle()
 		return
@@ -692,6 +911,25 @@ func _refresh_hub_art_states() -> void:
 		owner_portrait_path,
 		[$PropLayer/OwnerPortraitVisual, $PropLayer/OwnerPortraitInner]
 	)
+	if truth_filter_glow != null:
+		truth_filter_glow.visible = GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed
+		var glow_alpha := 0.18 if GameState.memory_signal_level >= GameState.MEMORY_SIGNAL_FRACTURED else 0.12
+		truth_filter_glow.color = Color(0.8, 0.2, 1.0, glow_alpha)
+	_update_memory_signal_pulse()
+
+func _update_memory_signal_pulse() -> void:
+	if memory_signal_tween and memory_signal_tween.is_valid():
+		memory_signal_tween.kill()
+	if memory_signal_background == null:
+		return
+	memory_signal_background.modulate.a = 1.0
+	if GameState.memory_signal_level <= GameState.MEMORY_SIGNAL_GROUNDED:
+		return
+	var low_alpha := 0.72 if GameState.memory_signal_level == GameState.MEMORY_SIGNAL_UNEASY else 0.58
+	memory_signal_tween = create_tween()
+	memory_signal_tween.set_loops()
+	memory_signal_tween.tween_property(memory_signal_background, "modulate:a", low_alpha, 0.9)
+	memory_signal_tween.tween_property(memory_signal_background, "modulate:a", 1.0, 0.9)
 
 func _apply_prop_sprite(sprite_node: Sprite2D, path: String, placeholders: Array) -> void:
 	var loaded := _apply_sprite_texture(sprite_node, path)

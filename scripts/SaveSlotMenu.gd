@@ -88,9 +88,10 @@ func _refresh_slots() -> void:
 			var empty_action := "Choose to begin" if current_mode == MODE_NEW_GAME else "Cannot load"
 			button.text = "Save Slot %d\nEMPTY SAVE\n%s" % [slot_id, empty_action]
 		else:
-			button.text = "Save Slot %d\nStatus: %s\nGames: %d / %d    Secrets: %d / %d\nLast Saved: %s" % [
+			button.text = "Save Slot %d\nStatus: %s    Signal: %s\nGames: %d / %d    Secrets: %d / %d\nLast Saved: %s" % [
 				slot_id,
 				summary.get("story_phase", "Unknown"),
+				summary.get("memory_signal_label", "Grounded"),
 				int(summary.get("games_completed_count", 0)),
 				int(summary.get("total_games_count", 0)),
 				int(summary.get("secrets_found_count", 0)),

@@ -38,6 +38,11 @@ polygon = PackedVector2Array(116, 148, 232, 148, 252, 190, 232, 224, 116, 224, 9
 color = Color(0.16, 0.88, 1, 0.16)
 polygon = PackedVector2Array(420, 78, 560, 78, 580, 152, 552, 190, 426, 190, 400, 152)
 
+[node name="TruthFilterGlow" type="Polygon2D" parent="EffectsLayer"]
+visible = false
+color = Color(0.8, 0.2, 1, 0.12)
+polygon = PackedVector2Array(340, 196, 430, 196, 448, 258, 420, 306, 336, 306, 312, 258)
+
 [node name="Floor" type="Polygon2D" parent="FloorLayer"]
 color = Color(0.045, 0.045, 0.065, 1)
 polygon = PackedVector2Array(0, 0, 640, 0, 640, 440, 0, 440)
@@ -134,6 +139,14 @@ visible = false
 position = Vector2(360, 330)
 centered = false
 
+[node name="TruthFilterVisual" type="Polygon2D" parent="PropLayer"]
+color = Color(0.17, 0.1, 0.28, 1)
+polygon = PackedVector2Array(332, 214, 424, 214, 424, 292, 332, 292)
+
+[node name="TruthFilterScreen" type="Polygon2D" parent="PropLayer"]
+color = Color(0.68, 0.28, 0.95, 1)
+polygon = PackedVector2Array(350, 228, 406, 228, 406, 258, 350, 258)
+
 [node name="StaffDoorVisual" type="Polygon2D" parent="PropLayer"]
 color = Color(0.28, 0.08, 0.1, 1)
 polygon = PackedVector2Array(512, 240, 580, 240, 580, 320, 512, 320)
@@ -190,6 +203,19 @@ size = Vector2(220, 48)
 theme_override_font_sizes/font_size = 12
 text = "Objective: Talk to Mira."
 autowrap_mode = 3
+
+[node name="MemorySignalBackground" type="ColorRect" parent="UILayer"]
+visible = false
+position = Vector2(18, 46)
+size = Vector2(172, 24)
+color = Color(0.015, 0.018, 0.024, 0.64)
+
+[node name="MemorySignalLabel" type="Label" parent="UILayer"]
+visible = false
+position = Vector2(26, 50)
+size = Vector2(156, 18)
+theme_override_font_sizes/font_size = 10
+text = "Memory Signal: Grounded"
 
 [node name="STAFF ONLY" type="Label" parent="UILayer"]
 position = Vector2(512, 220)
@@ -278,6 +304,13 @@ position = Vector2(402, 374)
 interactable_kind = "broken_cabinet"
 label_text = "BROKEN CABINET"
 sprite_texture_path = "res://assets/art/hub/cabinets/broken_cabinet.png"
+use_placeholder_visual = false
+flicker_enabled = true
+
+[node name="TruthFilter" parent="InteractableLayer" instance=ExtResource("5")]
+position = Vector2(378, 276)
+interactable_kind = "truth_filter"
+label_text = "TRUTH FILTER"
 use_placeholder_visual = false
 flicker_enabled = true
 

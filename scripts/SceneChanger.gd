@@ -2,6 +2,7 @@ extends Node
 
 const ARCADE_HUB_SCENE := "res://scenes/arcade/ArcadeHub.tscn"
 const ROCKBYTE_DUEL_SCENE := "res://scenes/minigames/RockbyteDuel.tscn"
+const TRUTH_FILTER_SCENE := "res://scenes/minigames/TruthFilter.tscn"
 const SYNC_DOOR_PUZZLE_SCENE := "res://scenes/arcade/SyncDoorPuzzle.tscn"
 const STAFF_ROOM_SCENE := "res://scenes/arcade/StaffRoom.tscn"
 const TITLE_OR_MAIN_SCENE := "res://scenes/main/Main.tscn"
@@ -24,6 +25,9 @@ func go_to_arcade_hub() -> void:
 
 func go_to_rockbyte_duel() -> void:
 	change_scene(ROCKBYTE_DUEL_SCENE)
+
+func go_to_truth_filter() -> void:
+	change_scene(TRUTH_FILTER_SCENE)
 
 func go_to_sync_door_puzzle() -> void:
 	change_scene(SYNC_DOOR_PUZZLE_SCENE)

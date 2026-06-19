@@ -130,7 +130,7 @@ All of these must pass in a live Godot playthrough before adding new content:
 
 ## Out Of Scope Until This Passes
 - New NPCs.
-- New minigames.
+- Additional minigames beyond the implemented Act 2 Truth Filter scaffold.
 - New endings.
 - New story branches.
 - Combat.

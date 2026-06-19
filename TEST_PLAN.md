@@ -85,6 +85,40 @@
 - Because `rockbyte_duel_completed` persists, Cabinet 07 should not replay as incomplete.
 - Live result: still needs manual confirmation.
 
+## Memory Signal State Test
+Memory Signal is a story signal, not a health meter or punishment system.
+
+1. Start a New Memory.
+2. Confirm `GameState.memory_signal_level == 0`.
+3. Confirm `GameState.get_memory_signal_label()` returns `Grounded`.
+4. Complete the Lost Token quest by returning the token to Mira.
+5. Confirm `GameState.memory_signal_level == 1`.
+6. Confirm `GameState.get_memory_signal_label()` returns `Uneasy`.
+7. Save the game.
+8. Load the same save.
+9. Confirm Memory Signal is still `Uneasy`.
+10. For future Act 2 tests, setting `truth_filter_quest_started` should make slot summaries show `Truth Filter`.
+11. For future Act 2 tests, setting `lying_cabinets_completed` or `second_memory_fragment_collected` before Sync Door completion should make slot summaries show `Truth Filter Cleared`.
+
+## Act 2 Truth Filter Test
+Run this only after confirming the first quest still works.
+
+1. Complete the Lost Token quest.
+2. Confirm Memory Signal reads `Uneasy`.
+3. Confirm the objective reads `Objective: Find the Truth Filter.`
+4. Interact with Staff Door and confirm it blocks until Truth Filter is cleared.
+5. Interact with the `TRUTH FILTER` cabinet.
+6. Confirm `res://scenes/minigames/TruthFilter.tscn` opens.
+7. Confirm instructions, rule text, three cabinet statements, and choice buttons are readable.
+8. Pick one wrong answer and confirm retry works without hard-fail.
+9. Complete all four rounds.
+10. Confirm `lying_cabinets_completed` and `second_memory_fragment_collected` are true.
+11. Confirm Memory Signal reads `Fractured`.
+12. Return to ArcadeHub.
+13. Save and load.
+14. Confirm Truth Filter completion and Memory Signal persist.
+15. Confirm Staff Door now routes to Sync Door.
+
 ## First Quest Vertical Slice Test
 This is the active quality gate before adding more NPCs, minigames, endings, story branches, combat, inventory, or cabinet games. Run this from `res://scenes/main/Main.tscn` in Godot.
 

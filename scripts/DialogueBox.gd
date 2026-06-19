@@ -14,6 +14,7 @@ const MACHINE_SPEAKERS := [
 	"Vendo",
 	"Mr. Byte",
 	"Broken Cabinet",
+	"Truth Filter",
 	"Terminal",
 	"Memory Terminal",
 ]

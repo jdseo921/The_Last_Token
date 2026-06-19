@@ -119,6 +119,7 @@ func collect_save_data() -> Dictionary:
 		"post_reveal_roam_unlocked": GameState.post_reveal_roam_unlocked,
 		"ending_seen": GameState.ending_seen,
 		"twist_reveal_seen": GameState.twist_reveal_seen,
+		"memory_signal_label": GameState.get_memory_signal_label(),
 		"play_time_seconds": Time.get_ticks_msec() / 1000.0,
 		"last_saved_at": GameState.save_timestamp,
 		"game_state": GameState.to_save_data(),
@@ -137,7 +138,7 @@ func load_saved_scene_or_default(data: Dictionary) -> void:
 	if scene_path.is_empty() or scene_path == SceneChanger.TITLE_OR_MAIN_SCENE:
 		SceneChanger.go_to_arcade_hub()
 		return
-	if scene_path == SceneChanger.ROCKBYTE_DUEL_SCENE or scene_path == SceneChanger.SYNC_DOOR_PUZZLE_SCENE:
+	if scene_path == SceneChanger.ROCKBYTE_DUEL_SCENE or scene_path == SceneChanger.TRUTH_FILTER_SCENE or scene_path == SceneChanger.SYNC_DOOR_PUZZLE_SCENE:
 		SceneChanger.go_to_arcade_hub()
 		return
 	if scene_path.begins_with("res://scenes/cutscenes/"):
@@ -163,7 +164,7 @@ func _get_current_save_scene_path() -> String:
 	var scene_path := current_scene.scene_file_path
 	if scene_path == SceneChanger.TITLE_OR_MAIN_SCENE:
 		return SceneChanger.ARCADE_HUB_SCENE
-	if scene_path == SceneChanger.ROCKBYTE_DUEL_SCENE or scene_path == SceneChanger.SYNC_DOOR_PUZZLE_SCENE:
+	if scene_path == SceneChanger.ROCKBYTE_DUEL_SCENE or scene_path == SceneChanger.TRUTH_FILTER_SCENE or scene_path == SceneChanger.SYNC_DOOR_PUZZLE_SCENE:
 		return SceneChanger.ARCADE_HUB_SCENE
 	if scene_path.begins_with("res://scenes/cutscenes/"):
 		return SceneChanger.ARCADE_HUB_SCENE
@@ -190,6 +191,8 @@ func _normalize_slot_summary(data: Dictionary, slot_id: int) -> Dictionary:
 	data["post_reveal_roam_unlocked"] = bool(game_state.get("post_reveal_roam_unlocked", false))
 	data["ending_seen"] = bool(game_state.get("ending_seen", false))
 	data["twist_reveal_seen"] = bool(game_state.get("twist_reveal_seen", false))
+	var signal_level := int(game_state.get("memory_signal_level", 0))
+	data["memory_signal_label"] = GameState.get_memory_signal_label_from_level(signal_level)
 	if not data.has("last_saved_at") or str(data["last_saved_at"]).is_empty():
 		data["last_saved_at"] = str(game_state.get("save_timestamp", "Unknown"))
 	return data
