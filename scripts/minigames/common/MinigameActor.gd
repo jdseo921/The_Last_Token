@@ -23,6 +23,7 @@ const DEFAULT_PLACEHOLDER_COLORS := {
 	"ghost": Color(0.72, 0.82, 0.95, 0.78),
 	"object_npc": Color(0.72, 0.64, 0.42, 1.0),
 }
+const ACTION_SPEED_MULTIPLIER := 1.5
 
 @export var actor_id: String = ""
 @export var display_name: String = "Actor"
@@ -129,10 +130,10 @@ func play_remove_action(target_position: Vector2) -> void:
 		return
 	_start_action("remove_action")
 	action_tween = create_tween()
-	action_tween.tween_property(visual_root, "position", base_visual_position + remove_offset, 0.16)
-	action_tween.tween_property(visual_root, "scale", base_scale * 1.08, 0.08)
-	action_tween.tween_property(visual_root, "scale", base_scale, 0.08)
-	action_tween.tween_property(visual_root, "position", base_visual_position, 0.16)
+	action_tween.tween_property(visual_root, "position", base_visual_position + remove_offset, _scaled_action_time(0.16))
+	action_tween.tween_property(visual_root, "scale", base_scale * 1.08, _scaled_action_time(0.08))
+	action_tween.tween_property(visual_root, "scale", base_scale, _scaled_action_time(0.08))
+	action_tween.tween_property(visual_root, "position", base_visual_position, _scaled_action_time(0.16))
 	action_tween.finished.connect(_on_action_tween_finished.bind("remove_action"), CONNECT_ONE_SHOT)
 
 func play_machine_action(target_position: Vector2) -> void:
@@ -140,18 +141,18 @@ func play_machine_action(target_position: Vector2) -> void:
 	_start_action("machine_action")
 	action_tween = create_tween()
 	if actor_type == "terminal":
-		action_tween.tween_property(visual_root, "modulate", Color(0.65, 1.0, 0.82, 1.0), 0.08)
-		action_tween.tween_property(visual_root, "scale", base_scale * 1.06, 0.08)
-		action_tween.tween_property(visual_root, "modulate", base_modulate, 0.12)
-		action_tween.tween_property(visual_root, "scale", base_scale, 0.12)
+		action_tween.tween_property(visual_root, "modulate", Color(0.65, 1.0, 0.82, 1.0), _scaled_action_time(0.08))
+		action_tween.tween_property(visual_root, "scale", base_scale * 1.06, _scaled_action_time(0.08))
+		action_tween.tween_property(visual_root, "modulate", base_modulate, _scaled_action_time(0.12))
+		action_tween.tween_property(visual_root, "scale", base_scale, _scaled_action_time(0.12))
 	else:
-		action_tween.tween_property(visual_root, "position", base_visual_position + target_offset, 0.05)
-		action_tween.tween_property(visual_root, "modulate", Color(0.65, 0.95, 1.0, 0.45), 0.07)
-		action_tween.tween_property(visual_root, "modulate", Color(1.0, 0.65, 0.85, 1.0), 0.07)
-		action_tween.tween_property(visual_root, "scale", base_scale * 1.08, 0.08)
-		action_tween.tween_property(visual_root, "modulate", base_modulate, 0.12)
-		action_tween.tween_property(visual_root, "scale", base_scale, 0.08)
-		action_tween.tween_property(visual_root, "position", base_visual_position, 0.08)
+		action_tween.tween_property(visual_root, "position", base_visual_position + target_offset, _scaled_action_time(0.05))
+		action_tween.tween_property(visual_root, "modulate", Color(0.65, 0.95, 1.0, 0.45), _scaled_action_time(0.07))
+		action_tween.tween_property(visual_root, "modulate", Color(1.0, 0.65, 0.85, 1.0), _scaled_action_time(0.07))
+		action_tween.tween_property(visual_root, "scale", base_scale * 1.08, _scaled_action_time(0.08))
+		action_tween.tween_property(visual_root, "modulate", base_modulate, _scaled_action_time(0.12))
+		action_tween.tween_property(visual_root, "scale", base_scale, _scaled_action_time(0.08))
+		action_tween.tween_property(visual_root, "position", base_visual_position, _scaled_action_time(0.08))
 	action_tween.finished.connect(_on_action_tween_finished.bind("machine_action"), CONNECT_ONE_SHOT)
 
 func play_success() -> void:
@@ -159,26 +160,26 @@ func play_success() -> void:
 	action_tween = create_tween()
 	match actor_type:
 		"machine", "terminal":
-			action_tween.tween_property(visual_root, "modulate", Color(0.72, 1.0, 0.95, 1.0), 0.08)
-			action_tween.tween_property(visual_root, "scale", base_scale * 1.08, 0.1)
+			action_tween.tween_property(visual_root, "modulate", Color(0.72, 1.0, 0.95, 1.0), _scaled_action_time(0.08))
+			action_tween.tween_property(visual_root, "scale", base_scale * 1.08, _scaled_action_time(0.1))
 		"object_npc":
-			action_tween.tween_property(visual_root, "position", base_visual_position + Vector2(0, -4), 0.1)
-			action_tween.tween_property(visual_root, "position", base_visual_position, 0.12)
+			action_tween.tween_property(visual_root, "position", base_visual_position + Vector2(0, -4), _scaled_action_time(0.1))
+			action_tween.tween_property(visual_root, "position", base_visual_position, _scaled_action_time(0.12))
 		_:
-			action_tween.tween_property(visual_root, "scale", base_scale * 1.12, 0.12)
-			action_tween.tween_property(visual_root, "modulate", Color(0.78, 1.0, 0.78, 1.0), 0.12)
-	action_tween.tween_property(visual_root, "scale", base_scale, 0.16)
-	action_tween.tween_property(visual_root, "modulate", base_modulate, 0.16)
+			action_tween.tween_property(visual_root, "scale", base_scale * 1.12, _scaled_action_time(0.12))
+			action_tween.tween_property(visual_root, "modulate", Color(0.78, 1.0, 0.78, 1.0), _scaled_action_time(0.12))
+	action_tween.tween_property(visual_root, "scale", base_scale, _scaled_action_time(0.16))
+	action_tween.tween_property(visual_root, "modulate", base_modulate, _scaled_action_time(0.16))
 	action_tween.finished.connect(_on_action_tween_finished.bind("success"), CONNECT_ONE_SHOT)
 
 func play_failure() -> void:
 	_start_action("failure")
 	action_tween = create_tween()
-	action_tween.tween_property(visual_root, "position", base_visual_position + Vector2(-3, 0), 0.05)
-	action_tween.tween_property(visual_root, "position", base_visual_position + Vector2(3, 0), 0.05)
-	action_tween.tween_property(visual_root, "modulate", Color(0.75, 0.75, 0.75, 0.62), 0.12)
-	action_tween.tween_property(visual_root, "position", base_visual_position, 0.05)
-	action_tween.tween_property(visual_root, "modulate", base_modulate, 0.18)
+	action_tween.tween_property(visual_root, "position", base_visual_position + Vector2(-3, 0), _scaled_action_time(0.05))
+	action_tween.tween_property(visual_root, "position", base_visual_position + Vector2(3, 0), _scaled_action_time(0.05))
+	action_tween.tween_property(visual_root, "modulate", Color(0.75, 0.75, 0.75, 0.62), _scaled_action_time(0.12))
+	action_tween.tween_property(visual_root, "position", base_visual_position, _scaled_action_time(0.05))
+	action_tween.tween_property(visual_root, "modulate", base_modulate, _scaled_action_time(0.18))
 	action_tween.finished.connect(_on_action_tween_finished.bind("failure"), CONNECT_ONE_SHOT)
 
 func reset_pose() -> void:
@@ -203,27 +204,27 @@ func get_removal_style_for_actor() -> String:
 func _start_motion_action(action_name: String, offset: Vector2, out_time: float, back_time: float) -> void:
 	_start_action(action_name)
 	action_tween = create_tween()
-	action_tween.tween_property(visual_root, "position", base_visual_position + offset, out_time)
-	action_tween.tween_property(visual_root, "position", base_visual_position, back_time)
+	action_tween.tween_property(visual_root, "position", base_visual_position + offset, _scaled_action_time(out_time))
+	action_tween.tween_property(visual_root, "position", base_visual_position, _scaled_action_time(back_time))
 	action_tween.finished.connect(_on_action_tween_finished.bind(action_name), CONNECT_ONE_SHOT)
 
 func _start_ghost_action(action_name: String, offset: Vector2) -> void:
 	_start_action(action_name)
 	action_tween = create_tween()
-	action_tween.tween_property(visual_root, "position", base_visual_position + offset.limit_length(12.0), 0.14)
-	action_tween.tween_property(visual_root, "modulate", Color(base_modulate.r, base_modulate.g, base_modulate.b, 0.35), 0.08)
-	action_tween.tween_property(visual_root, "modulate", Color(base_modulate.r, base_modulate.g, base_modulate.b, 0.78), 0.12)
-	action_tween.tween_property(visual_root, "position", base_visual_position, 0.16)
+	action_tween.tween_property(visual_root, "position", base_visual_position + offset.limit_length(12.0), _scaled_action_time(0.14))
+	action_tween.tween_property(visual_root, "modulate", Color(base_modulate.r, base_modulate.g, base_modulate.b, 0.35), _scaled_action_time(0.08))
+	action_tween.tween_property(visual_root, "modulate", Color(base_modulate.r, base_modulate.g, base_modulate.b, 0.78), _scaled_action_time(0.12))
+	action_tween.tween_property(visual_root, "position", base_visual_position, _scaled_action_time(0.16))
 	action_tween.finished.connect(_on_action_tween_finished.bind(action_name), CONNECT_ONE_SHOT)
 
 func _start_object_action(action_name: String) -> void:
 	_start_action(action_name)
 	action_tween = create_tween()
-	action_tween.tween_property(visual_root, "scale", base_scale * 1.08, 0.08)
-	action_tween.tween_property(visual_root, "position", base_visual_position + Vector2(3, 0), 0.06)
-	action_tween.tween_property(visual_root, "position", base_visual_position + Vector2(-3, 0), 0.06)
-	action_tween.tween_property(visual_root, "scale", base_scale, 0.1)
-	action_tween.tween_property(visual_root, "position", base_visual_position, 0.08)
+	action_tween.tween_property(visual_root, "scale", base_scale * 1.08, _scaled_action_time(0.08))
+	action_tween.tween_property(visual_root, "position", base_visual_position + Vector2(3, 0), _scaled_action_time(0.06))
+	action_tween.tween_property(visual_root, "position", base_visual_position + Vector2(-3, 0), _scaled_action_time(0.06))
+	action_tween.tween_property(visual_root, "scale", base_scale, _scaled_action_time(0.1))
+	action_tween.tween_property(visual_root, "position", base_visual_position, _scaled_action_time(0.08))
 	action_tween.finished.connect(_on_action_tween_finished.bind(action_name), CONNECT_ONE_SHOT)
 
 func _start_action(_action_name: String) -> void:
@@ -242,6 +243,9 @@ func _get_target_offset(target_position: Vector2, max_distance: float) -> Vector
 	if direction.length() <= 0.01:
 		return Vector2.ZERO
 	return direction.normalized() * max_distance
+
+func _scaled_action_time(seconds: float) -> float:
+	return seconds / ACTION_SPEED_MULTIPLIER
 
 func _refresh_visuals() -> void:
 	name_label.text = display_name

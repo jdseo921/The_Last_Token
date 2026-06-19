@@ -260,6 +260,26 @@ offset_right = 344.0
 offset_bottom = 38.0
 text = "Exit"
 
+[node name="ResultPopup" type="Panel" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 120.0
+offset_top = 150.0
+offset_right = 520.0
+offset_bottom = 252.0
+
+[node name="ResultPopupLabel" type="Label" parent="ResultPopup"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 12.0
+offset_right = 382.0
+offset_bottom = 90.0
+theme_override_font_sizes/font_size = 16
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
 [node name="EffectsLayer" type="CanvasLayer" parent="."]
 layer = 5
 

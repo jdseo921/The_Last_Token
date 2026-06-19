@@ -9,6 +9,7 @@ const REMOVAL_VANISH := "vanish"
 const REMOVAL_SHAKE := "shake"
 const ACTIVE_ROCK_COLOR := Color(0.68, 0.72, 0.78, 1.0)
 const EMPTY_ROCK_COLOR := Color(0.13, 0.13, 0.16, 0.45)
+const ACTION_SPEED_MULTIPLIER := 1.5
 
 @export var pile_id: String = "rock_pile"
 @export var max_rocks: int = 5
@@ -107,20 +108,20 @@ func _play_removal_animation(removed_indices: Array[int], removal_style: String)
 		var rock := rock_nodes[index]
 		match removal_style:
 			REMOVAL_CARRY:
-				action_tween.tween_property(rock, "position", rock.position + Vector2(18, -10), 0.18)
-				action_tween.tween_property(rock, "modulate:a", 0.0, 0.18)
+				action_tween.tween_property(rock, "position", rock.position + Vector2(18, -10), _scaled_action_time(0.18))
+				action_tween.tween_property(rock, "modulate:a", 0.0, _scaled_action_time(0.18))
 			REMOVAL_REACH:
-				action_tween.tween_property(rock, "scale", Vector2(1.18, 1.18), 0.08)
-				action_tween.tween_property(rock, "modulate:a", 0.0, 0.16)
+				action_tween.tween_property(rock, "scale", Vector2(1.18, 1.18), _scaled_action_time(0.08))
+				action_tween.tween_property(rock, "modulate:a", 0.0, _scaled_action_time(0.16))
 			REMOVAL_DIGITAL_CRUMBLE:
-				action_tween.tween_property(rock, "modulate", Color(0.45, 1.0, 1.0, 0.35), 0.07)
-				action_tween.tween_property(rock, "modulate:a", 0.0, 0.14)
+				action_tween.tween_property(rock, "modulate", Color(0.45, 1.0, 1.0, 0.35), _scaled_action_time(0.07))
+				action_tween.tween_property(rock, "modulate:a", 0.0, _scaled_action_time(0.14))
 			REMOVAL_SHAKE:
-				action_tween.tween_property(rock, "position", rock.position + Vector2(-3, 0), 0.04)
-				action_tween.tween_property(rock, "position", rock.position + Vector2(3, 0), 0.04)
-				action_tween.tween_property(rock, "modulate:a", 0.0, 0.14)
+				action_tween.tween_property(rock, "position", rock.position + Vector2(-3, 0), _scaled_action_time(0.04))
+				action_tween.tween_property(rock, "position", rock.position + Vector2(3, 0), _scaled_action_time(0.04))
+				action_tween.tween_property(rock, "modulate:a", 0.0, _scaled_action_time(0.14))
 			_:
-				action_tween.tween_property(rock, "modulate:a", 0.0, 0.12)
+				action_tween.tween_property(rock, "modulate:a", 0.0, _scaled_action_time(0.12))
 	action_tween.finished.connect(_on_removal_animation_finished.bind(removed_indices), CONNECT_ONE_SHOT)
 
 func _on_removal_animation_finished(removed_indices: Array[int]) -> void:
@@ -142,6 +143,9 @@ func _load_rock_texture() -> void:
 	var resource := load(rock_texture_path)
 	if resource is Texture2D:
 		rock_texture = resource
+
+func _scaled_action_time(seconds: float) -> float:
+	return seconds / ACTION_SPEED_MULTIPLIER
 
 func _clear_rocks() -> void:
 	for rock in rock_nodes:

@@ -52,6 +52,7 @@ var has_arcade_return_position := false
 var arcade_return_position := Vector2.ZERO
 var opening_intro_seen := false
 var last_announced_quest_id := ""
+var npc_dialogue_counts: Dictionary = {}
 
 func _ready() -> void:
 	_ensure_input_actions()
@@ -160,6 +161,7 @@ func reset_for_new_game() -> void:
 	save_progress_stage = "New Memory"
 	opening_intro_seen = false
 	last_announced_quest_id = ""
+	npc_dialogue_counts.clear()
 	clear_arcade_return_position()
 
 func set_arcade_return_position(position: Vector2) -> void:
@@ -273,6 +275,14 @@ func get_current_quest_data() -> Dictionary:
 func mark_current_quest_announced() -> void:
 	last_announced_quest_id = get_current_quest_id()
 
+func get_npc_dialogue_count(key: String) -> int:
+	return int(npc_dialogue_counts.get(key, 0))
+
+func increment_npc_dialogue_count(key: String) -> int:
+	var next_count := get_npc_dialogue_count(key) + 1
+	npc_dialogue_counts[key] = next_count
+	return next_count
+
 func to_save_data() -> Dictionary:
 	return {
 		"save_slot_index": save_slot_index,
@@ -313,6 +323,7 @@ func to_save_data() -> Dictionary:
 		"vendo_memory_riddle_secret_found": vendo_memory_riddle_secret_found,
 		"opening_intro_seen": opening_intro_seen,
 		"last_announced_quest_id": last_announced_quest_id,
+		"npc_dialogue_counts": npc_dialogue_counts.duplicate(true),
 	}
 
 func apply_save_data(data: Dictionary) -> void:
@@ -356,3 +367,6 @@ func apply_save_data(data: Dictionary) -> void:
 	vendo_memory_riddle_secret_found = data.get("vendo_memory_riddle_secret_found", vendo_memory_riddle_secret_found)
 	opening_intro_seen = data.get("opening_intro_seen", opening_intro_seen)
 	last_announced_quest_id = str(data.get("last_announced_quest_id", last_announced_quest_id))
+	var dialogue_counts_value: Variant = data.get("npc_dialogue_counts", npc_dialogue_counts)
+	if dialogue_counts_value is Dictionary:
+		npc_dialogue_counts = dialogue_counts_value.duplicate(true)

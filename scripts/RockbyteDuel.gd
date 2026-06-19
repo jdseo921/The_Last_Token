@@ -7,6 +7,11 @@ const ACTION_QUEUE_SCRIPT := preload("res://scripts/minigames/common/MinigameAct
 const CONFIG_LOADER := preload("res://scripts/minigames/common/MinigameConfigLoader.gd")
 const CONFIG_PATH := "res://data/minigames/rockbyte_duel_config.json"
 const ROCK_PILE_PROP_SCENE := preload("res://scenes/minigames/common/RockPileProp.tscn")
+const CABINET_TURN_DELAY_SECONDS := 0.23
+const HARD_RANDOM_MOVE_CHANCE_PERCENT := 12
+const LEEWAY_RANDOM_MOVE_CHANCE_PERCENT := 58
+const LEEWAY_LOSS_THRESHOLD := 3
+const RESULT_POPUP_HOLD_SECONDS := 2.0
 
 @export var background_texture_path: String = ""
 @export var frame_texture_path: String = ""
@@ -24,6 +29,8 @@ const ROCK_PILE_PROP_SCENE := preload("res://scenes/minigames/common/RockPilePro
 @onready var take_right_button: Button = $ButtonArea/ButtonsHBox/TakeRightButton
 @onready var take_both_button: Button = $ButtonArea/ButtonsHBox/TakeBothButton
 @onready var exit_button: Button = $ButtonArea/ExitButton
+@onready var result_popup: Panel = $ResultPopup
+@onready var result_popup_label: Label = $ResultPopup/ResultPopupLabel
 @onready var left_rocks: Array[ColorRect] = [
 	$GameArea/PilesHBox/LeftPilePanel/LeftRockGrid/Rock1,
 	$GameArea/PilesHBox/LeftPilePanel/LeftRockGrid/Rock2,
@@ -51,6 +58,7 @@ var left_pile_prop: Node = null
 var right_pile_prop: Node = null
 var visual_sequence_running := false
 var minigame_config: Dictionary = {}
+var result_popup_tween: Tween = null
 
 func _ready() -> void:
 	minigame_config = CONFIG_LOADER.load_config(CONFIG_PATH)
@@ -136,18 +144,16 @@ func _cabinet_turn(player_message: String) -> void:
 	if duel_finished:
 		return
 	turn_label.text = "Cabinet turn"
-	await get_tree().create_timer(0.35).timeout
+	await get_tree().create_timer(CABINET_TURN_DELAY_SECONDS).timeout
 	if duel_finished:
 		return
 	if left_pile == 0 and right_pile == 0:
 		_finish_duel(false)
 		return
-	var winning_move := _get_winning_move()
-	if winning_move == "" or randi() % 100 < 35:
-		winning_move = _random_valid_move()
-	var removed := _get_removed_counts_for_move(winning_move)
-	_apply_cabinet_move(winning_move)
-	await _play_cabinet_move_visual(winning_move, int(removed.get("left", 0)), int(removed.get("right", 0)))
+	var cabinet_move := _get_cabinet_move()
+	var removed := _get_removed_counts_for_move(cabinet_move)
+	_apply_cabinet_move(cabinet_move)
+	await _play_cabinet_move_visual(cabinet_move, int(removed.get("left", 0)), int(removed.get("right", 0)))
 	_refresh_counts()
 	status_label.text = "%s\n%s" % [player_message, last_message]
 	if left_pile == 0 and right_pile == 0:
@@ -174,6 +180,27 @@ func _random_valid_move() -> String:
 	if left_pile > 0 or right_pile > 0:
 		options.append("both")
 	return options[randi() % options.size()]
+
+func _get_cabinet_move() -> String:
+	var strategic_move := _get_strategic_move()
+	var random_chance := HARD_RANDOM_MOVE_CHANCE_PERCENT
+	if GameState.rockbyte_duel_loss_count >= LEEWAY_LOSS_THRESHOLD:
+		random_chance = LEEWAY_RANDOM_MOVE_CHANCE_PERCENT
+	if strategic_move == "" or randi() % 100 < random_chance:
+		return _random_valid_move()
+	return strategic_move
+
+func _get_strategic_move() -> String:
+	var winning_move := _get_winning_move()
+	if not winning_move.is_empty():
+		return winning_move
+	if left_pile > right_pile:
+		return "left"
+	if right_pile > left_pile:
+		return "right"
+	if left_pile > 0 and right_pile > 0:
+		return "both"
+	return _random_valid_move()
 
 func _apply_cabinet_move(choice: String) -> void:
 	match choice:
@@ -206,13 +233,15 @@ func _finish_duel(player_won: bool) -> void:
 		GameState.collect_lost_token()
 		_play_audio("play_token_get")
 		exit_button.text = "Return to Arcade"
-		status_label.text = "TWO VERSIONS FOUND.\nONE SAVED. ONE LOST.\nLost Token recovered."
+		status_label.text = "Lost Token recovered.\nReturn to Mira."
+		_show_result_popup("TWO VERSIONS FOUND.\nONE SAVED. ONE LOST.\nLost Token recovered.")
 		exit_button.grab_focus()
 		return
 	_play_audio("play_error")
 	GameState.rockbyte_duel_loss_count += 1
 	loss_retry_count = GameState.rockbyte_duel_loss_count
-	status_label.text = _get_loss_text()
+	status_label.text = "Duel lost.\nPress Retry Duel."
+	_show_result_popup(_get_loss_text())
 	exit_button.text = "Retry Duel"
 	exit_button.grab_focus()
 
@@ -231,6 +260,7 @@ func _reset_duel() -> void:
 	player_won_last_round = false
 	round_finished_msec = 0
 	last_message = "Choose one move each turn. Take the final rock to win."
+	_hide_result_popup()
 	turn_label.text = "Your turn"
 	take_left_button.visible = true
 	take_right_button.visible = true
@@ -316,6 +346,25 @@ func _sync_stage_pile_counts() -> void:
 		left_pile_prop.call("set_count", left_pile)
 	if right_pile_prop != null and is_instance_valid(right_pile_prop) and right_pile_prop.has_method("set_count"):
 		right_pile_prop.call("set_count", right_pile)
+
+func _show_result_popup(text: String) -> void:
+	if result_popup_tween and result_popup_tween.is_valid():
+		result_popup_tween.kill()
+	result_popup_label.text = text
+	result_popup.visible = true
+	result_popup.modulate.a = 0.0
+	result_popup_tween = create_tween()
+	result_popup_tween.tween_property(result_popup, "modulate:a", 1.0, 0.18)
+	result_popup_tween.tween_interval(RESULT_POPUP_HOLD_SECONDS)
+	result_popup_tween.tween_property(result_popup, "modulate:a", 0.0, 0.28)
+	result_popup_tween.tween_callback(_hide_result_popup.bind(false))
+
+func _hide_result_popup(kill_tween: bool = true) -> void:
+	if kill_tween and result_popup_tween and result_popup_tween.is_valid():
+		result_popup_tween.kill()
+	result_popup_tween = null
+	if result_popup != null:
+		result_popup.visible = false
 
 func _play_player_move_visual(choice: String, removed_left: int, removed_right: int) -> void:
 	var actions: Array[Dictionary] = []
