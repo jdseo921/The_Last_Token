@@ -4,6 +4,7 @@
 - Final runtime click-through still needs to be completed in Godot on a machine with the editor installed.
 - Publish-readiness polish pass was statically reviewed and passed a Godot 4.7 headless project/main-scene smoke check.
 - The full `TEST_PLAN.md` path still needs a human interactive playthrough in the Godot viewport because NPC movement, collisions, focus navigation, and menu readability cannot be fully verified from the headless console.
+- Codex-driven temporary Godot QA runners have repeatedly crashed while opening `user://logs/...`. Use `QA_AUTOMATION.md` and prefer headless scene smoke checks plus manual viewport QA.
 
 ## Known Bugs / Risks
 - Rockbyte Duel uses simple cabinet AI, so outcomes may vary and winning may require retrying.

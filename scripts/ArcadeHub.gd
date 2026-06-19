@@ -23,11 +23,14 @@ const PORTRAIT_PLAYER_NEUTRAL := "res://assets/art/portraits/player/player_neutr
 @onready var ui_layer: Node2D = $UILayer
 @onready var dialogue_box: CanvasLayer = $UILayer/DialogueBox
 @onready var prompt_label: Label = $UILayer/InteractionPrompt
+@onready var prompt_background: ColorRect = $UILayer/InteractionPromptBackground
 @onready var hint_label: Label = $UILayer/HintLabel
 @onready var post_reveal_hint_label: Label = $UILayer/PostRevealHintLabel
+@onready var objective_hint_background: ColorRect = $UILayer/ObjectiveHintBackground
 @onready var objective_hint_label: Label = $UILayer/ObjectiveHintLabel
 @onready var quest_notice: CanvasLayer = $QuestNotice
 @onready var intro_fade_overlay: ColorRect = $IntroFadeLayer/IntroFadeOverlay
+@onready var pause_menu: CanvasLayer = $PauseMenu
 
 var save_slot_menu: Control = null
 var choice_box: CanvasLayer = null
@@ -50,6 +53,9 @@ func _ready() -> void:
 	else:
 		call_deferred("_maybe_show_quest_notification")
 
+func _process(_delta: float) -> void:
+	_refresh_objective_hint_visibility()
+
 func _apply_spawn_position() -> void:
 	if GameState.has_arcade_return_position:
 		player.global_position = GameState.arcade_return_position
@@ -64,6 +70,8 @@ func _apply_spawn_position() -> void:
 func _on_prompt_changed(text: String) -> void:
 	prompt_label.text = text
 	prompt_label.visible = not text.is_empty()
+	if prompt_background:
+		prompt_background.visible = prompt_label.visible
 
 func start_dialogue(lines: Array, after_dialogue: Callable = Callable()) -> void:
 	pending_after_dialogue = after_dialogue
@@ -94,8 +102,28 @@ func _refresh_hint() -> void:
 
 func _refresh_objective_hint() -> void:
 	objective_hint_label.text = _get_objective_hint_text()
-	objective_hint_label.visible = false
+	_refresh_objective_hint_visibility()
 	_refresh_hub_art_states()
+
+func _refresh_objective_hint_visibility() -> void:
+	if objective_hint_label == null or objective_hint_background == null:
+		return
+	var should_show := _objective_hint_should_be_visible()
+	objective_hint_label.visible = should_show
+	objective_hint_background.visible = should_show
+
+func _objective_hint_should_be_visible() -> bool:
+	if _get_objective_hint_text().is_empty():
+		return false
+	if _should_play_opening_intro() or intro_active:
+		return false
+	if _dialogue_is_active() or _choice_box_is_open() or _save_slot_menu_is_open():
+		return false
+	if pause_menu != null and pause_menu.visible:
+		return false
+	if quest_notice != null and quest_notice.visible:
+		return false
+	return true
 
 func _get_objective_hint_text() -> String:
 	if not GameState.story_started:
@@ -136,9 +164,9 @@ func _play_opening_intro() -> void:
 	intro_fade_overlay.modulate.a = 1.0
 	await _fade_intro_to_dialogue()
 	dialogue_box.start_dialogue([
-		{"speaker": "Player", "text": "I remember the smell of warm plastic and old carpet before I remember my own name.", "portrait": PORTRAIT_PLAYER_NEUTRAL},
-		{"speaker": "Player", "text": "Pixel Haven should be closed. The lights should be off. Someone left them waiting for me.", "portrait": PORTRAIT_PLAYER_NEUTRAL},
-		{"speaker": "Player", "text": "There is a token-shaped absence in my pocket, and Mira's voice is the first thing that feels familiar.", "portrait": PORTRAIT_PLAYER_NEUTRAL},
+		{"speaker": "Player", "text": "Pixel Haven. I know the name before I know myself.", "portrait": PORTRAIT_PLAYER_NEUTRAL},
+		{"speaker": "Player", "text": "The arcade is closed, but the machines are awake.", "portrait": PORTRAIT_PLAYER_NEUTRAL},
+		{"speaker": "Player", "text": "Something is missing from my pocket. A token. A memory.", "portrait": PORTRAIT_PLAYER_NEUTRAL},
 	])
 	await dialogue_box.dialogue_finished
 	GameState.mark_opening_intro_seen()
@@ -213,26 +241,27 @@ func _handle_mira() -> void:
 	if not GameState.lost_token_quest_started:
 		GameState.mira_intro_seen = true
 		start_dialogue([
-			{"speaker": "Mira", "text": "Pixel Haven kept the lights on for you."},
-			{"speaker": "Mira", "text": "You are late again."},
-			{"speaker": "Player", "text": "Again?", "portrait": PORTRAIT_PLAYER_NEUTRAL},
+			{"speaker": "Mira", "text": "You made it back."},
+			{"speaker": "Mira", "text": "I kept hoping you would."},
+			{"speaker": "Player", "text": "Have I been here before?", "portrait": PORTRAIT_PLAYER_NEUTRAL},
+			{"speaker": "Mira", "text": "Many times. Never for long."},
 			{"speaker": "Mira", "text": "Cabinet 07 has your Lost Token."},
 			{"speaker": "Mira", "text": "Please bring it back to me."},
 		], Callable(GameState, "start_lost_token_quest"))
 		return
 	if GameState.lost_token_quest_started and not GameState.lost_token_collected:
 		start_dialogue([
-			{"speaker": "Mira", "text": "Go to Cabinet 07."},
-			{"speaker": "Mira", "text": "It remembers employees better than customers."},
+			{"speaker": "Mira", "text": "Cabinet 07 is waiting."},
+			{"speaker": "Mira", "text": "It only opens for signals it almost remembers."},
 		])
 		return
 	if GameState.lost_token_collected and not GameState.lost_token_quest_completed:
 		start_dialogue([
-			{"speaker": "Player", "text": "I found the token."},
-			{"speaker": "Mira", "text": "You found it."},
-			{"speaker": "Mira", "text": "I was afraid you would not.", "portrait": PORTRAIT_MIRA_WORRIED},
+			{"speaker": "Player", "text": "I found the Lost Token."},
+			{"speaker": "Mira", "text": "Then one memory came back.", "portrait": PORTRAIT_MIRA_WORRIED},
+			{"speaker": "Mira", "text": "I remembered waiting for you."},
+			{"speaker": "Mira", "text": "Thank you for returning this."},
 			{"speaker": "Mira", "text": "The Staff Door should hear you now."},
-			{"speaker": "Mira", "text": "Please check it."},
 		], Callable(GameState, "complete_lost_token_quest"))
 		return
 	start_dialogue([{"speaker": "Mira", "text": "Welcome to Pixel Haven."}])
@@ -376,7 +405,8 @@ func _handle_cabinet_07() -> void:
 	if not GameState.lost_token_quest_started:
 		GameState.cabinet07_employee_hint_seen = true
 		start_dialogue([
-			{"speaker": "Cabinet 07", "text": "CUSTOMER PROFILE: UNKNOWN."},
+			{"speaker": "Cabinet 07", "text": "CUSTOMER SIGNAL: UNKNOWN."},
+			{"speaker": "Cabinet 07", "text": "EMPLOYEE SIGNAL: PARTIAL."},
 			{"speaker": "Cabinet 07", "text": "LOST TOKEN REQUIRED."},
 		])
 		return
@@ -385,10 +415,10 @@ func _handle_cabinet_07() -> void:
 		SceneChanger.go_to_rockbyte_duel()
 		return
 	start_dialogue([
-		{"speaker": "Cabinet 07", "text": "TOKEN ACCEPTED."},
-		{"speaker": "Cabinet 07", "text": "EMPLOYEE SIGNAL PARTIAL."},
-		{"speaker": "Cabinet 07", "text": "LOST TOKEN RECOVERED."},
-		{"speaker": "Cabinet 07", "text": "RETURN TOKEN TO MIRA."},
+		{"speaker": "Cabinet 07", "text": "TOKEN RECOVERED."},
+		{"speaker": "Cabinet 07", "text": "EMPLOYEE SIGNAL: PARTIAL."},
+		{"speaker": "Cabinet 07", "text": "TWO RECORDS DETECTED."},
+		{"speaker": "Cabinet 07", "text": "RETURN TO MIRA."},
 	])
 
 func _on_save_slot_menu_closed() -> void:
@@ -465,6 +495,10 @@ func _apply_hub_art() -> void:
 	)
 	cabinet_07_flicker_sprite.visible = false
 	cabinet_07_flicker_sprite.sprite_frames = null
+	if _apply_animated_sprite_sheet(cabinet_07_flicker_sprite, ASSET_PATHS.HUB_CABINET_07_FLICKER_SHEET, 4, 0.24):
+		cabinet_07_sprite.visible = false
+	elif _apply_animated_sprite_sheet(cabinet_07_flicker_sprite, ASSET_PATHS.HUB_CABINET_07_FLICKER, 2, 0.32):
+		cabinet_07_sprite.visible = false
 	_apply_prop_sprite(
 		broken_cabinet_sprite,
 		ASSET_PATHS.HUB_BROKEN_CABINET,

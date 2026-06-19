@@ -2,8 +2,8 @@
 
 ## Godot Version
 - Target engine: Godot 4.x
-- Godot 4.4.x is preferred for local testing/export.
-- Project config currently lists feature tag: `4.4`
+- Godot 4.7.x is the current local target for testing/export.
+- Project config currently lists feature tag: `4.7`
 
 ## Main Scene
 - `res://scenes/main/Main.tscn`
@@ -22,7 +22,7 @@
 - Local build folders such as `build/`, `builds/`, `export/`, and `exports/` are ignored by `.gitignore`.
 
 ## Manual Windows Export Steps
-1. Open the project in Godot 4.4.x.
+1. Open the project in Godot 4.7.x.
 2. Go to `Project -> Export`.
 3. Choose `Add...`.
 4. Select `Windows Desktop`.
@@ -47,3 +47,6 @@ Runtime saves are written under:
 - `user://saves/slot_3.json`
 
 The exact OS path for `user://` depends on the Godot editor/runtime environment.
+
+## Automated QA Caveat
+Use `QA_AUTOMATION.md` for Codex/headless check guidance. In this workspace, temporary Godot QA runners have crashed while opening `user://logs/...`, so automated checks should be limited to scene smoke tests unless that local runner issue is fixed.

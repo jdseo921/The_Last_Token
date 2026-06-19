@@ -3,6 +3,23 @@
 ## Purpose
 This plan breaks the future visual pass into safe phases. The current MVP should remain playable throughout the process. Do not add gameplay, NPCs, minigames, or endings as part of visual upgrade work unless a separate approved gameplay task says to do so.
 
+## Current Gate: First Quest Vertical Slice
+Before starting additional visual expansion, the project should pass `FIRST_QUEST_VERTICAL_SLICE.md`.
+
+The active visual priority is only this loop:
+
+1. Title Menu
+2. New Memory
+3. Opening intro
+4. Mira starts the Lost Token quest
+5. Cabinet 07 launches Rockbyte Duel
+6. Rockbyte Duel plays clearly with staged actor and rock visuals
+7. Lost Token is recovered
+8. Returning to Mira completes the quest
+9. Save/load confirms the state
+
+Visual work should support this gate before adding new NPCs, new minigames, new endings, additional story branches, combat, inventory, or extra cabinet games.
+
 ## Phase 1: Asset Pipeline And Placeholder Replacement Support
 Goal: make art replacement safe before making lots of art.
 
@@ -18,6 +35,7 @@ Exit criteria:
 - New art can be imported without breaking a scene.
 - Missing art still fails softly.
 - Placeholder MVP remains playable.
+- First quest visual requirements remain readable and testable.
 
 ## Phase 2: Dialogue Portraits
 Goal: improve character presence without changing dialogue content.
@@ -46,6 +64,7 @@ Exit criteria:
 - ArcadeHub reads clearly without feeling crowded.
 - All required interactables remain reachable.
 - Objective hint, post-reveal hint, and interaction prompt remain readable.
+- Mira, Cabinet 07, and the first quest route remain visually obvious.
 
 ## Phase 4: Minigame Screen Templates
 Goal: make minigames feel like haunted arcade screens while keeping rules clear.
@@ -64,6 +83,7 @@ Exit criteria:
 - Minigame rule scripts still own rules and `GameState` changes.
 - Presentation scripts/components own actors, props, effects, and animation loops.
 - Win/loss/success feedback remains clear without audio.
+- Rockbyte Duel meets the first quest gate before any later minigame receives polish.
 
 ## Phase 5: Memory Recall Panel Art
 Goal: replace slideshow placeholders with pixel-art memory panels.

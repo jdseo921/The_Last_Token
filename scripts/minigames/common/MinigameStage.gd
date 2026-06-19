@@ -143,9 +143,13 @@ func play_prop_action(prop_id: String, action_name: String) -> void:
 func clear_stage() -> void:
 	for actor in actors.values():
 		if actor and is_instance_valid(actor):
+			if actor is CanvasItem:
+				actor.visible = false
 			actor.queue_free()
 	for prop in props.values():
 		if prop and is_instance_valid(prop):
+			if prop is CanvasItem:
+				prop.visible = false
 			prop.queue_free()
 	actors.clear()
 	props.clear()

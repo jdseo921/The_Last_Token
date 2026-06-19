@@ -2,11 +2,11 @@
 
 ## Test Rules
 - Test in Godot 4.x from `res://scenes/main/Main.tscn`.
-- Godot 4.4.x is preferred for local testing because the project feature tag is `4.4`.
+- Godot 4.7.x is the current local test target because the project feature tag is `4.7`.
 - Keep the test focused on the playable MVP path, not polish.
 - Fix blockers before adding new content.
 - Missing art/audio placeholders are acceptable if they do not break play.
-- This pass was statically reviewed from scripts and scene files. Live Godot runtime verification could not be completed here because `godot` is not available on PATH.
+- See `QA_AUTOMATION.md` before running Codex/Godot automation. Headless scene checks are smoke tests only; live playthrough gates still require the Godot viewport.
 
 ## Local Run And Export Readiness
 1. Open Godot Project Manager.
@@ -35,6 +35,97 @@
 - Live full-route result: not completed; the 31-step interactive route still needs a human viewport playthrough.
 - Headless smoke result: passed with Godot 4.7 console using project open, brief default run, and direct `res://scenes/main/Main.tscn` launch.
 - README status: unchanged because the full live route has not passed.
+
+## First Quest Runtime QA Fix Pass
+- Date: 2026-06-19
+- Scope: Title Menu -> New Memory -> Opening intro -> Mira -> Lost Token quest -> Cabinet 07 -> Rockbyte Duel -> Lost Token recovered -> return to Mira -> quest complete -> save/load.
+- Fix scope: first-quest blockers only.
+- Gameplay changes made: none.
+- Headless runtime result: passed for project open, `res://scenes/main/Main.tscn`, `res://scenes/arcade/ArcadeHub.tscn`, and `res://scenes/minigames/RockbyteDuel.tscn` using Godot 4.7 console.
+- Static route review result: first-quest state transitions are wired. Mira starts the Lost Token quest, Cabinet 07 launches Rockbyte Duel, Rockbyte Duel win sets `rockbyte_duel_completed` and `lost_token_collected`, Mira completion sets `lost_token_quest_completed`, and these flags are included in save data.
+- Save route note: the current MVP uses the pause menu for save/load. The Memory Terminal is not present in ArcadeHub, so first-quest save/load testing should use `Esc -> Save` and `Esc -> Load`.
+- Full interactive result: not passed yet; a human viewport playthrough is still required to confirm movement, dialogue input, quest notice timing, Rockbyte losing/retrying/winning, and save/load restore from Slot 1.
+- Remaining first-quest issues: no script or scene launch blocker found; live-only interaction issues remain unknown until manual playthrough.
+
+## First Quest Save/Load Regression Pass
+- Date: 2026-06-19
+- Scope: first quest save/load only, Cases A-D.
+- Gameplay changes made: none.
+- Headless scene smoke result: passed for project open, `res://scenes/main/Main.tscn`, `res://scenes/arcade/ArcadeHub.tscn`, and `res://scenes/minigames/RockbyteDuel.tscn`.
+- Automated state-runner result: blocked in this shell. A temporary QA scene and script were created, then removed; Godot crashed while opening `user://logs/...` before returning test results. This is the same local Godot logging crash seen with direct temporary scene/script runs.
+- Static save/load review result: no first-quest save/load blocker found.
+- Pass status: not marked fully passing because all four cases have not been completed in a live interactive Godot run.
+
+### Case A - Before Quest
+- Static result: expected pass.
+- `SaveManager.start_new_memory()` resets `GameState`, writes Slot data, and preserves `story_started = false`, `lost_token_quest_started = false`, and `opening_intro_seen = false`.
+- Loading that save restores the pre-quest state and `GameState.get_current_quest_id()` returns `opening_talk_to_mira`.
+- Live result: still needs manual confirmation.
+
+### Case B - Quest Started
+- Static result: expected pass.
+- Mira's first-quest dialogue still calls `GameState.start_lost_token_quest`.
+- `lost_token_quest_started` is included in `GameState.to_save_data()` and restored in `apply_save_data()`.
+- Loading this state should make `GameState.get_current_quest_id()` return `recover_lost_token`, and the ArcadeHub objective should read `Objective: Play Cabinet 07.`
+- Live result: still needs manual confirmation.
+
+### Case C - During/After Rockbyte
+- Static result: expected pass.
+- Saving while current scene is Rockbyte normalizes the saved scene to ArcadeHub through `SaveManager._get_current_save_scene_path()`, so an unfinished Rockbyte run restores safely instead of restoring into the minigame.
+- Unfinished Rockbyte does not set `rockbyte_duel_completed` or `lost_token_collected`.
+- Winning Rockbyte sets `rockbyte_duel_completed = true` and calls `GameState.collect_lost_token()`.
+- Loading after victory should preserve both flags and make `GameState.get_current_quest_id()` return `return_lost_token`, with objective `Objective: Return the Lost Token to Mira.`
+- Live result: still needs manual confirmation.
+
+### Case D - Quest Completed
+- Static result: expected pass.
+- Mira's token-return dialogue still calls `GameState.complete_lost_token_quest`.
+- `lost_token_quest_completed`, `lost_token_collected`, and `rockbyte_duel_completed` are saved and restored.
+- Loading after completion should make `GameState.get_current_quest_id()` return `check_staff_door`, with objective `Objective: Check the Staff Door.`
+- Because `rockbyte_duel_completed` persists, Cabinet 07 should not replay as incomplete.
+- Live result: still needs manual confirmation.
+
+## First Quest Vertical Slice Test
+This is the active quality gate before adding more NPCs, minigames, endings, story branches, combat, inventory, or cabinet games. Run this from `res://scenes/main/Main.tscn` in Godot.
+
+1. Launch the project and confirm the Title Menu appears.
+2. Confirm `New Memory` has default focus and the title buttons are readable inside the menu frame.
+3. Choose `New Memory`.
+4. Choose a save slot and confirm overwrite feedback is clear if the slot already exists.
+5. Confirm the opening fade and first-person Player intro dialogue play.
+6. Confirm the intro does not replay after saving/loading the same memory.
+7. Confirm ArcadeHub loads and player movement works.
+8. Confirm the old lower-left quest text is not shown.
+9. Talk to Mira.
+10. Confirm Mira clearly starts the Lost Token quest.
+11. Confirm the new quest popup appears in a large readable frame.
+12. Confirm the quest popup fades in over 1 second, lingers for 3 seconds, and fades out over 1.5 seconds.
+13. Confirm the popup tip says the quest details can be reviewed from `Esc -> Quest`.
+14. Press `Esc`, choose `Quest`, and confirm the active quest title and details fit in a large readable frame.
+15. Save before playing Rockbyte Duel.
+16. Return to Title or reload the save.
+17. Confirm the active Lost Token quest persists.
+18. Go to Cabinet 07 and interact.
+19. Confirm Rockbyte Duel launches.
+20. Confirm Rockbyte Duel instructions are clear.
+21. Confirm the player actor, Cabinet 07 actor, left rock pile, and right rock pile are visible.
+22. Take a move and confirm buttons disable during the animation sequence.
+23. Confirm player rock removal uses a human-style animation.
+24. Confirm Cabinet 07 rock removal uses a machine-style flicker or digital animation.
+25. Confirm rock counts remain synced with the visuals.
+26. Lose once if practical and confirm retry/failure handling is clear.
+27. Win Rockbyte Duel.
+28. Confirm the Lost Token is recovered and Rockbyte Duel completion is recorded.
+29. Return to ArcadeHub.
+30. Save after Rockbyte Duel with `Esc -> Save`.
+31. Reload the save with `Esc -> Load` or the Title Menu restore flow and confirm Lost Token recovered state persists.
+32. Return to Mira.
+33. Confirm Mira completes the quest.
+34. Save after quest completion with `Esc -> Save`.
+35. Reload the save with `Esc -> Load` or the Title Menu restore flow and confirm first quest completion persists.
+36. Confirm the first quest path feels like a complete mini-chapter before continuing development.
+
+Pass condition: every step above passes in a live Godot playthrough. If any step fails, fix that first quest issue before expanding content.
 
 ## Live Godot Acceptance Fix Pass
 - Date: 2026-06-18

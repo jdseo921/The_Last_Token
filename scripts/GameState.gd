@@ -218,28 +218,28 @@ func get_current_quest_data() -> Dictionary:
 				"id": "opening_talk_to_mira",
 				"title": "Find Mira",
 				"summary": "Talk to Mira at the ticket counter.",
-				"details": "Pixel Haven is closed, but Mira seems to know why I am here. I should talk to her at the ticket counter.",
+				"details": "Pixel Haven is closed, but Mira seems to know me. I should talk to her at the ticket counter.",
 			}
 		"recover_lost_token":
 			return {
 				"id": "recover_lost_token",
 				"title": "Recover the Lost Token",
 				"summary": "Play Cabinet 07.",
-				"details": "Mira says Cabinet 07 has my Lost Token. I need to play it and bring the token back.",
+				"details": "Mira says Cabinet 07 has my Lost Token. I need to play it and bring the token back to her.",
 			}
 		"return_lost_token":
 			return {
 				"id": "return_lost_token",
 				"title": "Return the Lost Token",
 				"summary": "Bring the token back to Mira.",
-				"details": "Cabinet 07 released the Lost Token. Mira asked for it, and the Staff Door may respond once it is returned.",
+				"details": "Cabinet 07 released the Lost Token. Mira is waiting for it by the ticket counter.",
 			}
 		"check_staff_door":
 			return {
 				"id": "check_staff_door",
 				"title": "Check the Staff Door",
 				"summary": "Inspect the Staff Door.",
-				"details": "The Lost Token is back with Mira. The Staff Door should be listening now.",
+				"details": "Mira remembered something when the token returned. The Staff Door should be listening now.",
 			}
 		"enter_staff_room":
 			return {

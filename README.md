@@ -7,7 +7,7 @@ The project is currently an MVP candidate pending final live playtest, with plac
 
 ## Engine
 - Godot 4.x
-- Godot 4.4.x preferred, because `project.godot` currently lists the `4.4` feature tag.
+- Godot 4.7.x is the current local target; `project.godot` lists the `4.7` feature tag.
 - Main scene: `res://scenes/main/Main.tscn`
 
 ## Open The Project
@@ -45,8 +45,11 @@ Do not commit generated `.exe`, `.pck`, `.zip`, log files, or large build output
 ## Core Gameplay Loop
 Explore the arcade, talk to Mira and the other core NPCs, play Rockbyte Duel, solve the Sync Door puzzle, enter the Staff Room, watch the reveal slideshow, and continue into post-reveal roam.
 
-## Memory Slots
-The Memory Terminal opens a small save/load menu with three Memory Slots. Saves are stored under `user://saves/slot_1.json`, `slot_2.json`, and `slot_3.json`.
+## Save Files
+The Esc pause menu opens save/load options with three save slots. Saves are stored under `user://saves/slot_1.json`, `slot_2.json`, and `slot_3.json`.
+
+## QA Automation
+See `QA_AUTOMATION.md` before running automated Godot checks from Codex. Headless scene checks are useful for smoke testing, but the first quest is not considered passed until a live Godot viewport playthrough confirms it.
 
 ## Post-Reveal Roam
 After the ending prompt, the player returns to ArcadeHub with post-reveal state unlocked. NPC dialogue changes to reflect the reveal, and the state can be saved and loaded.

@@ -66,7 +66,7 @@ func rebuild_visuals() -> void:
 	_clear_rocks()
 	max_rocks = maxi(max_rocks, 1)
 	current_rocks = clampi(current_rocks, 0, max_rocks)
-	title_label.text = pile_id.to_upper()
+	title_label.text = pile_id.replace("_", " ").to_upper()
 	for index in range(max_rocks):
 		rock_nodes.append(_create_rock_node(index))
 	_refresh_visual_count()
@@ -84,7 +84,7 @@ func _create_rock_node(index: int) -> Control:
 		color_rect.color = ACTIVE_ROCK_COLOR
 		rock = color_rect
 	rock.name = "Rock%d" % [index + 1]
-	rock.custom_minimum_size = Vector2(18, 18)
+	rock.custom_minimum_size = Vector2(20, 20)
 	rocks_container.add_child(rock)
 	return rock
 

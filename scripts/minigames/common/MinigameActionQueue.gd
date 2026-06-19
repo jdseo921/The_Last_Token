@@ -7,6 +7,8 @@ signal action_finished(action_data: Dictionary)
 
 @export var stage_path: NodePath
 
+const ACTION_TIMEOUT_SECONDS := 1.25
+
 var stage: Node = null
 var actions: Array[Dictionary] = []
 var current_index: int = 0
@@ -175,10 +177,20 @@ func _stage_is_ready() -> bool:
 
 func _wait_for_stage_action() -> void:
 	if stage != null and stage.has_signal("stage_action_finished"):
-		var signal_ref: Signal = Signal(stage, "stage_action_finished")
-		await signal_ref
+		await _wait_for_signal_or_timeout(Signal(stage, "stage_action_finished"), ACTION_TIMEOUT_SECONDS)
 
 func _wait_for_prop_animation(prop: Node) -> void:
 	if prop.has_signal("prop_animation_finished"):
-		var signal_ref: Signal = Signal(prop, "prop_animation_finished")
-		await signal_ref
+		await _wait_for_signal_or_timeout(Signal(prop, "prop_animation_finished"), ACTION_TIMEOUT_SECONDS)
+
+func _wait_for_signal_or_timeout(signal_ref: Signal, timeout_seconds: float) -> void:
+	var finished := false
+	var mark_finished := func(_arg1: Variant = null, _arg2: Variant = null) -> void:
+		finished = true
+	if not signal_ref.is_connected(mark_finished):
+		signal_ref.connect(mark_finished, CONNECT_ONE_SHOT)
+	var timeout_msec := Time.get_ticks_msec() + int(maxf(timeout_seconds, 0.05) * 1000.0)
+	while not finished and Time.get_ticks_msec() < timeout_msec:
+		await get_tree().process_frame
+	if not finished:
+		push_warning("MinigameActionQueue continued after animation timeout.")

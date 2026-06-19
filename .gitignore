@@ -12,3 +12,6 @@ exports/
 
 # Local logs
 *.log
+
+# Temporary Codex/image generation/QA scratch files
+tmp/

@@ -206,7 +206,7 @@ func _finish_duel(player_won: bool) -> void:
 		GameState.collect_lost_token()
 		_play_audio("play_token_get")
 		exit_button.text = "Return to Arcade"
-		status_label.text = "PATTERN BROKEN.\nMEMORY UNLOCKED.\nTWO VERSIONS REMAINED.\nONE WAS SAVED.\nONE WAS LOST.\n\nLost Token recovered.\nReturn to Mira."
+		status_label.text = "TWO VERSIONS FOUND.\nONE SAVED. ONE LOST.\nLost Token recovered."
 		exit_button.grab_focus()
 		return
 	_play_audio("play_error")
@@ -260,11 +260,11 @@ func _set_rock_group_count(rocks: Array[ColorRect], count: int) -> void:
 func _get_loss_text() -> String:
 	match loss_retry_count:
 		1:
-			return "YOU LOST THIS GAME BEFORE.\nMANY TIMES.\nPress Retry Duel to begin again."
+			return "Cabinet 07 remembers this loss.\nTry again."
 		2:
-			return "Hint: Two piles do not mean two choices.\nSometimes both must change together.\nPress Retry Duel to try again."
+			return "Hint: two piles can change together.\nPress Retry Duel."
 		_:
-			return "Cabinet 07: HELP UNLOCKED.\nTry leaving both piles with the same count.\nPress Retry Duel to try again."
+			return "Cabinet 07: pattern aid unlocked.\nTry keeping both piles even."
 
 func _set_move_buttons_enabled(enabled: bool) -> void:
 	var can_use_buttons := enabled and not visual_sequence_running
