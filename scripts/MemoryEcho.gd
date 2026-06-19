@@ -1,5 +1,10 @@
 extends Control
 
+const MODE_QUESTION := "question"
+const MODE_RETRY_QUESTION := "retry_question"
+const MODE_NEXT_QUESTION := "next_question"
+const MODE_COMPLETE := "complete"
+
 const QUESTIONS := [
 	{
 		"prompt": "You came here before.",
@@ -51,7 +56,7 @@ const QUESTIONS := [
 @onready var glitch_bar_b: ColorRect = $GlitchBarB
 
 var current_question_index := 0
-var continue_mode := "question"
+var continue_mode := MODE_QUESTION
 var finished := false
 var glitch_tween: Tween = null
 
@@ -72,7 +77,7 @@ func _ready() -> void:
 func _show_question() -> void:
 	continue_button.visible = false
 	response_label.text = ""
-	continue_mode = "question"
+	continue_mode = MODE_QUESTION
 	var question: Dictionary = QUESTIONS[current_question_index]
 	echo_label.text = str(question.get("prompt", ""))
 	var choices_value: Variant = question.get("choices", [])
@@ -102,14 +107,14 @@ func _show_accepted(question: Dictionary) -> void:
 	if accepted_value is Array:
 		accepted_lines = accepted_value
 	response_label.text = _join_lines(accepted_lines)
-	continue_mode = "next_question"
+	continue_mode = MODE_NEXT_QUESTION
 	continue_button.text = "Continue"
 	continue_button.visible = true
 	continue_button.grab_focus()
 
 func _show_retry() -> void:
 	response_label.text = "MEMORY SIGNAL SPIKED.\nTRY AGAIN."
-	continue_mode = "retry_question"
+	continue_mode = MODE_RETRY_QUESTION
 	continue_button.text = "Retry"
 	continue_button.visible = true
 	continue_button.grab_focus()
@@ -118,15 +123,15 @@ func _on_continue_pressed() -> void:
 	if finished:
 		return
 	match continue_mode:
-		"retry_question":
+		MODE_RETRY_QUESTION:
 			_show_question()
-		"next_question":
+		MODE_NEXT_QUESTION:
 			current_question_index += 1
 			if current_question_index >= QUESTIONS.size():
 				_show_completion()
 				return
 			_show_question()
-		"complete":
+		MODE_COMPLETE:
 			_return_to_staff_corridor()
 		_:
 			_show_question()
@@ -135,7 +140,7 @@ func _show_completion() -> void:
 	GameState.complete_memory_echo()
 	echo_label.text = "MEMORY ECHO STABILIZED."
 	response_label.text = "RESTORE PLAYBACK AVAILABLE."
-	continue_mode = "complete"
+	continue_mode = MODE_COMPLETE
 	continue_button.text = "Return"
 	continue_button.visible = true
 	continue_button.grab_focus()
@@ -143,7 +148,7 @@ func _show_completion() -> void:
 func _show_repeat_complete() -> void:
 	echo_label.text = "MEMORY ECHO STABILIZED."
 	response_label.text = "RESTORE PLAYBACK AVAILABLE."
-	continue_mode = "complete"
+	continue_mode = MODE_COMPLETE
 	continue_button.text = "Return"
 	continue_button.visible = true
 	continue_button.grab_focus()

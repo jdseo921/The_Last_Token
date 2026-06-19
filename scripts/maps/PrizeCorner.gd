@@ -83,12 +83,7 @@ func _handle_pip() -> void:
 		])
 		return
 	if not _is_prize_sort_completed() and _prize_sort_unlocked():
-		var lines: Array = []
-		if not was_pip_met:
-			lines.append_array([
-				{"speaker": "Pip", "text": "Hi! I am a legally distinct prize animal."},
-				{"speaker": "Pip", "text": "I am filled with cotton and confidential information."},
-			])
+		var lines := _get_optional_first_meeting_lines(was_pip_met)
 		lines.append_array([
 			{"speaker": "Pip", "text": "You are softer this time."},
 			{"speaker": "Pip", "text": "Less screaming."},
@@ -99,22 +94,25 @@ func _handle_pip() -> void:
 		_show_pip_prize_completion_dialogue()
 		return
 	if GameState.lost_token_quest_completed:
-		var lost_token_lines: Array = []
-		if not was_pip_met:
-			lost_token_lines.append_array([
-				{"speaker": "Pip", "text": "Hi! I am a legally distinct prize animal."},
-				{"speaker": "Pip", "text": "I am filled with cotton and confidential information."},
-			])
-		lost_token_lines.append_array([
+		var lines := _get_optional_first_meeting_lines(was_pip_met)
+		lines.append_array([
 			{"speaker": "Pip", "text": "You used to want the blue one."},
 			{"speaker": "Pip", "text": "You never had enough tickets."},
 		])
-		start_dialogue(lost_token_lines)
+		start_dialogue(lines)
 		return
-	start_dialogue([
+	start_dialogue(_get_first_meeting_lines())
+
+func _get_first_meeting_lines() -> Array:
+	return [
 		{"speaker": "Pip", "text": "Hi! I am a legally distinct prize animal."},
 		{"speaker": "Pip", "text": "I am filled with cotton and confidential information."},
-	])
+	]
+
+func _get_optional_first_meeting_lines(was_pip_met: bool) -> Array:
+	if was_pip_met:
+		return []
+	return _get_first_meeting_lines()
 
 func _handle_prize_counter() -> void:
 	if _is_prize_sort_completed():
