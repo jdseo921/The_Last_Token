@@ -1,0 +1,8 @@
+[gd_resource type="Theme" load_steps=2 format=3]
+
+[sub_resource type="SystemFont" id="SystemFont_retro_mechanical"]
+font_names = PackedStringArray("Cascadia Mono", "Consolas", "Courier New", "monospace")
+
+[resource]
+default_font = SubResource("SystemFont_retro_mechanical")
+default_font_size = 14

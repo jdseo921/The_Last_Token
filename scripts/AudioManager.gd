@@ -12,6 +12,7 @@ const SFX_NAMES := {
 	"glitch": "glitch",
 	"save": "save",
 	"error": "error",
+	"quest_update": "quest_update",
 }
 
 var sfx_players: Array[AudioStreamPlayer] = []
@@ -28,6 +29,9 @@ func _ready() -> void:
 	ambience_player = AudioStreamPlayer.new()
 	add_child(ambience_player)
 	ambience_player.finished.connect(_on_ambience_finished)
+	var settings := get_node_or_null("/root/GameSettings")
+	if settings and settings.has_signal("settings_changed"):
+		settings.settings_changed.connect(_on_settings_changed)
 
 func play_ui_confirm() -> void:
 	_play_sfx("ui_confirm")
@@ -53,12 +57,16 @@ func play_save() -> void:
 func play_error() -> void:
 	_play_sfx("error")
 
+func play_quest_update() -> void:
+	_play_sfx("quest_update")
+
 func play_arcade_ambience() -> void:
 	ambience_stream = _load_audio(MUSIC_DIR, "arcade_ambience")
 	if ambience_stream == null:
 		return
 	ambience_enabled = true
 	ambience_player.stream = ambience_stream
+	ambience_player.volume_db = _get_music_volume_db()
 	ambience_player.play()
 
 func stop_arcade_ambience() -> void:
@@ -77,6 +85,7 @@ func _play_sfx(key: String) -> void:
 	next_player_index = (next_player_index + 1) % sfx_players.size()
 	player.stop()
 	player.stream = stream
+	player.volume_db = _get_sfx_volume_db()
 	player.play()
 
 func _load_audio(folder_path: String, base_name: String) -> AudioStream:
@@ -91,3 +100,19 @@ func _load_audio(folder_path: String, base_name: String) -> AudioStream:
 func _on_ambience_finished() -> void:
 	if ambience_enabled and ambience_stream:
 		ambience_player.play()
+
+func _on_settings_changed() -> void:
+	if ambience_player != null:
+		ambience_player.volume_db = _get_music_volume_db()
+
+func _get_sfx_volume_db() -> float:
+	var volume := 1.0
+	if has_node("/root/GameSettings"):
+		volume = float(get_node("/root/GameSettings").get("sfx_volume"))
+	return linear_to_db(maxf(volume, 0.001))
+
+func _get_music_volume_db() -> float:
+	var volume := 0.75
+	if has_node("/root/GameSettings"):
+		volume = float(get_node("/root/GameSettings").get("music_volume"))
+	return linear_to_db(maxf(volume, 0.001))

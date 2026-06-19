@@ -20,6 +20,20 @@ func cycle_window_size() -> void:
 	_apply_window_size()
 	_save_settings()
 
+func set_window_size_index(index: int) -> void:
+	window_size_index = clampi(index, 0, WINDOW_SIZES.size() - 1)
+	_apply_window_size()
+	_save_settings()
+
+func get_window_size_index() -> int:
+	return clampi(window_size_index, 0, WINDOW_SIZES.size() - 1)
+
+func get_window_size_options() -> Array[String]:
+	var options: Array[String] = []
+	for size in WINDOW_SIZES:
+		options.append("%d x %d" % [size.x, size.y])
+	return options
+
 func get_window_size_label() -> String:
 	var size := _get_current_window_size()
 	return "Window Size: %d x %d" % [size.x, size.y]

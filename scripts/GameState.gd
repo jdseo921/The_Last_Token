@@ -17,6 +17,7 @@ var lost_token_quest_started := false
 var lost_token_collected := false
 var lost_token_quest_completed := false
 var rockbyte_duel_completed := false
+var rockbyte_duel_loss_count := 0
 var story_puzzle_completed := false
 var staff_room_unlocked := false
 var twist_reveal_seen := false
@@ -49,6 +50,8 @@ var save_player_facing := "down"
 var save_progress_stage := "New Game"
 var has_arcade_return_position := false
 var arcade_return_position := Vector2.ZERO
+var opening_intro_seen := false
+var last_announced_quest_id := ""
 
 func _ready() -> void:
 	_ensure_input_actions()
@@ -127,6 +130,7 @@ func reset_for_new_game() -> void:
 	lost_token_collected = false
 	lost_token_quest_completed = false
 	rockbyte_duel_completed = false
+	rockbyte_duel_loss_count = 0
 	story_puzzle_completed = false
 	staff_room_unlocked = false
 	twist_reveal_seen = false
@@ -154,6 +158,8 @@ func reset_for_new_game() -> void:
 	save_player_position_y = 0.0
 	save_player_facing = "down"
 	save_progress_stage = "New Memory"
+	opening_intro_seen = false
+	last_announced_quest_id = ""
 	clear_arcade_return_position()
 
 func set_arcade_return_position(position: Vector2) -> void:
@@ -185,6 +191,88 @@ func mark_twist_reveal_seen() -> void:
 func unlock_post_reveal_roam() -> void:
 	post_reveal_roam_unlocked = true
 
+func mark_opening_intro_seen() -> void:
+	opening_intro_seen = true
+
+func get_current_quest_id() -> String:
+	if not story_started:
+		return "opening_talk_to_mira"
+	if lost_token_quest_started and not rockbyte_duel_completed:
+		return "recover_lost_token"
+	if rockbyte_duel_completed and not lost_token_quest_completed:
+		return "return_lost_token"
+	if lost_token_quest_completed and not story_puzzle_completed:
+		return "check_staff_door"
+	if story_puzzle_completed and staff_room_unlocked and not twist_reveal_seen:
+		return "enter_staff_room"
+	if twist_reveal_seen and not post_reveal_roam_unlocked:
+		return "finish_memory"
+	if post_reveal_roam_unlocked:
+		return "talk_to_witnesses"
+	return ""
+
+func get_current_quest_data() -> Dictionary:
+	match get_current_quest_id():
+		"opening_talk_to_mira":
+			return {
+				"id": "opening_talk_to_mira",
+				"title": "Find Mira",
+				"summary": "Talk to Mira at the ticket counter.",
+				"details": "Pixel Haven is closed, but Mira seems to know why I am here. I should talk to her at the ticket counter.",
+			}
+		"recover_lost_token":
+			return {
+				"id": "recover_lost_token",
+				"title": "Recover the Lost Token",
+				"summary": "Play Cabinet 07.",
+				"details": "Mira says Cabinet 07 has my Lost Token. I need to play it and bring the token back.",
+			}
+		"return_lost_token":
+			return {
+				"id": "return_lost_token",
+				"title": "Return the Lost Token",
+				"summary": "Bring the token back to Mira.",
+				"details": "Cabinet 07 released the Lost Token. Mira asked for it, and the Staff Door may respond once it is returned.",
+			}
+		"check_staff_door":
+			return {
+				"id": "check_staff_door",
+				"title": "Check the Staff Door",
+				"summary": "Inspect the Staff Door.",
+				"details": "The Lost Token is back with Mira. The Staff Door should be listening now.",
+			}
+		"enter_staff_room":
+			return {
+				"id": "enter_staff_room",
+				"title": "Enter the Staff Room",
+				"summary": "Return to the Staff Door.",
+				"details": "Both switches are active and the Staff Room is unlocked. I should go inside.",
+			}
+		"finish_memory":
+			return {
+				"id": "finish_memory",
+				"title": "Finish the Memory",
+				"summary": "Let the memory settle.",
+				"details": "The truth is visible now. I need to let this memory finish and see what remains afterward.",
+			}
+		"talk_to_witnesses":
+			return {
+				"id": "talk_to_witnesses",
+				"title": "Talk to Those Who Remembered",
+				"summary": "Speak with the remaining witnesses.",
+				"details": "Pixel Haven remembers me differently now. Mira, Gus, Vendo, and Mr. Byte may have changed things to say.",
+			}
+		_:
+			return {
+				"id": "",
+				"title": "No Active Quest",
+				"summary": "There is no current objective.",
+				"details": "There is no active quest right now.",
+			}
+
+func mark_current_quest_announced() -> void:
+	last_announced_quest_id = get_current_quest_id()
+
 func to_save_data() -> Dictionary:
 	return {
 		"save_slot_index": save_slot_index,
@@ -196,11 +284,15 @@ func to_save_data() -> Dictionary:
 		"save_player_position_y": save_player_position_y,
 		"save_player_facing": save_player_facing,
 		"save_progress_stage": save_progress_stage,
+		"has_arcade_return_position": has_arcade_return_position,
+		"arcade_return_position_x": arcade_return_position.x,
+		"arcade_return_position_y": arcade_return_position.y,
 		"story_started": story_started,
 		"lost_token_quest_started": lost_token_quest_started,
 		"lost_token_collected": lost_token_collected,
 		"lost_token_quest_completed": lost_token_quest_completed,
 		"rockbyte_duel_completed": rockbyte_duel_completed,
+		"rockbyte_duel_loss_count": rockbyte_duel_loss_count,
 		"story_puzzle_completed": story_puzzle_completed,
 		"staff_room_unlocked": staff_room_unlocked,
 		"twist_reveal_seen": twist_reveal_seen,
@@ -219,6 +311,8 @@ func to_save_data() -> Dictionary:
 		"owner_portrait_secret_found": owner_portrait_secret_found,
 		"employee_04_file_found": employee_04_file_found,
 		"vendo_memory_riddle_secret_found": vendo_memory_riddle_secret_found,
+		"opening_intro_seen": opening_intro_seen,
+		"last_announced_quest_id": last_announced_quest_id,
 	}
 
 func apply_save_data(data: Dictionary) -> void:
@@ -231,11 +325,17 @@ func apply_save_data(data: Dictionary) -> void:
 	save_player_position_y = data.get("save_player_position_y", save_player_position_y)
 	save_player_facing = data.get("save_player_facing", save_player_facing)
 	save_progress_stage = data.get("save_progress_stage", save_progress_stage)
+	has_arcade_return_position = bool(data.get("has_arcade_return_position", has_arcade_return_position))
+	arcade_return_position = Vector2(
+		float(data.get("arcade_return_position_x", arcade_return_position.x)),
+		float(data.get("arcade_return_position_y", arcade_return_position.y))
+	)
 	story_started = data.get("story_started", story_started)
 	lost_token_quest_started = data.get("lost_token_quest_started", lost_token_quest_started)
 	lost_token_collected = data.get("lost_token_collected", lost_token_collected)
 	lost_token_quest_completed = data.get("lost_token_quest_completed", lost_token_quest_completed)
 	rockbyte_duel_completed = data.get("rockbyte_duel_completed", rockbyte_duel_completed)
+	rockbyte_duel_loss_count = int(data.get("rockbyte_duel_loss_count", rockbyte_duel_loss_count))
 	story_puzzle_completed = data.get("story_puzzle_completed", story_puzzle_completed)
 	staff_room_unlocked = data.get("staff_room_unlocked", staff_room_unlocked)
 	twist_reveal_seen = data.get("twist_reveal_seen", twist_reveal_seen)
@@ -254,3 +354,5 @@ func apply_save_data(data: Dictionary) -> void:
 	owner_portrait_secret_found = data.get("owner_portrait_secret_found", owner_portrait_secret_found)
 	employee_04_file_found = data.get("employee_04_file_found", employee_04_file_found)
 	vendo_memory_riddle_secret_found = data.get("vendo_memory_riddle_secret_found", vendo_memory_riddle_secret_found)
+	opening_intro_seen = data.get("opening_intro_seen", opening_intro_seen)
+	last_announced_quest_id = str(data.get("last_announced_quest_id", last_announced_quest_id))

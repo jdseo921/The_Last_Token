@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/HubInteractable.gd" id="1"]
 
 [sub_resource type="RectangleShape2D" id="1"]
-size = Vector2(22, 22)
+size = Vector2(64, 64)
 
 [node name="HubInteractable" type="Area2D"]
 script = ExtResource("1")
@@ -17,6 +17,7 @@ visible = false
 visible = false
 
 [node name="PlaceholderVisual" type="Polygon2D" parent="VisualRoot"]
+visible = false
 color = Color(0.18, 0.32, 0.42, 1)
 polygon = PackedVector2Array(-12, -12, 12, -12, 12, 12, -12, 12)
 

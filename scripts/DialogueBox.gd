@@ -37,18 +37,22 @@ var line_complete := true
 func _ready() -> void:
 	visible = false
 	continue_prompt_label.text = "Press E / Space to continue"
+	_apply_settings()
+	var settings := get_node_or_null("/root/GameSettings")
+	if settings and settings.has_signal("settings_changed"):
+		settings.settings_changed.connect(_apply_settings)
 
 func _process(delta: float) -> void:
 	if not active or line_complete:
 		return
 	if current_reveal_mode == "letters":
-		reveal_progress += LETTERS_PER_SECOND * delta
+		reveal_progress += LETTERS_PER_SECOND * _get_text_speed() * delta
 		var visible_count := mini(int(reveal_progress), current_full_text.length())
 		dialogue_text_label.visible_characters = visible_count
 		line_complete = visible_count >= current_full_text.length()
 		return
 	if current_reveal_mode == "words":
-		reveal_progress += WORDS_PER_SECOND * delta
+		reveal_progress += WORDS_PER_SECOND * _get_text_speed() * delta
 		var visible_words := mini(int(reveal_progress), current_words.size())
 		dialogue_text_label.text = _join_visible_words(visible_words)
 		line_complete = visible_words >= current_words.size()
@@ -175,3 +179,16 @@ func _play_audio(method_name: String) -> void:
 	var audio_manager := get_node_or_null("/root/AudioManager")
 	if audio_manager and audio_manager.has_method(method_name):
 		audio_manager.call(method_name)
+
+func _apply_settings() -> void:
+	var settings := get_node_or_null("/root/GameSettings")
+	if settings == null:
+		panel.self_modulate.a = 0.92
+		return
+	panel.self_modulate.a = float(settings.get("dialogue_opacity"))
+
+func _get_text_speed() -> float:
+	var settings := get_node_or_null("/root/GameSettings")
+	if settings == null:
+		return 1.0
+	return maxf(float(settings.get("text_speed")), 0.5)

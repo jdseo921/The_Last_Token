@@ -4,9 +4,12 @@ extends Area2D
 @export var label_text: String = ""
 @export var sprite_texture_path: String = ""
 @export var idle_sheet_path: String = ""
+@export var facing_sheet_path: String = ""
+@export var idle_animation_enabled := true
 @export var idle_animation_name: String = "idle"
 @export var idle_frame_count: int = 2
 @export var idle_frame_duration: float = 0.45
+@export var visual_scale: float = 1.0
 @export var show_label := true
 @export var use_placeholder_visual := true
 @export var idle_bob_enabled := false
@@ -23,6 +26,7 @@ var idle_time := 0.0
 @onready var label: Label = $Label
 
 func _ready() -> void:
+	visual_root.scale = Vector2(visual_scale, visual_scale)
 	base_visual_position = visual_root.position
 	label.text = label_text
 	_apply_placeholder_style()
@@ -40,6 +44,8 @@ func _process(delta: float) -> void:
 		visual_root.modulate.a = flicker_alpha
 
 func interact(player: Node = null) -> void:
+	if player is Node2D:
+		face_target((player as Node2D).global_position)
 	var hub := _find_interaction_handler()
 	if hub and hub.has_method("handle_hub_interaction"):
 		hub.handle_hub_interaction(self, player)
@@ -109,6 +115,13 @@ func _apply_idle_sheet() -> void:
 	var frame_total := maxi(idle_frame_count, 1)
 	var frame_width := maxi(int(texture.get_width() / frame_total), 1)
 	var frame_height := maxi(texture.get_height(), 1)
+	if not idle_animation_enabled:
+		var atlas := AtlasTexture.new()
+		atlas.atlas = texture
+		atlas.region = Rect2(0, 0, frame_width, frame_height)
+		sprite.texture = atlas
+		sprite.visible = true
+		return
 	var frames := SpriteFrames.new()
 	frames.add_animation(idle_animation_name)
 	frames.set_animation_loop(idle_animation_name, true)
@@ -129,10 +142,36 @@ func _apply_optional_sprite_art() -> void:
 		sprite.visible = false
 		sprite.texture = null
 		return
+	if sprite.visible:
+		return
 	_apply_sprite_texture()
 
 func _refresh_visual_visibility() -> void:
 	var has_sprite_art := sprite.texture != null or animated_sprite.visible
 	label.visible = show_label
 	label.modulate.a = 0.72 if has_sprite_art else 1.0
-	placeholder_visual.visible = use_placeholder_visual or not has_sprite_art
+	placeholder_visual.visible = use_placeholder_visual and not has_sprite_art
+
+func face_target(target_position: Vector2) -> void:
+	if facing_sheet_path.is_empty() or not ResourceLoader.exists(facing_sheet_path):
+		return
+	var resource := load(facing_sheet_path)
+	if not resource is Texture2D:
+		return
+	var texture := resource as Texture2D
+	var frame_width := maxi(int(texture.get_width() / 4), 1)
+	var frame_height := maxi(texture.get_height(), 1)
+	var direction_index := _get_diagonal_facing_index(target_position - global_position)
+	var atlas := AtlasTexture.new()
+	atlas.atlas = texture
+	atlas.region = Rect2(direction_index * frame_width, 0, frame_width, frame_height)
+	animated_sprite.visible = false
+	animated_sprite.stop()
+	sprite.texture = atlas
+	sprite.visible = true
+	_refresh_visual_visibility()
+
+func _get_diagonal_facing_index(direction: Vector2) -> int:
+	if direction.y < 0.0:
+		return 0 if direction.x >= 0.0 else 1
+	return 2 if direction.x >= 0.0 else 3

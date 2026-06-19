@@ -1,0 +1,208 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/SettingsMenu.gd" id="1"]
+
+[node name="SettingsMenu" type="CanvasLayer"]
+layer = 95
+script = ExtResource("1")
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.76)
+
+[node name="Panel" type="Panel" parent="."]
+offset_left = 92.0
+offset_top = 42.0
+offset_right = 548.0
+offset_bottom = 398.0
+
+[node name="FrameTexture" type="TextureRect" parent="Panel"]
+visible = false
+offset_right = 456.0
+offset_bottom = 356.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TitleLabel" type="Label" parent="Panel"]
+offset_left = 84.0
+offset_top = 42.0
+offset_right = 372.0
+offset_bottom = 68.0
+theme_override_font_sizes/font_size = 18
+text = "SETTINGS"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel"]
+offset_left = 68.0
+offset_top = 80.0
+offset_right = 390.0
+offset_bottom = 278.0
+horizontal_scroll_mode = 0
+
+[node name="VBox" type="VBoxContainer" parent="Panel/ScrollContainer"]
+custom_minimum_size = Vector2(300, 360)
+theme_override_constants/separation = 8
+
+[node name="AudioLabel" type="Label" parent="Panel/ScrollContainer/VBox"]
+custom_minimum_size = Vector2(0, 24)
+theme_override_colors/font_color = Color(0.48, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "Audio"
+
+[node name="MasterVolumeRow" type="HBoxContainer" parent="Panel/ScrollContainer/VBox"]
+custom_minimum_size = Vector2(0, 30)
+theme_override_constants/separation = 8
+
+[node name="MasterVolumeLabel" type="Label" parent="Panel/ScrollContainer/VBox/MasterVolumeRow"]
+custom_minimum_size = Vector2(108, 30)
+theme_override_font_sizes/font_size = 13
+text = "Master Volume"
+vertical_alignment = 1
+
+[node name="MasterVolumeSlider" type="HSlider" parent="Panel/ScrollContainer/VBox/MasterVolumeRow"]
+custom_minimum_size = Vector2(126, 30)
+min_value = 0.0
+max_value = 100.0
+step = 5.0
+value = 100.0
+
+[node name="MasterVolumeValue" type="Label" parent="Panel/ScrollContainer/VBox/MasterVolumeRow"]
+custom_minimum_size = Vector2(44, 30)
+theme_override_font_sizes/font_size = 13
+text = "100%"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SfxVolumeRow" type="HBoxContainer" parent="Panel/ScrollContainer/VBox"]
+custom_minimum_size = Vector2(0, 30)
+theme_override_constants/separation = 8
+
+[node name="SfxVolumeLabel" type="Label" parent="Panel/ScrollContainer/VBox/SfxVolumeRow"]
+custom_minimum_size = Vector2(108, 30)
+theme_override_font_sizes/font_size = 13
+text = "SFX Volume"
+vertical_alignment = 1
+
+[node name="SfxVolumeSlider" type="HSlider" parent="Panel/ScrollContainer/VBox/SfxVolumeRow"]
+custom_minimum_size = Vector2(126, 30)
+min_value = 0.0
+max_value = 100.0
+step = 5.0
+value = 100.0
+
+[node name="SfxVolumeValue" type="Label" parent="Panel/ScrollContainer/VBox/SfxVolumeRow"]
+custom_minimum_size = Vector2(44, 30)
+theme_override_font_sizes/font_size = 13
+text = "100%"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="MusicVolumeRow" type="HBoxContainer" parent="Panel/ScrollContainer/VBox"]
+custom_minimum_size = Vector2(0, 30)
+theme_override_constants/separation = 8
+
+[node name="MusicVolumeLabel" type="Label" parent="Panel/ScrollContainer/VBox/MusicVolumeRow"]
+custom_minimum_size = Vector2(108, 30)
+theme_override_font_sizes/font_size = 13
+text = "Music Volume"
+vertical_alignment = 1
+
+[node name="MusicVolumeSlider" type="HSlider" parent="Panel/ScrollContainer/VBox/MusicVolumeRow"]
+custom_minimum_size = Vector2(126, 30)
+min_value = 0.0
+max_value = 100.0
+step = 5.0
+value = 75.0
+
+[node name="MusicVolumeValue" type="Label" parent="Panel/ScrollContainer/VBox/MusicVolumeRow"]
+custom_minimum_size = Vector2(44, 30)
+theme_override_font_sizes/font_size = 13
+text = "75%"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="DialogueLabel" type="Label" parent="Panel/ScrollContainer/VBox"]
+custom_minimum_size = Vector2(0, 24)
+theme_override_colors/font_color = Color(1, 0.58, 0.95, 1)
+theme_override_font_sizes/font_size = 16
+text = "Dialogue"
+
+[node name="DialogueOpacityRow" type="HBoxContainer" parent="Panel/ScrollContainer/VBox"]
+custom_minimum_size = Vector2(0, 30)
+theme_override_constants/separation = 8
+
+[node name="DialogueOpacityLabel" type="Label" parent="Panel/ScrollContainer/VBox/DialogueOpacityRow"]
+custom_minimum_size = Vector2(108, 30)
+theme_override_font_sizes/font_size = 13
+text = "Box Opacity"
+vertical_alignment = 1
+
+[node name="DialogueOpacitySlider" type="HSlider" parent="Panel/ScrollContainer/VBox/DialogueOpacityRow"]
+custom_minimum_size = Vector2(126, 30)
+min_value = 45.0
+max_value = 100.0
+step = 5.0
+value = 92.0
+
+[node name="DialogueOpacityValue" type="Label" parent="Panel/ScrollContainer/VBox/DialogueOpacityRow"]
+custom_minimum_size = Vector2(44, 30)
+theme_override_font_sizes/font_size = 13
+text = "92%"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TextSpeedRow" type="HBoxContainer" parent="Panel/ScrollContainer/VBox"]
+custom_minimum_size = Vector2(0, 30)
+theme_override_constants/separation = 8
+
+[node name="TextSpeedLabel" type="Label" parent="Panel/ScrollContainer/VBox/TextSpeedRow"]
+custom_minimum_size = Vector2(108, 30)
+theme_override_font_sizes/font_size = 13
+text = "Text Speed"
+vertical_alignment = 1
+
+[node name="TextSpeedSlider" type="HSlider" parent="Panel/ScrollContainer/VBox/TextSpeedRow"]
+custom_minimum_size = Vector2(126, 30)
+min_value = 50.0
+max_value = 200.0
+step = 10.0
+value = 100.0
+
+[node name="TextSpeedValue" type="Label" parent="Panel/ScrollContainer/VBox/TextSpeedRow"]
+custom_minimum_size = Vector2(44, 30)
+theme_override_font_sizes/font_size = 13
+text = "1.0x"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="DisplayLabel" type="Label" parent="Panel/ScrollContainer/VBox"]
+custom_minimum_size = Vector2(0, 24)
+theme_override_colors/font_color = Color(0.62, 1, 0.45, 1)
+theme_override_font_sizes/font_size = 16
+text = "Display"
+
+[node name="WindowSizeRow" type="HBoxContainer" parent="Panel/ScrollContainer/VBox"]
+custom_minimum_size = Vector2(0, 30)
+theme_override_constants/separation = 8
+
+[node name="WindowSizeLabel" type="Label" parent="Panel/ScrollContainer/VBox/WindowSizeRow"]
+custom_minimum_size = Vector2(108, 30)
+theme_override_font_sizes/font_size = 13
+text = "Window Size"
+vertical_alignment = 1
+
+[node name="WindowSizeOption" type="OptionButton" parent="Panel/ScrollContainer/VBox/WindowSizeRow"]
+custom_minimum_size = Vector2(178, 30)
+
+[node name="BackButton" type="Button" parent="Panel"]
+offset_left = 168.0
+offset_top = 296.0
+offset_right = 288.0
+offset_bottom = 328.0
+text = "Back"

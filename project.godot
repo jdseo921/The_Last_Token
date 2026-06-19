@@ -25,6 +25,7 @@ SceneChanger="*res://scripts/SceneChanger.gd"
 SaveManager="*res://scripts/SaveManager.gd"
 AudioManager="*res://scripts/AudioManager.gd"
 DisplayOptions="*res://scripts/DisplayOptions.gd"
+GameSettings="*res://scripts/GameSettings.gd"
 
 [display]
 
@@ -34,3 +35,7 @@ window/size/window_width_override=960
 window/size/window_height_override=660
 window/stretch/mode="canvas_items"
 window/stretch/aspect="keep"
+
+[gui]
+
+theme/custom="res://themes/retro_mechanical_theme.tres"

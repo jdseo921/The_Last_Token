@@ -22,6 +22,9 @@ func _on_prompt_changed(text: String) -> void:
 	prompt_label.text = text
 	prompt_label.visible = not text.is_empty()
 
+func can_open_pause_menu() -> bool:
+	return active_dialogue_box == null and active_cutscene == null and not reveal_in_progress
+
 func handle_hub_interaction(interactable: Node, player_node: Node = null) -> void:
 	match str(interactable.interactable_kind):
 		"reveal_terminal":

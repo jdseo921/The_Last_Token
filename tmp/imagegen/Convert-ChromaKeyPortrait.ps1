@@ -3,7 +3,9 @@ param(
     [string]$InputPath,
     [Parameter(Mandatory = $true)]
     [string]$OutputPath,
-    [int]$Size = 96
+    [int]$Size = 96,
+    [int]$Width = 0,
+    [int]$Height = 0
 )
 
 Add-Type -AssemblyName System.Drawing
@@ -41,13 +43,22 @@ for ($y = 0; $y -lt $source.Height; $y++) {
     }
 }
 
-$resized = [System.Drawing.Bitmap]::new($Size, $Size, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+$outWidth = $Size
+$outHeight = $Size
+if ($Width -gt 0) {
+    $outWidth = $Width
+}
+if ($Height -gt 0) {
+    $outHeight = $Height
+}
+
+$resized = [System.Drawing.Bitmap]::new($outWidth, $outHeight, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
 $graphics = [System.Drawing.Graphics]::FromImage($resized)
 $graphics.Clear([System.Drawing.Color]::Transparent)
 $graphics.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::NearestNeighbor
 $graphics.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::Half
 $graphics.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::None
-$graphics.DrawImage($cutout, 0, 0, $Size, $Size)
+$graphics.DrawImage($cutout, 0, 0, $outWidth, $outHeight)
 
 $outDir = Split-Path -Parent $OutputPath
 if ($outDir -and -not (Test-Path -LiteralPath $outDir)) {

@@ -3,8 +3,9 @@
 [ext_resource type="Script" path="res://scripts/ArcadeHub.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="3"]
-[ext_resource type="PackedScene" path="res://scenes/ui/MemoryTerminal.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/arcade/HubInteractable.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/ui/QuestNotice.tscn" id="7"]
 
 [node name="ArcadeHub" type="Node2D"]
 script = ExtResource("1")
@@ -45,10 +46,6 @@ polygon = PackedVector2Array(424, 222, 610, 222, 610, 342, 424, 342)
 color = Color(0.07, 0.11, 0.1, 1)
 polygon = PackedVector2Array(236, 92, 366, 92, 366, 312, 236, 312)
 
-[node name="MemoryTerminalZone" type="Polygon2D" parent="FloorLayer"]
-color = Color(0.08, 0.13, 0.12, 1)
-polygon = PackedVector2Array(34, 270, 230, 270, 230, 380, 34, 380)
-
 [node name="WalkPath" type="Polygon2D" parent="FloorLayer"]
 color = Color(0.09, 0.09, 0.1, 1)
 polygon = PackedVector2Array(230, 172, 424, 172, 424, 350, 230, 350)
@@ -80,14 +77,17 @@ position = Vector2(56, 60)
 centered = false
 
 [node name="GusSpotVisual" type="Polygon2D" parent="PropLayer"]
+visible = false
 color = Color(0.16, 0.26, 0.22, 1)
 polygon = PackedVector2Array(260, 112, 340, 112, 340, 148, 260, 148)
 
 [node name="MrByteKioskVisual" type="Polygon2D" parent="PropLayer"]
+visible = false
 color = Color(0.12, 0.22, 0.32, 1)
 polygon = PackedVector2Array(260, 188, 340, 188, 340, 230, 260, 230)
 
 [node name="VendoMachineVisual" type="Polygon2D" parent="PropLayer"]
+visible = false
 color = Color(0.18, 0.31, 0.24, 1)
 polygon = PackedVector2Array(258, 264, 348, 264, 348, 318, 258, 318)
 
@@ -134,19 +134,6 @@ visible = false
 position = Vector2(512, 240)
 centered = false
 
-[node name="MemoryTerminalVisual" type="Polygon2D" parent="PropLayer"]
-color = Color(0.12, 0.38, 0.32, 1)
-polygon = PackedVector2Array(72, 310, 188, 310, 188, 362, 72, 362)
-
-[node name="MemoryTerminalScreen" type="Polygon2D" parent="PropLayer"]
-color = Color(0.22, 0.95, 0.76, 1)
-polygon = PackedVector2Array(104, 326, 158, 326, 158, 346, 104, 346)
-
-[node name="MemoryTerminalSprite" type="Sprite2D" parent="PropLayer"]
-visible = false
-position = Vector2(72, 310)
-centered = false
-
 [node name="Player" parent="." instance=ExtResource("2")]
 position = Vector2(178, 246)
 
@@ -161,16 +148,17 @@ text = ""
 horizontal_alignment = 1
 
 [node name="PIXEL HAVEN" type="Label" parent="UILayer"]
-position = Vector2(20, 12)
-theme_override_font_sizes/font_size = 14
+position = Vector2(18, 10)
+theme_override_font_sizes/font_size = 12
 text = "PIXEL HAVEN"
 
 [node name="FINAL NIGHT" type="Label" parent="UILayer"]
-position = Vector2(20, 28)
-theme_override_font_sizes/font_size = 11
+position = Vector2(18, 24)
+theme_override_font_sizes/font_size = 10
 text = "FINAL NIGHT"
 
 [node name="ObjectiveHintLabel" type="Label" parent="UILayer"]
+visible = false
 position = Vector2(394, 16)
 size = Vector2(220, 48)
 theme_override_font_sizes/font_size = 12
@@ -187,20 +175,17 @@ position = Vector2(452, 76)
 theme_override_font_sizes/font_size = 11
 text = "CABINET 07"
 
-[node name="MEMORY TERMINAL" type="Label" parent="UILayer"]
-position = Vector2(64, 288)
-theme_override_font_sizes/font_size = 10
-text = "MEMORY TERMINAL"
-
 [node name="TicketCounterLabel" type="Label" parent="UILayer"]
-position = Vector2(56, 106)
-theme_override_font_sizes/font_size = 10
+position = Vector2(56, 162)
+theme_override_font_sizes/font_size = 9
+modulate = Color(1, 1, 1, 0.72)
 text = "TICKET COUNTER"
 
 [node name="HintLabel" type="Label" parent="UILayer"]
+visible = false
 position = Vector2(32, 404)
 theme_override_font_sizes/font_size = 11
-text = "Start: talk to Mira"
+text = ""
 
 [node name="PostRevealHintLabel" type="Label" parent="UILayer"]
 position = Vector2(176, 14)
@@ -215,22 +200,27 @@ position = Vector2(176, 190)
 interactable_kind = "mira"
 label_text = "MIRA"
 idle_sheet_path = "res://assets/art/characters/mira/mira_idle_sheet.png"
+facing_sheet_path = "res://assets/art/characters/mira/mira_turn_diagonal_sheet.png"
+idle_animation_enabled = false
+visual_scale = 1.1
 use_placeholder_visual = false
-idle_bob_enabled = true
 
 [node name="Gus" parent="InteractableLayer" instance=ExtResource("5")]
 position = Vector2(300, 130)
 interactable_kind = "gus"
 label_text = "GUS"
 idle_sheet_path = "res://assets/art/characters/gus/gus_idle_sheet.png"
+facing_sheet_path = "res://assets/art/characters/gus/gus_turn_diagonal_sheet.png"
+idle_animation_enabled = false
+visual_scale = 1.1
 use_placeholder_visual = false
-idle_bob_enabled = true
 
 [node name="Vendo" parent="InteractableLayer" instance=ExtResource("5")]
 position = Vector2(304, 292)
 interactable_kind = "vendo"
 label_text = "VENDO"
 idle_sheet_path = "res://assets/art/characters/vendo/vendo_idle_sheet.png"
+idle_animation_enabled = false
 use_placeholder_visual = false
 flicker_enabled = true
 
@@ -240,6 +230,7 @@ interactable_kind = "cabinet07"
 label_text = "CABINET 07"
 sprite_texture_path = "res://assets/art/hub/cabinets/cabinet_07_idle.png"
 idle_sheet_path = "res://assets/art/hub/cabinets/cabinet_07_flicker.png"
+idle_animation_enabled = false
 use_placeholder_visual = false
 flicker_enabled = true
 
@@ -248,6 +239,7 @@ position = Vector2(300, 212)
 interactable_kind = "mr_byte"
 label_text = "MR. BYTE"
 idle_sheet_path = "res://assets/art/characters/mr_byte/mr_byte_idle_sheet.png"
+idle_animation_enabled = false
 use_placeholder_visual = false
 flicker_enabled = true
 
@@ -263,11 +255,28 @@ flicker_enabled = true
 position = Vector2(546, 300)
 interactable_kind = "staff_door"
 label_text = "STAFF DOOR"
+use_placeholder_visual = false
 
 [node name="OwnerPortrait" parent="InteractableLayer" instance=ExtResource("5")]
 position = Vector2(90, 92)
 interactable_kind = "owner_portrait"
 label_text = "OWNER PORTRAIT"
+show_label = false
+use_placeholder_visual = false
 
-[node name="MemoryTerminal" parent="InteractableLayer" instance=ExtResource("4")]
-position = Vector2(130, 346)
+[node name="PauseMenu" parent="." instance=ExtResource("6")]
+
+[node name="QuestNotice" parent="." instance=ExtResource("7")]
+
+[node name="IntroFadeLayer" type="CanvasLayer" parent="."]
+layer = 0
+
+[node name="IntroFadeOverlay" type="ColorRect" parent="IntroFadeLayer"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)

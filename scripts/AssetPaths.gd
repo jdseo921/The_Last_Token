@@ -56,6 +56,7 @@ const TITLE_BACKGROUND := UI_TITLE + "title_background_640x440.png"
 const TITLE_LOGO := UI_TITLE + "the_last_token_logo.png"
 const TITLE_MENU_FRAME := UI_TITLE + "title_menu_frame.png"
 const TITLE_SCANLINE_OVERLAY := UI_TITLE + "title_scanline_overlay.png"
+const QUEST_WINDOW_FRAME := UI_MENUS + "quest_window_frame.png"
 
 static func exists(path: String) -> bool:
 	if path.is_empty():

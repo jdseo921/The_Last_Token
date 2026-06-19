@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/TitleMenu.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/ui/SettingsMenu.tscn" id="2"]
 
 [node name="TitleMenu" type="Control"]
 layout_mode = 3
@@ -57,33 +58,54 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.45, 0.9, 1, 1)
 
+[node name="StartupStaticOverlay" type="ColorRect" parent="EffectsLayer"]
+visible = false
+modulate = Color(1, 1, 1, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.8, 0.95, 1, 1)
+
+[node name="CrackleRoot" type="Control" parent="EffectsLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
 [node name="UILayer" type="CanvasLayer" parent="."]
 layer = 1
 
 [node name="LogoTexture" type="TextureRect" parent="UILayer"]
 visible = false
-offset_left = 96.0
-offset_top = 44.0
-offset_right = 544.0
-offset_bottom = 124.0
+offset_left = 112.0
+offset_top = 38.0
+offset_right = 528.0
+offset_bottom = 118.0
 expand_mode = 1
 stretch_mode = 5
 
 [node name="LogoFallbackLabel" type="Label" parent="UILayer"]
-offset_left = 96.0
+offset_left = 112.0
 offset_top = 46.0
-offset_right = 544.0
-offset_bottom = 112.0
-theme_override_font_sizes/font_size = 32
+offset_right = 528.0
+offset_bottom = 106.0
+theme_override_font_sizes/font_size = 28
 text = "THE LAST TOKEN"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Panel" type="Panel" parent="UILayer"]
-offset_left = 112.0
-offset_top = 128.0
-offset_right = 528.0
-offset_bottom = 398.0
+offset_left = 91.0
+offset_top = 122.0
+offset_right = 549.0
+offset_bottom = 432.0
 
 [node name="MenuFrame" type="TextureRect" parent="UILayer/Panel"]
 visible = false
@@ -98,28 +120,30 @@ stretch_mode = 5
 
 [node name="VBox" type="VBoxContainer" parent="UILayer/Panel"]
 layout_mode = 0
-offset_left = 48.0
-offset_top = 24.0
-offset_right = 368.0
+offset_left = 76.0
+offset_top = 66.0
+offset_right = 382.0
 offset_bottom = 246.0
-
-[node name="SubtitleLabel" type="Label" parent="UILayer/Panel/VBox"]
-custom_minimum_size = Vector2(0, 42)
-text = "A memory arcade mystery"
-horizontal_alignment = 1
+theme_override_constants/separation = 14
 
 [node name="NewMemoryButton" type="Button" parent="UILayer/Panel/VBox"]
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 32)
+theme_override_font_sizes/font_size = 14
 text = "New Memory"
 
 [node name="RestoreMemoryButton" type="Button" parent="UILayer/Panel/VBox"]
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 32)
+theme_override_font_sizes/font_size = 14
 text = "Restore Memory"
 
-[node name="WindowSizeButton" type="Button" parent="UILayer/Panel/VBox"]
-custom_minimum_size = Vector2(0, 44)
-text = "Window Size: 960 x 660"
+[node name="SettingsButton" type="Button" parent="UILayer/Panel/VBox"]
+custom_minimum_size = Vector2(0, 32)
+theme_override_font_sizes/font_size = 14
+text = "Settings"
 
 [node name="QuitButton" type="Button" parent="UILayer/Panel/VBox"]
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 32)
+theme_override_font_sizes/font_size = 14
 text = "Quit"
+
+[node name="SettingsMenu" parent="." instance=ExtResource("2")]

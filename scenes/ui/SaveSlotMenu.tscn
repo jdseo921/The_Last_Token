@@ -31,7 +31,7 @@ offset_top = 14.0
 offset_right = 552.0
 offset_bottom = 42.0
 theme_override_font_sizes/font_size = 20
-text = "MEMORY TERMINAL"
+text = "SAVE FILES"
 
 [node name="SubtitleLabel" type="Label" parent="Panel"]
 layout_mode = 0
@@ -39,7 +39,7 @@ offset_left = 24.0
 offset_top = 44.0
 offset_right = 552.0
 offset_bottom = 72.0
-text = "Save Memory - choose a slot"
+text = "Save File - choose a slot"
 
 [node name="SlotsVBox" type="VBoxContainer" parent="Panel"]
 layout_mode = 0
@@ -63,7 +63,7 @@ offset_left = 24.0
 offset_top = 374.0
 offset_right = 280.0
 offset_bottom = 408.0
-text = "Mode: Save Memory"
+text = "Mode: Save File"
 vertical_alignment = 1
 
 [node name="CloseButton" type="Button" parent="Panel"]
@@ -75,4 +75,12 @@ offset_bottom = 408.0
 text = "Back"
 
 [node name="ConfirmOverwrite" type="ConfirmationDialog" parent="."]
-dialog_text = "Overwrite this Memory Slot?"
+dialog_text = "Overwrite this save file?"
+
+[node name="FadeOverlay" type="ColorRect" parent="."]
+visible = false
+layout_mode = 0
+offset_right = 640.0
+offset_bottom = 440.0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)

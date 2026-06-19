@@ -5,11 +5,15 @@ signal menu_closed
 const MODE_NEW_GAME := "new_game"
 const MODE_LOAD := "load"
 const MODE_SAVE := "save"
+const OPEN_FADE_SECONDS := 0.18
+const ENTER_GAME_FADE_SECONDS := 0.28
 
 var current_mode := MODE_SAVE
 var slot_buttons: Array[Button] = []
 var pending_slot_id := 0
 var pending_mode := ""
+var transition_in_progress := false
+var fade_tween: Tween = null
 
 @onready var slots_vbox: VBoxContainer = $Panel/SlotsVBox
 @onready var title_label: Label = $Panel/TitleLabel
@@ -18,8 +22,10 @@ var pending_mode := ""
 @onready var mode_label: Label = $Panel/ModeLabel
 @onready var close_button: Button = $Panel/CloseButton
 @onready var confirm_overwrite: ConfirmationDialog = $ConfirmOverwrite
+@onready var fade_overlay: ColorRect = $FadeOverlay
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	visible = false
 	close_button.pressed.connect(_on_close_pressed)
 	confirm_overwrite.confirmed.connect(_on_overwrite_confirmed)
@@ -29,13 +35,15 @@ func _ready() -> void:
 func open_menu(mode = MODE_SAVE) -> void:
 	current_mode = _normalize_mode(mode)
 	visible = true
-	title_label.text = "MEMORY TERMINAL"
+	transition_in_progress = false
+	title_label.text = "SAVE FILES"
 	status_label.text = ""
 	_refresh_slots()
+	_play_open_fade()
 	_focus_first_slot()
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not visible:
+	if not visible or transition_in_progress:
 		return
 	if confirm_overwrite.visible:
 		return
@@ -45,6 +53,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		close_menu()
 
 func _on_close_pressed() -> void:
+	if transition_in_progress:
+		return
 	_play_audio("play_ui_cancel")
 	close_menu()
 
@@ -60,7 +70,7 @@ func _build_slots() -> void:
 	slot_buttons.clear()
 	for slot_id in range(1, 4):
 		var button := Button.new()
-		button.text = "Memory Slot %d" % slot_id
+		button.text = "Save Slot %d" % slot_id
 		button.custom_minimum_size = Vector2(0, 88)
 		button.pressed.connect(_on_slot_pressed.bind(slot_id))
 		slots_vbox.add_child(button)
@@ -75,10 +85,10 @@ func _refresh_slots() -> void:
 		var save_exists := bool(summary.get("save_exists", false))
 		button.disabled = false
 		if not save_exists:
-			var empty_action := "Choose to begin" if current_mode == MODE_NEW_GAME else "Cannot restore"
-			button.text = "Memory Slot %d\nEMPTY MEMORY\n%s" % [slot_id, empty_action]
+			var empty_action := "Choose to begin" if current_mode == MODE_NEW_GAME else "Cannot load"
+			button.text = "Save Slot %d\nEMPTY SAVE\n%s" % [slot_id, empty_action]
 		else:
-			button.text = "Memory Slot %d\nStatus: %s\nGames: %d / %d    Secrets: %d / %d\nLast Saved: %s" % [
+			button.text = "Save Slot %d\nStatus: %s\nGames: %d / %d    Secrets: %d / %d\nLast Saved: %s" % [
 				slot_id,
 				summary.get("story_phase", "Unknown"),
 				int(summary.get("games_completed_count", 0)),
@@ -89,6 +99,8 @@ func _refresh_slots() -> void:
 			]
 
 func _on_slot_pressed(slot_id: int) -> void:
+	if transition_in_progress:
+		return
 	match current_mode:
 		MODE_NEW_GAME:
 			_handle_new_game_slot(slot_id)
@@ -103,23 +115,29 @@ func _handle_new_game_slot(slot_id: int) -> void:
 		_confirm_overwrite(slot_id, MODE_NEW_GAME)
 		return
 	if SaveManager.start_new_memory(slot_id):
-		status_label.text = "New Memory saved in Slot %d." % slot_id
-		close_menu()
+		status_label.text = "New save created in Slot %d." % slot_id
+		await _fade_out_for_scene_change()
+		get_tree().paused = false
 		SceneChanger.go_to_arcade_hub()
 		return
-	_show_failure("Could not create Memory Slot %d." % slot_id)
+	_show_failure("Could not create Save Slot %d." % slot_id)
 
 func _handle_load_slot(slot_id: int) -> void:
 	if not SaveManager.has_save(slot_id):
 		_play_audio("play_error")
-		_show_failure("Memory Slot %d is empty. Nothing to restore." % slot_id)
+		_show_failure("Save Slot %d is empty. Nothing to load." % slot_id)
 		return
 	_play_audio("play_ui_confirm")
+	status_label.text = "Loading Save Slot %d..." % slot_id
+	await _fade_out_for_scene_change()
+	var was_paused := get_tree().paused
+	get_tree().paused = false
 	if SaveManager.load_game(slot_id):
-		status_label.text = "Restored Memory Slot %d." % slot_id
-		close_menu()
 		return
-	_show_failure("Could not restore Memory Slot %d." % slot_id)
+	get_tree().paused = was_paused
+	transition_in_progress = false
+	_reset_fade_overlay()
+	_show_failure("Could not load Save Slot %d." % slot_id)
 
 func _handle_save_slot(slot_id: int) -> void:
 	_play_audio("play_ui_confirm")
@@ -127,19 +145,19 @@ func _handle_save_slot(slot_id: int) -> void:
 		_confirm_overwrite(slot_id, MODE_SAVE)
 		return
 	if SaveManager.save_game(slot_id):
-		status_label.text = "Saved Memory Slot %d." % slot_id
+		status_label.text = "Saved to Slot %d." % slot_id
 		await get_tree().create_timer(0.25).timeout
 		close_menu()
 		return
-	_show_failure("Could not save Memory Slot %d." % slot_id)
+	_show_failure("Could not save to Slot %d." % slot_id)
 
 func _confirm_overwrite(slot_id: int, mode: String) -> void:
 	pending_slot_id = slot_id
 	pending_mode = mode
-	confirm_overwrite.title = "Overwrite Memory Slot %d" % slot_id
+	confirm_overwrite.title = "Overwrite Save Slot %d" % slot_id
 	confirm_overwrite.ok_button_text = "Overwrite"
 	confirm_overwrite.cancel_button_text = "Keep Slot"
-	confirm_overwrite.dialog_text = "Replace Memory Slot %d?\nThe old memory in this slot will be lost." % slot_id
+	confirm_overwrite.dialog_text = "Replace Save Slot %d?\nThe old save file in this slot will be lost." % slot_id
 	confirm_overwrite.popup_centered()
 	call_deferred("_focus_overwrite_confirm")
 
@@ -154,18 +172,19 @@ func _on_overwrite_confirmed() -> void:
 	match mode:
 		MODE_NEW_GAME:
 			if SaveManager.start_new_memory(slot_id):
-				status_label.text = "Memory Slot %d overwritten." % slot_id
-				close_menu()
+				status_label.text = "Save Slot %d overwritten." % slot_id
+				await _fade_out_for_scene_change()
+				get_tree().paused = false
 				SceneChanger.go_to_arcade_hub()
 				return
-			_show_failure("Could not overwrite Memory Slot %d." % slot_id)
+			_show_failure("Could not overwrite Save Slot %d." % slot_id)
 		MODE_SAVE:
 			if SaveManager.save_game(slot_id):
-				status_label.text = "Memory Slot %d overwritten." % slot_id
+				status_label.text = "Save Slot %d overwritten." % slot_id
 				await get_tree().create_timer(0.25).timeout
 				close_menu()
 				return
-			_show_failure("Could not overwrite Memory Slot %d." % slot_id)
+			_show_failure("Could not overwrite Save Slot %d." % slot_id)
 
 func _on_overwrite_canceled() -> void:
 	_play_audio("play_ui_cancel")
@@ -185,20 +204,20 @@ func _normalize_mode(mode) -> String:
 func _get_subtitle_text() -> String:
 	match current_mode:
 		MODE_NEW_GAME:
-			return "New Memory - choose a slot"
+			return "New Save - choose a slot"
 		MODE_LOAD:
-			return "Restore Memory - choose a saved slot"
+			return "Load Save - choose a saved slot"
 		_:
-			return "Save Memory - choose a slot"
+			return "Save File - choose a slot"
 
 func _get_mode_display_text() -> String:
 	match current_mode:
 		MODE_SAVE:
-			return "Mode: Save Memory"
+			return "Mode: Save File"
 		MODE_LOAD:
-			return "Mode: Restore Memory"
+			return "Mode: Load Save"
 		_:
-			return "Mode: New Memory"
+			return "Mode: New Save"
 
 func _focus_first_slot() -> void:
 	for button in slot_buttons:
@@ -213,9 +232,47 @@ func _focus_overwrite_confirm() -> void:
 		ok_button.grab_focus()
 
 func _show_failure(message: String) -> void:
+	transition_in_progress = false
+	_reset_fade_overlay()
 	status_label.text = message
 	_refresh_slots()
 	_focus_first_slot()
+
+func _play_open_fade() -> void:
+	if fade_tween and fade_tween.is_valid():
+		fade_tween.kill()
+	fade_overlay.visible = true
+	fade_overlay.modulate.a = 1.0
+	fade_tween = create_tween()
+	fade_tween.tween_property(fade_overlay, "modulate:a", 0.0, OPEN_FADE_SECONDS)
+	fade_tween.tween_callback(_hide_fade_overlay)
+
+func _fade_out_for_scene_change() -> void:
+	transition_in_progress = true
+	_set_slot_buttons_disabled(true)
+	close_button.disabled = true
+	if fade_tween and fade_tween.is_valid():
+		fade_tween.kill()
+	fade_overlay.visible = true
+	fade_overlay.modulate.a = 0.0
+	fade_tween = create_tween()
+	fade_tween.tween_property(fade_overlay, "modulate:a", 1.0, ENTER_GAME_FADE_SECONDS)
+	await fade_tween.finished
+
+func _hide_fade_overlay() -> void:
+	fade_overlay.visible = false
+
+func _reset_fade_overlay() -> void:
+	if fade_tween and fade_tween.is_valid():
+		fade_tween.kill()
+	fade_overlay.visible = false
+	fade_overlay.modulate.a = 0.0
+	_set_slot_buttons_disabled(false)
+	close_button.disabled = false
+
+func _set_slot_buttons_disabled(disabled: bool) -> void:
+	for button in slot_buttons:
+		button.disabled = disabled
 
 func _play_audio(method_name: String) -> void:
 	var audio_manager := get_node_or_null("/root/AudioManager")

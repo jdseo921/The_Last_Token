@@ -55,9 +55,14 @@ The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys t
 
 | Asset | Recommended Size | Folder | Status | Notes |
 |---|---:|---|---|---|
-| Player sprite | 32x32 | `assets/art/characters/player/` | Placeholder | Idle first; walk frames later. |
+| Player sprite | 32x32 | `assets/art/characters/player/player_gameplay.png` | Integrated | Regular gameplay sprite; face obscured for story reasons. |
+| Player post-game sprite | 32x32 | `assets/art/characters/player/player_gameplay_glitch.png` | Integrated | Glitchier post-game variant; same obscured-face silhouette. |
+| Player 8-direction walk sheet | 16 frames, 32x32 each | `assets/art/characters/player/player_walk_8dir_sheet.png` | Integrated | Regular movement sheet; 2 frames per direction. |
+| Player post-game 8-direction walk sheet | 16 frames, 32x32 each | `assets/art/characters/player/player_walk_8dir_glitch_sheet.png` | Integrated | Glitch movement sheet; 2 frames per direction. |
 | Mira sprite | 32x32 | `assets/art/characters/mira/` | Placeholder | Warm but slightly haunted silhouette. |
+| Mira diagonal facing sheet | 4 frames, 32x32 each | `assets/art/characters/mira/mira_turn_diagonal_sheet.png` | Integrated | Used when Mira turns toward the protagonist. |
 | Gus sprite | 32x32 | `assets/art/characters/gus/` | Placeholder | Practical arcade regular. |
+| Gus diagonal facing sheet | 4 frames, 32x32 each | `assets/art/characters/gus/gus_turn_diagonal_sheet.png` | Integrated | Used when Gus turns toward the protagonist. |
 | Vendo sprite | 32x48 or 48x48 | `assets/art/characters/vendo/` | Placeholder | Machine-like NPC; vending-machine readable. |
 | Mr. Byte sprite | 32x48 or 48x48 | `assets/art/characters/mr_byte/` | Placeholder | Kiosk/helper machine silhouette. |
 | Cabinet 07 sprite | 48x64 or 64x64 | `assets/art/hub/cabinets/` | Placeholder | Important story cabinet; screen glow. |
@@ -81,7 +86,9 @@ The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys t
 | Vending machine | 48x64 | `assets/art/hub/props/` | Placeholder | Could share Vendo visual if useful. |
 | Title background | 640x440 | `assets/art/ui/title/title_background_640x440.png` | Integrated | Retro arcade title backdrop; fallback stays dark. |
 | Title logo | Flexible, pixel-aligned | `assets/art/ui/title/the_last_token_logo.png` | Integrated | Replaces fallback `THE LAST TOKEN` text when present. |
-| Title menu frame | 416x270 or scalable | `assets/art/ui/title/title_menu_frame.png` | Integrated | Decorative frame behind menu buttons. |
+| Title menu frame | 384x240 or scalable | `assets/art/ui/title/title_menu_frame.png` | Integrated | Wider decorative frame behind menu buttons. |
+| Settings menu frame | 456x356 | `assets/art/ui/menus/settings_menu_frame.png` | Integrated | Decorative frame behind scrollable settings controls. |
+| Quest window frame | 1024x704 scalable | `assets/art/ui/menus/quest_window_frame.png` | Integrated | Quest notification and detail frame scaled to 80% of the active viewport. |
 | Title scanline overlay | 640x440 | `assets/art/ui/title/title_scanline_overlay.png` | Integrated | Subtle overlay only; must not reduce readability. |
 | CRT overlay | 640x440 | `assets/art/ui/crt/` | Planned | Keep subtle; do not reduce readability. |
 | Dialogue portraits | 64x64 or 96x96 | `assets/art/portraits/` | In Progress | First 96x96 portrait batch generated and wired through DialogueBox; keep pending until live Godot dialogue review passes. |

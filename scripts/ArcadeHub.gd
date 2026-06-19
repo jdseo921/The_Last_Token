@@ -1,7 +1,6 @@
 extends Node2D
 
 const ASSET_PATHS := preload("res://scripts/AssetPaths.gd")
-const PLAYER_IDLE_SHEET_PATH := "res://assets/art/characters/player/player_idle_sheet.png"
 const MIRA_IDLE_SHEET_PATH := "res://assets/art/characters/mira/mira_idle_sheet.png"
 const GUS_IDLE_SHEET_PATH := "res://assets/art/characters/gus/gus_idle_sheet.png"
 const VENDO_IDLE_SHEET_PATH := "res://assets/art/characters/vendo/vendo_idle_sheet.png"
@@ -21,23 +20,24 @@ const PORTRAIT_PLAYER_NEUTRAL := "res://assets/art/portraits/player/player_neutr
 @onready var cabinet_07_flicker_sprite: AnimatedSprite2D = $PropLayer/Cabinet07FlickerSprite
 @onready var broken_cabinet_sprite: Sprite2D = $PropLayer/BrokenCabinetSprite
 @onready var staff_door_sprite: Sprite2D = $PropLayer/StaffDoorSprite
-@onready var memory_terminal_sprite: Sprite2D = $PropLayer/MemoryTerminalSprite
 @onready var ui_layer: Node2D = $UILayer
 @onready var dialogue_box: CanvasLayer = $UILayer/DialogueBox
 @onready var prompt_label: Label = $UILayer/InteractionPrompt
 @onready var hint_label: Label = $UILayer/HintLabel
 @onready var post_reveal_hint_label: Label = $UILayer/PostRevealHintLabel
 @onready var objective_hint_label: Label = $UILayer/ObjectiveHintLabel
+@onready var quest_notice: CanvasLayer = $QuestNotice
+@onready var intro_fade_overlay: ColorRect = $IntroFadeLayer/IntroFadeOverlay
 
 var save_slot_menu: Control = null
 var choice_box: CanvasLayer = null
 var pending_after_dialogue: Callable = Callable()
 var cabinet_glow_tween: Tween = null
-var player_idle_sprite: AnimatedSprite2D = null
+var intro_active := false
+var intro_fade_tween: Tween = null
 
 func _ready() -> void:
 	_apply_hub_art()
-	_apply_player_art()
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
 	_apply_spawn_position()
@@ -45,6 +45,10 @@ func _ready() -> void:
 	_refresh_hint()
 	_refresh_objective_hint()
 	_refresh_hub_art_states()
+	if _should_play_opening_intro():
+		call_deferred("_play_opening_intro")
+	else:
+		call_deferred("_maybe_show_quest_notification")
 
 func _apply_spawn_position() -> void:
 	if GameState.has_arcade_return_position:
@@ -74,22 +78,23 @@ func _on_dialogue_finished() -> void:
 	if pending_after_dialogue.is_valid():
 		pending_after_dialogue.call()
 		pending_after_dialogue = Callable()
-	if player and player.has_method("set_control_enabled") and not _choice_box_is_open():
+	if player and player.has_method("set_control_enabled") and not _choice_box_is_open() and not intro_active:
 		player.set_control_enabled(true)
 	_refresh_hint()
 	_refresh_objective_hint()
 	_refresh_hub_art_states()
+	_maybe_show_quest_notification()
 
 func _choice_box_is_open() -> bool:
 	return choice_box != null and is_instance_valid(choice_box) and choice_box.visible
 
 func _refresh_hint() -> void:
-	hint_label.visible = not GameState.story_started
+	hint_label.visible = false
 	post_reveal_hint_label.visible = GameState.post_reveal_roam_unlocked and not _dialogue_is_active() and not _choice_box_is_open() and not _save_slot_menu_is_open()
 
 func _refresh_objective_hint() -> void:
 	objective_hint_label.text = _get_objective_hint_text()
-	objective_hint_label.visible = not objective_hint_label.text.is_empty() and not _dialogue_is_active() and not _choice_box_is_open() and not _save_slot_menu_is_open()
+	objective_hint_label.visible = false
 	_refresh_hub_art_states()
 
 func _get_objective_hint_text() -> String:
@@ -117,6 +122,63 @@ func _dialogue_is_active() -> bool:
 func _save_slot_menu_is_open() -> bool:
 	return save_slot_menu != null and is_instance_valid(save_slot_menu) and save_slot_menu.visible
 
+func can_open_pause_menu() -> bool:
+	return not intro_active and not _dialogue_is_active() and not _choice_box_is_open() and not _save_slot_menu_is_open()
+
+func _should_play_opening_intro() -> bool:
+	return not GameState.opening_intro_seen and not GameState.story_started
+
+func _play_opening_intro() -> void:
+	intro_active = true
+	if player and player.has_method("set_control_enabled"):
+		player.set_control_enabled(false)
+	intro_fade_overlay.visible = true
+	intro_fade_overlay.modulate.a = 1.0
+	await _fade_intro_to_dialogue()
+	dialogue_box.start_dialogue([
+		{"speaker": "Player", "text": "I remember the smell of warm plastic and old carpet before I remember my own name.", "portrait": PORTRAIT_PLAYER_NEUTRAL},
+		{"speaker": "Player", "text": "Pixel Haven should be closed. The lights should be off. Someone left them waiting for me.", "portrait": PORTRAIT_PLAYER_NEUTRAL},
+		{"speaker": "Player", "text": "There is a token-shaped absence in my pocket, and Mira's voice is the first thing that feels familiar.", "portrait": PORTRAIT_PLAYER_NEUTRAL},
+	])
+	await dialogue_box.dialogue_finished
+	GameState.mark_opening_intro_seen()
+	await _fade_intro_from_black()
+	intro_active = false
+	if player and player.has_method("set_control_enabled"):
+		player.set_control_enabled(true)
+	_maybe_show_quest_notification()
+
+func _fade_intro_to_dialogue() -> void:
+	if intro_fade_tween and intro_fade_tween.is_valid():
+		intro_fade_tween.kill()
+	await get_tree().create_timer(0.2).timeout
+	intro_fade_tween = create_tween()
+	intro_fade_tween.tween_property(intro_fade_overlay, "modulate:a", 0.72, 1.15)
+	await intro_fade_tween.finished
+
+func _fade_intro_from_black() -> void:
+	if intro_fade_tween and intro_fade_tween.is_valid():
+		intro_fade_tween.kill()
+	intro_fade_overlay.visible = true
+	intro_fade_overlay.modulate.a = maxf(intro_fade_overlay.modulate.a, 0.72)
+	intro_fade_tween = create_tween()
+	intro_fade_tween.tween_property(intro_fade_overlay, "modulate:a", 0.0, 0.9)
+	intro_fade_tween.tween_callback(_hide_intro_fade_overlay)
+	await intro_fade_tween.finished
+
+func _hide_intro_fade_overlay() -> void:
+	intro_fade_overlay.visible = false
+
+func _maybe_show_quest_notification() -> void:
+	if intro_active or _dialogue_is_active() or _choice_box_is_open() or _save_slot_menu_is_open():
+		return
+	var quest_id := GameState.get_current_quest_id()
+	if quest_id.is_empty() or quest_id == GameState.last_announced_quest_id:
+		return
+	if quest_notice and quest_notice.has_method("show_notification"):
+		quest_notice.call("show_notification", GameState.get_current_quest_data())
+	GameState.mark_current_quest_announced()
+
 func handle_hub_interaction(interactable: Node, player_node: Node = null) -> void:
 	match str(interactable.interactable_kind):
 		"mira":
@@ -129,8 +191,6 @@ func handle_hub_interaction(interactable: Node, player_node: Node = null) -> voi
 			_handle_mr_byte()
 		"cabinet07":
 			_handle_cabinet_07()
-		"memory_terminal":
-			_handle_memory_terminal()
 		"staff_door":
 			_handle_staff_door()
 		"owner_portrait":
@@ -331,20 +391,6 @@ func _handle_cabinet_07() -> void:
 		{"speaker": "Cabinet 07", "text": "RETURN TOKEN TO MIRA."},
 	])
 
-func _handle_memory_terminal() -> void:
-	if save_slot_menu and is_instance_valid(save_slot_menu):
-		save_slot_menu.queue_free()
-	save_slot_menu = load("res://scenes/ui/SaveSlotMenu.tscn").instantiate()
-	ui_layer.add_child(save_slot_menu)
-	if player and player.has_method("set_control_enabled"):
-		player.set_control_enabled(false)
-	if save_slot_menu.has_signal("menu_closed"):
-		save_slot_menu.menu_closed.connect(_on_save_slot_menu_closed, CONNECT_ONE_SHOT)
-	if save_slot_menu.has_method("open_menu"):
-		save_slot_menu.open_menu(true)
-	_refresh_hint()
-	_refresh_objective_hint()
-
 func _on_save_slot_menu_closed() -> void:
 	if player and player.has_method("set_control_enabled"):
 		player.set_control_enabled(true)
@@ -413,18 +459,12 @@ func _apply_hub_art() -> void:
 		[$PropLayer/TicketCounterVisual]
 	)
 	_apply_prop_sprite(
-		memory_terminal_sprite,
-		ASSET_PATHS.HUB_MEMORY_TERMINAL,
-		[$PropLayer/MemoryTerminalVisual, $PropLayer/MemoryTerminalScreen]
-	)
-	_apply_prop_sprite(
 		cabinet_07_sprite,
 		ASSET_PATHS.HUB_CABINET_07_IDLE,
 		[$PropLayer/Cabinet07Visual, $PropLayer/Cabinet07Screen]
 	)
-	var has_cabinet_flicker := _apply_animated_sprite_sheet(cabinet_07_flicker_sprite, ASSET_PATHS.HUB_CABINET_07_FLICKER_SHEET, 3, 0.18)
-	if has_cabinet_flicker:
-		cabinet_07_sprite.visible = false
+	cabinet_07_flicker_sprite.visible = false
+	cabinet_07_flicker_sprite.sprite_frames = null
 	_apply_prop_sprite(
 		broken_cabinet_sprite,
 		ASSET_PATHS.HUB_BROKEN_CABINET,
@@ -448,21 +488,6 @@ func _refresh_hub_art_states() -> void:
 		owner_portrait_path,
 		[$PropLayer/OwnerPortraitVisual, $PropLayer/OwnerPortraitInner]
 	)
-
-func _apply_player_art() -> void:
-	if not ASSET_PATHS.exists(PLAYER_IDLE_SHEET_PATH):
-		return
-	player_idle_sprite = _create_idle_sheet_sprite(PLAYER_IDLE_SHEET_PATH, 2, 0.45)
-	if player_idle_sprite == null:
-		return
-	player.add_child(player_idle_sprite)
-	player_idle_sprite.position = Vector2.ZERO
-	var body_visual := player.get_node_or_null("BodyVisual") as CanvasItem
-	if body_visual != null:
-		body_visual.visible = false
-	var facing_dot := player.get_node_or_null("FacingDot") as CanvasItem
-	if facing_dot != null:
-		facing_dot.visible = false
 
 func _apply_prop_sprite(sprite_node: Sprite2D, path: String, placeholders: Array) -> void:
 	var loaded := _apply_sprite_texture(sprite_node, path)
@@ -521,26 +546,3 @@ func _start_cabinet_glow_pulse() -> void:
 	cabinet_glow_tween.tween_property(glow_target, "modulate:a", 1.0, 0.42)
 	cabinet_glow_tween.tween_property(glow_target, "modulate:a", 0.45, 0.28)
 	cabinet_glow_tween.tween_property(glow_target, "modulate:a", 0.8, 0.55)
-
-func _create_idle_sheet_sprite(path: String, frame_count: int, frame_duration: float) -> AnimatedSprite2D:
-	var texture: Texture2D = ASSET_PATHS.load_texture_or_null(path)
-	if texture == null:
-		return null
-	var frame_total := maxi(frame_count, 1)
-	var frame_width := maxi(int(texture.get_width() / frame_total), 1)
-	var frame_height := maxi(texture.get_height(), 1)
-	var frames := SpriteFrames.new()
-	frames.add_animation("idle")
-	frames.set_animation_loop("idle", true)
-	frames.set_animation_speed("idle", 1.0 / maxf(frame_duration, 0.05))
-	for index in range(frame_total):
-		var atlas := AtlasTexture.new()
-		atlas.atlas = texture
-		atlas.region = Rect2(index * frame_width, 0, frame_width, frame_height)
-		frames.add_frame("idle", atlas)
-	var animated_sprite := AnimatedSprite2D.new()
-	animated_sprite.name = "OptionalIdleSprite"
-	animated_sprite.sprite_frames = frames
-	animated_sprite.animation = "idle"
-	animated_sprite.play("idle")
-	return animated_sprite

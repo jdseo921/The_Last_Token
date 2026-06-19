@@ -63,6 +63,7 @@ func _ready() -> void:
 	take_right_button.pressed.connect(_on_take_right_pressed)
 	take_both_button.pressed.connect(_on_take_both_pressed)
 	exit_button.pressed.connect(_on_exit_pressed)
+	loss_retry_count = GameState.rockbyte_duel_loss_count
 	_reset_duel()
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -209,7 +210,8 @@ func _finish_duel(player_won: bool) -> void:
 		exit_button.grab_focus()
 		return
 	_play_audio("play_error")
-	loss_retry_count += 1
+	GameState.rockbyte_duel_loss_count += 1
+	loss_retry_count = GameState.rockbyte_duel_loss_count
 	status_label.text = _get_loss_text()
 	exit_button.text = "Retry Duel"
 	exit_button.grab_focus()
