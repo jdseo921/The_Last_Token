@@ -1,0 +1,100 @@
+{
+	"quests": {
+		"lost_token": {
+			"id": "lost_token",
+			"title": "Recover the Lost Token",
+			"owner": "Mira",
+			"location": "ArcadeHub",
+			"summary": "Play Cabinet 07 and bring the Lost Token back to Mira.",
+			"details": "Mira says Cabinet 07 has the Lost Token. Recover it, then return to the ticket counter.",
+			"minigame": "Rockbyte Duel",
+			"required": true,
+			"starts_after": "story_started",
+			"completion_dialogue": [
+				{"speaker": "Mira", "text": "It remembered enough to give this back."},
+				{"speaker": "Mira", "text": "That means something in here still knows you."}
+			],
+			"memory_signal_after": "Uneasy"
+		},
+		"truth_filter": {
+			"id": "truth_filter",
+			"title": "Truth Filter",
+			"owner": "Mr. Byte",
+			"location": "Cabinet Row",
+			"summary": "Meet Mr. Byte in Cabinet Row and open the Truth Filter.",
+			"details": "The Lost Token woke a memory, but the arcade is still filtering the truth. Mr. Byte can open the Truth Filter from Cabinet Row.",
+			"minigame": "Truth Filter",
+			"required": true,
+			"starts_after": "lost_token_quest_completed",
+			"completion_dialogue": [
+				{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
+				{"speaker": "Mr. Byte", "text": "Warning: restored subjects may now notice missing pieces."}
+			],
+			"memory_signal_after": "Fractured"
+		},
+		"circuit_soda": {
+			"id": "circuit_soda",
+			"title": "Circuit Soda",
+			"owner": "Vendo",
+			"location": "Snack Alcove",
+			"summary": "Stabilize the signal flow through Vendo's machine.",
+			"details": "Vendo claims the player's signal is being routed through the wrong channels. The Circuit Soda puzzle should make the signal easier for the staff systems to read.",
+			"minigame": "Circuit Soda",
+			"required": true,
+			"starts_after": "lying_cabinets_completed",
+			"completion_dialogue": [
+				{"speaker": "Vendo", "text": "Your signal now flows smoother than orange soda through a busted hose."},
+				{"speaker": "Vendo", "text": "Still no refunds."}
+			],
+			"memory_signal_after": "Fractured"
+		},
+		"maintenance_sync": {
+			"id": "maintenance_sync",
+			"title": "Maintenance Sync",
+			"owner": "Gus",
+			"location": "Maintenance Hall",
+			"summary": "Stabilize the two signals needed by the Staff Door.",
+			"details": "Gus says the Staff Door listens for two stable signals. The maintenance system needs both signals active before the Staff Room can open.",
+			"minigame": "Maintenance Sync",
+			"required": true,
+			"starts_after": "lying_cabinets_completed",
+			"completion_dialogue": [
+				{"speaker": "Gus", "text": "Door finally heard both of you."},
+				{"speaker": "Gus", "text": "Try not to think too hard about that sentence."}
+			],
+			"memory_signal_after": "Overloaded"
+		},
+		"broken_high_score": {
+			"id": "broken_high_score",
+			"title": "Broken High Score",
+			"owner": "Roxy",
+			"location": "Cabinet Row",
+			"summary": "Restore a corrupted high-score record.",
+			"details": "The score claims the target is 9999, but the display is broken. The real record may be much smaller and much stranger.",
+			"minigame": "Broken High Score",
+			"required": false,
+			"starts_after": "lost_token_quest_completed",
+			"completion_dialogue": [
+				{"speaker": "Roxy", "text": "Score came back."},
+				{"speaker": "Roxy", "text": "Name stayed blank. That is usually bad."}
+			],
+			"memory_signal_after": "No Change"
+		},
+		"prize_counter_secret": {
+			"id": "prize_counter_secret",
+			"title": "Prize Counter Secret",
+			"owner": "Pip",
+			"location": "Prize Corner",
+			"summary": "Find the prize counter's hidden memory.",
+			"details": "The prize counter remembers small things: cheap prizes, saved tickets, and someone who never clocked out.",
+			"minigame": "Prize Counter",
+			"required": false,
+			"starts_after": "prize_corner_unlocked",
+			"completion_dialogue": [
+				{"speaker": "Pip", "text": "Funny thing about prizes."},
+				{"speaker": "Pip", "text": "The cheap ones remember who wanted them."}
+			],
+			"memory_signal_after": "No Change"
+		}
+	}
+}

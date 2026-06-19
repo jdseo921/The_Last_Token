@@ -1,0 +1,82 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/maps/StaffCorridor.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/common/MapTransition.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="4"]
+
+[node name="StaffCorridor" type="Node2D"]
+script = ExtResource("1")
+
+[node name="Background" type="Polygon2D" parent="."]
+color = Color(0.025, 0.025, 0.032, 1)
+polygon = PackedVector2Array(0, 0, 640, 0, 640, 440, 0, 440)
+
+[node name="CorridorPath" type="Polygon2D" parent="."]
+color = Color(0.08, 0.075, 0.09, 1)
+polygon = PackedVector2Array(176, 0, 464, 0, 464, 440, 176, 440)
+
+[node name="MemoryEchoPlaceholder" type="Polygon2D" parent="."]
+color = Color(0.22, 0.68, 0.78, 0.25)
+polygon = PackedVector2Array(240, 126, 400, 126, 424, 220, 400, 314, 240, 314, 216, 220)
+
+[node name="StaffRoomDoorPlaceholder" type="Polygon2D" parent="."]
+color = Color(0.36, 0.08, 0.1, 1)
+polygon = PackedVector2Array(286, 40, 354, 40, 354, 126, 286, 126)
+
+[node name="Spawn_Default" type="Marker2D" parent="."]
+position = Vector2(320, 360)
+
+[node name="Spawn_FromMaintenanceHall" type="Marker2D" parent="."]
+position = Vector2(320, 360)
+
+[node name="Player" parent="." instance=ExtResource("2")]
+position = Vector2(320, 360)
+
+[node name="ReturnToMaintenanceHall" parent="." instance=ExtResource("3")]
+position = Vector2(320, 412)
+target_scene_path = "res://scenes/maps/MaintenanceHall.tscn"
+target_spawn_id = "Spawn_FromStaffCorridor"
+
+[node name="UILayer" type="Node2D" parent="."]
+
+[node name="TitleLabel" type="Label" parent="UILayer"]
+position = Vector2(24, 20)
+size = Vector2(280, 28)
+theme_override_font_sizes/font_size = 18
+text = "STAFF CORRIDOR"
+
+[node name="HintLabel" type="Label" parent="UILayer"]
+position = Vector2(24, 48)
+size = Vector2(430, 42)
+theme_override_font_sizes/font_size = 10
+text = "Placeholder shell: future Memory Echo transition into the Staff Room."
+autowrap_mode = 3
+
+[node name="EchoLabel" type="Label" parent="UILayer"]
+position = Vector2(220, 320)
+size = Vector2(200, 20)
+theme_override_font_sizes/font_size = 10
+text = "MEMORY ECHO / FUTURE"
+horizontal_alignment = 1
+
+[node name="DoorLabel" type="Label" parent="UILayer"]
+position = Vector2(250, 132)
+size = Vector2(140, 20)
+theme_override_font_sizes/font_size = 10
+text = "STAFF ROOM"
+horizontal_alignment = 1
+
+[node name="InteractionPromptBackground" type="ColorRect" parent="UILayer"]
+visible = false
+position = Vector2(194, 400)
+size = Vector2(252, 30)
+color = Color(0.015, 0.018, 0.024, 0.68)
+
+[node name="InteractionPrompt" type="Label" parent="UILayer"]
+position = Vector2(200, 404)
+size = Vector2(240, 24)
+text = ""
+horizontal_alignment = 1
+
+[node name="PauseMenu" parent="." instance=ExtResource("4")]

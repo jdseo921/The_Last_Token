@@ -1,5 +1,7 @@
 extends Node
 
+const QUEST_REGISTRY := preload("res://scripts/QuestRegistry.gd")
+
 const ACTION_BINDINGS := {
 	"move_up": [KEY_W, KEY_UP],
 	"move_down": [KEY_S, KEY_DOWN],
@@ -65,6 +67,7 @@ var arcade_return_position := Vector2.ZERO
 var opening_intro_seen := false
 var last_announced_quest_id := ""
 var npc_dialogue_counts: Dictionary = {}
+var pending_spawn_id := ""
 
 func _ready() -> void:
 	_ensure_input_actions()
@@ -199,7 +202,18 @@ func reset_for_new_game() -> void:
 	opening_intro_seen = false
 	last_announced_quest_id = ""
 	npc_dialogue_counts.clear()
+	pending_spawn_id = ""
 	clear_arcade_return_position()
+
+func set_pending_spawn_id(spawn_id: String) -> void:
+	pending_spawn_id = spawn_id
+
+func consume_pending_spawn_id(default_spawn_id: String = "Spawn_Default") -> String:
+	var spawn_id := pending_spawn_id
+	pending_spawn_id = ""
+	if spawn_id.is_empty():
+		return default_spawn_id
+	return spawn_id
 
 func set_arcade_return_position(position: Vector2) -> void:
 	arcade_return_position = position
@@ -266,47 +280,47 @@ func get_current_quest_id() -> String:
 func get_current_quest_data() -> Dictionary:
 	match get_current_quest_id():
 		"opening_talk_to_mira":
-			return {
+			return _with_registry_quest_data({
 				"id": "opening_talk_to_mira",
 				"title": "Find Mira",
 				"summary": "Talk to Mira at the ticket counter.",
 				"details": "Pixel Haven is closed, but Mira seems to know me. I should talk to her at the ticket counter.",
-			}
+			}, "lost_token")
 		"recover_lost_token":
-			return {
+			return _with_registry_quest_data({
 				"id": "recover_lost_token",
 				"title": "Recover the Lost Token",
 				"summary": "Play Cabinet 07.",
 				"details": "Mira says Cabinet 07 has my Lost Token. I need to play it and bring the token back to her.",
-			}
+			}, "lost_token")
 		"return_lost_token":
-			return {
+			return _with_registry_quest_data({
 				"id": "return_lost_token",
 				"title": "Return the Lost Token",
 				"summary": "Bring the token back to Mira.",
 				"details": "Cabinet 07 released the Lost Token. Mira is waiting for it by the ticket counter.",
-			}
+			}, "lost_token")
 		"check_staff_door":
-			return {
+			return _with_registry_quest_data({
 				"id": "check_staff_door",
 				"title": "Check the Staff Door",
 				"summary": "Inspect the Staff Door.",
 				"details": "The Truth Filter recovered a second memory fragment. The Staff Door should be listening now.",
-			}
+			}, "maintenance_sync")
 		"truth_filter":
-			return {
+			return _with_registry_quest_data({
 				"id": "truth_filter",
-				"title": "Find the Truth Filter",
-				"summary": "Find the cabinet that tests broken memories.",
-				"details": "The Lost Token woke a memory, but Mira says the arcade is still filtering the truth. A cabinet nearby may know which memories are lying.",
-			}
+				"title": "Open the Truth Filter",
+				"summary": "Meet Mr. Byte in Cabinet Row.",
+				"details": "The Lost Token woke a memory, but Mira says the arcade is still filtering the truth. Mr. Byte can open the Truth Filter in Cabinet Row.",
+			}, "truth_filter")
 		"enter_staff_room":
-			return {
+			return _with_registry_quest_data({
 				"id": "enter_staff_room",
 				"title": "Enter the Staff Room",
 				"summary": "Return to the Staff Door.",
 				"details": "Both switches are active and the Staff Room is unlocked. I should go inside.",
-			}
+			}, "maintenance_sync")
 		"finish_memory":
 			return {
 				"id": "finish_memory",
@@ -328,6 +342,19 @@ func get_current_quest_data() -> Dictionary:
 				"summary": "There is no current objective.",
 				"details": "There is no active quest right now.",
 			}
+
+func _with_registry_quest_data(base_data: Dictionary, registry_id: String) -> Dictionary:
+	var merged := base_data.duplicate(true)
+	var registry_data: Dictionary = QUEST_REGISTRY.get_quest(registry_id)
+	merged["registry_id"] = registry_id
+	merged["owner"] = str(registry_data.get("owner", ""))
+	merged["location"] = str(registry_data.get("location", ""))
+	merged["minigame"] = str(registry_data.get("minigame", ""))
+	merged["required"] = bool(registry_data.get("required", true))
+	merged["starts_after"] = str(registry_data.get("starts_after", ""))
+	merged["completion_dialogue"] = registry_data.get("completion_dialogue", [])
+	merged["memory_signal_after"] = str(registry_data.get("memory_signal_after", ""))
+	return merged
 
 func mark_current_quest_announced() -> void:
 	last_announced_quest_id = get_current_quest_id()

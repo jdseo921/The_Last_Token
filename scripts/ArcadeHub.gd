@@ -66,6 +66,12 @@ func _process(_delta: float) -> void:
 	_refresh_objective_hint_visibility()
 
 func _apply_spawn_position() -> void:
+	var spawn_id := GameState.consume_pending_spawn_id("")
+	if not spawn_id.is_empty():
+		var marker := get_node_or_null(spawn_id)
+		if marker is Marker2D:
+			player.global_position = marker.global_position
+			return
 	if GameState.has_arcade_return_position:
 		player.global_position = GameState.arcade_return_position
 		GameState.clear_arcade_return_position()
@@ -172,7 +178,7 @@ func _get_objective_hint_text() -> String:
 	if GameState.rockbyte_duel_completed and not GameState.lost_token_quest_completed:
 		return "Objective: Return the Lost Token to Mira."
 	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
-		return "Objective: Find the Truth Filter."
+		return "Objective: Go to Cabinet Row. Talk to Mr. Byte."
 	if GameState.lying_cabinets_completed and not GameState.story_puzzle_completed:
 		return "Objective: Check the Staff Door."
 	if GameState.story_puzzle_completed and GameState.staff_room_unlocked and not GameState.twist_reveal_seen:
@@ -363,7 +369,7 @@ func _handle_mira() -> void:
 			{"speaker": "Mira", "text": "Thank you for returning this."},
 			{"speaker": "Mira", "text": "The token woke something."},
 			{"speaker": "Mira", "text": "Now the arcade has to decide which memories are true."},
-			{"speaker": "Mira", "text": "Find the Truth Filter cabinet."},
+			{"speaker": "Mira", "text": "Mr. Byte can open the Truth Filter."},
 		], Callable(GameState, "complete_lost_token_quest"))
 		return
 	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
@@ -371,16 +377,16 @@ func _handle_mira() -> void:
 			[
 				{"speaker": "Mira", "text": "The token woke something."},
 				{"speaker": "Mira", "text": "Now the arcade has to decide which memories are true."},
-				{"speaker": "Mira", "text": "Find the Truth Filter cabinet."},
+				{"speaker": "Mira", "text": "Mr. Byte can open the Truth Filter."},
 			],
 			[
 				{"speaker": "Mira", "text": "Memory Signal feels different now.", "portrait": PORTRAIT_MIRA_WORRIED},
 				{"speaker": "Mira", "text": "Uneasy, but not broken."},
-				{"speaker": "Mira", "text": "The Truth Filter should know what changed."},
+				{"speaker": "Mira", "text": "Mr. Byte is waiting in Cabinet Row."},
 			],
 		], [
 			[
-				{"speaker": "Mira", "text": "Truth Filter first. Staff Door after."},
+				{"speaker": "Mira", "text": "Cabinet Row first. Staff Door after."},
 				{"speaker": "Mira", "text": "I know. The arcade makes terrible queues."},
 			],
 		]))
@@ -443,12 +449,12 @@ func _handle_gus() -> void:
 				{"speaker": "Gus", "text": "Once the machines start correcting memories, they get picky."},
 			],
 			[
-				{"speaker": "Gus", "text": "Truth Filter cabinet is the one acting like it grades homework."},
-				{"speaker": "Gus", "text": "So, naturally, I avoid eye contact."},
+				{"speaker": "Gus", "text": "Truth Filter cabinet is over in Cabinet Row."},
+				{"speaker": "Gus", "text": "Mr. Byte is the one acting like he grades homework."},
 			],
 		], [
 			[
-				{"speaker": "Gus", "text": "Truth Filter. Then Staff Door."},
+				{"speaker": "Gus", "text": "Cabinet Row. Then Staff Door."},
 				{"speaker": "Gus", "text": "One weird chore at a time.", "portrait": PORTRAIT_GUS_ANNOYED},
 			],
 		]))
@@ -533,12 +539,12 @@ func _handle_vendo() -> void:
 				{"speaker": "Vendo", "text": "Please enjoy a refreshing sense of doubt."},
 			],
 			[
-				{"speaker": "Vendo", "text": "Truth Filter is now available."},
+				{"speaker": "Vendo", "text": "Truth Filter is now available in Cabinet Row."},
 				{"speaker": "Vendo", "text": "Warning: contains truths. May be bitter."},
 			],
 		], [
 			[
-				{"speaker": "Vendo", "text": "Please proceed to Truth Filter."},
+				{"speaker": "Vendo", "text": "Please proceed to Mr. Byte."},
 				{"speaker": "Vendo", "text": "Lingering near vending units does not count as therapy."},
 			],
 		]))
@@ -700,17 +706,17 @@ func _handle_mr_byte() -> void:
 		GameState.mr_byte_intro_seen = true
 		start_dialogue(_select_repeat_dialogue("mr_byte", [
 			[
-				{"speaker": "Mr. Byte", "text": "Truth filter unavailable until contradiction threshold is reached."},
-				{"speaker": "Mr. Byte", "text": "Correction: threshold reached."},
+				{"speaker": "Mr. Byte", "text": "Remote kiosk limited."},
+				{"speaker": "Mr. Byte", "text": "Primary Truth Filter access is in Cabinet Row."},
 			],
 			[
 				{"speaker": "Mr. Byte", "text": "Memory Signal: Uneasy."},
-				{"speaker": "Mr. Byte", "text": "Recommended action: submit corrupted statements for filtering."},
+				{"speaker": "Mr. Byte", "text": "Recommended action: proceed to Cabinet Row."},
 			],
 		], [
 			[
 				{"speaker": "Mr. Byte", "text": "Repeated help request logged."},
-				{"speaker": "Mr. Byte", "text": "Proceed to Truth Filter."},
+				{"speaker": "Mr. Byte", "text": "Proceed to Cabinet Row."},
 			],
 		]))
 		return
@@ -839,8 +845,8 @@ func _handle_truth_filter() -> void:
 		return
 	GameState.truth_filter_quest_started = true
 	GameState.update_memory_signal_from_progress()
-	_store_arcade_return_position()
-	SceneChanger.go_to_truth_filter()
+	GameState.set_pending_spawn_id("Spawn_FromArcadeHub")
+	SceneChanger.go_to_cabinet_row()
 
 func _on_save_slot_menu_closed() -> void:
 	if player and player.has_method("set_control_enabled"):
@@ -965,7 +971,7 @@ func _refresh_hub_art_states() -> void:
 		[$PropLayer/OwnerPortraitVisual, $PropLayer/OwnerPortraitInner]
 	)
 	if truth_filter_glow != null:
-		truth_filter_glow.visible = GameState.lost_token_quest_completed and not GameState.story_puzzle_completed
+		truth_filter_glow.visible = false
 		var glow_alpha := 0.2 if GameState.memory_signal_level >= GameState.MEMORY_SIGNAL_FRACTURED else 0.12
 		truth_filter_glow.color = Color(0.8, 0.2, 1.0, glow_alpha)
 	_update_memory_signal_pulse()

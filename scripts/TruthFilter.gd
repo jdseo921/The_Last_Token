@@ -175,13 +175,13 @@ func _complete_puzzle() -> void:
 	for button in choose_buttons:
 		button.visible = false
 	exit_button.visible = true
-	exit_button.text = "Return to Arcade"
+	exit_button.text = "Return to Cabinet Row"
 	_play_audio("play_token_get")
 	exit_button.grab_focus()
 
 func _on_exit_pressed() -> void:
 	_play_audio("play_ui_confirm")
-	SceneChanger.go_to_arcade_hub()
+	SceneChanger.go_to_cabinet_row()
 
 func _set_choice_buttons_enabled(enabled: bool) -> void:
 	for button in choose_buttons:

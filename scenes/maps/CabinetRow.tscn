@@ -1,0 +1,138 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/maps/CabinetRow.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/common/MapTransition.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/arcade/HubInteractable.tscn" id="6"]
+
+[node name="CabinetRow" type="Node2D"]
+script = ExtResource("1")
+
+[node name="Background" type="Polygon2D" parent="."]
+color = Color(0.035, 0.04, 0.07, 1)
+polygon = PackedVector2Array(0, 0, 640, 0, 640, 440, 0, 440)
+
+[node name="CabinetWall" type="Polygon2D" parent="."]
+color = Color(0.09, 0.07, 0.14, 1)
+polygon = PackedVector2Array(52, 62, 588, 62, 588, 178, 52, 178)
+
+[node name="TruthFilterGlow" type="Polygon2D" parent="."]
+visible = false
+color = Color(0.8, 0.2, 1, 0.16)
+polygon = PackedVector2Array(246, 72, 394, 72, 410, 176, 386, 214, 254, 214, 230, 176)
+
+[node name="TruthFilterPlaceholder" type="Polygon2D" parent="."]
+color = Color(0.34, 0.12, 0.52, 1)
+polygon = PackedVector2Array(270, 88, 370, 88, 370, 172, 270, 172)
+
+[node name="MrBytePlaceholder" type="Polygon2D" parent="."]
+color = Color(0.14, 0.34, 0.62, 1)
+polygon = PackedVector2Array(118, 104, 182, 104, 182, 172, 118, 172)
+
+[node name="BrokenHighScorePlaceholder" type="Polygon2D" parent="."]
+color = Color(0.18, 0.17, 0.22, 1)
+polygon = PackedVector2Array(444, 104, 508, 104, 508, 172, 444, 172)
+
+[node name="Spawn_Default" type="Marker2D" parent="."]
+position = Vector2(320, 314)
+
+[node name="Spawn_FromArcadeHub" type="Marker2D" parent="."]
+position = Vector2(320, 314)
+
+[node name="Spawn_FromSnackAlcove" type="Marker2D" parent="."]
+position = Vector2(572, 254)
+
+[node name="Spawn_FromTruthFilter" type="Marker2D" parent="."]
+position = Vector2(320, 258)
+
+[node name="Player" parent="." instance=ExtResource("2")]
+position = Vector2(320, 314)
+
+[node name="InteractableLayer" type="Node2D" parent="."]
+
+[node name="MrByte" parent="InteractableLayer" instance=ExtResource("6")]
+position = Vector2(150, 158)
+interactable_kind = "mr_byte"
+label_text = "MR. BYTE"
+idle_sheet_path = "res://assets/art/characters/mr_byte/mr_byte_idle_sheet.png"
+idle_animation_enabled = false
+use_placeholder_visual = false
+flicker_enabled = true
+
+[node name="TruthFilter" parent="InteractableLayer" instance=ExtResource("6")]
+position = Vector2(320, 158)
+interactable_kind = "truth_filter"
+label_text = "TRUTH FILTER"
+use_placeholder_visual = false
+flicker_enabled = true
+
+[node name="BrokenHighScore" parent="InteractableLayer" instance=ExtResource("6")]
+position = Vector2(476, 158)
+interactable_kind = "broken_high_score"
+label_text = "BROKEN HIGH SCORE"
+show_label = false
+use_placeholder_visual = false
+
+[node name="ReturnToArcadeHub" parent="." instance=ExtResource("3")]
+position = Vector2(320, 406)
+target_scene_path = "res://scenes/arcade/ArcadeHub.tscn"
+target_spawn_id = "Spawn_FromCabinetRow"
+
+[node name="ToSnackAlcove" parent="." instance=ExtResource("3")]
+position = Vector2(606, 254)
+target_scene_path = "res://scenes/maps/SnackAlcove.tscn"
+target_spawn_id = "Spawn_FromCabinetRow"
+
+[node name="UILayer" type="Node2D" parent="."]
+
+[node name="DialogueBox" parent="UILayer" instance=ExtResource("5")]
+
+[node name="TitleLabel" type="Label" parent="UILayer"]
+position = Vector2(24, 20)
+size = Vector2(250, 28)
+theme_override_font_sizes/font_size = 18
+text = "CABINET ROW"
+
+[node name="HintLabel" type="Label" parent="UILayer"]
+position = Vector2(24, 48)
+size = Vector2(390, 42)
+theme_override_font_sizes/font_size = 10
+text = "Mr. Byte owns the Truth Filter. A broken high-score cabinet sits dark for now."
+autowrap_mode = 3
+
+[node name="MrByteLabel" type="Label" parent="UILayer"]
+position = Vector2(94, 178)
+size = Vector2(112, 20)
+theme_override_font_sizes/font_size = 10
+text = "MR. BYTE"
+horizontal_alignment = 1
+
+[node name="TruthFilterLabel" type="Label" parent="UILayer"]
+position = Vector2(244, 178)
+size = Vector2(152, 20)
+theme_override_font_sizes/font_size = 10
+text = "TRUTH FILTER"
+horizontal_alignment = 1
+
+[node name="BrokenHighScoreLabel" type="Label" parent="UILayer"]
+position = Vector2(420, 178)
+size = Vector2(112, 20)
+theme_override_font_sizes/font_size = 10
+text = "BROKEN SCORE"
+horizontal_alignment = 1
+
+[node name="InteractionPromptBackground" type="ColorRect" parent="UILayer"]
+visible = false
+position = Vector2(194, 400)
+size = Vector2(252, 30)
+color = Color(0.015, 0.018, 0.024, 0.68)
+
+[node name="InteractionPrompt" type="Label" parent="UILayer"]
+position = Vector2(200, 404)
+size = Vector2(240, 24)
+text = ""
+horizontal_alignment = 1
+
+[node name="PauseMenu" parent="." instance=ExtResource("4")]

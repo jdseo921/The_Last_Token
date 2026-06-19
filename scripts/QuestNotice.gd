@@ -32,7 +32,7 @@ func show_notification(quest_data: Dictionary) -> void:
 	_configure_window(
 		"NEW QUEST",
 		str(quest_data.get("title", "Quest Updated")),
-		str(quest_data.get("summary", "")),
+		_format_quest_body(quest_data, false),
 		false
 	)
 	visible = true
@@ -53,7 +53,7 @@ func show_details(quest_data: Dictionary) -> void:
 	_configure_window(
 		"ACTIVE QUEST",
 		str(quest_data.get("title", "No Active Quest")),
-		str(quest_data.get("details", "")),
+		_format_quest_body(quest_data, true),
 		true
 	)
 	visible = true
@@ -99,6 +99,25 @@ func _configure_window(eyebrow: String, title: String, body: String, details_mod
 	close_button.offset_top = rect.size.y * 0.88
 	close_button.offset_right = close_button.offset_left + 124.0
 	close_button.offset_bottom = close_button.offset_top + 28.0
+
+func _format_quest_body(quest_data: Dictionary, details_mode: bool) -> String:
+	var lines := PackedStringArray()
+	var owner := str(quest_data.get("owner", ""))
+	var location := str(quest_data.get("location", ""))
+	var required_text := "Required" if bool(quest_data.get("required", true)) else "Optional"
+	if not owner.is_empty():
+		lines.append("Owner: %s" % owner)
+	if not location.is_empty():
+		lines.append("Location: %s" % location)
+	lines.append("Type: %s" % required_text)
+	lines.append("")
+	var body_key := "details" if details_mode else "summary"
+	var body_text := str(quest_data.get(body_key, ""))
+	if body_text.is_empty():
+		body_text = str(quest_data.get("summary", ""))
+	if not body_text.is_empty():
+		lines.append(body_text)
+	return "\n".join(lines)
 
 func _get_scaled_panel_rect() -> Rect2:
 	var viewport_size := get_viewport().get_visible_rect().size

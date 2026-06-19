@@ -1,0 +1,92 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/maps/MaintenanceHall.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/common/MapTransition.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="4"]
+
+[node name="MaintenanceHall" type="Node2D"]
+script = ExtResource("1")
+
+[node name="Background" type="Polygon2D" parent="."]
+color = Color(0.035, 0.045, 0.047, 1)
+polygon = PackedVector2Array(0, 0, 640, 0, 640, 440, 0, 440)
+
+[node name="UtilityWall" type="Polygon2D" parent="."]
+color = Color(0.09, 0.095, 0.09, 1)
+polygon = PackedVector2Array(72, 60, 568, 60, 568, 178, 72, 178)
+
+[node name="GusPlaceholder" type="Polygon2D" parent="."]
+color = Color(0.26, 0.44, 0.28, 1)
+polygon = PackedVector2Array(136, 118, 194, 118, 194, 178, 136, 178)
+
+[node name="SyncDoorPlaceholder" type="Polygon2D" parent="."]
+color = Color(0.44, 0.1, 0.12, 1)
+polygon = PackedVector2Array(438, 86, 518, 86, 518, 184, 438, 184)
+
+[node name="Spawn_Default" type="Marker2D" parent="."]
+position = Vector2(320, 318)
+
+[node name="Spawn_FromArcadeHub" type="Marker2D" parent="."]
+position = Vector2(320, 318)
+
+[node name="Spawn_FromStaffCorridor" type="Marker2D" parent="."]
+position = Vector2(542, 260)
+
+[node name="Player" parent="." instance=ExtResource("2")]
+position = Vector2(320, 318)
+
+[node name="ReturnToArcadeHub" parent="." instance=ExtResource("3")]
+position = Vector2(320, 406)
+target_scene_path = "res://scenes/arcade/ArcadeHub.tscn"
+target_spawn_id = "Spawn_FromMaintenanceHall"
+
+[node name="ToStaffCorridor" parent="." instance=ExtResource("3")]
+position = Vector2(606, 260)
+target_scene_path = "res://scenes/maps/StaffCorridor.tscn"
+target_spawn_id = "Spawn_FromMaintenanceHall"
+required_flag = "staff_room_unlocked"
+locked_dialogue = Array[String](["STAFF CORRIDOR LOCKED.", "SYNC DOOR ACCESS REQUIRED."])
+
+[node name="UILayer" type="Node2D" parent="."]
+
+[node name="TitleLabel" type="Label" parent="UILayer"]
+position = Vector2(24, 20)
+size = Vector2(280, 28)
+theme_override_font_sizes/font_size = 18
+text = "MAINTENANCE HALL"
+
+[node name="HintLabel" type="Label" parent="UILayer"]
+position = Vector2(24, 48)
+size = Vector2(430, 42)
+theme_override_font_sizes/font_size = 10
+text = "Placeholder shell: Gus, Sync Door, and staff access systems."
+autowrap_mode = 3
+
+[node name="GusLabel" type="Label" parent="UILayer"]
+position = Vector2(112, 184)
+size = Vector2(108, 20)
+theme_override_font_sizes/font_size = 10
+text = "GUS"
+horizontal_alignment = 1
+
+[node name="SyncDoorLabel" type="Label" parent="UILayer"]
+position = Vector2(408, 190)
+size = Vector2(140, 20)
+theme_override_font_sizes/font_size = 10
+text = "SYNC DOOR"
+horizontal_alignment = 1
+
+[node name="InteractionPromptBackground" type="ColorRect" parent="UILayer"]
+visible = false
+position = Vector2(194, 400)
+size = Vector2(252, 30)
+color = Color(0.015, 0.018, 0.024, 0.68)
+
+[node name="InteractionPrompt" type="Label" parent="UILayer"]
+position = Vector2(200, 404)
+size = Vector2(240, 24)
+text = ""
+horizontal_alignment = 1
+
+[node name="PauseMenu" parent="." instance=ExtResource("4")]

@@ -277,7 +277,7 @@ offset_left = 184.0
 offset_top = 0.0
 offset_right = 344.0
 offset_bottom = 36.0
-text = "Return to Arcade"
+text = "Return to Cabinet Row"
 
 [node name="GlitchOverlay" type="ColorRect" parent="."]
 visible = false

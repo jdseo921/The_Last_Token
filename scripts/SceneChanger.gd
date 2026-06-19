@@ -6,6 +6,11 @@ const TRUTH_FILTER_SCENE := "res://scenes/minigames/TruthFilter.tscn"
 const SYNC_DOOR_PUZZLE_SCENE := "res://scenes/arcade/SyncDoorPuzzle.tscn"
 const STAFF_ROOM_SCENE := "res://scenes/arcade/StaffRoom.tscn"
 const TITLE_OR_MAIN_SCENE := "res://scenes/main/Main.tscn"
+const CABINET_ROW_SCENE := "res://scenes/maps/CabinetRow.tscn"
+const SNACK_ALCOVE_SCENE := "res://scenes/maps/SnackAlcove.tscn"
+const PRIZE_CORNER_SCENE := "res://scenes/maps/PrizeCorner.tscn"
+const MAINTENANCE_HALL_SCENE := "res://scenes/maps/MaintenanceHall.tscn"
+const STAFF_CORRIDOR_SCENE := "res://scenes/maps/StaffCorridor.tscn"
 
 func change_scene(scene_path: String) -> void:
 	if scene_path.is_empty():
@@ -37,3 +42,18 @@ func go_to_staff_room() -> void:
 
 func go_to_title_or_main() -> void:
 	change_scene(TITLE_OR_MAIN_SCENE)
+
+func go_to_cabinet_row() -> void:
+	change_scene(CABINET_ROW_SCENE)
+
+func go_to_snack_alcove() -> void:
+	change_scene(SNACK_ALCOVE_SCENE)
+
+func go_to_prize_corner() -> void:
+	change_scene(PRIZE_CORNER_SCENE)
+
+func go_to_maintenance_hall() -> void:
+	change_scene(MAINTENANCE_HALL_SCENE)
+
+func go_to_staff_corridor() -> void:
+	change_scene(STAFF_CORRIDOR_SCENE)
