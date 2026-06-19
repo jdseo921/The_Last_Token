@@ -38,14 +38,14 @@ offset_bottom = 344.0
 [node name="TitleLabel" type="Label" parent="Panel/VBox"]
 custom_minimum_size = Vector2(0, 32)
 theme_override_font_sizes/font_size = 22
-text = "SYNC DOOR: TWO SIGNALS"
+text = "MAINTENANCE SYNC"
 horizontal_alignment = 1
 
 [node name="InstructionLabel" type="Label" parent="Panel/VBox"]
 custom_minimum_size = Vector2(0, 76)
-text = "Two switches must be active together.
-Fractured signals do not stay stable for long.
-Watch the signal labels before pressing."
+text = "Two signals must be active together.
+One signal remembers.
+One signal returns."
 horizontal_alignment = 1
 autowrap_mode = 3
 
@@ -96,7 +96,7 @@ text = "Confirm Sync"
 [node name="ExitButton" type="Button" parent="Panel/VBox"]
 visible = false
 custom_minimum_size = Vector2(160, 36)
-text = "Return to Arcade"
+text = "Return to Maintenance"
 
 [node name="SwitchATimer" type="Timer" parent="."]
 one_shot = true

@@ -1,5 +1,11 @@
 extends Control
 
+const CABINET_SHEET_PATH := "res://assets/art/minigames/truth_filter/truth_filter_cabinets_sheet.png"
+const CABINET_ART_NORMAL := "normal"
+const CABINET_ART_ACTIVE := "active"
+const CABINET_ART_CORRECT := "correct"
+const CABINET_ART_WRONG := "wrong"
+
 const ROUND_DATA: Array[Dictionary] = [
 	{
 		"rule": "Only one cabinet is telling the truth.",
@@ -69,6 +75,11 @@ const SCREEN_WRONG_COLOR := Color(1.0, 0.2, 0.55, 0.76)
 	$StageArea/CabinetB/ScreenGlow,
 	$StageArea/CabinetC/ScreenGlow,
 ]
+@onready var cabinet_art_rects: Array[TextureRect] = [
+	$StageArea/CabinetA/CabinetArt,
+	$StageArea/CabinetB/CabinetArt,
+	$StageArea/CabinetC/CabinetArt,
+]
 @onready var statement_labels: Array[Label] = [
 	$StageArea/CabinetA/StatementLabel,
 	$StageArea/CabinetB/StatementLabel,
@@ -86,11 +97,13 @@ var current_round := 0
 var completed := false
 var feedback_tween: Tween = null
 var round_transition_running := false
+var cabinet_sheet_texture: Texture2D = null
 
 func _ready() -> void:
 	for index in range(choose_buttons.size()):
 		choose_buttons[index].pressed.connect(_on_choice_pressed.bind(index))
 	exit_button.pressed.connect(_on_exit_pressed)
+	_apply_cabinet_art_sheet()
 	_start_puzzle()
 
 func _start_puzzle() -> void:
@@ -113,7 +126,7 @@ func _begin_round() -> void:
 	status_label.text = str(round_data["transition"])
 	for index in range(statement_labels.size()):
 		statement_labels[index].text = "..."
-		_set_panel_state(index, CABINET_ACTIVE_COLOR, SCREEN_NORMAL_COLOR)
+		_set_panel_state(index, CABINET_ACTIVE_COLOR, SCREEN_NORMAL_COLOR, CABINET_ART_ACTIVE)
 	await get_tree().create_timer(0.95).timeout
 	if completed:
 		return
@@ -126,7 +139,7 @@ func _show_round() -> void:
 	var statements: Array = round_data["statements"]
 	for index in range(statement_labels.size()):
 		statement_labels[index].text = str(statements[index])
-		_set_panel_state(index, CABINET_NORMAL_COLOR, SCREEN_NORMAL_COLOR)
+		_set_panel_state(index, CABINET_NORMAL_COLOR, SCREEN_NORMAL_COLOR, CABINET_ART_NORMAL)
 		cabinet_panels[index].position = Vector2.ZERO
 	status_label.text = "Read the rule. Choose the matching cabinet."
 	_set_signal_integrity("Stable")
@@ -141,15 +154,15 @@ func _on_choice_pressed(index: int) -> void:
 	if index != correct_index:
 		status_label.text = "MEMORY SIGNAL WOBBLED.\nTry again."
 		_set_signal_integrity("Wobbling")
-		_set_panel_state(index, CABINET_WRONG_COLOR, SCREEN_WRONG_COLOR)
+		_set_panel_state(index, CABINET_WRONG_COLOR, SCREEN_WRONG_COLOR, CABINET_ART_WRONG)
 		_play_audio("play_error")
 		await _play_wrong_feedback(index)
-		_set_panel_state(index, CABINET_NORMAL_COLOR, SCREEN_NORMAL_COLOR)
+		_set_panel_state(index, CABINET_NORMAL_COLOR, SCREEN_NORMAL_COLOR, CABINET_ART_NORMAL)
 		_set_signal_integrity("Stable")
 		_set_choice_buttons_enabled(true)
 		choose_buttons[index].grab_focus()
 		return
-	_set_panel_state(index, CABINET_CORRECT_COLOR, SCREEN_CORRECT_COLOR)
+	_set_panel_state(index, CABINET_CORRECT_COLOR, SCREEN_CORRECT_COLOR, CABINET_ART_CORRECT)
 	_set_signal_integrity("Recovered")
 	status_label.text = "Statement accepted."
 	_play_audio("play_ui_confirm")
@@ -171,7 +184,7 @@ func _complete_puzzle() -> void:
 	rule_label.text = "TRUTH FILTER COMPLETE"
 	status_label.text = "TRUTH FILTER PASSED.\nSECOND MEMORY FRAGMENT RECOVERED.\nYOUR MEMORY IS NO LONGER THE ONLY WITNESS."
 	for index in range(cabinet_panels.size()):
-		_set_panel_state(index, CABINET_CORRECT_COLOR, SCREEN_CORRECT_COLOR)
+		_set_panel_state(index, CABINET_CORRECT_COLOR, SCREEN_CORRECT_COLOR, CABINET_ART_CORRECT)
 	for button in choose_buttons:
 		button.visible = false
 	exit_button.visible = true
@@ -187,11 +200,12 @@ func _set_choice_buttons_enabled(enabled: bool) -> void:
 	for button in choose_buttons:
 		button.disabled = not enabled
 
-func _set_panel_state(index: int, panel_color: Color, screen_color: Color) -> void:
+func _set_panel_state(index: int, panel_color: Color, screen_color: Color, art_state: String = CABINET_ART_NORMAL) -> void:
 	if index < 0 or index >= cabinet_panels.size():
 		return
 	_set_panel_color(cabinet_panels[index], panel_color)
 	cabinet_screen_rects[index].color = screen_color
+	_set_cabinet_art_state(index, art_state)
 
 func _set_signal_integrity(value: String) -> void:
 	signal_integrity_label.text = "Signal Integrity: %s" % value
@@ -212,6 +226,47 @@ func _set_panel_color(panel: Panel, color: Color) -> void:
 	style.border_width_top = 2
 	style.border_width_bottom = 2
 	panel.add_theme_stylebox_override("panel", style)
+
+func _apply_cabinet_art_sheet() -> void:
+	cabinet_sheet_texture = _load_texture(CABINET_SHEET_PATH)
+	for rect in cabinet_art_rects:
+		rect.visible = cabinet_sheet_texture != null
+		rect.texture = null
+	if cabinet_sheet_texture != null:
+		for index in range(cabinet_art_rects.size()):
+			_set_cabinet_art_state(index, CABINET_ART_NORMAL)
+
+func _set_cabinet_art_state(index: int, art_state: String) -> void:
+	if cabinet_sheet_texture == null or index < 0 or index >= cabinet_art_rects.size():
+		return
+	var rect := cabinet_art_rects[index]
+	rect.texture = _get_cabinet_atlas(art_state)
+	rect.visible = true
+
+func _get_cabinet_atlas(art_state: String) -> AtlasTexture:
+	var frame_index := 0
+	match art_state:
+		CABINET_ART_ACTIVE:
+			frame_index = 1
+		CABINET_ART_CORRECT:
+			frame_index = 2
+		CABINET_ART_WRONG:
+			frame_index = 3
+		_:
+			frame_index = 0
+	var frame_width := maxi(int(cabinet_sheet_texture.get_width() / 4), 1)
+	var atlas := AtlasTexture.new()
+	atlas.atlas = cabinet_sheet_texture
+	atlas.region = Rect2(frame_index * frame_width, 0, frame_width, cabinet_sheet_texture.get_height())
+	return atlas
+
+func _load_texture(path: String) -> Texture2D:
+	if path.is_empty() or not ResourceLoader.exists(path):
+		return null
+	var resource := load(path)
+	if resource is Texture2D:
+		return resource
+	return null
 
 func _play_wrong_feedback(index: int) -> void:
 	if feedback_tween and feedback_tween.is_valid():

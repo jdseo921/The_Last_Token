@@ -16,6 +16,8 @@ static func get_active_main_quest_id() -> String:
 		return "lost_token"
 	if not GameState.lying_cabinets_completed:
 		return "truth_filter"
+	if not GameState.circuit_soda_completed:
+		return "circuit_soda"
 	if not GameState.story_puzzle_completed:
 		return "maintenance_sync"
 	if not GameState.twist_reveal_seen:
@@ -70,8 +72,9 @@ static func _fallback_quests() -> Dictionary:
 			"required": true,
 			"starts_after": "story_started",
 			"completion_dialogue": [
-				{"speaker": "Mira", "text": "It remembered enough to give this back."},
-				{"speaker": "Mira", "text": "That means something in here still knows you."},
+				{"speaker": "Mira", "text": "You brought it back."},
+				{"speaker": "Mira", "text": "That token used to be just a prize."},
+				{"speaker": "Mira", "text": "Then it became proof that part of you could still return."},
 			],
 			"memory_signal_after": "Uneasy",
 		},
@@ -87,7 +90,25 @@ static func _fallback_quests() -> Dictionary:
 			"starts_after": "lost_token_quest_completed",
 			"completion_dialogue": [
 				{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
-				{"speaker": "Mr. Byte", "text": "Warning: restored subjects may now notice missing pieces."},
+				{"speaker": "Mr. Byte", "text": "Contradictions remain."},
+				{"speaker": "Mr. Byte", "text": "That means the memory is alive enough to argue."},
+			],
+			"memory_signal_after": "Fractured",
+		},
+		"circuit_soda": {
+			"id": "circuit_soda",
+			"title": "Circuit Soda",
+			"owner": "Vendo",
+			"location": "Snack Alcove",
+			"summary": "Route the fractured Memory Signal through Vendo's machine.",
+			"details": "Vendo claims the player's signal is being routed through the wrong channels. Circuit Soda should stabilize the fractured signal before the staff systems will trust it.",
+			"minigame": "Circuit Soda",
+			"required": true,
+			"starts_after": "lying_cabinets_completed",
+			"completion_dialogue": [
+				{"speaker": "Vendo", "text": "Signal routed."},
+				{"speaker": "Vendo", "text": "You successfully became beverage-adjacent data."},
+				{"speaker": "Vendo", "text": "I would offer a receipt, but the printer remembers too much."},
 			],
 			"memory_signal_after": "Fractured",
 		},
@@ -100,10 +121,44 @@ static func _fallback_quests() -> Dictionary:
 			"details": "Gus says the Staff Door listens for two stable signals.",
 			"minigame": "Maintenance Sync",
 			"required": true,
-			"starts_after": "lying_cabinets_completed",
+			"starts_after": "circuit_soda_completed",
 			"completion_dialogue": [
-				{"speaker": "Gus", "text": "Door finally heard both of you."},
+				{"speaker": "Gus", "text": "Door's listening now."},
+				{"speaker": "Gus", "text": "I do not like doors that listen."},
+				{"speaker": "Gus", "text": "But if it opens, part of you matched something it lost."},
 			],
 			"memory_signal_after": "Overloaded",
+		},
+		"broken_high_score": {
+			"id": "broken_high_score",
+			"title": "Broken High Score",
+			"owner": "Roxy",
+			"location": "Cabinet Row",
+			"summary": "Restore a corrupted high-score record.",
+			"details": "The score claims the target is 9999, but the display is broken. The real record may be much smaller and much stranger.",
+			"minigame": "Broken High Score",
+			"required": false,
+			"starts_after": "rockbyte_duel_completed",
+			"completion_dialogue": [
+				{"speaker": "Roxy", "text": "Huh. Your score came back."},
+				{"speaker": "Roxy", "text": "That usually does not happen after a reset."},
+			],
+			"memory_signal_after": "No Change",
+		},
+		"prize_counter_secret": {
+			"id": "prize_counter_secret",
+			"title": "Prize Sort",
+			"owner": "Pip",
+			"location": "Prize Corner",
+			"summary": "Arrange three prize labels by memory state.",
+			"details": "Pip says the prize labels remember an order: Ticket Stub, Lost Token, then Blank Employee Badge.",
+			"minigame": "Prize Sort",
+			"required": false,
+			"starts_after": "lying_cabinets_completed",
+			"completion_dialogue": [
+				{"speaker": "Pip", "text": "Prizes remember hands."},
+				{"speaker": "Pip", "text": "Yours feel familiar."},
+			],
+			"memory_signal_after": "No Change",
 		},
 	}

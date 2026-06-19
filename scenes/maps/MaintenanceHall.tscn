@@ -1,9 +1,12 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/MaintenanceHall.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/common/MapTransition.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/arcade/HubInteractable.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/common/AnimatedAmbientProp.tscn" id="7"]
 
 [node name="MaintenanceHall" type="Node2D"]
 script = ExtResource("1")
@@ -12,9 +15,18 @@ script = ExtResource("1")
 color = Color(0.035, 0.045, 0.047, 1)
 polygon = PackedVector2Array(0, 0, 640, 0, 640, 440, 0, 440)
 
+[node name="BackgroundArt" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(320, 220)
+
 [node name="UtilityWall" type="Polygon2D" parent="."]
 color = Color(0.09, 0.095, 0.09, 1)
 polygon = PackedVector2Array(72, 60, 568, 60, 568, 178, 72, 178)
+
+[node name="SyncDoorGlow" type="Polygon2D" parent="."]
+visible = false
+color = Color(0.22, 0.86, 0.68, 0.16)
+polygon = PackedVector2Array(416, 70, 540, 70, 558, 184, 528, 224, 422, 224, 398, 184)
 
 [node name="GusPlaceholder" type="Polygon2D" parent="."]
 color = Color(0.26, 0.44, 0.28, 1)
@@ -23,6 +35,23 @@ polygon = PackedVector2Array(136, 118, 194, 118, 194, 178, 136, 178)
 [node name="SyncDoorPlaceholder" type="Polygon2D" parent="."]
 color = Color(0.44, 0.1, 0.12, 1)
 polygon = PackedVector2Array(438, 86, 518, 86, 518, 184, 438, 184)
+
+[node name="AmbientWarningLights" parent="." instance=ExtResource("7")]
+position = Vector2(320, 80)
+effect_type = "blink"
+intensity = 0.05
+speed = 0.42
+prop_size = Vector2(420, 18)
+prop_color = Color(1, 0.36, 0.18, 0.08)
+
+[node name="AmbientMaintenanceDoorPulse" parent="." instance=ExtResource("7")]
+position = Vector2(478, 136)
+effect_type = "glow_pulse"
+intensity = 0.08
+speed = 0.55
+only_when_memory_signal_at_least = 2
+prop_size = Vector2(104, 118)
+prop_color = Color(0.22, 0.95, 0.72, 0.08)
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
 position = Vector2(320, 318)
@@ -33,8 +62,30 @@ position = Vector2(320, 318)
 [node name="Spawn_FromStaffCorridor" type="Marker2D" parent="."]
 position = Vector2(542, 260)
 
+[node name="Spawn_FromMaintenanceSync" type="Marker2D" parent="."]
+position = Vector2(478, 252)
+
 [node name="Player" parent="." instance=ExtResource("2")]
 position = Vector2(320, 318)
+
+[node name="InteractableLayer" type="Node2D" parent="."]
+
+[node name="Gus" parent="InteractableLayer" instance=ExtResource("6")]
+position = Vector2(166, 166)
+interactable_kind = "gus"
+label_text = "GUS"
+idle_sheet_path = "res://assets/art/characters/gus/gus_idle_sheet.png"
+facing_sheet_path = "res://assets/art/characters/gus/gus_turn_diagonal_sheet.png"
+idle_animation_enabled = false
+visual_scale = 1.1
+use_placeholder_visual = false
+
+[node name="MaintenanceSync" parent="InteractableLayer" instance=ExtResource("6")]
+position = Vector2(478, 166)
+interactable_kind = "maintenance_sync"
+label_text = "MAINTENANCE SYNC"
+use_placeholder_visual = false
+flicker_enabled = true
 
 [node name="ReturnToArcadeHub" parent="." instance=ExtResource("3")]
 position = Vector2(320, 406)
@@ -50,6 +101,8 @@ locked_dialogue = Array[String](["STAFF CORRIDOR LOCKED.", "SYNC DOOR ACCESS REQ
 
 [node name="UILayer" type="Node2D" parent="."]
 
+[node name="DialogueBox" parent="UILayer" instance=ExtResource("5")]
+
 [node name="TitleLabel" type="Label" parent="UILayer"]
 position = Vector2(24, 20)
 size = Vector2(280, 28)
@@ -60,7 +113,7 @@ text = "MAINTENANCE HALL"
 position = Vector2(24, 48)
 size = Vector2(430, 42)
 theme_override_font_sizes/font_size = 10
-text = "Placeholder shell: Gus, Sync Door, and staff access systems."
+text = "Gus owns Maintenance Sync. Stabilize both signals before the Staff Door opens."
 autowrap_mode = 3
 
 [node name="GusLabel" type="Label" parent="UILayer"]
@@ -74,7 +127,7 @@ horizontal_alignment = 1
 position = Vector2(408, 190)
 size = Vector2(140, 20)
 theme_override_font_sizes/font_size = 10
-text = "SYNC DOOR"
+text = "MAINTENANCE SYNC"
 horizontal_alignment = 1
 
 [node name="InteractionPromptBackground" type="ColorRect" parent="UILayer"]

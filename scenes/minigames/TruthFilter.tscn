@@ -123,6 +123,17 @@ offset_top = 0.0
 offset_right = 170.0
 offset_bottom = 100.0
 
+[node name="CabinetArt" type="TextureRect" parent="StageArea/CabinetA"]
+visible = false
+modulate = Color(1, 1, 1, 0.82)
+layout_mode = 0
+offset_left = 38.0
+offset_top = 4.0
+offset_right = 132.0
+offset_bottom = 96.0
+mouse_filter = 2
+stretch_mode = 5
+
 [node name="ScreenGlow" type="ColorRect" parent="StageArea/CabinetA"]
 layout_mode = 0
 offset_left = 20.0
@@ -158,6 +169,17 @@ offset_top = 0.0
 offset_right = 357.0
 offset_bottom = 100.0
 
+[node name="CabinetArt" type="TextureRect" parent="StageArea/CabinetB"]
+visible = false
+modulate = Color(1, 1, 1, 0.82)
+layout_mode = 0
+offset_left = 38.0
+offset_top = 4.0
+offset_right = 132.0
+offset_bottom = 96.0
+mouse_filter = 2
+stretch_mode = 5
+
 [node name="ScreenGlow" type="ColorRect" parent="StageArea/CabinetB"]
 layout_mode = 0
 offset_left = 20.0
@@ -192,6 +214,17 @@ offset_left = 374.0
 offset_top = 0.0
 offset_right = 544.0
 offset_bottom = 100.0
+
+[node name="CabinetArt" type="TextureRect" parent="StageArea/CabinetC"]
+visible = false
+modulate = Color(1, 1, 1, 0.82)
+layout_mode = 0
+offset_left = 38.0
+offset_top = 4.0
+offset_right = 132.0
+offset_bottom = 96.0
+mouse_filter = 2
+stretch_mode = 5
 
 [node name="ScreenGlow" type="ColorRect" parent="StageArea/CabinetC"]
 layout_mode = 0

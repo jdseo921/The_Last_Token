@@ -179,8 +179,10 @@ func _get_objective_hint_text() -> String:
 		return "Objective: Return the Lost Token to Mira."
 	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
 		return "Objective: Go to Cabinet Row. Talk to Mr. Byte."
+	if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
+		return "Objective: Go to Snack Alcove. Talk to Vendo."
 	if GameState.lying_cabinets_completed and not GameState.story_puzzle_completed:
-		return "Objective: Check the Staff Door."
+		return "Objective: Go to Maintenance Hall. Talk to Gus."
 	if GameState.story_puzzle_completed and GameState.staff_room_unlocked and not GameState.twist_reveal_seen:
 		return "Objective: Enter the Staff Room."
 	if GameState.twist_reveal_seen and not GameState.post_reveal_roam_unlocked:
@@ -363,14 +365,13 @@ func _handle_mira() -> void:
 	if GameState.lost_token_collected and not GameState.lost_token_quest_completed:
 		start_dialogue([
 			{"speaker": "Player", "text": "I found the Lost Token. It felt like it already belonged to me.", "portrait": PORTRAIT_PLAYER_NEUTRAL},
-			{"speaker": "Mira", "text": "Then one memory came back.", "portrait": PORTRAIT_MIRA_WORRIED},
-			{"speaker": "Mira", "text": "I remembered you handing me tickets after closing."},
-			{"speaker": "Mira", "text": "You looked scared then too. But you still helped."},
-			{"speaker": "Mira", "text": "Thank you for returning this."},
+			{"speaker": "Mira", "text": "You brought it back.", "portrait": PORTRAIT_MIRA_WORRIED},
+			{"speaker": "Mira", "text": "That token used to be just a prize."},
+			{"speaker": "Mira", "text": "Then it became proof that part of you could still return."},
 			{"speaker": "Mira", "text": "The token woke something."},
 			{"speaker": "Mira", "text": "Now the arcade has to decide which memories are true."},
 			{"speaker": "Mira", "text": "Mr. Byte can open the Truth Filter."},
-		], Callable(GameState, "complete_lost_token_quest"))
+		], Callable(self, "_complete_lost_token_with_mira_anecdote"))
 		return
 	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
 		start_dialogue(_select_repeat_dialogue("mira", [
@@ -388,6 +389,23 @@ func _handle_mira() -> void:
 			[
 				{"speaker": "Mira", "text": "Cabinet Row first. Staff Door after."},
 				{"speaker": "Mira", "text": "I know. The arcade makes terrible queues."},
+			],
+		]))
+		return
+	if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
+		start_dialogue(_select_repeat_dialogue("mira", [
+			[
+				{"speaker": "Mira", "text": "Your Memory Signal is Fractured now."},
+				{"speaker": "Mira", "text": "Vendo says fractured things still need somewhere to flow.", "portrait": PORTRAIT_MIRA_WORRIED},
+			],
+			[
+				{"speaker": "Mira", "text": "Snack Alcove is the next stop."},
+				{"speaker": "Mira", "text": "Try not to let Vendo make this sound more normal than it is."},
+			],
+		], [
+			[
+				{"speaker": "Mira", "text": "Talk to Vendo in Snack Alcove."},
+				{"speaker": "Mira", "text": "Then we can see whether the Staff Door listens."},
 			],
 		]))
 		return
@@ -425,6 +443,10 @@ func _handle_mira() -> void:
 		],
 	]))
 
+func _complete_lost_token_with_mira_anecdote() -> void:
+	GameState.mira_rockbyte_anecdote_seen = true
+	GameState.complete_lost_token_quest()
+
 func _handle_ticket_counter() -> void:
 	if _can_show_act2_echo() and not GameState.echo_ticket_counter_seen:
 		start_dialogue(_get_ticket_counter_echo_lines())
@@ -456,6 +478,23 @@ func _handle_gus() -> void:
 			[
 				{"speaker": "Gus", "text": "Cabinet Row. Then Staff Door."},
 				{"speaker": "Gus", "text": "One weird chore at a time.", "portrait": PORTRAIT_GUS_ANNOYED},
+			],
+		]))
+		return
+	if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
+		start_dialogue(_select_repeat_dialogue("gus", [
+			[
+				{"speaker": "Gus", "text": "Signal's fractured."},
+				{"speaker": "Gus", "text": "Vendo has a machine for that, because of course he does.", "portrait": PORTRAIT_GUS_ANNOYED},
+			],
+			[
+				{"speaker": "Gus", "text": "Snack Alcove first."},
+				{"speaker": "Gus", "text": "Then bring that stabilized weirdness back toward maintenance."},
+			],
+		], [
+			[
+				{"speaker": "Gus", "text": "Vendo. Snack Alcove. Circuit Soda."},
+				{"speaker": "Gus", "text": "I do not name these things.", "portrait": PORTRAIT_GUS_ANNOYED},
 			],
 		]))
 		return
@@ -546,6 +585,24 @@ func _handle_vendo() -> void:
 			[
 				{"speaker": "Vendo", "text": "Please proceed to Mr. Byte."},
 				{"speaker": "Vendo", "text": "Lingering near vending units does not count as therapy."},
+			],
+		]))
+		return
+	if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
+		GameState.vendo_intro_seen = true
+		start_dialogue(_select_repeat_dialogue("vendo", [
+			[
+				{"speaker": "Vendo", "text": "Memory Signal: Fractured."},
+				{"speaker": "Vendo", "text": "Suggested treatment: visit my legally distinct signal-routing beverage machine."},
+			],
+			[
+				{"speaker": "Vendo", "text": "Please report to Snack Alcove."},
+				{"speaker": "Vendo", "text": "Circuit Soda accepts unstable identities and exact change."},
+			],
+		], [
+			[
+				{"speaker": "Vendo", "text": "Snack Alcove is open."},
+				{"speaker": "Vendo", "text": "Try not to spill identity on the carpet."},
 			],
 		]))
 		return
@@ -720,12 +777,30 @@ func _handle_mr_byte() -> void:
 			],
 		]))
 		return
+	if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
+		GameState.mr_byte_intro_seen = true
+		start_dialogue(_select_repeat_dialogue("mr_byte", [
+			[
+				{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
+				{"speaker": "Mr. Byte", "text": "Fractured signal requires route stabilization."},
+			],
+			[
+				{"speaker": "Mr. Byte", "text": "Next owner: Vendo."},
+				{"speaker": "Mr. Byte", "text": "Location: Snack Alcove."},
+			],
+		], [
+			[
+				{"speaker": "Mr. Byte", "text": "Current objective unchanged."},
+				{"speaker": "Mr. Byte", "text": "Proceed to Snack Alcove."},
+			],
+		]))
+		return
 	if GameState.lying_cabinets_completed and not GameState.story_puzzle_completed:
 		GameState.mr_byte_intro_seen = true
 		start_dialogue(_select_repeat_dialogue("mr_byte", [
 			[
 				{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
-				{"speaker": "Mr. Byte", "text": "Warning: restored subjects may now notice missing pieces."},
+				{"speaker": "Mr. Byte", "text": "Contradictions remain stable."},
 			],
 			[
 				{"speaker": "Mr. Byte", "text": "Second memory fragment detected."},
@@ -857,7 +932,17 @@ func _on_save_slot_menu_closed() -> void:
 
 func _handle_staff_door() -> void:
 	if GameState.staff_room_unlocked:
-		SceneChanger.go_to_staff_room()
+		start_dialogue([
+			{"speaker": "Staff Door", "text": "ACCESS GRANTED."},
+			{"speaker": "Staff Door", "text": "EMPLOYEE SIGNAL ACCEPTED."},
+		], Callable(SceneChanger, "go_to_staff_room"))
+		return
+	if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
+		start_dialogue([
+			{"speaker": "Staff Door", "text": "STAFF ACCESS LOCKED."},
+			{"speaker": "Staff Door", "text": "CIRCUIT SODA ROUTE REQUIRED."},
+			{"speaker": "Staff Door", "text": "FRACTURED SIGNAL UNSTABILIZED."},
+		])
 		return
 	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
 		start_dialogue([
@@ -866,20 +951,17 @@ func _handle_staff_door() -> void:
 			{"speaker": "Staff Door", "text": "MEMORY SIGNAL UNSTABLE."},
 		])
 		return
-	if GameState.lost_token_quest_completed and GameState.rockbyte_duel_completed and GameState.lying_cabinets_completed:
+	if GameState.lost_token_quest_completed and GameState.rockbyte_duel_completed and GameState.lying_cabinets_completed and GameState.circuit_soda_completed:
 		start_dialogue([
 			{"speaker": "Staff Door", "text": "FRACTURED SIGNAL ACCEPTED."},
-			{"speaker": "Staff Door", "text": "TWO-SIGNAL SYNC REQUIRED."},
-		], Callable(self, "_go_to_sync_door_from_staff"))
+			{"speaker": "Staff Door", "text": "MAINTENANCE SYNC REQUIRED."},
+			{"speaker": "Staff Door", "text": "GUS AUTHORIZATION REQUIRED."},
+		])
 		return
 	start_dialogue([
 		{"speaker": "Staff Door", "text": "STAFF ACCESS LOCKED."},
 		{"speaker": "Staff Door", "text": "MEMORY TOKEN SIGNAL MISSING."},
 	])
-
-func _go_to_sync_door_from_staff() -> void:
-	_store_arcade_return_position()
-	SceneChanger.go_to_sync_door_puzzle()
 
 func _handle_owner_portrait() -> void:
 	if _is_post_reveal():

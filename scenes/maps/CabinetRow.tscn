@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/CabinetRow.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="5"]
 [ext_resource type="PackedScene" path="res://scenes/arcade/HubInteractable.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/common/AnimatedAmbientProp.tscn" id="7"]
 
 [node name="CabinetRow" type="Node2D"]
 script = ExtResource("1")
@@ -13,6 +14,10 @@ script = ExtResource("1")
 [node name="Background" type="Polygon2D" parent="."]
 color = Color(0.035, 0.04, 0.07, 1)
 polygon = PackedVector2Array(0, 0, 640, 0, 640, 440, 0, 440)
+
+[node name="BackgroundArt" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(320, 220)
 
 [node name="CabinetWall" type="Polygon2D" parent="."]
 color = Color(0.09, 0.07, 0.14, 1)
@@ -35,6 +40,26 @@ polygon = PackedVector2Array(118, 104, 182, 104, 182, 172, 118, 172)
 color = Color(0.18, 0.17, 0.22, 1)
 polygon = PackedVector2Array(444, 104, 508, 104, 508, 172, 444, 172)
 
+[node name="RoxyPlaceholder" type="Polygon2D" parent="."]
+color = Color(0.44, 0.16, 0.34, 1)
+polygon = PackedVector2Array(520, 118, 574, 118, 574, 174, 520, 174)
+
+[node name="AmbientCabinetRowFlicker" parent="." instance=ExtResource("7")]
+position = Vector2(320, 132)
+effect_type = "flicker"
+intensity = 0.06
+speed = 0.55
+prop_size = Vector2(520, 84)
+prop_color = Color(0.25, 0.68, 1, 0.08)
+
+[node name="AmbientRoxyAreaGlow" parent="." instance=ExtResource("7")]
+position = Vector2(548, 146)
+effect_type = "glow_pulse"
+intensity = 0.05
+speed = 0.5
+prop_size = Vector2(86, 64)
+prop_color = Color(0.95, 0.28, 0.7, 0.08)
+
 [node name="Spawn_Default" type="Marker2D" parent="."]
 position = Vector2(320, 314)
 
@@ -46,6 +71,9 @@ position = Vector2(572, 254)
 
 [node name="Spawn_FromTruthFilter" type="Marker2D" parent="."]
 position = Vector2(320, 258)
+
+[node name="Spawn_FromBrokenHighScore" type="Marker2D" parent="."]
+position = Vector2(476, 254)
 
 [node name="Player" parent="." instance=ExtResource("2")]
 position = Vector2(320, 314)
@@ -68,11 +96,18 @@ label_text = "TRUTH FILTER"
 use_placeholder_visual = false
 flicker_enabled = true
 
+[node name="Roxy" parent="InteractableLayer" instance=ExtResource("6")]
+position = Vector2(548, 166)
+interactable_kind = "roxy"
+label_text = "ROXY"
+idle_sheet_path = "res://assets/art/characters/roxy/roxy_idle_sheet.png"
+use_placeholder_visual = true
+idle_bob_enabled = true
+
 [node name="BrokenHighScore" parent="InteractableLayer" instance=ExtResource("6")]
 position = Vector2(476, 158)
 interactable_kind = "broken_high_score"
 label_text = "BROKEN HIGH SCORE"
-show_label = false
 use_placeholder_visual = false
 
 [node name="ReturnToArcadeHub" parent="." instance=ExtResource("3")]
@@ -99,7 +134,7 @@ text = "CABINET ROW"
 position = Vector2(24, 48)
 size = Vector2(390, 42)
 theme_override_font_sizes/font_size = 10
-text = "Mr. Byte owns the Truth Filter. A broken high-score cabinet sits dark for now."
+text = "Mr. Byte owns the Truth Filter. Roxy watches the Broken High Score cabinet."
 autowrap_mode = 3
 
 [node name="MrByteLabel" type="Label" parent="UILayer"]
@@ -117,10 +152,17 @@ text = "TRUTH FILTER"
 horizontal_alignment = 1
 
 [node name="BrokenHighScoreLabel" type="Label" parent="UILayer"]
-position = Vector2(420, 178)
-size = Vector2(112, 20)
+position = Vector2(404, 178)
+size = Vector2(124, 20)
 theme_override_font_sizes/font_size = 10
 text = "BROKEN SCORE"
+horizontal_alignment = 1
+
+[node name="RoxyLabel" type="Label" parent="UILayer"]
+position = Vector2(536, 178)
+size = Vector2(72, 20)
+theme_override_font_sizes/font_size = 10
+text = "ROXY"
 horizontal_alignment = 1
 
 [node name="InteractionPromptBackground" type="ColorRect" parent="UILayer"]

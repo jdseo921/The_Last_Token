@@ -36,9 +36,16 @@ assets/art/hub/tiles/
 assets/art/hub/props/
 assets/art/hub/cabinets/
 assets/art/hub/effects/
+assets/art/maps/
+assets/art/maps/cabinet_row/
+assets/art/maps/snack_alcove/
+assets/art/maps/prize_corner/
+assets/art/maps/maintenance_hall/
 assets/art/minigames/
 assets/art/minigames/rockbyte_duel/
 assets/art/minigames/sync_door/
+assets/art/minigames/truth_filter/
+assets/art/minigames/circuit_soda/
 assets/art/minigames/broken_high_score/
 assets/art/cutscenes/
 assets/art/cutscenes/memory_reveal/
@@ -80,6 +87,10 @@ The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys t
 | Cabinet 07 idle art | 48x64 or 64x64 | `assets/art/hub/cabinets/cabinet_07_idle.png` | Integrated | Idle cabinet state. |
 | Cabinet 07 flicker art | 48x64 or 64x64 | `assets/art/hub/cabinets/cabinet_07_flicker.png` / `cabinet_07_flicker_sheet.png` | Integrated | Optional flicker overlay/state; sheet kept for future animation. |
 | Broken cabinet art | 48x48 or 64x48 | `assets/art/hub/cabinets/broken_cabinet.png` | Integrated | Replaces broken cabinet placeholder when present. |
+| Cabinet Row background | 640x440 | `assets/art/maps/cabinet_row/cabinet_row_background_640x440.png` | Integrated | Optional map background with placeholder fallback. |
+| Snack Alcove background | 640x440 | `assets/art/maps/snack_alcove/snack_alcove_background_640x440.png` | Integrated | Optional map background with placeholder fallback. |
+| Prize Corner background | 640x440 | `assets/art/maps/prize_corner/prize_corner_background_640x440.png` | Integrated | Optional map background with placeholder fallback. |
+| Maintenance Hall background | 640x440 | `assets/art/maps/maintenance_hall/maintenance_hall_background_640x440.png` | Integrated | Optional map background with placeholder fallback. |
 | Arcade floor tiles | 16x16 | `assets/art/hub/tiles/` | Placeholder | Dark carpet/tile pattern; low noise. |
 | Arcade wall tiles | 16x16 | `assets/art/hub/tiles/` | Placeholder | Dim walls, trim, posters optional later. |
 | Ticket counter | 96x48 or tiled | `assets/art/hub/props/` | Placeholder | Counter should not overpower Mira. |
@@ -95,7 +106,9 @@ The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys t
 | Memory recall panels | 320x180 or 640x360 | `assets/art/cutscenes/memory_reveal/` | Placeholder | 8 reveal panels currently support fallback. |
 | Rockbyte Duel screen art | 320x180 or UI pieces | `assets/art/minigames/rockbyte_duel/` | Placeholder | Keep rules and piles readable. |
 | Sync Door screen art | 320x180 or UI pieces | `assets/art/minigames/sync_door/` | Placeholder | Switch states must remain obvious. |
-| Future Broken High Score screen art | 320x180 or UI pieces | `assets/art/minigames/broken_high_score/` | Planned | Do not integrate until optional feature gate passes. |
+| Truth Filter cabinet states | 4 frames, 64x64 each | `assets/art/minigames/truth_filter/truth_filter_cabinets_sheet.png` | Integrated | Optional state sheet with panel-color fallback. |
+| Circuit Soda tile sheet | 6 frames, 32x32 each | `assets/art/minigames/circuit_soda/circuit_soda_tiles_sheet.png` | Integrated | Optional tile icons with text-button fallback. |
+| Broken High Score screen art | 640x440 | `assets/art/minigames/broken_high_score/broken_high_score_screen.png` | Integrated | Optional screen background with flat-color fallback; feature remains non-blocking. |
 
 ## Hub Character Idle Sheet Checklist
 | Sheet | Recommended Size | Folder | Status | Notes |
@@ -105,6 +118,8 @@ The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys t
 | Gus idle sheet | 2 frames, 32x32 each | `assets/art/characters/gus/gus_idle_sheet.png` | Integrated | Sheet is 64x32 total; can replace placeholder body when present. |
 | Vendo idle sheet | 2 frames, 48x48 each | `assets/art/characters/vendo/vendo_idle_sheet.png` | Integrated | Sheet is 96x48 total; larger machine silhouette for readability. |
 | Mr. Byte idle sheet | 2 frames, 48x48 each | `assets/art/characters/mr_byte/mr_byte_idle_sheet.png` | Integrated | Sheet is 96x48 total; larger terminal silhouette for readability. |
+| Roxy idle sheet | 2 frames, 32x32 each | `assets/art/characters/roxy/roxy_idle_sheet.png` | Integrated | Sheet is 64x32 total; optional interactable idle animation with placeholder fallback. |
+| Pip idle sheet | 2 frames, 32x32 each | `assets/art/characters/pip/pip_idle_sheet.png` | Integrated | Sheet is 64x32 total; optional interactable idle animation with placeholder fallback. |
 
 ## Dialogue Portrait Checklist
 | Portrait | Status | Notes |

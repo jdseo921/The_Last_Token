@@ -1,9 +1,12 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/SnackAlcove.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/common/MapTransition.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/arcade/HubInteractable.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/common/AnimatedAmbientProp.tscn" id="7"]
 
 [node name="SnackAlcove" type="Node2D"]
 script = ExtResource("1")
@@ -12,9 +15,18 @@ script = ExtResource("1")
 color = Color(0.04, 0.045, 0.055, 1)
 polygon = PackedVector2Array(0, 0, 640, 0, 640, 440, 0, 440)
 
+[node name="BackgroundArt" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(320, 220)
+
 [node name="SnackWall" type="Polygon2D" parent="."]
 color = Color(0.11, 0.06, 0.09, 1)
 polygon = PackedVector2Array(70, 58, 570, 58, 570, 188, 70, 188)
+
+[node name="CircuitSodaGlow" type="Polygon2D" parent="."]
+visible = false
+color = Color(0.22, 0.82, 0.95, 0.16)
+polygon = PackedVector2Array(388, 88, 516, 88, 530, 176, 508, 214, 396, 214, 376, 176)
 
 [node name="VendoPlaceholder" type="Polygon2D" parent="."]
 color = Color(0.16, 0.48, 0.34, 1)
@@ -23,6 +35,22 @@ polygon = PackedVector2Array(282, 88, 358, 88, 358, 184, 282, 184)
 [node name="CircuitSodaPlaceholder" type="Polygon2D" parent="."]
 color = Color(0.1, 0.32, 0.48, 1)
 polygon = PackedVector2Array(404, 104, 500, 104, 500, 174, 404, 174)
+
+[node name="AmbientVendingGlow" parent="." instance=ExtResource("7")]
+position = Vector2(320, 136)
+effect_type = "glow_pulse"
+intensity = 0.06
+speed = 0.55
+prop_size = Vector2(92, 108)
+prop_color = Color(0.18, 0.95, 0.54, 0.09)
+
+[node name="AmbientSodaMachineBlink" parent="." instance=ExtResource("7")]
+position = Vector2(452, 138)
+effect_type = "blink"
+intensity = 0.05
+speed = 0.75
+prop_size = Vector2(76, 46)
+prop_color = Color(0.26, 0.82, 1, 0.09)
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
 position = Vector2(320, 312)
@@ -36,8 +64,29 @@ position = Vector2(70, 260)
 [node name="Spawn_FromPrizeCorner" type="Marker2D" parent="."]
 position = Vector2(570, 260)
 
+[node name="Spawn_FromCircuitSoda" type="Marker2D" parent="."]
+position = Vector2(452, 258)
+
 [node name="Player" parent="." instance=ExtResource("2")]
 position = Vector2(320, 312)
+
+[node name="InteractableLayer" type="Node2D" parent="."]
+
+[node name="Vendo" parent="InteractableLayer" instance=ExtResource("6")]
+position = Vector2(320, 166)
+interactable_kind = "vendo"
+label_text = "VENDO"
+idle_sheet_path = "res://assets/art/characters/vendo/vendo_idle_sheet.png"
+idle_animation_enabled = false
+use_placeholder_visual = false
+flicker_enabled = true
+
+[node name="CircuitSoda" parent="InteractableLayer" instance=ExtResource("6")]
+position = Vector2(452, 166)
+interactable_kind = "circuit_soda"
+label_text = "CIRCUIT SODA"
+use_placeholder_visual = false
+flicker_enabled = true
 
 [node name="ReturnToArcadeHub" parent="." instance=ExtResource("3")]
 position = Vector2(320, 406)
@@ -56,6 +105,8 @@ target_spawn_id = "Spawn_FromSnackAlcove"
 
 [node name="UILayer" type="Node2D" parent="."]
 
+[node name="DialogueBox" parent="UILayer" instance=ExtResource("5")]
+
 [node name="TitleLabel" type="Label" parent="UILayer"]
 position = Vector2(24, 20)
 size = Vector2(250, 28)
@@ -66,7 +117,7 @@ text = "SNACK ALCOVE"
 position = Vector2(24, 48)
 size = Vector2(390, 42)
 theme_override_font_sizes/font_size = 10
-text = "Placeholder shell: Vendo and future Circuit Soda puzzle."
+text = "Vendo owns Circuit Soda. Route the signal before staff systems listen."
 autowrap_mode = 3
 
 [node name="VendoLabel" type="Label" parent="UILayer"]

@@ -1,6 +1,9 @@
 extends Node2D
 
+const BACKGROUND_ART_PATH := "res://assets/art/maps/cabinet_row/cabinet_row_background_640x440.png"
+
 @onready var player: CharacterBody2D = $Player
+@onready var background_art: Sprite2D = $BackgroundArt
 @onready var dialogue_box: CanvasLayer = $UILayer/DialogueBox
 @onready var prompt_label: Label = $UILayer/InteractionPrompt
 @onready var prompt_background: ColorRect = $UILayer/InteractionPromptBackground
@@ -11,6 +14,7 @@ var pending_after_dialogue: Callable = Callable()
 func _ready() -> void:
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
+	_apply_background_art()
 	_apply_spawn_position()
 	_on_prompt_changed("")
 	_refresh_truth_filter_state()
@@ -54,6 +58,8 @@ func handle_hub_interaction(interactable: Node, _player_node: Node = null) -> vo
 			_handle_mr_byte()
 		"truth_filter":
 			_handle_truth_filter()
+		"roxy":
+			_handle_roxy()
 		"broken_high_score":
 			_handle_broken_high_score()
 		_:
@@ -76,9 +82,52 @@ func _handle_mr_byte() -> void:
 			{"speaker": "Mr. Byte", "text": "Please choose the least broken answer."},
 		])
 		return
+	if not GameState.mr_byte_truth_filter_anecdote_seen:
+		GameState.mr_byte_truth_filter_anecdote_seen = true
+		start_dialogue([
+			{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
+			{"speaker": "Mr. Byte", "text": "Contradictions remain."},
+			{"speaker": "Mr. Byte", "text": "That means the memory is alive enough to argue."},
+		])
+		return
 	start_dialogue([
-		{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
-		{"speaker": "Mr. Byte", "text": "Warning: restored subjects may now notice missing pieces."},
+		{"speaker": "Mr. Byte", "text": "Truth Filter status: passed."},
+		{"speaker": "Mr. Byte", "text": "Contradictions remain stable."},
+	])
+
+func _handle_roxy() -> void:
+	GameState.roxy_met = true
+	if _is_post_reveal():
+		start_dialogue([
+			{"speaker": "Roxy", "text": "So you were Employee 04."},
+			{"speaker": "Roxy", "text": "That explains the blank high score."},
+			{"speaker": "Roxy", "text": "Hard to rank a memory."},
+		])
+		return
+	if not _broken_high_score_is_unlocked():
+		start_dialogue([
+			{"speaker": "Roxy", "text": "Player Two is not on the board yet."},
+			{"speaker": "Roxy", "text": "Go survive Cabinet 07, then maybe I will be impressed."},
+		])
+		return
+	if not GameState.broken_high_score_completed:
+		start_dialogue([
+			{"speaker": "Roxy", "text": "Finally. Player Two showed up."},
+			{"speaker": "Roxy", "text": "You look like someone who loses to menus."},
+			{"speaker": "Roxy", "text": "Try the Broken High Score cabinet."},
+			{"speaker": "Roxy", "text": "The screen lies, but badly."},
+		])
+		return
+	if not GameState.roxy_high_score_anecdote_seen:
+		GameState.roxy_high_score_anecdote_seen = true
+		start_dialogue([
+			{"speaker": "Roxy", "text": "Huh. Your score came back."},
+			{"speaker": "Roxy", "text": "That usually does not happen after a reset."},
+		])
+		return
+	start_dialogue([
+		{"speaker": "Roxy", "text": "Score still says you existed."},
+		{"speaker": "Roxy", "text": "Try not to make it weird."},
 	])
 
 func _handle_truth_filter() -> void:
@@ -100,12 +149,48 @@ func _handle_truth_filter() -> void:
 	SceneChanger.go_to_truth_filter()
 
 func _handle_broken_high_score() -> void:
-	start_dialogue([
-		{"speaker": "Broken High Score", "text": "OUT OF ORDER."},
-		{"speaker": "Broken High Score", "text": "RECORD RESTORE UNAVAILABLE."},
-	])
+	if not _broken_high_score_is_unlocked():
+		start_dialogue([
+			{"speaker": "Broken High Score", "text": "SCREEN ASLEEP."},
+			{"speaker": "Broken High Score", "text": "CABINET 07 SCORE REQUIRED."},
+		])
+		return
+	if GameState.broken_high_score_completed:
+		start_dialogue([
+			{"speaker": "Broken High Score", "text": "PREVIOUS SCORE FOUND."},
+			{"speaker": "Broken High Score", "text": "RECORD RESTORED."},
+		])
+		return
+	GameState.set_pending_spawn_id("Spawn_FromBrokenHighScore")
+	SceneChanger.go_to_broken_high_score()
+
+func _broken_high_score_is_unlocked() -> bool:
+	return GameState.rockbyte_duel_completed or GameState.lying_cabinets_completed
+
+func _is_post_reveal() -> bool:
+	return GameState.post_reveal_roam_unlocked or GameState.twist_reveal_seen
+
+func _apply_background_art() -> void:
+	var loaded := _apply_sprite_texture(background_art, BACKGROUND_ART_PATH)
+	for placeholder in [$Background, $CabinetWall, $TruthFilterPlaceholder, $MrBytePlaceholder, $BrokenHighScorePlaceholder, $RoxyPlaceholder]:
+		if placeholder is CanvasItem:
+			placeholder.visible = not loaded
 
 func _refresh_truth_filter_state() -> void:
 	if truth_filter_glow == null:
 		return
 	truth_filter_glow.visible = GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed
+
+func _apply_sprite_texture(sprite_node: Sprite2D, path: String) -> bool:
+	if sprite_node == null:
+		return false
+	sprite_node.visible = false
+	sprite_node.texture = null
+	if path.is_empty() or not ResourceLoader.exists(path):
+		return false
+	var resource := load(path)
+	if not resource is Texture2D:
+		return false
+	sprite_node.texture = resource
+	sprite_node.visible = true
+	return true

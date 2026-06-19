@@ -3,6 +3,8 @@ extends Node
 const ARCADE_HUB_SCENE := "res://scenes/arcade/ArcadeHub.tscn"
 const ROCKBYTE_DUEL_SCENE := "res://scenes/minigames/RockbyteDuel.tscn"
 const TRUTH_FILTER_SCENE := "res://scenes/minigames/TruthFilter.tscn"
+const CIRCUIT_SODA_SCENE := "res://scenes/minigames/CircuitSoda.tscn"
+const BROKEN_HIGH_SCORE_SCENE := "res://scenes/minigames/BrokenHighScore.tscn"
 const SYNC_DOOR_PUZZLE_SCENE := "res://scenes/arcade/SyncDoorPuzzle.tscn"
 const STAFF_ROOM_SCENE := "res://scenes/arcade/StaffRoom.tscn"
 const TITLE_OR_MAIN_SCENE := "res://scenes/main/Main.tscn"
@@ -33,6 +35,12 @@ func go_to_rockbyte_duel() -> void:
 
 func go_to_truth_filter() -> void:
 	change_scene(TRUTH_FILTER_SCENE)
+
+func go_to_circuit_soda() -> void:
+	change_scene(CIRCUIT_SODA_SCENE)
+
+func go_to_broken_high_score() -> void:
+	change_scene(BROKEN_HIGH_SCORE_SCENE)
 
 func go_to_sync_door_puzzle() -> void:
 	change_scene(SYNC_DOOR_PUZZLE_SCENE)

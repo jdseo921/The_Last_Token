@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/TitleMenu.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/ui/SettingsMenu.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/common/AnimatedAmbientProp.tscn" id="3"]
 
 [node name="TitleMenu" type="Control"]
 layout_mode = 3
@@ -78,6 +79,30 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="AmbientCabinetFlicker" parent="EffectsLayer" instance=ExtResource("3")]
+position = Vector2(320, 280)
+effect_type = "random_screen_flash"
+intensity = 0.08
+speed = 0.8
+prop_size = Vector2(340, 190)
+prop_color = Color(0.18, 0.82, 0.95, 0.08)
+
+[node name="AmbientLogoPulse" parent="EffectsLayer" instance=ExtResource("3")]
+position = Vector2(320, 78)
+effect_type = "glow_pulse"
+intensity = 0.06
+speed = 0.65
+prop_size = Vector2(420, 72)
+prop_color = Color(0.72, 0.92, 1, 0.1)
+
+[node name="AmbientScanlinePulse" parent="EffectsLayer" instance=ExtResource("3")]
+position = Vector2(320, 220)
+effect_type = "scanline_pulse"
+intensity = 0.05
+speed = 0.45
+prop_size = Vector2(640, 260)
+prop_color = Color(0.7, 0.95, 1, 0.06)
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 layer = 1

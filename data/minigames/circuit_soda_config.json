@@ -1,0 +1,19 @@
+{
+	"minigame_id": "circuit_soda",
+	"title": "Circuit Soda",
+	"owner": "Vendo",
+	"location": "Snack Alcove",
+	"rounds": 3,
+	"grid_size": "3x3",
+	"instructions": [
+		"CIRCUIT SODA",
+		"Rotate the pipes.",
+		"Connect Memory Input to Restore Output.",
+		"Do not spill identity."
+	],
+	"completion_text": [
+		"MEMORY FLOW RESTORED.",
+		"CARBONATION LEVEL: UNRELATED.",
+		"IDENTITY SIGNAL ROUTED."
+	]
+}

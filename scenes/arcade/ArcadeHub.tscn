@@ -1,4 +1,4 @@
-[gd_scene format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/ArcadeHub.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://scenes/ui/QuestNotice.tscn" id="7"]
 [ext_resource type="PackedScene" path="res://scenes/common/MapTransition.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://scenes/common/AnimatedAmbientProp.tscn" id="9"]
 
 [node name="ArcadeHub" type="Node2D"]
 script = ExtResource("1")
@@ -43,6 +44,57 @@ polygon = PackedVector2Array(420, 78, 560, 78, 580, 152, 552, 190, 426, 190, 400
 visible = false
 color = Color(0.8, 0.2, 1, 0.12)
 polygon = PackedVector2Array(340, 196, 430, 196, 448, 258, 420, 306, 336, 306, 312, 258)
+
+[node name="AmbientCabinet07Flicker" parent="EffectsLayer" instance=ExtResource("9")]
+position = Vector2(490, 124)
+effect_type = "flicker"
+intensity = 0.08
+speed = 0.75
+prop_size = Vector2(76, 36)
+prop_color = Color(0.12, 0.88, 1, 0.16)
+
+[node name="AmbientTruthFilterFlicker" parent="EffectsLayer" instance=ExtResource("9")]
+position = Vector2(378, 244)
+effect_type = "random_screen_flash"
+intensity = 0.07
+speed = 0.65
+only_when_memory_signal_at_least = 1
+active_flag_optional = "lost_token_quest_completed"
+prop_size = Vector2(74, 36)
+prop_color = Color(0.85, 0.28, 1, 0.12)
+
+[node name="AmbientStaffDoorPulse" parent="EffectsLayer" instance=ExtResource("9")]
+position = Vector2(546, 280)
+effect_type = "glow_pulse"
+intensity = 0.09
+speed = 0.58
+only_when_memory_signal_at_least = 2
+prop_size = Vector2(82, 104)
+prop_color = Color(0.95, 0.24, 0.32, 0.09)
+
+[node name="AmbientVendoBlink" parent="EffectsLayer" instance=ExtResource("9")]
+position = Vector2(304, 286)
+effect_type = "blink"
+intensity = 0.05
+speed = 0.7
+prop_size = Vector2(56, 34)
+prop_color = Color(0.2, 1, 0.58, 0.1)
+
+[node name="AmbientMrByteBlink" parent="EffectsLayer" instance=ExtResource("9")]
+position = Vector2(300, 202)
+effect_type = "blink"
+intensity = 0.05
+speed = 0.85
+prop_size = Vector2(54, 30)
+prop_color = Color(0.32, 0.75, 1, 0.1)
+
+[node name="AmbientBrokenCabinetFlicker" parent="EffectsLayer" instance=ExtResource("9")]
+position = Vector2(402, 356)
+effect_type = "flicker"
+intensity = 0.04
+speed = 0.45
+prop_size = Vector2(52, 34)
+prop_color = Color(0.8, 0.82, 0.9, 0.06)
 
 [node name="Floor" type="Polygon2D" parent="FloorLayer"]
 color = Color(0.045, 0.045, 0.065, 1)

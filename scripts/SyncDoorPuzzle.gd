@@ -40,8 +40,8 @@ func _ready() -> void:
 	switch_b_timer.timeout.connect(_on_switch_b_timeout)
 	switch_a_timer.wait_time = SWITCH_ACTIVE_SECONDS
 	switch_b_timer.wait_time = SWITCH_ACTIVE_SECONDS
-	title_label.text = "SYNC DOOR: TWO SIGNALS"
-	instruction_label.text = "Two switches must be active together.\nFractured signals do not stay stable for long.\nWatch the signal labels before pressing."
+	title_label.text = "MAINTENANCE SYNC"
+	instruction_label.text = "Two signals must be active together.\nOne signal remembers.\nOne signal returns."
 	_start_phase(PHASE_BASIC)
 	switch_a_button.grab_focus()
 
@@ -143,8 +143,7 @@ func _complete_puzzle() -> void:
 	puzzle_solved = true
 	switch_a_timer.stop()
 	switch_b_timer.stop()
-	GameState.story_puzzle_completed = true
-	GameState.unlock_staff_room()
+	GameState.complete_maintenance_sync()
 	_play_audio("play_ui_confirm")
 	door_label.text = "Staff Door: OPEN"
 	status_label.text = "TWO SIGNALS DETECTED.\nRESTORED SIGNAL PRESENT.\nMEMORY SIGNAL: OVERLOADED.\nACCESS GRANTED."
@@ -176,7 +175,7 @@ func _reset_switches() -> void:
 
 func _on_exit_pressed() -> void:
 	_play_audio("play_ui_confirm")
-	SceneChanger.go_to_arcade_hub()
+	SceneChanger.go_to_maintenance_hall()
 
 func _refresh_ui() -> void:
 	if puzzle_solved:

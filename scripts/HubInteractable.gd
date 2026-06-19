@@ -72,6 +72,10 @@ func _apply_placeholder_style() -> void:
 			placeholder_visual.color = Color(0.42, 0.62, 0.48, 1)
 		"vendo":
 			placeholder_visual.color = Color(0.26, 0.72, 0.5, 1)
+		"roxy":
+			placeholder_visual.color = Color(0.68, 0.24, 0.5, 1)
+		"pip":
+			placeholder_visual.color = Color(0.78, 0.64, 0.26, 1)
 		"mr_byte":
 			placeholder_visual.color = Color(0.32, 0.58, 0.92, 1)
 		"cabinet07":

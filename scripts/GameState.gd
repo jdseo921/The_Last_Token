@@ -11,7 +11,7 @@ const ACTION_BINDINGS := {
 	"cancel": [KEY_ESCAPE, KEY_BACKSPACE],
 }
 
-const TOTAL_GAMES_COUNT := 3
+const TOTAL_GAMES_COUNT := 4
 const TOTAL_SECRETS_COUNT := 4
 const MEMORY_SIGNAL_GROUNDED := 0
 const MEMORY_SIGNAL_UNEASY := 1
@@ -28,6 +28,9 @@ var rockbyte_duel_loss_count := 0
 var truth_filter_quest_started := false
 var lying_cabinets_completed := false
 var second_memory_fragment_collected := false
+var circuit_soda_started := false
+var circuit_soda_completed := false
+var maintenance_sync_completed := false
 var story_puzzle_completed := false
 var staff_room_unlocked := false
 var twist_reveal_seen := false
@@ -41,11 +44,23 @@ var gus_intro_seen := false
 var gus_post_reveal_seen := false
 var vendo_intro_seen := false
 var vendo_post_reveal_seen := false
+var roxy_met := false
+var pip_met := false
+var pip_secret_started := false
+var pip_secret_completed := false
+var pip_post_reveal_secret_seen := false
+var mira_rockbyte_anecdote_seen := false
+var mr_byte_truth_filter_anecdote_seen := false
+var vendo_circuit_anecdote_seen := false
+var gus_sync_anecdote_seen := false
+var roxy_high_score_anecdote_seen := false
+var pip_prize_anecdote_seen := false
 var cabinet07_employee_hint_seen := false
 var mr_byte_intro_seen := false
 var mr_byte_post_reveal_seen := false
 
 var broken_cabinet_secret_found := false
+var broken_high_score_completed := false
 var owner_portrait_secret_found := false
 var employee_04_file_found := false
 var vendo_memory_riddle_secret_found := false
@@ -89,7 +104,9 @@ func get_games_completed_count_from_data(data: Dictionary) -> int:
 	var completed := 0
 	if bool(data.get("rockbyte_duel_completed", false)):
 		completed += 1
-	if bool(data.get("story_puzzle_completed", false)):
+	if bool(data.get("circuit_soda_completed", false)):
+		completed += 1
+	if bool(data.get("maintenance_sync_completed", false)) or bool(data.get("story_puzzle_completed", false)):
 		completed += 1
 	if bool(data.get("twist_reveal_seen", false)):
 		completed += 1
@@ -131,6 +148,8 @@ func get_story_phase_label_from_data(data: Dictionary) -> String:
 		return "Staff Room"
 	if bool(data.get("story_puzzle_completed", false)):
 		return "Sync Door Solved"
+	if bool(data.get("circuit_soda_completed", false)):
+		return "Signal Stabilized"
 	if bool(data.get("second_memory_fragment_collected", false)) or bool(data.get("lying_cabinets_completed", false)):
 		return "Truth Filter Cleared"
 	if bool(data.get("truth_filter_quest_started", false)) and not bool(data.get("lying_cabinets_completed", false)):
@@ -168,6 +187,9 @@ func reset_for_new_game() -> void:
 	truth_filter_quest_started = false
 	lying_cabinets_completed = false
 	second_memory_fragment_collected = false
+	circuit_soda_started = false
+	circuit_soda_completed = false
+	maintenance_sync_completed = false
 	story_puzzle_completed = false
 	staff_room_unlocked = false
 	twist_reveal_seen = false
@@ -180,10 +202,22 @@ func reset_for_new_game() -> void:
 	gus_post_reveal_seen = false
 	vendo_intro_seen = false
 	vendo_post_reveal_seen = false
+	roxy_met = false
+	pip_met = false
+	pip_secret_started = false
+	pip_secret_completed = false
+	pip_post_reveal_secret_seen = false
+	mira_rockbyte_anecdote_seen = false
+	mr_byte_truth_filter_anecdote_seen = false
+	vendo_circuit_anecdote_seen = false
+	gus_sync_anecdote_seen = false
+	roxy_high_score_anecdote_seen = false
+	pip_prize_anecdote_seen = false
 	cabinet07_employee_hint_seen = false
 	mr_byte_intro_seen = false
 	mr_byte_post_reveal_seen = false
 	broken_cabinet_secret_found = false
+	broken_high_score_completed = false
 	owner_portrait_secret_found = false
 	employee_04_file_found = false
 	vendo_memory_riddle_secret_found = false
@@ -243,6 +277,28 @@ func complete_truth_filter() -> void:
 	second_memory_fragment_collected = true
 	update_memory_signal_from_progress()
 
+func start_circuit_soda() -> void:
+	circuit_soda_started = true
+	update_memory_signal_from_progress()
+
+func complete_circuit_soda() -> void:
+	circuit_soda_started = true
+	circuit_soda_completed = true
+	update_memory_signal_from_progress()
+
+func complete_maintenance_sync() -> void:
+	maintenance_sync_completed = true
+	story_puzzle_completed = true
+	staff_room_unlocked = true
+	update_memory_signal_from_progress()
+
+func complete_broken_high_score() -> void:
+	broken_high_score_completed = true
+
+func complete_pip_secret() -> void:
+	pip_secret_started = true
+	pip_secret_completed = true
+
 func unlock_staff_room() -> void:
 	staff_room_unlocked = true
 	update_memory_signal_from_progress()
@@ -267,8 +323,10 @@ func get_current_quest_id() -> String:
 		return "return_lost_token"
 	if lost_token_quest_completed and not lying_cabinets_completed:
 		return "truth_filter"
-	if lying_cabinets_completed and not story_puzzle_completed:
-		return "check_staff_door"
+	if lying_cabinets_completed and not circuit_soda_completed:
+		return "circuit_soda"
+	if circuit_soda_completed and not maintenance_sync_completed and not story_puzzle_completed:
+		return "maintenance_sync"
 	if story_puzzle_completed and staff_room_unlocked and not twist_reveal_seen:
 		return "enter_staff_room"
 	if twist_reveal_seen and not post_reveal_roam_unlocked:
@@ -300,13 +358,20 @@ func get_current_quest_data() -> Dictionary:
 				"summary": "Bring the token back to Mira.",
 				"details": "Cabinet 07 released the Lost Token. Mira is waiting for it by the ticket counter.",
 			}, "lost_token")
-		"check_staff_door":
+		"maintenance_sync":
 			return _with_registry_quest_data({
-				"id": "check_staff_door",
-				"title": "Check the Staff Door",
-				"summary": "Inspect the Staff Door.",
-				"details": "The Truth Filter recovered a second memory fragment. The Staff Door should be listening now.",
+				"id": "maintenance_sync",
+				"title": "Maintenance Sync",
+				"summary": "Talk to Gus in Maintenance Hall.",
+				"details": "The Truth Filter recovered a second memory fragment, and Vendo stabilized the fractured signal. Gus should know what the Staff Door needs next.",
 			}, "maintenance_sync")
+		"circuit_soda":
+			return _with_registry_quest_data({
+				"id": "circuit_soda",
+				"title": "Stabilize Circuit Soda",
+				"summary": "Talk to Vendo in Snack Alcove.",
+				"details": "The Truth Filter left the Memory Signal fractured. Vendo says the signal needs to be routed before the Staff Door systems will trust it.",
+			}, "circuit_soda")
 		"truth_filter":
 			return _with_registry_quest_data({
 				"id": "truth_filter",
@@ -412,6 +477,9 @@ func to_save_data() -> Dictionary:
 		"truth_filter_quest_started": truth_filter_quest_started,
 		"lying_cabinets_completed": lying_cabinets_completed,
 		"second_memory_fragment_collected": second_memory_fragment_collected,
+		"circuit_soda_started": circuit_soda_started,
+		"circuit_soda_completed": circuit_soda_completed,
+		"maintenance_sync_completed": maintenance_sync_completed,
 		"story_puzzle_completed": story_puzzle_completed,
 		"staff_room_unlocked": staff_room_unlocked,
 		"twist_reveal_seen": twist_reveal_seen,
@@ -424,10 +492,22 @@ func to_save_data() -> Dictionary:
 		"gus_post_reveal_seen": gus_post_reveal_seen,
 		"vendo_intro_seen": vendo_intro_seen,
 		"vendo_post_reveal_seen": vendo_post_reveal_seen,
+		"roxy_met": roxy_met,
+		"pip_met": pip_met,
+		"pip_secret_started": pip_secret_started,
+		"pip_secret_completed": pip_secret_completed,
+		"pip_post_reveal_secret_seen": pip_post_reveal_secret_seen,
+		"mira_rockbyte_anecdote_seen": mira_rockbyte_anecdote_seen,
+		"mr_byte_truth_filter_anecdote_seen": mr_byte_truth_filter_anecdote_seen,
+		"vendo_circuit_anecdote_seen": vendo_circuit_anecdote_seen,
+		"gus_sync_anecdote_seen": gus_sync_anecdote_seen,
+		"roxy_high_score_anecdote_seen": roxy_high_score_anecdote_seen,
+		"pip_prize_anecdote_seen": pip_prize_anecdote_seen,
 		"cabinet07_employee_hint_seen": cabinet07_employee_hint_seen,
 		"mr_byte_intro_seen": mr_byte_intro_seen,
 		"mr_byte_post_reveal_seen": mr_byte_post_reveal_seen,
 		"broken_cabinet_secret_found": broken_cabinet_secret_found,
+		"broken_high_score_completed": broken_high_score_completed,
 		"owner_portrait_secret_found": owner_portrait_secret_found,
 		"employee_04_file_found": employee_04_file_found,
 		"vendo_memory_riddle_secret_found": vendo_memory_riddle_secret_found,
@@ -463,7 +543,12 @@ func apply_save_data(data: Dictionary) -> void:
 	truth_filter_quest_started = bool(data.get("truth_filter_quest_started", truth_filter_quest_started))
 	lying_cabinets_completed = bool(data.get("lying_cabinets_completed", lying_cabinets_completed))
 	second_memory_fragment_collected = bool(data.get("second_memory_fragment_collected", second_memory_fragment_collected))
+	circuit_soda_started = bool(data.get("circuit_soda_started", circuit_soda_started))
+	circuit_soda_completed = bool(data.get("circuit_soda_completed", circuit_soda_completed))
+	maintenance_sync_completed = bool(data.get("maintenance_sync_completed", maintenance_sync_completed))
 	story_puzzle_completed = data.get("story_puzzle_completed", story_puzzle_completed)
+	if story_puzzle_completed:
+		maintenance_sync_completed = true
 	staff_room_unlocked = data.get("staff_room_unlocked", staff_room_unlocked)
 	twist_reveal_seen = data.get("twist_reveal_seen", twist_reveal_seen)
 	ending_seen = data.get("ending_seen", ending_seen)
@@ -475,10 +560,22 @@ func apply_save_data(data: Dictionary) -> void:
 	gus_post_reveal_seen = data.get("gus_post_reveal_seen", gus_post_reveal_seen)
 	vendo_intro_seen = data.get("vendo_intro_seen", vendo_intro_seen)
 	vendo_post_reveal_seen = data.get("vendo_post_reveal_seen", vendo_post_reveal_seen)
+	roxy_met = bool(data.get("roxy_met", roxy_met))
+	pip_met = bool(data.get("pip_met", pip_met))
+	pip_secret_started = bool(data.get("pip_secret_started", pip_secret_started))
+	pip_secret_completed = bool(data.get("pip_secret_completed", pip_secret_completed))
+	pip_post_reveal_secret_seen = bool(data.get("pip_post_reveal_secret_seen", pip_post_reveal_secret_seen))
+	mira_rockbyte_anecdote_seen = bool(data.get("mira_rockbyte_anecdote_seen", mira_rockbyte_anecdote_seen))
+	mr_byte_truth_filter_anecdote_seen = bool(data.get("mr_byte_truth_filter_anecdote_seen", mr_byte_truth_filter_anecdote_seen))
+	vendo_circuit_anecdote_seen = bool(data.get("vendo_circuit_anecdote_seen", vendo_circuit_anecdote_seen))
+	gus_sync_anecdote_seen = bool(data.get("gus_sync_anecdote_seen", gus_sync_anecdote_seen))
+	roxy_high_score_anecdote_seen = bool(data.get("roxy_high_score_anecdote_seen", roxy_high_score_anecdote_seen))
+	pip_prize_anecdote_seen = bool(data.get("pip_prize_anecdote_seen", pip_prize_anecdote_seen))
 	cabinet07_employee_hint_seen = data.get("cabinet07_employee_hint_seen", cabinet07_employee_hint_seen)
 	mr_byte_intro_seen = data.get("mr_byte_intro_seen", mr_byte_intro_seen)
 	mr_byte_post_reveal_seen = data.get("mr_byte_post_reveal_seen", mr_byte_post_reveal_seen)
 	broken_cabinet_secret_found = data.get("broken_cabinet_secret_found", broken_cabinet_secret_found)
+	broken_high_score_completed = bool(data.get("broken_high_score_completed", broken_high_score_completed))
 	owner_portrait_secret_found = data.get("owner_portrait_secret_found", owner_portrait_secret_found)
 	employee_04_file_found = data.get("employee_04_file_found", employee_04_file_found)
 	vendo_memory_riddle_secret_found = data.get("vendo_memory_riddle_secret_found", vendo_memory_riddle_secret_found)

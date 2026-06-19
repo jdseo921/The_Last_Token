@@ -1,9 +1,12 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/PrizeCorner.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/common/MapTransition.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/arcade/HubInteractable.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/common/AnimatedAmbientProp.tscn" id="7"]
 
 [node name="PrizeCorner" type="Node2D"]
 script = ExtResource("1")
@@ -12,6 +15,10 @@ script = ExtResource("1")
 color = Color(0.045, 0.038, 0.055, 1)
 polygon = PackedVector2Array(0, 0, 640, 0, 640, 440, 0, 440)
 
+[node name="BackgroundArt" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(320, 220)
+
 [node name="PrizeCounterPlaceholder" type="Polygon2D" parent="."]
 color = Color(0.32, 0.18, 0.24, 1)
 polygon = PackedVector2Array(110, 92, 530, 92, 530, 178, 110, 178)
@@ -19,6 +26,22 @@ polygon = PackedVector2Array(110, 92, 530, 92, 530, 178, 110, 178)
 [node name="PipPlaceholder" type="Polygon2D" parent="."]
 color = Color(0.48, 0.38, 0.18, 1)
 polygon = PackedVector2Array(292, 196, 348, 196, 348, 252, 292, 252)
+
+[node name="AmbientPrizeShelfTwinkle" parent="." instance=ExtResource("7")]
+position = Vector2(320, 132)
+effect_type = "random_screen_flash"
+intensity = 0.04
+speed = 0.45
+prop_size = Vector2(380, 64)
+prop_color = Color(1, 0.86, 0.36, 0.07)
+
+[node name="AmbientPipBob" parent="." instance=ExtResource("7")]
+position = Vector2(320, 224)
+effect_type = "bob"
+intensity = 0.05
+speed = 0.6
+prop_size = Vector2(62, 62)
+prop_color = Color(1, 0.72, 0.24, 0.07)
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
 position = Vector2(320, 318)
@@ -32,6 +55,23 @@ position = Vector2(70, 260)
 [node name="Player" parent="." instance=ExtResource("2")]
 position = Vector2(320, 318)
 
+[node name="InteractableLayer" type="Node2D" parent="."]
+
+[node name="PrizeCounter" parent="InteractableLayer" instance=ExtResource("6")]
+position = Vector2(320, 154)
+interactable_kind = "prize_counter"
+label_text = "PRIZE COUNTER"
+show_label = false
+use_placeholder_visual = false
+
+[node name="Pip" parent="InteractableLayer" instance=ExtResource("6")]
+position = Vector2(320, 232)
+interactable_kind = "pip"
+label_text = "PIP"
+idle_sheet_path = "res://assets/art/characters/pip/pip_idle_sheet.png"
+use_placeholder_visual = true
+idle_bob_enabled = true
+
 [node name="ReturnToArcadeHub" parent="." instance=ExtResource("3")]
 position = Vector2(320, 406)
 target_scene_path = "res://scenes/arcade/ArcadeHub.tscn"
@@ -44,6 +84,8 @@ target_spawn_id = "Spawn_FromPrizeCorner"
 
 [node name="UILayer" type="Node2D" parent="."]
 
+[node name="DialogueBox" parent="UILayer" instance=ExtResource("5")]
+
 [node name="TitleLabel" type="Label" parent="UILayer"]
 position = Vector2(24, 20)
 size = Vector2(250, 28)
@@ -54,7 +96,7 @@ text = "PRIZE CORNER"
 position = Vector2(24, 48)
 size = Vector2(420, 42)
 theme_override_font_sizes/font_size = 10
-text = "Placeholder shell: future Pip and prize counter secret."
+text = "Pip watches the prize labels and remembers more than a plush should."
 autowrap_mode = 3
 
 [node name="PrizeCounterLabel" type="Label" parent="UILayer"]
@@ -68,7 +110,7 @@ horizontal_alignment = 1
 position = Vector2(270, 258)
 size = Vector2(100, 20)
 theme_override_font_sizes/font_size = 10
-text = "PIP / FUTURE"
+text = "PIP"
 horizontal_alignment = 1
 
 [node name="InteractionPromptBackground" type="ColorRect" parent="UILayer"]

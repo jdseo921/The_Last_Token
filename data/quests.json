@@ -11,8 +11,9 @@
 			"required": true,
 			"starts_after": "story_started",
 			"completion_dialogue": [
-				{"speaker": "Mira", "text": "It remembered enough to give this back."},
-				{"speaker": "Mira", "text": "That means something in here still knows you."}
+				{"speaker": "Mira", "text": "You brought it back."},
+				{"speaker": "Mira", "text": "That token used to be just a prize."},
+				{"speaker": "Mira", "text": "Then it became proof that part of you could still return."}
 			],
 			"memory_signal_after": "Uneasy"
 		},
@@ -28,7 +29,8 @@
 			"starts_after": "lost_token_quest_completed",
 			"completion_dialogue": [
 				{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
-				{"speaker": "Mr. Byte", "text": "Warning: restored subjects may now notice missing pieces."}
+				{"speaker": "Mr. Byte", "text": "Contradictions remain."},
+				{"speaker": "Mr. Byte", "text": "That means the memory is alive enough to argue."}
 			],
 			"memory_signal_after": "Fractured"
 		},
@@ -37,14 +39,15 @@
 			"title": "Circuit Soda",
 			"owner": "Vendo",
 			"location": "Snack Alcove",
-			"summary": "Stabilize the signal flow through Vendo's machine.",
-			"details": "Vendo claims the player's signal is being routed through the wrong channels. The Circuit Soda puzzle should make the signal easier for the staff systems to read.",
+			"summary": "Route the fractured Memory Signal through Vendo's machine.",
+			"details": "Vendo claims the player's signal is being routed through the wrong channels. Circuit Soda should stabilize the fractured signal before the staff systems will trust it.",
 			"minigame": "Circuit Soda",
 			"required": true,
 			"starts_after": "lying_cabinets_completed",
 			"completion_dialogue": [
-				{"speaker": "Vendo", "text": "Your signal now flows smoother than orange soda through a busted hose."},
-				{"speaker": "Vendo", "text": "Still no refunds."}
+				{"speaker": "Vendo", "text": "Signal routed."},
+				{"speaker": "Vendo", "text": "You successfully became beverage-adjacent data."},
+				{"speaker": "Vendo", "text": "I would offer a receipt, but the printer remembers too much."}
 			],
 			"memory_signal_after": "Fractured"
 		},
@@ -57,10 +60,11 @@
 			"details": "Gus says the Staff Door listens for two stable signals. The maintenance system needs both signals active before the Staff Room can open.",
 			"minigame": "Maintenance Sync",
 			"required": true,
-			"starts_after": "lying_cabinets_completed",
+			"starts_after": "circuit_soda_completed",
 			"completion_dialogue": [
-				{"speaker": "Gus", "text": "Door finally heard both of you."},
-				{"speaker": "Gus", "text": "Try not to think too hard about that sentence."}
+				{"speaker": "Gus", "text": "Door's listening now."},
+				{"speaker": "Gus", "text": "I do not like doors that listen."},
+				{"speaker": "Gus", "text": "But if it opens, part of you matched something it lost."}
 			],
 			"memory_signal_after": "Overloaded"
 		},
@@ -73,26 +77,26 @@
 			"details": "The score claims the target is 9999, but the display is broken. The real record may be much smaller and much stranger.",
 			"minigame": "Broken High Score",
 			"required": false,
-			"starts_after": "lost_token_quest_completed",
+			"starts_after": "rockbyte_duel_completed",
 			"completion_dialogue": [
-				{"speaker": "Roxy", "text": "Score came back."},
-				{"speaker": "Roxy", "text": "Name stayed blank. That is usually bad."}
+				{"speaker": "Roxy", "text": "Huh. Your score came back."},
+				{"speaker": "Roxy", "text": "That usually does not happen after a reset."}
 			],
 			"memory_signal_after": "No Change"
 		},
 		"prize_counter_secret": {
 			"id": "prize_counter_secret",
-			"title": "Prize Counter Secret",
+			"title": "Prize Sort",
 			"owner": "Pip",
 			"location": "Prize Corner",
-			"summary": "Find the prize counter's hidden memory.",
-			"details": "The prize counter remembers small things: cheap prizes, saved tickets, and someone who never clocked out.",
-			"minigame": "Prize Counter",
+			"summary": "Arrange three prize labels by memory state.",
+			"details": "Pip says the prize labels remember an order: Ticket Stub, Lost Token, then Blank Employee Badge.",
+			"minigame": "Prize Sort",
 			"required": false,
-			"starts_after": "prize_corner_unlocked",
+			"starts_after": "lying_cabinets_completed",
 			"completion_dialogue": [
-				{"speaker": "Pip", "text": "Funny thing about prizes."},
-				{"speaker": "Pip", "text": "The cheap ones remember who wanted them."}
+				{"speaker": "Pip", "text": "Prizes remember hands."},
+				{"speaker": "Pip", "text": "Yours feel familiar."}
 			],
 			"memory_signal_after": "No Change"
 		}
