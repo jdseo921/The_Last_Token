@@ -45,6 +45,15 @@
   - Optional content is not required.
   - The expanded route feels longer than the original MVP without feeling padded.
 
+## Final Expanded Route Gate Result
+- Date: 2026-06-20.
+- Method: Codex/Godot 4.7 headless smoke plus static route review. This is not a live viewport playthrough.
+- Scene path smoke: PASS via `scripts/qa/ScenePathSmoke.gd`.
+- Required route state smoke: PASS via `scripts/qa/RequiredRouteStateSmoke.gd`; the simulated route reaches `Main: 10 / 10` only after `twist_reveal_seen`.
+- Headless scene open smoke: PASS for every required route scene, including Circuit Soda after the parser blocker fix.
+- Blocker fixed: `scripts/CircuitSoda.gd` had a Godot 4.7 parse error from inferred `next_pos`; it now uses an explicit `Vector2i` type.
+- README status: unchanged because live Godot viewport acceptance has not passed yet.
+
 ## Live Runtime QA Result
 - Requested live route: Title Menu through Post-Reveal Roam save/load.
 - Result: blocked before step 1 in this environment.
@@ -176,9 +185,8 @@ Run this after Truth Filter completion, when Memory Signal is `Fractured`.
 10. Return to Snack Alcove.
 11. Talk to Vendo and confirm:
    - `Signal routed.`
-   - `You successfully became beverage-adjacent data.`
-   - `I would offer a receipt, but the printer remembers too much.`
-   - `Your label is still missing, but the machine knows what shelf you go on.`
+   - `Unfortunately, routed does not mean understood.`
+   - `Mira and Gus have records. Try not to enjoy paperwork.`
 12. Talk to Vendo again and confirm shorter repeat lines appear.
 13. Confirm the objective reads `Objective: Find Gus in Maintenance Hall.`
 14. Save and load.
@@ -303,8 +311,7 @@ Run this after Lost Shift File completion and before Maintenance Sync, when Memo
 14. Talk to Gus and confirm:
    `Power's back.`
    `Door's awake.`
-   `That is usually good news, except when the door is smarter than the staff.`
-   `Now we can sync the two signals.`
+   `Now the hard part: making it listen without letting it answer too much.`
 15. Save and load.
 16. Confirm Static Service Run completion and `gus_static_run_anecdote_seen` persist.
 17. Confirm Maintenance Sync is now available.
@@ -692,12 +699,16 @@ Pass condition: every step above passes in a live Godot playthrough. If any step
 7. Complete Truth Filter.
 8. Confirm the objective points to Snack Alcove / Vendo.
 9. Complete Circuit Soda.
-10. Confirm the objective points to Maintenance Hall / Gus.
-11. Complete Maintenance Sync.
-12. Confirm Staff Corridor unlocks.
-13. Complete Security Tape Assembly.
-14. Complete Memory Echo.
-15. Enter Staff Room.
+10. Confirm the objective points to the Lost Shift File.
+11. Read the Closing Checklist, Maintenance Note, and Staff Schedule.
+12. Confirm the objective points to Maintenance Hall / Gus.
+13. Complete Static Service Run.
+14. Complete Maintenance Sync.
+15. Confirm Staff Corridor unlocks.
+16. Complete Security Tape Assembly.
+17. Complete Final Night Walk.
+18. Complete Memory Echo.
+19. Enter Staff Room.
 
 ## 5. Staff Room Reveal Test
 1. In Staff Room, interact with the Employee 04 file before the reveal.

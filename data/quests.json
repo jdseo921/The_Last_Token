@@ -109,17 +109,16 @@
 		"staff_corridor": {
 			"id": "staff_corridor",
 			"title": "Enter the Staff Corridor",
-			"owner": "Memory Echo",
+			"owner": "Staff Door",
 			"location": "Staff Corridor",
 			"summary": "Follow the Overloaded signal past the Staff Door.",
 			"details": "Gus stabilized the door, but the arcade is not ready to show the Staff Room yet. Something is echoing in the corridor.",
-			"minigame": "Memory Echo",
+			"minigame": "None",
 			"required": true,
 			"starts_after": "maintenance_sync_completed",
 			"completion_dialogue": [
-				{"speaker": "Memory Echo", "text": "Echo stabilized."},
-				{"speaker": "Memory Echo", "text": "The arcade stops arguing with itself."},
-				{"speaker": "Memory Echo", "text": "That might be worse."}
+				{"speaker": "Staff Door", "text": "ACCESS GRANTED."},
+				{"speaker": "Staff Door", "text": "EMPLOYEE SIGNAL ACCEPTED."}
 			],
 			"memory_signal_after": "Overloaded"
 		},
@@ -154,6 +153,23 @@
 				{"speaker": "Staff Door", "text": "FINAL NIGHT SEQUENCE STABILIZED."},
 				{"speaker": "Staff Door", "text": "ONE WALKED IN."},
 				{"speaker": "Staff Door", "text": "TWO SIGNALS ANSWERED."}
+			],
+			"memory_signal_after": "Overloaded"
+		},
+		"memory_echo": {
+			"id": "memory_echo",
+			"title": "Stabilize the Memory Echo",
+			"owner": "Memory Echo",
+			"location": "Staff Corridor",
+			"summary": "Stabilize the Memory Echo.",
+			"details": "The Final Night route is stable. The Memory Echo can now stabilize the signal before the Staff Room reveals what happened.",
+			"minigame": "Memory Echo",
+			"required": true,
+			"starts_after": "final_night_walk_completed",
+			"completion_dialogue": [
+				{"speaker": "Memory Echo", "text": "Echo stabilized."},
+				{"speaker": "Memory Echo", "text": "The arcade stops arguing with itself."},
+				{"speaker": "Memory Echo", "text": "That might be worse."}
 			],
 			"memory_signal_after": "Overloaded"
 		},

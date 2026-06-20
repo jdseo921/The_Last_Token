@@ -160,25 +160,32 @@ func get_required_progress_count_from_data(data: Dictionary) -> int:
 	var completed := 0
 	if bool(data.get("rockbyte_duel_completed", false)):
 		completed += 1
-	if bool(data.get("lying_cabinets_completed", false)) or bool(data.get("second_memory_fragment_collected", false)):
+	if bool(data.get("lying_cabinets_completed", false)):
 		completed += 1
 	if bool(data.get("circuit_soda_completed", false)):
 		completed += 1
-	if bool(data.get("lost_shift_file_completed", false)) or bool(data.get("maintenance_sync_completed", false)) or bool(data.get("story_puzzle_completed", false)):
+	if _is_lost_shift_file_complete_in_data(data):
 		completed += 1
-	if bool(data.get("static_service_run_completed", false)) or bool(data.get("maintenance_sync_completed", false)) or bool(data.get("story_puzzle_completed", false)):
+	if bool(data.get("static_service_run_completed", false)):
 		completed += 1
-	if bool(data.get("maintenance_sync_completed", false)) or bool(data.get("story_puzzle_completed", false)):
+	if bool(data.get("maintenance_sync_completed", false)):
 		completed += 1
-	if bool(data.get("security_tape_assembly_completed", false)) or bool(data.get("memory_echo_completed", false)):
+	if bool(data.get("security_tape_assembly_completed", false)):
 		completed += 1
-	if bool(data.get("final_night_walk_completed", false)) or bool(data.get("memory_echo_completed", false)):
+	if bool(data.get("final_night_walk_completed", false)):
 		completed += 1
 	if bool(data.get("memory_echo_completed", false)):
 		completed += 1
 	if bool(data.get("twist_reveal_seen", false)):
 		completed += 1
 	return completed
+
+func _is_lost_shift_file_complete_in_data(data: Dictionary) -> bool:
+	return bool(data.get("lost_shift_file_completed", false)) or (
+		bool(data.get("closing_checklist_read", false))
+		and bool(data.get("maintenance_note_read", false))
+		and bool(data.get("staff_schedule_read", false))
+	)
 
 func get_total_required_progress_count() -> int:
 	return TOTAL_REQUIRED_PROGRESS_COUNT
@@ -190,9 +197,44 @@ func get_optional_games_completed_count_from_data(data: Dictionary) -> int:
 	var completed := 0
 	if bool(data.get("broken_high_score_completed", false)):
 		completed += 1
-	if bool(data.get("prize_sort_completed", false)) or bool(data.get("pip_secret_completed", false)):
+	if bool(data.get("prize_sort_completed", false)):
 		completed += 1
 	return completed
+
+func get_compatible_save_data_for_summary(data: Dictionary) -> Dictionary:
+	var compatible := data.duplicate(true)
+	_apply_route_compatibility_to_data(compatible)
+	return compatible
+
+func _apply_route_compatibility_to_data(data: Dictionary) -> void:
+	# Compatibility for saves made before the expanded route had separate flags.
+	# Current counters stay exact; this only repairs loaded/previewed legacy data.
+	if bool(data.get("second_memory_fragment_collected", false)):
+		data["lying_cabinets_completed"] = true
+	if bool(data.get("pip_secret_completed", false)):
+		data["prize_sort_completed"] = true
+	if bool(data.get("twist_reveal_seen", false)):
+		data["memory_echo_completed"] = true
+		data["staff_room_unlocked"] = true
+	if bool(data.get("memory_echo_completed", false)):
+		data["final_night_walk_completed"] = true
+		data["staff_room_unlocked"] = true
+	if bool(data.get("final_night_walk_completed", false)):
+		data["security_tape_assembly_completed"] = true
+	if bool(data.get("security_tape_assembly_completed", false)):
+		data["maintenance_sync_completed"] = true
+		data["story_puzzle_completed"] = true
+		data["staff_corridor_unlocked"] = true
+	if bool(data.get("story_puzzle_completed", false)):
+		data["maintenance_sync_completed"] = true
+	if bool(data.get("maintenance_sync_completed", false)):
+		data["story_puzzle_completed"] = true
+		data["static_service_run_completed"] = true
+		data["staff_corridor_unlocked"] = true
+	if bool(data.get("static_service_run_completed", false)):
+		data["lost_shift_file_completed"] = true
+	if _is_lost_shift_file_complete_in_data(data):
+		data["lost_shift_file_completed"] = true
 
 func get_total_optional_games_count() -> int:
 	return TOTAL_OPTIONAL_GAMES_COUNT
@@ -231,24 +273,21 @@ func get_story_phase_label_from_data(data: Dictionary) -> String:
 	if bool(data.get("memory_echo_completed", false)):
 		return "Staff Room"
 	if bool(data.get("final_night_walk_completed", false)):
-		return "Final Night Route Stable"
+		return "Memory Echo"
 	if bool(data.get("security_tape_assembly_completed", false)):
-		return "Security Tape Restored"
+		return "Final Night Walk"
 	if bool(data.get("staff_corridor_unlocked", false)):
-		return "Staff Corridor"
+		return "Security Tape Assembly"
 	if bool(data.get("story_puzzle_completed", false)):
-		return "Sync Door Solved"
+		return "Staff Corridor"
 	if bool(data.get("static_service_run_completed", false)):
-		return "Service Power Restored"
-	if bool(data.get("lost_shift_file_completed", false)):
+		return "Maintenance Sync"
+	if _is_lost_shift_file_complete_in_data(data):
 		return "Static Service Run"
-	if bool(data.get("lost_shift_file_completed", false)) or (
-		bool(data.get("circuit_soda_completed", false)) and not bool(data.get("maintenance_sync_completed", false))
-		and not bool(data.get("story_puzzle_completed", false))
-	):
+	if bool(data.get("circuit_soda_completed", false)) and not _is_lost_shift_file_complete_in_data(data):
 		return "Lost Shift File"
 	if bool(data.get("circuit_soda_completed", false)):
-		return "Signal Stabilized"
+		return "Lost Shift File"
 	if bool(data.get("second_memory_fragment_collected", false)) or bool(data.get("lying_cabinets_completed", false)):
 		return "Truth Filter Cleared"
 	if bool(data.get("truth_filter_quest_started", false)) and not bool(data.get("lying_cabinets_completed", false)):
@@ -275,6 +314,17 @@ func get_memory_signal_label_from_level(level: int) -> String:
 			return "Restored"
 		_:
 			return "Grounded"
+
+func get_memory_signal_level_from_data(data: Dictionary) -> int:
+	if bool(data.get("post_reveal_roam_unlocked", false)):
+		return MEMORY_SIGNAL_RESTORED
+	if bool(data.get("staff_corridor_unlocked", false)) or bool(data.get("story_puzzle_completed", false)) or bool(data.get("maintenance_sync_completed", false)):
+		return MEMORY_SIGNAL_OVERLOADED
+	if bool(data.get("lying_cabinets_completed", false)) or bool(data.get("second_memory_fragment_collected", false)):
+		return MEMORY_SIGNAL_FRACTURED
+	if bool(data.get("lost_token_quest_completed", false)):
+		return MEMORY_SIGNAL_UNEASY
+	return MEMORY_SIGNAL_GROUNDED
 
 func reset_for_new_game() -> void:
 	story_started = false
@@ -461,7 +511,6 @@ func complete_maintenance_sync() -> void:
 	maintenance_sync_started = true
 	maintenance_sync_completed = true
 	story_puzzle_completed = true
-	staff_room_unlocked = true
 	staff_corridor_unlocked = true
 	update_memory_signal_from_progress()
 
@@ -494,6 +543,7 @@ func start_memory_echo() -> void:
 func complete_memory_echo() -> void:
 	memory_echo_started = true
 	memory_echo_completed = true
+	staff_room_unlocked = true
 	final_night_walk_started = true
 	final_night_walk_completed = true
 	update_memory_signal_from_progress()
@@ -561,6 +611,7 @@ func unlock_staff_room() -> void:
 	update_memory_signal_from_progress()
 
 func mark_twist_reveal_seen() -> void:
+	staff_room_unlocked = true
 	staff_corridor_unlocked = true
 	memory_echo_started = true
 	memory_echo_completed = true
@@ -687,18 +738,12 @@ func get_current_quest_data() -> Dictionary:
 				"details": "The security tape is assembled, but the memory is still too unstable to play back. Walk the reconstructed route before confronting the Memory Echo.",
 			}, "final_night_walk")
 		"stabilize_memory_echo":
-			return {
+			return _with_registry_quest_data({
 				"id": "stabilize_memory_echo",
 				"title": "Stabilize the Memory Echo",
-				"owner": "Memory Echo",
-				"location": "Staff Corridor",
 				"summary": "Stabilize the Memory Echo.",
 				"details": "The Final Night route is stable. The Memory Echo can now stabilize the signal before the Staff Room reveals what happened.",
-				"required": true,
-				"starts_after": "final_night_walk_completed",
-				"minigame": "Memory Echo",
-				"memory_signal_after": "Overloaded",
-			}
+			}, "memory_echo")
 		"circuit_soda":
 			return _with_registry_quest_data({
 				"id": "circuit_soda",
@@ -776,7 +821,7 @@ func update_memory_signal_from_progress() -> void:
 	if post_reveal_roam_unlocked:
 		set_memory_signal_level(MEMORY_SIGNAL_RESTORED)
 		return
-	if staff_room_unlocked or story_puzzle_completed:
+	if staff_corridor_unlocked or story_puzzle_completed:
 		set_memory_signal_level(MEMORY_SIGNAL_OVERLOADED)
 		return
 	if lying_cabinets_completed or second_memory_fragment_collected:
@@ -952,7 +997,15 @@ func apply_save_data(data: Dictionary) -> void:
 	staff_door_final_walk_anecdote_seen = bool(data.get("staff_door_final_walk_anecdote_seen", false))
 	memory_echo_started = bool(data.get("memory_echo_started", memory_echo_started))
 	memory_echo_completed = bool(data.get("memory_echo_completed", memory_echo_completed))
-	if memory_echo_completed:
+	if security_tape_assembly_completed:
+		lost_shift_file_completed = true
+		static_service_run_started = true
+		static_service_run_completed = true
+		maintenance_sync_started = true
+		maintenance_sync_completed = true
+		story_puzzle_completed = true
+		staff_corridor_unlocked = true
+	if final_night_walk_completed:
 		lost_shift_file_completed = true
 		static_service_run_started = true
 		static_service_run_completed = true
@@ -962,8 +1015,21 @@ func apply_save_data(data: Dictionary) -> void:
 		staff_corridor_unlocked = true
 		security_tape_assembly_started = true
 		security_tape_assembly_completed = true
+	if memory_echo_completed:
+		lost_shift_file_completed = true
+		static_service_run_started = true
+		static_service_run_completed = true
+		maintenance_sync_started = true
+		maintenance_sync_completed = true
+		story_puzzle_completed = true
+		staff_corridor_unlocked = true
+		staff_room_unlocked = true
+		security_tape_assembly_started = true
+		security_tape_assembly_completed = true
 		final_night_walk_started = true
 		final_night_walk_completed = true
+	elif not twist_reveal_seen:
+		staff_room_unlocked = false
 	twist_reveal_seen = data.get("twist_reveal_seen", twist_reveal_seen)
 	if twist_reveal_seen:
 		lost_shift_file_completed = true
@@ -973,6 +1039,7 @@ func apply_save_data(data: Dictionary) -> void:
 		maintenance_sync_completed = true
 		story_puzzle_completed = true
 		staff_corridor_unlocked = true
+		staff_room_unlocked = true
 		security_tape_assembly_started = true
 		security_tape_assembly_completed = true
 		final_night_walk_started = true

@@ -47,6 +47,8 @@ assets/art/minigames/sync_door/
 assets/art/minigames/truth_filter/
 assets/art/minigames/circuit_soda/
 assets/art/minigames/broken_high_score/
+assets/art/minigames/adventure/
+assets/art/minigames/security_tape/
 assets/art/cutscenes/
 assets/art/cutscenes/memory_reveal/
 assets/art/ui/
@@ -109,6 +111,18 @@ The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys t
 | Truth Filter cabinet states | 4 frames, 64x64 each | `assets/art/minigames/truth_filter/truth_filter_cabinets_sheet.png` | Integrated | Optional state sheet with panel-color fallback. |
 | Circuit Soda tile sheet | 6 frames, 32x32 each | `assets/art/minigames/circuit_soda/circuit_soda_tiles_sheet.png` | Integrated | Optional tile icons with text-button fallback. |
 | Broken High Score screen art | 640x440 | `assets/art/minigames/broken_high_score/broken_high_score_screen.png` | Integrated | Optional screen background with flat-color fallback; feature remains non-blocking. |
+| Adventure player 8-bit sprite | 16x16 | `assets/art/minigames/adventure/player_8bit.png` | Planned | Shared optional player sprite for Static Service Run and Final Night Walk; colored square fallback remains. |
+| Static Service maintenance tiles | 16x16 or 24x24 tiles | `assets/art/minigames/adventure/maintenance_tiles.png` | Planned | Future tile sheet for service floor/walls; current colored placeholder grid remains readable if missing. |
+| Static Service static leak | 16x16 | `assets/art/minigames/adventure/static_leak.png` | Planned | Hazard art; must read as electrical/static leak at tile scale. |
+| Static Service signal fuse | 16x16 | `assets/art/minigames/adventure/signal_fuse.png` | Planned | Collectible art for 3 Signal Fuses; current `F` marker remains if missing. |
+| Static Service breaker panel | 16x16 | `assets/art/minigames/adventure/breaker_panel.png` | Planned | Goal tile art; must be visibly distinct from fuses and hazards. |
+| Security Tape background | 640x440 or scalable | `assets/art/minigames/security_tape/security_tape_background.png` | Planned | Optional full-screen backdrop behind the existing panel; must not reduce text contrast. |
+| Security Tape fragment panel | Scalable UI panel or 96x32 per button | `assets/art/minigames/security_tape/tape_fragment_panel.png` | Planned | Optional button/panel texture for tape fragments; text labels must remain legible. |
+| Security Tape static overlay | 640x440 transparent overlay | `assets/art/minigames/security_tape/tape_static_overlay.png` | Planned | Optional subtle static layer; must ignore input and stay low-opacity. |
+| Final Night tiles | 16x16 or 24x24 tiles | `assets/art/minigames/adventure/final_night_tiles.png` | Planned | Future tile sheet for the memory route; current purple/blue placeholder grid remains. |
+| Final Night memory frame | 16x16 | `assets/art/minigames/adventure/memory_frame.png` | Planned | Ordered collectible art; frame number/text feedback must remain readable. |
+| Final Night rewind static | 16x16 | `assets/art/minigames/adventure/rewind_static.png` | Planned | Hazard art; should feel distinct from Static Service's static leak. |
+| Final Night staff door marker | 16x16 | `assets/art/minigames/adventure/staff_door_marker.png` | Planned | Goal/exit marker art; should suggest the Staff Door without revealing Staff Room content. |
 
 ## Hub Character Idle Sheet Checklist
 | Sheet | Recommended Size | Folder | Status | Notes |

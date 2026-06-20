@@ -179,7 +179,7 @@ func _has_connected_path() -> bool:
 		if pos == output_pos and _tile_has_side(index, SIDE_E):
 			return true
 		for side in _get_tile_connections(index):
-			var next_pos := pos + DIRS[side]
+			var next_pos: Vector2i = pos + DIRS[side]
 			if not _pos_in_grid(next_pos):
 				continue
 			var next_index := _index_from_pos(next_pos)

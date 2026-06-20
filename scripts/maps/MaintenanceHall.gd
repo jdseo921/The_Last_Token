@@ -85,9 +85,9 @@ func _handle_gus() -> void:
 	if GameState.lost_shift_file_completed and not GameState.static_service_run_completed and not GameState.maintenance_sync_completed and not GameState.story_puzzle_completed:
 		GameState.gus_lost_shift_comment_seen = true
 		start_dialogue([
-			{"speaker": "Gus", "text": "Employee 04. Cabinet shutdown."},
-			{"speaker": "Gus", "text": "Yeah. That is where the night went bad."},
-			{"speaker": "Gus", "text": "Before I sync anything, the service route needs power."},
+			{"speaker": "Gus", "text": "The file gives me enough to work with."},
+			{"speaker": "Gus", "text": "But the maintenance route is dead."},
+			{"speaker": "Gus", "text": "Go wake the service power before I ask the door anything important."},
 		], Callable(self, "_go_to_static_service_run"))
 		return
 	if GameState.static_service_run_completed and not GameState.gus_static_run_anecdote_seen:
@@ -95,8 +95,7 @@ func _handle_gus() -> void:
 		start_dialogue([
 			{"speaker": "Gus", "text": "Power's back."},
 			{"speaker": "Gus", "text": "Door's awake."},
-			{"speaker": "Gus", "text": "That is usually good news, except when the door is smarter than the staff."},
-			{"speaker": "Gus", "text": "Now we can sync the two signals."},
+			{"speaker": "Gus", "text": "Now the hard part: making it listen without letting it answer too much."},
 		])
 		return
 	if not GameState.maintenance_sync_completed and not GameState.story_puzzle_completed:

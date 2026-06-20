@@ -132,7 +132,8 @@ func collect_save_data() -> Dictionary:
 func apply_save_data(data: Dictionary) -> void:
 	if data.has("game_state") and typeof(data["game_state"]) == TYPE_DICTIONARY:
 		GameState.reset_for_new_game()
-		GameState.apply_save_data(data["game_state"])
+		var compatible_state := GameState.get_compatible_save_data_for_summary(data["game_state"])
+		GameState.apply_save_data(compatible_state)
 
 func load_saved_scene_or_default(data: Dictionary) -> void:
 	var scene_path := str(data.get("current_scene", ""))
@@ -201,7 +202,7 @@ func _normalize_slot_summary(data: Dictionary, slot_id: int) -> Dictionary:
 	data["save_exists"] = true
 	if not data.has("game_state") or typeof(data["game_state"]) != TYPE_DICTIONARY:
 		return data
-	var game_state: Dictionary = data["game_state"]
+	var game_state: Dictionary = GameState.get_compatible_save_data_for_summary(data["game_state"])
 	data["story_phase"] = GameState.get_story_phase_label_from_data(game_state)
 	data["games_completed_count"] = GameState.get_games_completed_count_from_data(game_state)
 	data["total_games_count"] = GameState.get_total_games_count()
@@ -214,7 +215,7 @@ func _normalize_slot_summary(data: Dictionary, slot_id: int) -> Dictionary:
 	data["post_reveal_roam_unlocked"] = bool(game_state.get("post_reveal_roam_unlocked", false))
 	data["ending_seen"] = bool(game_state.get("ending_seen", false))
 	data["twist_reveal_seen"] = bool(game_state.get("twist_reveal_seen", false))
-	var signal_level := int(game_state.get("memory_signal_level", 0))
+	var signal_level := GameState.get_memory_signal_level_from_data(game_state)
 	data["memory_signal_label"] = GameState.get_memory_signal_label_from_level(signal_level)
 	if not data.has("last_saved_at") or str(data["last_saved_at"]).is_empty():
 		data["last_saved_at"] = str(game_state.get("save_timestamp", "Unknown"))

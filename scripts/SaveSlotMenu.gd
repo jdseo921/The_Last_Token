@@ -70,9 +70,9 @@ func _build_slots() -> void:
 	slot_buttons.clear()
 	for slot_id in range(1, 4):
 		var button := Button.new()
-		button.text = "Save Slot %d" % slot_id
-		button.custom_minimum_size = Vector2(0, 92)
-		button.add_theme_font_size_override("font_size", 12)
+		button.text = "Memory Slot %d" % slot_id
+		button.custom_minimum_size = Vector2(0, 96)
+		button.add_theme_font_size_override("font_size", 10)
 		button.pressed.connect(_on_slot_pressed.bind(slot_id))
 		slots_vbox.add_child(button)
 		slot_buttons.append(button)
@@ -87,7 +87,7 @@ func _refresh_slots() -> void:
 		button.disabled = false
 		if not save_exists:
 			var empty_action := "Choose to begin" if current_mode == MODE_NEW_GAME else "Cannot load"
-			button.text = "Save Slot %d\nEMPTY SAVE\n%s" % [slot_id, empty_action]
+			button.text = "Memory Slot %d\nEMPTY SAVE\n%s" % [slot_id, empty_action]
 		else:
 			button.text = "Memory Slot %d\nStatus: %s\nMain: %d / %d\nOptional: %d / %d\nSecrets: %d / %d\nSignal: %s\nLast Saved: %s" % [
 				slot_id,

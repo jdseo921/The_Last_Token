@@ -81,9 +81,15 @@ func _handle_memory_echo() -> void:
 		])
 		return
 	if not GameState.memory_echo_completed:
-		GameState.start_memory_echo()
-		GameState.set_pending_spawn_id("Spawn_FromMemoryEcho")
-		SceneChanger.go_to_memory_echo()
+		if not GameState.memory_echo_started:
+			GameState.start_memory_echo()
+			start_dialogue([
+				{"speaker": "Memory System", "text": "FINAL NIGHT ROUTE STABLE."},
+				{"speaker": "Memory System", "text": "MEMORY ECHO AVAILABLE."},
+				{"speaker": "Memory System", "text": "IDENTITY CONFLICT APPROACHING READABLE RANGE."},
+			], Callable(self, "_go_to_memory_echo"))
+			return
+		_go_to_memory_echo()
 		return
 	if not GameState.memory_echo_anecdote_seen:
 		GameState.memory_echo_anecdote_seen = true
@@ -112,9 +118,16 @@ func _handle_security_tape() -> void:
 			{"speaker": "Staff Door", "text": "CUSTOMER RECORD NOT FOUND."},
 		])
 		return
-	GameState.start_security_tape_assembly()
-	GameState.set_pending_spawn_id("Spawn_FromSecurityTape")
-	SceneChanger.go_to_security_tape_assembly()
+	if not GameState.security_tape_assembly_started:
+		GameState.start_security_tape_assembly()
+		start_dialogue([
+			{"speaker": "Staff Door", "text": "SECURITY TAPE DAMAGED."},
+			{"speaker": "Staff Door", "text": "FINAL NIGHT SEQUENCE REQUIRED."},
+			{"speaker": "Mr. Byte", "text": "Security tape fragments detected."},
+			{"speaker": "Mr. Byte", "text": "Recommended action: restore order before restoring identity."},
+		], Callable(self, "_go_to_security_tape_assembly"))
+		return
+	_go_to_security_tape_assembly()
 
 func _handle_final_night_walk() -> void:
 	if not GameState.security_tape_assembly_completed:
@@ -138,9 +151,27 @@ func _handle_final_night_walk() -> void:
 			{"speaker": "Staff Door", "text": "MEMORY ECHO READY."},
 		])
 		return
-	GameState.start_final_night_walk()
+	if not GameState.final_night_walk_started:
+		GameState.start_final_night_walk()
+		start_dialogue([
+			{"speaker": "Staff Door", "text": "TAPE ORDER RESTORED."},
+			{"speaker": "Staff Door", "text": "ROUTE MEMORY UNSTABLE."},
+			{"speaker": "Staff Door", "text": "WALK THE FINAL NIGHT."},
+		], Callable(self, "_go_to_final_night_walk"))
+		return
+	_go_to_final_night_walk()
+
+func _go_to_security_tape_assembly() -> void:
+	GameState.set_pending_spawn_id("Spawn_FromSecurityTape")
+	SceneChanger.go_to_security_tape_assembly()
+
+func _go_to_final_night_walk() -> void:
 	GameState.set_pending_spawn_id("Spawn_FromFinalNightWalk")
 	SceneChanger.go_to_final_night_walk()
+
+func _go_to_memory_echo() -> void:
+	GameState.set_pending_spawn_id("Spawn_FromMemoryEcho")
+	SceneChanger.go_to_memory_echo()
 
 func _handle_staff_room_door() -> void:
 	if not GameState.memory_echo_completed:

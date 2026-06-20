@@ -11,6 +11,8 @@ Use automated checks for:
 - Direct scene parse/load sanity.
 - Missing script/resource errors.
 - Obvious GDScript parser errors.
+- Required route scene path existence.
+- Required route flag/progress smoke checks.
 
 Do not use automated checks as the only proof for:
 
@@ -55,6 +57,59 @@ If running individual commands manually, run these only as smoke checks and do n
 ```
 
 If these pass, report them as `headless smoke passed`, not as `live playthrough passed`.
+
+## Expanded Required Route QA Helpers
+These helpers support the expanded required route. They are not proof that the game feels good, that interactions are reachable, or that a player can complete the route.
+
+### ScenePathSmoke
+Checks that every required route scene path still exists.
+
+```powershell
+& "$env:USERPROFILE\Downloads\Godot_v4.7-stable_win64.exe\Godot_v4.7-stable_win64_console.exe" --headless --disable-crash-handler --path "." --log-file "$env:TEMP\the_last_token_scene_path_smoke.log" --script "res://scripts/qa/ScenePathSmoke.gd"
+```
+
+Expected result:
+
+- Prints each required scene as `OK`.
+- Exits with code `0` when all scenes exist.
+- Exits with code `1` and prints `MISSING` for any broken path.
+
+### RequiredRouteStateSmoke
+Simulates required route flags in order and prints:
+
+- Current quest id.
+- Story phase.
+- Memory Signal.
+- Required progress count.
+
+It checks this sequence:
+
+- New Memory.
+- Rockbyte complete.
+- Lost Token returned.
+- Truth Filter complete.
+- Circuit Soda complete.
+- Lost Shift File complete.
+- Static Service Run complete.
+- Maintenance Sync complete.
+- Security Tape complete.
+- Final Night Walk complete.
+- Memory Echo complete.
+- Reveal complete.
+
+```powershell
+& "$env:USERPROFILE\Downloads\Godot_v4.7-stable_win64.exe\Godot_v4.7-stable_win64_console.exe" --headless --disable-crash-handler --path "." --log-file "$env:TEMP\the_last_token_required_route_state_smoke.log" --script "res://scripts/qa/RequiredRouteStateSmoke.gd"
+```
+
+Expected result:
+
+- Main progress advances from `0/10` to `10/10`.
+- Quest IDs match the next required objective.
+- Story phase and Memory Signal match the simulated route state.
+- Exits with code `0` when all checks pass.
+- Exits with code `1` if a quest id, story phase, signal, or progress count does not match.
+
+Use this helper to catch missing flags, bad progress counts, and wrong quest IDs. Do not use it as acceptance for movement, dialogue timing, scene transitions, minigame playability, save/load behavior, or the full live route.
 
 ## Commands To Avoid In This Workspace
 Avoid these until the `user://logs` crash is solved:

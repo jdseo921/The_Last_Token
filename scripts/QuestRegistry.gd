@@ -12,27 +12,36 @@ static func get_quest(id: String) -> Dictionary:
 	return {}
 
 static func get_active_main_quest_id() -> String:
-	if not GameState.lost_token_quest_completed:
+	var state := _get_game_state()
+	if state == null:
+		return ""
+	if not state.lost_token_quest_completed:
 		return "lost_token"
-	if not GameState.lying_cabinets_completed:
+	if not state.lying_cabinets_completed:
 		return "truth_filter"
-	if not GameState.circuit_soda_completed:
+	if not state.circuit_soda_completed:
 		return "circuit_soda"
-	if not GameState.lost_shift_file_completed:
+	if not state.lost_shift_file_completed:
 		return "lost_shift_file"
-	if not GameState.static_service_run_completed:
+	if not state.static_service_run_completed:
 		return "static_service_run"
-	if not GameState.story_puzzle_completed:
+	if not state.story_puzzle_completed:
 		return "maintenance_sync"
-	if not GameState.security_tape_assembly_completed:
+	if not state.security_tape_assembly_completed:
 		return "security_tape_assembly"
-	if not GameState.final_night_walk_completed:
+	if not state.final_night_walk_completed:
 		return "final_night_walk"
-	if not GameState.memory_echo_completed:
-		return "staff_corridor"
-	if not GameState.twist_reveal_seen:
+	if not state.memory_echo_completed:
+		return "memory_echo"
+	if not state.twist_reveal_seen:
 		return "staff_corridor"
 	return ""
+
+static func _get_game_state() -> Node:
+	var main_loop := Engine.get_main_loop()
+	if main_loop is SceneTree:
+		return (main_loop as SceneTree).root.get_node_or_null("GameState")
+	return null
 
 static func get_active_main_quest_data() -> Dictionary:
 	return get_quest(get_active_main_quest_id())
@@ -180,17 +189,16 @@ static func _fallback_quests() -> Dictionary:
 		"staff_corridor": {
 			"id": "staff_corridor",
 			"title": "Enter the Staff Corridor",
-			"owner": "Memory Echo",
+			"owner": "Staff Door",
 			"location": "Staff Corridor",
 			"summary": "Follow the Overloaded signal past the Staff Door.",
 			"details": "Gus stabilized the door, but the arcade is not ready to show the Staff Room yet. Something is echoing in the corridor.",
-			"minigame": "Memory Echo",
+			"minigame": "None",
 			"required": true,
 			"starts_after": "maintenance_sync_completed",
 			"completion_dialogue": [
-				{"speaker": "Memory Echo", "text": "Echo stabilized."},
-				{"speaker": "Memory Echo", "text": "The arcade stops arguing with itself."},
-				{"speaker": "Memory Echo", "text": "That might be worse."},
+				{"speaker": "Staff Door", "text": "ACCESS GRANTED."},
+				{"speaker": "Staff Door", "text": "EMPLOYEE SIGNAL ACCEPTED."},
 			],
 			"memory_signal_after": "Overloaded",
 		},
@@ -225,6 +233,23 @@ static func _fallback_quests() -> Dictionary:
 				{"speaker": "Staff Door", "text": "FINAL NIGHT SEQUENCE STABILIZED."},
 				{"speaker": "Staff Door", "text": "ONE WALKED IN."},
 				{"speaker": "Staff Door", "text": "TWO SIGNALS ANSWERED."},
+			],
+			"memory_signal_after": "Overloaded",
+		},
+		"memory_echo": {
+			"id": "memory_echo",
+			"title": "Stabilize the Memory Echo",
+			"owner": "Memory Echo",
+			"location": "Staff Corridor",
+			"summary": "Stabilize the Memory Echo.",
+			"details": "The Final Night route is stable. The Memory Echo can now stabilize the signal before the Staff Room reveals what happened.",
+			"minigame": "Memory Echo",
+			"required": true,
+			"starts_after": "final_night_walk_completed",
+			"completion_dialogue": [
+				{"speaker": "Memory Echo", "text": "Echo stabilized."},
+				{"speaker": "Memory Echo", "text": "The arcade stops arguing with itself."},
+				{"speaker": "Memory Echo", "text": "That might be worse."},
 			],
 			"memory_signal_after": "Overloaded",
 		},

@@ -81,14 +81,13 @@ func _handle_vendo() -> void:
 		GameState.vendo_circuit_anecdote_seen = true
 		start_dialogue([
 			{"speaker": "Vendo", "text": "Signal routed."},
-			{"speaker": "Vendo", "text": "You successfully became beverage-adjacent data."},
-			{"speaker": "Vendo", "text": "I would offer a receipt, but the printer remembers too much."},
-			{"speaker": "Vendo", "text": "Your label is still missing, but the machine knows what shelf you go on."},
+			{"speaker": "Vendo", "text": "Unfortunately, routed does not mean understood."},
+			{"speaker": "Vendo", "text": "Mira and Gus have records. Try not to enjoy paperwork."},
 		])
 		return
 	start_dialogue([
 		{"speaker": "Vendo", "text": "Signal routed."},
-		{"speaker": "Vendo", "text": "Still not a drink."},
+		{"speaker": "Vendo", "text": "Paperwork remains tragically next."},
 	])
 
 func _handle_circuit_soda() -> void:

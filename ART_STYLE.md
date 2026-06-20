@@ -14,11 +14,21 @@ This document defines the future visual direction for The Last Token. The curren
 
 ## Tile And Asset Size Recommendations
 - Tiles: `16x16`.
+- Arcade-adventure tiles: `16x16` or `24x24`; keep walls, floors, hazards, collectibles, and goals readable in a small grid.
+- Arcade-adventure player: `16x16`; strong silhouette, one-frame placeholder-safe.
+- Arcade-adventure collectibles and hazards: `16x16`; use clear shape language before detail.
 - Character sprites: `32x32`.
 - Dialogue portraits: `64x64` for MVP-friendly portraits, `96x96` for final expressive portraits.
 - Memory recall panels: `320x180` for low-res authored panels, `640x360` for higher-detail panels that still preserve a 16:9 composition.
 - Arcade cabinet/object sprites: use dimensions that fit the hub grid, usually `32x32`, `32x48`, `48x48`, or `64x64`.
 - UI icons and cursor-like markers: `16x16` or `32x32`.
+- Minigame UI panels and overlays: `640x440` full-screen assets or scalable panel textures.
+
+## Expanded Required Route Minigame Art
+- Static Service Run should use a utility/service palette: dark maintenance floor, readable wall blocks, yellow Signal Fuses, blue-white static leaks, and a green or amber breaker panel.
+- Final Night Walk should feel like a memory route, not the same service area: cooler purples/blues, brighter Memory Frames, rewind static that reads differently from service static, and a Staff Door marker that does not reveal Staff Room details.
+- Security Tape Assembly should stay UI-first. Background and static overlays must be subtle enough that fragment text and restored order text remain readable.
+- Missing minigame art must never block play. Placeholder colored tiles, text labels, and buttons remain the fallback.
 
 ## Color Palette Rules
 - Use dark base colors for floors, walls, counters, cabinet shells, and background space.
