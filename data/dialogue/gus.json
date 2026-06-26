@@ -6,17 +6,17 @@
         {"speaker": "Gus", "text": "You again. Great.", "portrait": "res://assets/art/portraits/gus/gus_annoyed.png"},
         {"speaker": "Gus", "text": "I just finished cleaning up the previous session."},
         {"speaker": "Player", "text": "Previous session?"},
-        {"speaker": "Gus", "text": "Arcade talk."},
+        {"speaker": "Gus", "text": "Arcade talk.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
         {"speaker": "Gus", "text": "Means I found tickets in places tickets should fear."}
       ],
       [
-        {"speaker": "Gus", "text": "Machines are supposed to take quarters and make noise."},
+        {"speaker": "Gus", "text": "Machines are supposed to take quarters and make noise.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
         {"speaker": "Gus", "text": "These take memories and make paperwork."},
         {"speaker": "Gus", "text": "I prefer the quarters."},
         {"speaker": "Gus", "text": "They jam less often."}
       ],
       [
-        {"speaker": "Gus", "text": "Pixel Haven used to have more staff."},
+        {"speaker": "Gus", "text": "Pixel Haven used to have more staff.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
         {"speaker": "Gus", "text": "Then the schedule started looking like a ransom note."},
         {"speaker": "Gus", "text": "Old staff. Old machines. Same floor stains."},
         {"speaker": "Gus", "text": "Somehow I am still the one with a mop."},
@@ -25,7 +25,7 @@
     ],
     "truth_filter_active": [
       [
-        {"speaker": "Gus", "text": "Careful now."},
+        {"speaker": "Gus", "text": "Careful now.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
         {"speaker": "Gus", "text": "Once machines start correcting memories, they get picky."},
         {"speaker": "Gus", "text": "Truth Filter is in Cabinet Row."},
         {"speaker": "Gus", "text": "Mr. Byte is the one acting like he grades homework."}
@@ -33,32 +33,32 @@
       [
         {"speaker": "Gus", "text": "Cabinet Row first."},
         {"speaker": "Gus", "text": "Mr. Byte can sort the lying cabinets."},
-        {"speaker": "Gus", "text": "Do not argue with a machine that owns red pens."},
+        {"speaker": "Gus", "text": "Do not argue with a machine that owns red pens.", "portrait": "res://assets/art/portraits/gus/gus_annoyed.png"},
         {"speaker": "Gus", "text": "It will enjoy that."}
       ],
       [
         {"speaker": "Gus", "text": "Truth Filter."},
         {"speaker": "Gus", "text": "Cabinet Row."},
         {"speaker": "Gus", "text": "Let Mr. Byte tell you which memory is being dramatic."},
-        {"speaker": "Gus", "text": "Then come back before the door learns sarcasm."}
+        {"speaker": "Gus", "text": "Then come back before the door learns sarcasm.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"}
       ]
     ],
     "circuit_soda_active": [
       [
-        {"speaker": "Gus", "text": "Signal's fractured."},
+        {"speaker": "Gus", "text": "Signal's fractured.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"},
         {"speaker": "Gus", "text": "Vendo has a machine for that, because of course he does.", "portrait": "res://assets/art/portraits/gus/gus_annoyed.png"},
         {"speaker": "Gus", "text": "Snack Alcove first."},
         {"speaker": "Gus", "text": "Try not to let him sell you confidence in a can."}
       ],
       [
-        {"speaker": "Gus", "text": "Vending machines should vend."},
+        {"speaker": "Gus", "text": "Vending machines should vend.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
         {"speaker": "Gus", "text": "This one routes signals."},
         {"speaker": "Gus", "text": "I wrote a complaint."},
         {"speaker": "Gus", "text": "The complaint came out carbonated."},
         {"speaker": "Gus", "text": "Go to Snack Alcove."}
       ],
       [
-        {"speaker": "Gus", "text": "Your signal is leaking all over the place."},
+        {"speaker": "Gus", "text": "Your signal is leaking all over the place.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"},
         {"speaker": "Gus", "text": "Vendo calls that a beverage-adjacent routing issue."},
         {"speaker": "Gus", "text": "I call it a mop problem."},
         {"speaker": "Gus", "text": "Either way, Snack Alcove."}
@@ -67,11 +67,11 @@
     "lost_shift_file_phase": [
       [
         {"speaker": "Gus", "text": "The maintenance note is ugly."},
-        {"speaker": "Gus", "text": "Door-report ugly."},
+        {"speaker": "Gus", "text": "Door-report ugly.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"},
         {"speaker": "Gus", "text": "I saw the Staff Door report two signals after closing."},
         {"speaker": "Gus", "text": "One entered. One stayed."},
         {"speaker": "Gus", "text": "I pretended that was routine work."},
-        {"speaker": "Gus", "text": "Routine work is easier to carry than fear.", "portrait": "res://assets/art/portraits/gus/gus_annoyed.png"}
+        {"speaker": "Gus", "text": "Routine work is easier to carry than fear.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"}
       ]
     ],
     "static_service_run_intro": [
@@ -84,19 +84,19 @@
     ],
     "static_service_run_anecdote": [
       [
-        {"speaker": "Gus", "text": "Power's back."},
+        {"speaker": "Gus", "text": "Power's back.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
         {"speaker": "Gus", "text": "Door's awake."},
         {"speaker": "Gus", "text": "Great."},
         {"speaker": "Gus", "text": "Now the building has opinions and electricity."},
         {"speaker": "Gus", "text": "That is usually how repair bills become personal."},
-        {"speaker": "Gus", "text": "Still, you did good."},
+        {"speaker": "Gus", "text": "Still, you did good.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
         {"speaker": "Gus", "text": "The hum is cleaner now."},
-        {"speaker": "Gus", "text": "Cleaner does not mean safe.", "portrait": "res://assets/art/portraits/gus/gus_annoyed.png"}
+        {"speaker": "Gus", "text": "Cleaner does not mean safe.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"}
       ]
     ],
     "maintenance_sync_intro": [
       [
-        {"speaker": "Gus", "text": "Power's back. Door's listening."},
+        {"speaker": "Gus", "text": "Power's back. Door's listening.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"},
         {"speaker": "Gus", "text": "I still hate that sentence."},
         {"speaker": "Gus", "text": "Two signals are fighting in the door."},
         {"speaker": "Gus", "text": "Help me line them up."},
@@ -106,11 +106,11 @@
     "maintenance_sync_completion_anecdote": [
       [
         {"speaker": "Gus", "text": "Door's listening now."},
-        {"speaker": "Gus", "text": "I do not like doors that listen."},
+        {"speaker": "Gus", "text": "I do not like doors that listen.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
         {"speaker": "Gus", "text": "But it answered."},
         {"speaker": "Gus", "text": "Not with words."},
         {"speaker": "Gus", "text": "Worse. With agreement."},
-        {"speaker": "Gus", "text": "Part of you matched something it lost."},
+        {"speaker": "Gus", "text": "Part of you matched something it lost.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"},
         {"speaker": "Gus", "text": "Door heard both knocks."},
         {"speaker": "Gus", "text": "Yours, and the one you forgot making."},
         {"speaker": "Gus", "text": "I am calling that fixed because I want lunch.", "portrait": "res://assets/art/portraits/gus/gus_annoyed.png"}
@@ -118,7 +118,7 @@
     ],
     "post_reveal_witness": [
       [
-        {"speaker": "Gus", "text": "Employee 04."},
+        {"speaker": "Gus", "text": "Employee 04.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
         {"speaker": "Gus", "text": "Yeah. I know."},
         {"speaker": "Gus", "text": "I recognized pieces of the old you."},
         {"speaker": "Gus", "text": "The late-shift posture."},
@@ -126,8 +126,8 @@
         {"speaker": "Gus", "text": "Did not know how to say that without making it worse."},
         {"speaker": "Gus", "text": "So I called it maintenance and kept moving."},
         {"speaker": "Gus", "text": "You were staff."},
-        {"speaker": "Gus", "text": "Still are, in the ways that matter."},
-        {"speaker": "Gus", "text": "I do not want to clean around another absence.", "portrait": "res://assets/art/portraits/gus/gus_annoyed.png"}
+        {"speaker": "Gus", "text": "Still are, in the ways that matter.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
+        {"speaker": "Gus", "text": "I do not want to clean around another absence.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"}
       ]
     ]
   }

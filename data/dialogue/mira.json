@@ -3,13 +3,13 @@
   "sets": {
     "opening_first_meeting": [
       [
-        {"speaker": "Mira", "text": "You made it back."},
-        {"speaker": "Mira", "text": "I was afraid the door had forgotten you for good.", "portrait": "res://assets/art/portraits/mira/mira_worried.png"},
+        {"speaker": "Mira", "text": "You made it back.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
+        {"speaker": "Mira", "text": "I was afraid the door had forgotten you for good.", "portrait": "res://assets/art/portraits/mira/mira_afraid.png"},
         {"speaker": "Player", "text": "Do I know you?"},
         {"speaker": "Mira", "text": "Yes."},
         {"speaker": "Mira", "text": "But not in a way I can explain all at once."},
         {"speaker": "Player", "text": "That is not comforting."},
-        {"speaker": "Mira", "text": "I know. I am trying to keep it gentle."}
+        {"speaker": "Mira", "text": "I know. I am trying to keep it gentle.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"}
       ]
     ],
     "lost_token_quest_instruction": [
@@ -21,7 +21,7 @@
     ],
     "lost_token_active_repeat": [
       [
-        {"speaker": "Mira", "text": "Cabinet 07 is waiting."},
+        {"speaker": "Mira", "text": "Cabinet 07 is waiting.", "portrait": "res://assets/art/portraits/mira/mira_worried.png"},
         {"speaker": "Mira", "text": "It only opens for signals it almost remembers."},
         {"speaker": "Player", "text": "That sounds like a terrible way to recognize someone."},
         {"speaker": "Mira", "text": "Around here, it counts as friendly."}
@@ -34,7 +34,7 @@
         {"speaker": "Mira", "text": "The rest will catch up."}
       ],
       [
-        {"speaker": "Mira", "text": "I promise I am not brushing you off."},
+        {"speaker": "Mira", "text": "I promise I am not brushing you off.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
         {"speaker": "Mira", "text": "The token matters."},
         {"speaker": "Mira", "text": "Not because it is valuable."},
         {"speaker": "Mira", "text": "Because something here still knows it belongs to you."},
@@ -43,20 +43,20 @@
     ],
     "lost_token_return_anecdote": [
       [
-        {"speaker": "Mira", "text": "You brought it back.", "portrait": "res://assets/art/portraits/mira/mira_worried.png"},
+        {"speaker": "Mira", "text": "You brought it back.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
         {"speaker": "Mira", "text": "That token was once just a prize."},
         {"speaker": "Mira", "text": "A cheap little thing from the counter."},
         {"speaker": "Mira", "text": "Then the arcade held onto it like proof."},
-        {"speaker": "Mira", "text": "Proof that something here still knows you."},
-        {"speaker": "Mira", "text": "I remember you helping after closing."},
+        {"speaker": "Mira", "text": "Proof that something here still knows you.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
+        {"speaker": "Mira", "text": "I remember you helping after closing.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
         {"speaker": "Mira", "text": "Stacking chairs. Checking machines. Pretending you were not tired."},
         {"speaker": "Mira", "text": "You always made the work look smaller than it was."},
-        {"speaker": "Mira", "text": "Now the arcade is trying to make you look back."}
+        {"speaker": "Mira", "text": "Now the arcade is trying to make you look back.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"}
       ]
     ],
     "truth_filter_transition": [
       [
-        {"speaker": "Mira", "text": "The token woke something."},
+        {"speaker": "Mira", "text": "The token woke something.", "portrait": "res://assets/art/portraits/mira/mira_worried.png"},
         {"speaker": "Mira", "text": "Now the arcade has to decide which memories are true."},
         {"speaker": "Mira", "text": "Mr. Byte can open the Truth Filter."},
         {"speaker": "Mira", "text": "He is in Cabinet Row."}
@@ -64,7 +64,7 @@
     ],
     "circuit_soda_transition": [
       [
-        {"speaker": "Mira", "text": "Your Memory Signal is Fractured now.", "portrait": "res://assets/art/portraits/mira/mira_worried.png"},
+        {"speaker": "Mira", "text": "Your Memory Signal is Fractured now.", "portrait": "res://assets/art/portraits/mira/mira_afraid.png"},
         {"speaker": "Mira", "text": "I do not like how that feels in the room."},
         {"speaker": "Mira", "text": "Vendo says fractured things still need somewhere to flow."},
         {"speaker": "Mira", "text": "Go to Snack Alcove."},
@@ -74,9 +74,9 @@
     "lost_shift_file_dialogue": [
       [
         {"speaker": "Mira", "text": "The records are waking up now."},
-        {"speaker": "Mira", "text": "I remember locking the counter."},
+        {"speaker": "Mira", "text": "I remember locking the counter.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
         {"speaker": "Mira", "text": "I remember the carpet lights going dim."},
-        {"speaker": "Mira", "text": "But the last part is still missing.", "portrait": "res://assets/art/portraits/mira/mira_worried.png"},
+        {"speaker": "Mira", "text": "But the last part is still missing.", "portrait": "res://assets/art/portraits/mira/mira_afraid.png"},
         {"speaker": "Mira", "text": "There was a schedule."},
         {"speaker": "Mira", "text": "There was a maintenance note."},
         {"speaker": "Mira", "text": "Gus and Mr. Byte may remember the edges."},
@@ -85,28 +85,28 @@
     ],
     "overloaded_pre_staff_room": [
       [
-        {"speaker": "Mira", "text": "The signal is loud now.", "portrait": "res://assets/art/portraits/mira/mira_worried.png"},
+        {"speaker": "Mira", "text": "The signal is loud now.", "portrait": "res://assets/art/portraits/mira/mira_afraid.png"},
         {"speaker": "Mira", "text": "Not angry."},
         {"speaker": "Mira", "text": "Scared."},
         {"speaker": "Mira", "text": "When the Staff Room opens, do not rush past what it shows you."},
         {"speaker": "Mira", "text": "You have survived every answer so far."},
-        {"speaker": "Mira", "text": "Survive this one slowly."}
+        {"speaker": "Mira", "text": "Survive this one slowly.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"}
       ]
     ],
     "post_reveal_witness": [
       [
-        {"speaker": "Mira", "text": "Employee 04."},
-        {"speaker": "Mira", "text": "I can say it now."},
-        {"speaker": "Mira", "text": "I knew you as a coworker before I knew you as a restored memory.", "portrait": "res://assets/art/portraits/mira/mira_worried.png"},
+        {"speaker": "Mira", "text": "Employee 04.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
+        {"speaker": "Mira", "text": "I can say it now.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
+        {"speaker": "Mira", "text": "I knew you as a coworker before I knew you as a restored memory.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
         {"speaker": "Mira", "text": "You stayed late when everyone else wanted to leave."},
         {"speaker": "Mira", "text": "You checked whether everyone got home."},
         {"speaker": "Mira", "text": "You made broken cabinets feel less broken."},
         {"speaker": "Mira", "text": "I waited because I did not know what else counted as helping."},
-        {"speaker": "Mira", "text": "I felt guilty for waiting."},
+        {"speaker": "Mira", "text": "I felt guilty for waiting.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
         {"speaker": "Mira", "text": "Guilty for being relieved when you came back wrong instead of not at all."},
         {"speaker": "Mira", "text": "But you came back with the hard parts too."},
         {"speaker": "Mira", "text": "You came back enough to be spoken to."},
-        {"speaker": "Mira", "text": "I am so relieved I get to remember you gently."}
+        {"speaker": "Mira", "text": "I am so relieved I get to remember you gently.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"}
       ]
     ]
   }

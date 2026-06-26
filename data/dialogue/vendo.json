@@ -3,7 +3,7 @@
   "sets": {
     "early_flavor": [
       [
-        {"speaker": "Vendo", "text": "Welcome, valued almost-customer."},
+        {"speaker": "Vendo", "text": "Welcome, valued almost-customer.", "portrait": "res://assets/art/portraits/vendo/vendo_smug.png"},
         {"speaker": "Vendo", "text": "Please select a beverage or a coping mechanism."},
         {"speaker": "Vendo", "text": "Refunds remain impossible, but denial is currently chilled."},
         {"speaker": "Vendo", "text": "Labels may peel. Feelings may leak."},
@@ -13,19 +13,19 @@
         {"speaker": "Vendo", "text": "New promotional bundle: one can, two doubts, no receipt."},
         {"speaker": "Vendo", "text": "One flavor tastes like lime and denial."},
         {"speaker": "Vendo", "text": "Another tastes like tickets someone forgot to cash in."},
-        {"speaker": "Vendo", "text": "Your label is missing. That is terrible shelf presentation."},
+        {"speaker": "Vendo", "text": "Your label is missing. That is terrible shelf presentation.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
         {"speaker": "Vendo", "text": "Please do not ask customer service. It is a sticker on my left side."}
       ],
       [
         {"speaker": "Vendo", "text": "Previous sessions left residue in slot B."},
         {"speaker": "Vendo", "text": "Mostly dust. Some regret. One gum wrapper with leadership potential."},
-        {"speaker": "Vendo", "text": "Old staff used to buy grape soda after closing."},
+        {"speaker": "Vendo", "text": "Old staff used to buy grape soda after closing.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
         {"speaker": "Vendo", "text": "Now the grape soda buys time by pretending not to remember them."},
         {"speaker": "Vendo", "text": "Questionable customer service remains available."},
         {"speaker": "Vendo", "text": "For non-carbonated answers, consult Mira at the counter."}
       ],
       [
-        {"speaker": "Vendo", "text": "Today's special: coping mechanism with artificial cherry notes."},
+        {"speaker": "Vendo", "text": "Today's special: coping mechanism with artificial cherry notes.", "portrait": "res://assets/art/portraits/vendo/vendo_smug.png"},
         {"speaker": "Vendo", "text": "Side effects include deja vu, mild static, and reading labels twice."},
         {"speaker": "Vendo", "text": "If the can recognizes you, place it gently back in the machine."},
         {"speaker": "Vendo", "text": "Do not shake emotional contents."},
@@ -35,7 +35,7 @@
     ],
     "memory_cola_riddle_setup": [
       [
-        {"speaker": "Vendo", "text": "Initiating beverage-based psychological evaluation."},
+        {"speaker": "Vendo", "text": "Initiating beverage-based psychological evaluation.", "portrait": "res://assets/art/portraits/vendo/vendo_smug.png"},
         {"speaker": "Vendo", "text": "Question one: why does a customer return to a closed arcade?"},
         {"speaker": "Vendo", "text": "Do not answer. The machine is already judging the moisture in your silence."},
         {"speaker": "Vendo", "text": "Recommended product: MEMORY COLA."},
@@ -49,7 +49,7 @@
       ],
       [
         {"speaker": "Vendo", "text": "No sale."},
-        {"speaker": "Vendo", "text": "That answer contains insufficient dread."}
+        {"speaker": "Vendo", "text": "That answer contains insufficient dread.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"}
       ],
       [
         {"speaker": "Vendo", "text": "Rejected."},
@@ -62,29 +62,29 @@
     ],
     "memory_cola_correct": [
       [
-        {"speaker": "Vendo", "text": "Correct."},
+        {"speaker": "Vendo", "text": "Correct.", "portrait": "res://assets/art/portraits/vendo/vendo_sincere.png"},
         {"speaker": "Vendo", "text": "You lose memory."},
         {"speaker": "Vendo", "text": "I lose coins."},
         {"speaker": "Vendo", "text": "MEMORY COLA dispensed in theory only."},
-        {"speaker": "Vendo", "text": "Some losses keep lining up behind you like unpaid tabs."},
+        {"speaker": "Vendo", "text": "Some losses keep lining up behind you like unpaid tabs.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
         {"speaker": "Vendo", "text": "If you forget again, please retain your receipt."}
       ]
     ],
     "truth_filter_active": [
       [
-        {"speaker": "Vendo", "text": "Memory Signal: Uneasy."},
+        {"speaker": "Vendo", "text": "Memory Signal: Uneasy.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
         {"speaker": "Vendo", "text": "That is not a flavor. It is a warning label with carbonation."},
         {"speaker": "Vendo", "text": "Proceed to Cabinet Row."},
         {"speaker": "Vendo", "text": "Mr. Byte performs truth extraction with fewer bubbles."}
       ],
       [
-        {"speaker": "Vendo", "text": "Memory Signal: Uneasy."},
+        {"speaker": "Vendo", "text": "Memory Signal: Uneasy.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
         {"speaker": "Vendo", "text": "Recommended pairing: Mr. Byte and a bitter aftertaste."},
         {"speaker": "Vendo", "text": "Cabinet Row is now accepting customers with unresolved labels."},
         {"speaker": "Vendo", "text": "Do not lick the Truth Filter."}
       ],
       [
-        {"speaker": "Vendo", "text": "Memory Signal: Uneasy."},
+        {"speaker": "Vendo", "text": "Memory Signal: Uneasy.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
         {"speaker": "Vendo", "text": "Your thoughts are fizzing in opposite directions."},
         {"speaker": "Vendo", "text": "Cabinet Row can pressurize that into something useful."},
         {"speaker": "Vendo", "text": "Ask Mr. Byte. He enjoys sounding like a warranty document."}
@@ -92,7 +92,7 @@
     ],
     "circuit_soda_intro": [
       [
-        {"speaker": "Vendo", "text": "Memory Signal: Fractured."},
+        {"speaker": "Vendo", "text": "Memory Signal: Fractured.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
         {"speaker": "Vendo", "text": "Your identity is leaking through unauthorized beverage channels."},
         {"speaker": "Vendo", "text": "Insert unstable signal into Circuit Soda."},
         {"speaker": "Vendo", "text": "Align the currents until the machine stops arguing with itself."},
@@ -107,7 +107,7 @@
         {"speaker": "Vendo", "text": "Think of it as pouring yourself back into the right can."}
       ],
       [
-        {"speaker": "Vendo", "text": "Helpful hint: follow the current, not the panic."},
+        {"speaker": "Vendo", "text": "Helpful hint: follow the current, not the panic.", "portrait": "res://assets/art/portraits/vendo/vendo_smug.png"},
         {"speaker": "Vendo", "text": "Circuit Soda likes clean paths and dramatic buzzing."},
         {"speaker": "Vendo", "text": "Snack Alcove carpet does not like either."}
       ],
@@ -119,35 +119,35 @@
     ],
     "circuit_soda_completion_anecdote": [
       [
-        {"speaker": "Vendo", "text": "Signal routed."},
+        {"speaker": "Vendo", "text": "Signal routed.", "portrait": "res://assets/art/portraits/vendo/vendo_sincere.png"},
         {"speaker": "Vendo", "text": "Receipt says: identity routed successfully."},
         {"speaker": "Vendo", "text": "You successfully became beverage-adjacent data."},
         {"speaker": "Vendo", "text": "Please remain calm while the machine pretends this is normal."},
         {"speaker": "Vendo", "text": "Your label is missing, which usually means clearance bin."},
         {"speaker": "Vendo", "text": "Most machines reject unlabeled product."},
         {"speaker": "Vendo", "text": "This one did not."},
-        {"speaker": "Vendo", "text": "It recognized your signal without the label."},
+        {"speaker": "Vendo", "text": "It recognized your signal without the label.", "portrait": "res://assets/art/portraits/vendo/vendo_sincere.png"},
         {"speaker": "Vendo", "text": "I am programmed to call that successful customer retention."},
         {"speaker": "Vendo", "text": "Status note: warranty voided by existential damage."}
       ]
     ],
     "overloaded_phase": [
       [
-        {"speaker": "Vendo", "text": "The Staff Room is close enough that my display is trying not to flicker."},
+        {"speaker": "Vendo", "text": "The Staff Room is close enough that my display is trying not to flicker.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
         {"speaker": "Vendo", "text": "I would normally upsell a calming beverage."},
         {"speaker": "Vendo", "text": "Today I am recommending caution, which has terrible margins."},
         {"speaker": "Vendo", "text": "The door has stopped pretending it is only a door."},
-        {"speaker": "Vendo", "text": "Proceed carefully, valued almost-customer."},
+        {"speaker": "Vendo", "text": "Proceed carefully, valued almost-customer.", "portrait": "res://assets/art/portraits/vendo/vendo_sincere.png"},
         {"speaker": "Vendo", "text": "Flavor profile: unresolved."}
       ]
     ],
     "post_reveal_witness": [
       [
-        {"speaker": "Vendo", "text": "Employee 04."},
+        {"speaker": "Vendo", "text": "Employee 04.", "portrait": "res://assets/art/portraits/vendo/vendo_sincere.png"},
         {"speaker": "Vendo", "text": "At last, the product recalls its original label."},
         {"speaker": "Vendo", "text": "You were staff before you were a valued almost-customer."},
         {"speaker": "Vendo", "text": "System note: not just a stored file."},
-        {"speaker": "Vendo", "text": "Stored files do not make the room listen harder."},
+        {"speaker": "Vendo", "text": "Stored files do not make the room listen harder.", "portrait": "res://assets/art/portraits/vendo/vendo_sincere.png"},
         {"speaker": "Vendo", "text": "I recognized your signal and filed it under impossible returns."},
         {"speaker": "Vendo", "text": "Refunds remain impossible."},
         {"speaker": "Vendo", "text": "But welcome back anyway."},
