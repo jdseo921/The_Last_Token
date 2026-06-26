@@ -149,7 +149,13 @@ func _show_portrait(path: String) -> void:
 func _get_portrait_path(line: Dictionary, speaker: String) -> String:
 	if line.has("portrait"):
 		return str(line.get("portrait", ""))
-	return PORTRAIT_REGISTRY.get_default_portrait_path(speaker)
+	return PORTRAIT_REGISTRY.get_default_portrait_path(speaker, _should_show_revealed_player_portrait())
+
+func _should_show_revealed_player_portrait() -> bool:
+	var game_state := get_node_or_null("/root/GameState")
+	if game_state == null:
+		return false
+	return bool(game_state.get("twist_reveal_seen")) or bool(game_state.get("conscience_final_room_seen")) or bool(game_state.get("post_reveal_roam_unlocked"))
 
 func _set_text_left(left: float) -> void:
 	speaker_name_label.offset_left = left

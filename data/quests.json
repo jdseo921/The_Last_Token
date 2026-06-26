@@ -84,7 +84,7 @@
 			"starts_after": "circuit_soda_completed",
 			"completion_dialogue": [
 				{"speaker": "Quest", "text": "LOST SHIFT FILE COMPLETE"},
-				{"speaker": "Quest", "text": "Employee 04 was assigned to Cabinet shutdown."}
+				{"speaker": "Quest", "text": "A redacted staff number was assigned to Cabinet shutdown."}
 			],
 			"memory_signal_after": "Fractured"
 		},
@@ -225,16 +225,17 @@
 		"post_reveal_witness_route": {
 			"id": "post_reveal_witness_route",
 			"title": "Post-Reveal Witness Route",
-			"owner": "Mira / Gus / Vendo / Mr. Byte / Cabinet 07 / Roxy / Pip",
-			"location": "ArcadeHub, Cabinet Row, Prize Corner",
-			"summary": "Speak with the witnesses after the reveal.",
-			"details": "Pixel Haven remembers the protagonist in pieces. Speak with the witnesses after post-reveal roam unlocks.",
+			"owner": "Mira / Gus / Vendo / Mr. Byte / Cabinet 07",
+			"location": "ArcadeHub, Cabinet Row, Maintenance Hall, Snack Alcove",
+			"summary": "Speak with the core witnesses after the reveal.",
+			"details": "Pixel Haven remembers the protagonist in pieces. Roxy and Pip can add optional reflections if the player met them.",
 			"minigame": "None",
 			"required": false,
 			"starts_after": "post_reveal_roam_unlocked",
 			"completion_dialogue": [
 				{"speaker": "Quest", "text": "POST-REVEAL WITNESSES COMPLETE"},
-				{"speaker": "Quest", "text": "Pixel Haven remembers you in pieces. Together, they almost make a person."}
+				{"speaker": "Quest", "text": "Pixel Haven remembers you in pieces."},
+				{"speaker": "Quest", "text": "Together, they almost make a person."}
 			],
 			"memory_signal_after": "Restored"
 		}

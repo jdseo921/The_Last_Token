@@ -111,6 +111,19 @@ Expected result:
 
 Use this helper to catch missing flags, bad progress counts, and wrong quest IDs. Do not use it as acceptance for movement, dialogue timing, scene transitions, minigame playability, save/load behavior, or the full live route.
 
+### DialoguePoolSmoke
+Checks that `DialoguePool.gd` can load sample JSON dialogue, return first/random/sequential sets, and fall back safely for missing files or keys.
+
+```powershell
+& "$env:USERPROFILE\Downloads\Godot_v4.7-stable_win64.exe\Godot_v4.7-stable_win64_console.exe" --headless --disable-crash-handler --path "." --log-file "$env:TEMP\the_last_token_dialogue_pool_smoke.log" --script "res://scripts/qa/DialoguePoolSmoke.gd"
+```
+
+Expected result:
+
+- Prints `DialoguePoolSmoke: PASS`.
+- Exits with code `0` when sample data and fallbacks work.
+- Exits with code `1` if a required sample set cannot be loaded or fallback behavior breaks.
+
 ## Commands To Avoid In This Workspace
 Avoid these until the `user://logs` crash is solved:
 

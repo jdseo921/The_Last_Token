@@ -24,6 +24,7 @@ Assign clear ownership for a 45-75 minute compact arcade mystery so Mira remains
 | Staff Door + Mr. Byte | Security Tape Assembly | Staff Corridor | Staff Door blocks entry; Mr. Byte helps reconstruct corrupted tape. | `maintenance_sync_completed`. | `security_tape_assembly_completed` | Staff Door: "CUSTOMER RECORD NOT FOUND." | Overloaded pressure rises. | 6-9 min |
 | Staff Door / Memory System | Final Night Walk | Staff Corridor | Lets the player walk through a symbolic reconstruction before Memory Echo. | `security_tape_assembly_completed`. | `final_night_walk_completed` | Staff Door: "ONE WALKED IN. TWO SIGNALS ANSWERED." | Overloaded pressure rises. | 5-8 min |
 | Memory Echo | Memory Echo | Staff Corridor | Stabilizes identity through short memory-choice prompts. | `final_night_walk_completed`. | `memory_echo_completed` | Memory Echo: "The arcade stops arguing with itself." | Overloaded, Staff Room playback allowed. | 5-7 min |
+| ??? / `"Player"` | Final Self-Conflict | Staff Room | Confronts the protagonist's regret after the reveal slideshow and unlocks final self-recognition before EndingPrompt. | `twist_reveal_seen`. | `conscience_final_room_seen`, `player_glitched_form_unlocked` | `"Player"`: "Then carry it." | Overloaded emotional pressure; no progress-count change. | 5-8 min total |
 | Staff Room | Staff Room Reveal | Staff Room | Reveals Employee 04 and resolves the main mystery. | `memory_echo_completed`. | `twist_reveal_seen`, `post_reveal_roam_unlocked` | Player: "Employee 04. That was not a clue. It was my name tag." | Overloaded -> Restored. | 6-8 min |
 
 ## Optional Ownership Matrix
@@ -46,7 +47,7 @@ Assign clear ownership for a 45-75 minute compact arcade mystery so Mira remains
 | Uneasy | Mr. Byte | Mira | Records start contradicting memory. |
 | Fractured | Vendo | Mr. Byte, Gus | Signal routing and staff systems become the core mystery. |
 | Fractured Investigation | Mira + Gus + Mr. Byte | Staff records | Lost Shift File must feel collaborative, not like a fetch quest. |
-| Overloaded | Gus, Staff Door, Mr. Byte | Memory Echo | Back-room systems recognize two versions of the player; Final Night Walk makes the past physically traversable. |
+| Overloaded | Gus, Staff Door, Mr. Byte | Memory Echo, ??? / `"Player"` | Back-room systems recognize two versions of the player; Final Night Walk makes the past physically traversable; the conscience names itself after the Staff Room reveal slideshow. |
 | Restored | All core NPCs | Optional owners | Post-reveal lines can finally name Employee 04. |
 
 ## Dialogue Requirements

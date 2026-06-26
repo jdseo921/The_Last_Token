@@ -33,7 +33,7 @@
   7. Security Tape Assembly in Staff Corridor.
   8. Final Night Walk in Staff Corridor.
   9. Memory Echo dialogue-choice sequence in Staff Corridor.
-  10. Staff Room reveal, EndingPrompt, and Post-Reveal Roam.
+  10. Staff Room reveal, final self-conflict with `"Player"`, EndingPrompt, and Post-Reveal Roam.
 - Save/load checkpoints are required after Lost Token, Truth Filter, Circuit Soda, Lost Shift File, Static Service Run, Maintenance Sync, Security Tape Assembly, Final Night Walk, Memory Echo, and the reveal.
 - Pass criteria:
   - No scene path errors.
@@ -42,8 +42,24 @@
   - Objective text always points to the next required owner and location.
   - Each quest owner gives completion dialogue, then shorter repeat lines.
   - Staff Room reveal cannot happen before Memory Echo completion.
+  - Final self-conflict cannot happen before the Staff Room reveal slideshow finishes.
+  - Conscience encounters appear once after Truth Filter, Circuit Soda, Lost Shift File, and Final Night Walk.
+  - The final self-conflict unlocks the glitched player form after `twist_reveal_seen` and before EndingPrompt.
   - Optional content is not required.
   - The expanded route feels longer than the original MVP without feeling padded.
+
+## Dialogue QA And Anti-Bloat Checklist
+- Mira route: first meeting, Lost Token instruction, repeats, return anecdote, Lost Shift File, pre-Staff Room warning, and post-reveal witness.
+- Gus route: early flavor, Truth Filter/Circuit Soda nudges, Lost Shift File, Static Service Run, Maintenance Sync, and post-reveal witness.
+- Vendo route: early flavor, Memory Cola riddle, Truth Filter/Circuit Soda lines, completion anecdote, overloaded phase, and post-reveal witness.
+- Mr. Byte route: locked Truth Filter, Truth Filter intro/completion, Lost Shift File support, Security Tape support, Staff Records Chain, and post-reveal witness.
+- Cabinet 07 route: pre-Rockbyte, Rockbyte completion, Truth Filter echo, Fractured/Overloaded echo, and post-reveal status.
+- Roxy optional route: first meeting, Broken High Score intro/hints/completion/repeats, and post-reveal reflection.
+- Pip optional route: first meeting, post-token lines, Prize Sort intro/wrong/completion, and post-reveal reflection.
+- Environmental objects: Ticket Counter, Owner Portrait, Broken Cabinet, Closing Checklist, Maintenance Note, Staff Schedule, Staff Records, Security Tape, Final Night Walk, Memory Echo, Staff Room terminal, Employee 04 file, Prize Counter, Circuit Soda, Truth Filter, and Maintenance Sync.
+- Post-reveal witness route: required witnesses are Mira, Gus, Vendo, Mr. Byte, and Cabinet 07; Roxy/Pip add optional reflections unless already met.
+- Final room self-conflict: confirm `"Player"` uses the glitched protagonist portrait, no antagonist sprite appears before the name reveal, and the long dialogue remains climax-only.
+- Anti-bloat gates: required non-climax interactions stay at 10 lines or fewer, third-and-later repeats nudge objectives, and no dialogue outside Staff Room fully reveals Employee 04 before the reveal.
 
 ## Final Expanded Route Gate Result
 - Date: 2026-06-20.
@@ -153,13 +169,16 @@ Run this only after confirming the first quest still works.
 10. Complete all four rounds.
 11. Confirm `lying_cabinets_completed` and `second_memory_fragment_collected` are true.
 12. Confirm Memory Signal reads `Fractured`.
-13. Return to Cabinet Row or ArcadeHub cleanly.
-14. Confirm the objective reads `Objective: Find Vendo in the Snack Alcove.`
+13. Return to Cabinet Row cleanly.
+14. Confirm Conscience Encounter 1 appears once with speaker `???` and no antagonist sprite, silhouette, or portrait window.
+15. Save and load.
+16. Confirm Conscience Encounter 1 does not repeat.
+17. Confirm the objective reads `Objective: Find Vendo in the Snack Alcove.`
 15. Talk to Mr. Byte and confirm the first-time anecdote:
    - `Truth Filter passed.`
-   - `Contradictions remain.`
-   - `That means the memory is alive enough to argue.`
-   - `Record conflict reduced. Identity conflict remains.`
+   - `Lie density reduced.`
+   - `Identity conflict remains.`
+   - `Further stabilization required.`
 16. Talk to Mr. Byte again and confirm shorter repeat lines appear.
 17. Save and load.
 18. Confirm Truth Filter completion, Memory Signal, and `mr_byte_truth_filter_anecdote_seen` persist.
@@ -171,8 +190,9 @@ Run this after Truth Filter completion, when Memory Signal is `Fractured`.
 2. Talk to Vendo.
 3. Confirm Vendo introduces:
    - `Memory Signal: Fractured.`
-   - `Your signal is going everywhere except where it should.`
-   - `Luckily, I am a licensed beverage-adjacent routing system.`
+   - `Your identity is leaking through unauthorized beverage channels.`
+   - `Insert unstable signal into Circuit Soda.`
+   - `Align the currents until the machine stops arguing with itself.`
 4. Interact with the Circuit Soda machine.
 5. Confirm `res://scenes/minigames/CircuitSoda.tscn` opens.
 6. Rotate tiles in the 3x3 grid.
@@ -185,8 +205,9 @@ Run this after Truth Filter completion, when Memory Signal is `Fractured`.
 10. Return to Snack Alcove.
 11. Talk to Vendo and confirm:
    - `Signal routed.`
-   - `Unfortunately, routed does not mean understood.`
-   - `Mira and Gus have records. Try not to enjoy paperwork.`
+   - `Receipt says: identity routed successfully.`
+   - `It recognized your signal without the label.`
+   - `Status note: warranty voided by existential damage.`
 12. Talk to Vendo again and confirm shorter repeat lines appear.
 13. Confirm the objective reads `Objective: Find Gus in Maintenance Hall.`
 14. Save and load.
@@ -198,18 +219,17 @@ Run this after Circuit Soda completion and before Maintenance Sync.
 1. Complete Circuit Soda.
 2. Confirm the objective reads `Objective: Find the Lost Shift File.`
 3. Talk to Mira and confirm:
-   `Vendo routed the signal, but something is still missing.`
-   `Gus keeps old maintenance notes.`
-   `Mr. Byte can read staff records the machines refuse to say out loud.`
-   `Find the Lost Shift File before you ask the door to listen.`
+   `The records are waking up now.`
+   `I remember locking the counter.`
+   `But the last part is still missing.`
+   `Gus and Mr. Byte may remember the edges.`
 4. Interact with the Closing Checklist near the ticket counter or Staff Door.
 5. Confirm it reads:
    `CLOSING CHECKLIST`
-   `Final Night`
-   `- Count tokens`
-   `- Lock Cabinet Row`
-   `- Check Staff Door`
-   `- Employee 04: signature missing`
+   `Counter locked.`
+   `Cabinet Row dimmed.`
+   `Staff Door checked twice.`
+   `Final item scratched out.`
 6. Confirm `closing_checklist_read` is true.
 7. Go to Maintenance Hall.
 8. Talk to Gus and confirm he points to the maintenance note instead of launching Maintenance Sync.
@@ -229,24 +249,25 @@ Run this after Circuit Soda completion and before Maintenance Sync.
    `Final Night`
    `Mira - Counter`
    `Gus - Maintenance`
-   `Employee 04 - Cabinet shutdown`
+   `Employee ## - Cabinet shutdown`
    `Status: unresolved`
 16. Confirm `staff_schedule_read` is true.
 17. After all three notes are read, confirm:
    `lost_shift_file_completed` is true.
    The completion text appears:
    `LOST SHIFT FILE COMPLETE`
-   `Employee 04 was assigned to Cabinet shutdown.`
+   `A redacted staff number was assigned to Cabinet shutdown.`
 18. Confirm the objective becomes `Objective: Find Gus in Maintenance Hall.`
 19. Talk to Mira and confirm:
-   `That was the shift we stopped talking about.`
-   `I am sorry you had to read it before you remembered it.`
+   `The records are waking up now.`
+   `Please do not force the center before it is ready.`
 20. Talk to Gus after completion and confirm:
-   `Employee 04. Cabinet shutdown.`
-   `Yeah. That is where the night went bad.`
+   `The maintenance note is ugly.`
+   `I saw the Staff Door report two signals after closing.`
+   `The file gives me enough to work with.`
 21. Talk to Mr. Byte after completion and confirm:
-   `Lost Shift File reconstructed.`
-   `Identity reference remains restricted.`
+   `Lost Shift File access opened.`
+   `Name field remains protected.`
 22. Save and load.
 23. Confirm these flags persist:
    `lost_shift_file_started`
@@ -311,7 +332,8 @@ Run this after Lost Shift File completion and before Maintenance Sync, when Memo
 14. Talk to Gus and confirm:
    `Power's back.`
    `Door's awake.`
-   `Now the hard part: making it listen without letting it answer too much.`
+   `Great.`
+   `Cleaner does not mean safe.`
 15. Save and load.
 16. Confirm Static Service Run completion and `gus_static_run_anecdote_seen` persist.
 17. Confirm Maintenance Sync is now available.
@@ -358,8 +380,8 @@ Run this after Static Service Run completion, when Memory Signal is still `Fract
 22. Talk to Gus and confirm:
    `Door's listening now.`
    `I do not like doors that listen.`
-   `But if it opens, part of you matched something it lost.`
-   `Door heard both knocks. Yours, and the one you forgot making.`
+   `Door heard both knocks.`
+   `Yours, and the one you forgot making.`
 23. Talk to Gus again and confirm shorter repeat lines appear.
 24. Confirm the objective reads `Objective: Enter the Staff Corridor.`
 25. Confirm Staff Corridor unlocks.
@@ -467,8 +489,8 @@ Run this after Truth Filter completion. This quest is optional and must not bloc
 8. When Staff Corridor is reachable, read Record 03.
 9. Confirm it reads:
    `STAFF CORRIDOR LOG`
-   `Employee number readable after overload.`
-   `04`
+   `Employee number checksum detected.`
+   `Name field still sealed.`
 10. Confirm `staff_record_03_read` is true.
 11. After all three records are read, confirm:
    `staff_records_chain_completed` is true.
@@ -572,7 +594,7 @@ Pass condition: every step above passes in a live Godot playthrough. If any step
 11. Staff Door gating works: static pass; route checks required puzzle and Staff Corridor flags.
 12. Maintenance Sync works and unlocks Staff Corridor: static pass; puzzle success sets `story_puzzle_completed` and unlocks the route toward Security Tape Assembly.
 13. Staff Room reveal plays all 8 slides: static pass; StaffRoom passes 8 slide entries to SlideshowCutscene.
-14. EndingPrompt appears: static pass; StaffRoom instantiates EndingPrompt after reveal completion.
+14. Final self-conflict and EndingPrompt appear: static pass; StaffRoom starts the `"Player"` conversation after reveal completion, then instantiates EndingPrompt.
 15. Save and Continue returns to ArcadeHub: static pass; EndingPrompt marks post-reveal, saves active slot when present, and changes to ArcadeHub.
 16. Post-Reveal Roam dialogue appears: static pass; ArcadeHub branches on post-reveal/twist state.
 17. Post-reveal save/load works: static pass; SaveManager preserves post-reveal flags and restores safely to ArcadeHub.
@@ -719,7 +741,15 @@ Pass condition: every step above passes in a live Godot playthrough. If any step
 6. Confirm missing image panels use clean placeholders.
 7. Confirm `twist_reveal_seen` is set after the slideshow.
 8. Confirm `employee_04_file_found` is set after the reveal.
-9. Confirm EndingPrompt appears after the final slide.
+9. Confirm protagonist speaks first after the slideshow with `Employee 04.`
+10. Confirm protagonist `Player` dialogue now uses the normal neutral portrait instead of the pre-reveal blacked-out portrait.
+11. Confirm antagonist speaker is `"Player"`.
+12. Confirm `"Player"` has the shaded, pixel-glitched protagonist portrait.
+13. Confirm memory loss is explained as the conscience sealing away hardship, poverty, regret, and self-blame.
+14. Confirm protagonist explains being an arcade game maker who valued player joy over money.
+15. Confirm pride and regret are both accepted.
+16. Confirm `conscience_final_room_seen`, `conscience_name_revealed`, `player_creator_monologue_seen`, and `player_glitched_form_unlocked` are true.
+17. Confirm EndingPrompt appears after the final self-conflict conversation.
 
 ## 6. Ending Test
 1. Confirm ending text explains that memories and machines have changed.
@@ -788,8 +818,8 @@ Run this after Cabinet Row is reachable. This content is optional and must not b
 2. Talk to Roxy and confirm:
    `Finally. Player Two showed up.`
    `You look like someone who loses to menus.`
-   `Try the Broken High Score cabinet.`
-   `The screen lies, but badly.`
+   `The Broken High Score cabinet also loses to menus.`
+   `Go prove the fake target is fake.`
 3. Interact with the Broken High Score cabinet.
 4. Confirm `res://scenes/minigames/BrokenHighScore.tscn` opens.
 5. Confirm instructions say:
@@ -800,7 +830,7 @@ Run this after Cabinet Row is reachable. This content is optional and must not b
 6. Press `+10 Score` until score reaches at least `99`.
 7. Confirm completion text:
    `PREVIOUS SCORE FOUND.`
-   `EMPLOYEE 04 — 000000.`
+   `EMPLOYEE ## - 000000.`
    `RECORD RESTORED.`
 8. Return to Cabinet Row.
 9. Talk to Roxy and confirm:
@@ -827,8 +857,8 @@ Run this after Prize Corner is reachable. This content is optional and must not 
    `You used to want the blue one.`
    `You never had enough tickets.`
 4. After Truth Filter completion, talk to Pip and confirm:
-   `You are softer this time.`
-   `Less screaming.`
+   `Prize Sort is ready.`
+   `The labels remember an order.`
 5. Confirm Prize Sort opens with:
    `Arrange the prizes from oldest memory to newest memory.`
 6. Choose the correct order:
@@ -844,7 +874,7 @@ Run this after Prize Corner is reachable. This content is optional and must not 
 11. After the reveal, return to Pip and confirm:
    `There you are.`
    `Yep. Still not the original.`
-   `But you wave nicer now.`
+   `That is not mean. I checked.`
 12. Save and load.
 13. Confirm `pip_post_reveal_secret_seen` persists.
 

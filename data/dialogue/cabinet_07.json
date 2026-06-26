@@ -1,0 +1,82 @@
+{
+  "character_id": "cabinet_07",
+  "sets": {
+    "pre_rockbyte": [
+      [
+        {"speaker": "Cabinet 07", "text": "CUSTOMER SIGNAL: UNKNOWN."},
+        {"speaker": "Cabinet 07", "text": "EMPLOYEE SIGNAL: PARTIAL."},
+        {"speaker": "Cabinet 07", "text": "LOST TOKEN REQUIRED."},
+        {"speaker": "Cabinet 07", "text": "ROCKBYTE ACCESS: PENDING."}
+      ],
+      [
+        {"speaker": "Cabinet 07", "text": "PREVIOUS PLAYER PROFILE FOUND."},
+        {"speaker": "Cabinet 07", "text": "PROFILE STATUS: INCOMPLETE."},
+        {"speaker": "Cabinet 07", "text": "INSERT MEMORY."},
+        {"speaker": "Cabinet 07", "text": "INSERT TOKEN."}
+      ]
+    ],
+    "rockbyte_completion": [
+      [
+        {"speaker": "Cabinet 07", "text": "TOKEN RECOVERED."},
+        {"speaker": "Cabinet 07", "text": "SIGNAL RECOGNITION IMPROVED."},
+        {"speaker": "Cabinet 07", "text": "RETURN TO MIRA."}
+      ],
+      [
+        {"speaker": "Cabinet 07", "text": "ROCKBYTE COMPLETE."},
+        {"speaker": "Cabinet 07", "text": "LOST TOKEN: FOUND."},
+        {"speaker": "Cabinet 07", "text": "HANDOFF REQUIRED: MIRA."}
+      ]
+    ],
+    "truth_filter_phase_echo": [
+      [
+        {"speaker": "Cabinet 07", "text": "TOKEN RETURNED."},
+        {"speaker": "Cabinet 07", "text": "SIGNAL STATUS: UNEASY."},
+        {"speaker": "Cabinet 07", "text": "TRUTH FILTER REQUIRED."},
+        {"speaker": "Cabinet 07", "text": "LOCATION: CABINET ROW."}
+      ],
+      [
+        {"speaker": "Cabinet 07", "text": "TWO RECORDS DETECTED."},
+        {"speaker": "Cabinet 07", "text": "ONE RECORD CONTRADICTS."},
+        {"speaker": "Cabinet 07", "text": "TRUTH FILTER TARGET ACTIVE."}
+      ]
+    ],
+    "fractured_echo": [
+      [
+        {"speaker": "Cabinet 07", "text": "MEMORY SIGNAL: FRACTURED."},
+        {"speaker": "Cabinet 07", "text": "SECOND FRAGMENT ACCEPTED."},
+        {"speaker": "Cabinet 07", "text": "STAFF DOOR TARGET READY."},
+        {"speaker": "Cabinet 07", "text": "IDENTITY STILL MISALIGNED."}
+      ],
+      [
+        {"speaker": "Cabinet 07", "text": "PREVIOUS SCORE: DAMAGED."},
+        {"speaker": "Cabinet 07", "text": "PREVIOUS STAFF FILE: DAMAGED."},
+        {"speaker": "Cabinet 07", "text": "SIGNAL LESS WRONG."},
+        {"speaker": "Cabinet 07", "text": "CHECK STAFF DOOR."}
+      ]
+    ],
+    "overloaded_echo": [
+      [
+        {"speaker": "Cabinet 07", "text": "MEMORY SIGNAL: OVERLOADED."},
+        {"speaker": "Cabinet 07", "text": "LOCK RESPONSE: LISTENING."},
+        {"speaker": "Cabinet 07", "text": "TWO INPUTS NEAR DOOR."},
+        {"speaker": "Cabinet 07", "text": "ONE INPUT DENIES SOURCE."}
+      ],
+      [
+        {"speaker": "Cabinet 07", "text": "STATUS: TOO MUCH SIGNAL."},
+        {"speaker": "Cabinet 07", "text": "CABINET MEMORY BLEEDING."},
+        {"speaker": "Cabinet 07", "text": "STAFF ROOM EVENT NEAR."},
+        {"speaker": "Cabinet 07", "text": "DO NOT POWER OFF."}
+      ]
+    ],
+    "post_reveal_status": [
+      [
+        {"speaker": "Cabinet 07", "text": "EMPLOYEE 04 RESTORE STATUS: STABLE."},
+        {"speaker": "Cabinet 07", "text": "WELCOME BACK, EMPLOYEE 04."},
+        {"speaker": "Cabinet 07", "text": "IDENTITY CONFLICT: CLOSED."},
+        {"speaker": "Cabinet 07", "text": "PREVIOUS SESSION: CLOSED."},
+        {"speaker": "Cabinet 07", "text": "CURRENT SESSION: YOURS."},
+        {"speaker": "Cabinet 07", "text": "PLAYER SIGNAL ACCEPTED."}
+      ]
+    ]
+  }
+}

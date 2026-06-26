@@ -64,7 +64,7 @@ func _complete_game() -> void:
 	exit_button.visible = true
 	fake_target_label.text = "TARGET: 9999"
 	corrupted_digit_label.text = "0099"
-	status_label.text = "PREVIOUS SCORE FOUND.\nEMPLOYEE 04 — 000000.\nRECORD RESTORED."
+	status_label.text = "PREVIOUS SCORE FOUND.\nEMPLOYEE ## - 000000.\nRECORD RESTORED."
 	_play_audio("play_token_get")
 	exit_button.grab_focus()
 

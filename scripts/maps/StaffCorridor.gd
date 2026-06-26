@@ -1,5 +1,7 @@
 extends Node2D
 
+const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
+
 @onready var player: CharacterBody2D = $Player
 @onready var dialogue_box: CanvasLayer = $UILayer/DialogueBox
 @onready var prompt_label: Label = $UILayer/InteractionPrompt
@@ -13,9 +15,10 @@ func _ready() -> void:
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
 	_apply_spawn_position()
 	_on_prompt_changed("")
+	call_deferred("_maybe_start_conscience_encounter")
 
 func can_open_pause_menu() -> bool:
-	return not _dialogue_is_active()
+	return not _dialogue_is_active() and not ConscienceEncounterDirector.is_encounter_active()
 
 func _apply_spawn_position() -> void:
 	var spawn_id := GameState.consume_pending_spawn_id()
@@ -46,6 +49,34 @@ func _dialogue_is_active() -> bool:
 		return false
 	return dialogue_box.get("active") == true
 
+func _get_mr_byte_lines(key: String, fallback: Array) -> Array:
+	return DIALOGUE_POOL.get_lines("mr_byte", key, fallback)
+
+func _get_staff_door_lines(key: String, fallback: Array) -> Array:
+	return DIALOGUE_POOL.get_lines("staff_door", key, fallback)
+
+func _get_staff_door_sequential_lines(key: String, fallback: Array) -> Array:
+	return DIALOGUE_POOL.get_sequential_set("staff_door", key, key, fallback)
+
+func _get_environment_lines(key: String, fallback: Array) -> Array:
+	return DIALOGUE_POOL.get_lines("environment_objects", key, fallback)
+
+func _get_environment_state_lines(object_key: String, fallback: Array) -> Array:
+	var state_key := "%s_%s" % [object_key, _get_environment_state_key()]
+	var lines := _get_environment_lines(state_key, [])
+	if not lines.is_empty():
+		return lines
+	lines = _get_environment_lines("%s_locked" % object_key, fallback)
+	if not lines.is_empty():
+		return lines
+	return fallback
+
+func _get_environment_state_key() -> String:
+	GameState.update_memory_signal_from_progress()
+	if _is_post_reveal():
+		return "restored"
+	return GameState.get_memory_signal_label().to_lower()
+
 func handle_hub_interaction(interactable: Node, _player_node: Node = null) -> void:
 	match str(interactable.interactable_kind):
 		"security_tape":
@@ -63,101 +94,111 @@ func handle_hub_interaction(interactable: Node, _player_node: Node = null) -> vo
 
 func _handle_memory_echo() -> void:
 	if not GameState.maintenance_sync_completed:
-		start_dialogue([
+		start_dialogue(_get_environment_lines("memory_echo_object_maintenance_required", [
 			{"speaker": "Memory Echo", "text": "SIGNAL TOO QUIET."},
 			{"speaker": "Memory Echo", "text": "MAINTENANCE SYNC REQUIRED."},
-		])
+		]))
 		return
 	if not GameState.security_tape_assembly_completed:
-		start_dialogue([
+		start_dialogue(_get_environment_lines("memory_echo_object_security_tape_required", [
 			{"speaker": "Memory Echo", "text": "MEMORY ECHO LOCKED."},
 			{"speaker": "Memory Echo", "text": "SECURITY TAPE REQUIRED."},
-		])
+		]))
 		return
 	if not GameState.final_night_walk_completed:
-		start_dialogue([
+		start_dialogue(_get_environment_lines("memory_echo_object_final_night_required", [
 			{"speaker": "Memory Echo", "text": "MEMORY ECHO LOCKED."},
 			{"speaker": "Memory Echo", "text": "FINAL NIGHT WALK REQUIRED."},
-		])
+		]))
 		return
 	if not GameState.memory_echo_completed:
 		if not GameState.memory_echo_started:
 			GameState.start_memory_echo()
-			start_dialogue([
+			start_dialogue(_get_environment_lines("memory_echo_object_overloaded", [
 				{"speaker": "Memory System", "text": "FINAL NIGHT ROUTE STABLE."},
 				{"speaker": "Memory System", "text": "MEMORY ECHO AVAILABLE."},
 				{"speaker": "Memory System", "text": "IDENTITY CONFLICT APPROACHING READABLE RANGE."},
-			], Callable(self, "_go_to_memory_echo"))
+			]), Callable(self, "_go_to_memory_echo"))
 			return
 		_go_to_memory_echo()
 		return
 	if not GameState.memory_echo_anecdote_seen:
 		GameState.memory_echo_anecdote_seen = true
-		start_dialogue([
+		start_dialogue(_get_environment_lines("memory_echo_object_restored", [
 			{"speaker": "Memory Echo", "text": "Echo stabilized."},
 			{"speaker": "Memory Echo", "text": "The arcade stops arguing with itself."},
 			{"speaker": "Memory Echo", "text": "That might be worse."},
-		])
+		]))
 		return
-	start_dialogue([
+	start_dialogue(_get_environment_state_lines("memory_echo_object", [
 		{"speaker": "Memory Echo", "text": "Echo stable."},
 		{"speaker": "Memory Echo", "text": "Quiet is not always better."},
-	])
+	]))
 
 func _handle_security_tape() -> void:
 	if not GameState.maintenance_sync_completed:
-		start_dialogue([
+		start_dialogue(_get_environment_lines("security_tape_terminal_locked", [
 			{"speaker": "Staff Door", "text": "SECURITY TAPE LOCKED."},
 			{"speaker": "Staff Door", "text": "MAINTENANCE SYNC REQUIRED."},
-		])
+		]))
 		return
 	if GameState.security_tape_assembly_completed:
-		start_dialogue([
+		var completed_lines := _get_environment_lines("security_tape_terminal_restored", [
+			{"speaker": "Security Tape", "text": "TAPE ORDER RESTORED."},
+			{"speaker": "Security Tape", "text": "FINAL NIGHT ROUTE PARTIAL."},
+		])
+		completed_lines.append_array(_get_mr_byte_lines("security_tape_support", [
 			{"speaker": "Mr. Byte", "text": "Tape order restored."},
 			{"speaker": "Mr. Byte", "text": "Final Night sequence partial."},
-			{"speaker": "Staff Door", "text": "CUSTOMER RECORD NOT FOUND."},
-		])
+		]))
+		completed_lines.append_array(_get_staff_door_lines("final_night_walk_required", [
+			{"speaker": "Staff Door", "text": "FINAL NIGHT WALK REQUIRED."},
+		]))
+		start_dialogue(completed_lines)
 		return
 	if not GameState.security_tape_assembly_started:
 		GameState.start_security_tape_assembly()
-		start_dialogue([
-			{"speaker": "Staff Door", "text": "SECURITY TAPE DAMAGED."},
-			{"speaker": "Staff Door", "text": "FINAL NIGHT SEQUENCE REQUIRED."},
+		var start_lines := _get_environment_lines("security_tape_terminal_overloaded", [
+			{"speaker": "Security Tape", "text": "SECURITY TAPE DAMAGED."},
+			{"speaker": "Security Tape", "text": "RESTORE SEQUENCE."},
+		])
+		start_lines.append_array(_get_mr_byte_lines("security_tape_support", [
 			{"speaker": "Mr. Byte", "text": "Security tape fragments detected."},
 			{"speaker": "Mr. Byte", "text": "Recommended action: restore order before restoring identity."},
-		], Callable(self, "_go_to_security_tape_assembly"))
+		]))
+		start_dialogue(start_lines, Callable(self, "_go_to_security_tape_assembly"))
 		return
 	_go_to_security_tape_assembly()
 
 func _handle_final_night_walk() -> void:
 	if not GameState.security_tape_assembly_completed:
-		start_dialogue([
+		start_dialogue(_get_environment_lines("final_night_walk_terminal_locked", [
 			{"speaker": "Memory System", "text": "FINAL NIGHT WALK LOCKED."},
 			{"speaker": "Memory System", "text": "SECURITY TAPE REQUIRED."},
-		])
+		]))
 		return
 	if GameState.final_night_walk_completed:
 		if not GameState.staff_door_final_walk_anecdote_seen:
 			GameState.staff_door_final_walk_anecdote_seen = true
-			start_dialogue([
+			start_dialogue(_get_environment_lines("final_night_walk_terminal_restored", [
 				{"speaker": "Staff Door", "text": "ROUTE ACCEPTED."},
 				{"speaker": "Staff Door", "text": "FINAL NIGHT SEQUENCE STABILIZED."},
 				{"speaker": "Staff Door", "text": "ONE WALKED IN."},
 				{"speaker": "Staff Door", "text": "TWO SIGNALS ANSWERED."},
-			])
+			]))
 			return
-		start_dialogue([
+		start_dialogue(_get_environment_lines("final_night_walk_terminal_restored", [
 			{"speaker": "Staff Door", "text": "FINAL NIGHT ROUTE STABLE."},
 			{"speaker": "Staff Door", "text": "MEMORY ECHO READY."},
-		])
+		]))
 		return
 	if not GameState.final_night_walk_started:
 		GameState.start_final_night_walk()
-		start_dialogue([
+		start_dialogue(_get_environment_lines("final_night_walk_terminal_overloaded", [
 			{"speaker": "Staff Door", "text": "TAPE ORDER RESTORED."},
 			{"speaker": "Staff Door", "text": "ROUTE MEMORY UNSTABLE."},
 			{"speaker": "Staff Door", "text": "WALK THE FINAL NIGHT."},
-		], Callable(self, "_go_to_final_night_walk"))
+		]), Callable(self, "_go_to_final_night_walk"))
 		return
 	_go_to_final_night_walk()
 
@@ -174,36 +215,41 @@ func _go_to_memory_echo() -> void:
 	SceneChanger.go_to_memory_echo()
 
 func _handle_staff_room_door() -> void:
-	if not GameState.memory_echo_completed:
-		start_dialogue([
-			{"speaker": "Staff Room Door", "text": "RESTORE PLAYBACK LOCKED."},
-			{"speaker": "Staff Room Door", "text": "MEMORY ECHO REQUIRED."},
-		])
-		return
-	if GameState.twist_reveal_seen:
-		start_dialogue([
+	if _is_post_reveal():
+		start_dialogue(_get_staff_door_lines("post_reveal_stable", [
 			{"speaker": "Staff Room Door", "text": "RESTORE PLAYBACK COMPLETE."},
 			{"speaker": "Staff Room Door", "text": "RETURN NOT REQUIRED."},
-		])
+		]))
 		return
-	start_dialogue([
+	if not GameState.memory_echo_completed:
+		start_dialogue(_get_staff_door_sequential_lines("memory_echo_required", [
+			{"speaker": "Staff Room Door", "text": "RESTORE PLAYBACK LOCKED."},
+			{"speaker": "Staff Room Door", "text": "MEMORY ECHO REQUIRED."},
+		]))
+		return
+	start_dialogue(_get_staff_door_lines("staff_room_available", [
 		{"speaker": "Staff Room Door", "text": "RESTORE PLAYBACK AVAILABLE."},
 		{"speaker": "Staff Room Door", "text": "ENTER STAFF ROOM?"},
-	], Callable(SceneChanger, "go_to_staff_room"))
+	]), Callable(SceneChanger, "go_to_staff_room"))
 
 func _handle_staff_record_03() -> void:
 	if not GameState.lying_cabinets_completed:
-		start_dialogue([
+		start_dialogue(_get_environment_lines("staff_records_locked", [
 			{"speaker": "Staff Record", "text": "The corridor log has not finished restoring."},
-		])
+		]))
 		return
 	var was_completed := GameState.staff_records_chain_completed
 	GameState.read_staff_record_03()
-	var lines: Array = [
+	var lines := _get_environment_state_lines("staff_records", [
 		{"speaker": "Staff Record", "text": "STAFF CORRIDOR LOG"},
-		{"speaker": "Staff Record", "text": "Employee number readable after overload."},
-		{"speaker": "Staff Record", "text": "04"},
-	]
+		{"speaker": "Staff Record", "text": "Employee number sealed until Staff Room playback."},
+		{"speaker": "Staff Record", "text": "Name field unavailable."},
+	])
+	lines.append_array(_get_mr_byte_lines("staff_records_chain", [
+		{"speaker": "Mr. Byte", "text": "Record fragment accepted."},
+		{"speaker": "Mr. Byte", "text": "Identity checksum incomplete."},
+		{"speaker": "Mr. Byte", "text": "Additional staff records required."},
+	]))
 	lines.append_array(_get_staff_records_completion_lines())
 	var after_dialogue := Callable(self, "_show_staff_records_complete_notice") if not was_completed and GameState.staff_records_chain_completed else Callable()
 	start_dialogue(lines, after_dialogue)
@@ -224,3 +270,9 @@ func _show_staff_records_complete_notice() -> void:
 			"STAFF RECORDS CHAIN COMPLETE",
 			"The arcade knew the number before it knew the name."
 		)
+
+func _is_post_reveal() -> bool:
+	return GameState.post_reveal_roam_unlocked or GameState.twist_reveal_seen
+
+func _maybe_start_conscience_encounter() -> void:
+	ConscienceEncounterDirector.maybe_start_encounter(self, "after_final_night_walk")

@@ -94,12 +94,12 @@ label_text = "RECORD 03"
 
 [node name="ReturnToMaintenanceHall" parent="." instance=ExtResource("3")]
 position = Vector2(320, 412)
-target_scene_path = "res://scenes/maps/MaintenanceHall.tscn"
+target_scene_path = "res://scenes/maps/hallways/MaintenanceStaffHallway.tscn"
 target_spawn_id = "Spawn_FromStaffCorridor"
 
 [node name="ReturnToArcadeHub" parent="." instance=ExtResource("3")]
 position = Vector2(34, 360)
-target_scene_path = "res://scenes/arcade/ArcadeHub.tscn"
+target_scene_path = "res://scenes/maps/hallways/BackHallway.tscn"
 target_spawn_id = "Spawn_FromStaffCorridor"
 
 [node name="UILayer" type="Node2D" parent="."]

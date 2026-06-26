@@ -1,0 +1,100 @@
+{
+  "character_id": "staff_door",
+  "sets": {
+    "locked_grounded": [
+      [
+        {"speaker": "Staff Door", "text": "ACCESS DENIED."},
+        {"speaker": "Staff Door", "text": "EMPLOYEE SIGNAL REQUIRED."},
+        {"speaker": "Staff Door", "text": "MEMORY TOKEN SIGNAL MISSING."},
+        {"speaker": "Staff Door", "text": "REQUIRED: SPEAK TO MIRA."}
+      ],
+      [
+        {"speaker": "Staff Door", "text": "STAFF ACCESS LOCKED."},
+        {"speaker": "Staff Door", "text": "SIGNAL STATUS: GROUNDED."},
+        {"speaker": "Staff Door", "text": "REQUIRED: LOST TOKEN."}
+      ]
+    ],
+    "truth_filter_required": [
+      [
+        {"speaker": "Staff Door", "text": "STAFF ACCESS LOCKED."},
+        {"speaker": "Staff Door", "text": "MEMORY SIGNAL UNSTABLE."},
+        {"speaker": "Staff Door", "text": "REQUIRED: TRUTH FILTER."},
+        {"speaker": "Staff Door", "text": "LOCATION: CABINET ROW."}
+      ],
+      [
+        {"speaker": "Staff Door", "text": "ACCESS DENIED."},
+        {"speaker": "Staff Door", "text": "CONTRADICTIONS UNSORTED."},
+        {"speaker": "Staff Door", "text": "REQUIRED: MR. BYTE AUTHORIZATION."}
+      ]
+    ],
+    "maintenance_required": [
+      [
+        {"speaker": "Staff Door", "text": "STAFF ACCESS LOCKED."},
+        {"speaker": "Staff Door", "text": "SIGNAL ROUTE INCOMPLETE."},
+        {"speaker": "Staff Door", "text": "REQUIRED: CIRCUIT SODA."},
+        {"speaker": "Staff Door", "text": "THEN: MAINTENANCE SYNC."}
+      ],
+      [
+        {"speaker": "Staff Door", "text": "ACCESS DENIED."},
+        {"speaker": "Staff Door", "text": "SERVICE POWER NOT TRUSTED."},
+        {"speaker": "Staff Door", "text": "REQUIRED: MAINTENANCE SYNC."},
+        {"speaker": "Staff Door", "text": "GUS AUTHORIZATION REQUIRED."}
+      ]
+    ],
+    "security_tape_required": [
+      [
+        {"speaker": "Staff Door", "text": "STAFF ACCESS LOCKED."},
+        {"speaker": "Staff Door", "text": "SECURITY TAPE DAMAGED."},
+        {"speaker": "Staff Door", "text": "REQUIRED: SECURITY TAPE ASSEMBLY."},
+        {"speaker": "Staff Door", "text": "LOCATION: STAFF CORRIDOR."}
+      ],
+      [
+        {"speaker": "Staff Door", "text": "ACCESS DENIED."},
+        {"speaker": "Staff Door", "text": "VIDEO ORDER UNREADABLE."},
+        {"speaker": "Staff Door", "text": "REQUIRED: RESTORE SECURITY TAPE."}
+      ]
+    ],
+    "final_night_walk_required": [
+      [
+        {"speaker": "Staff Door", "text": "STAFF ACCESS LOCKED."},
+        {"speaker": "Staff Door", "text": "TAPE ORDER RESTORED."},
+        {"speaker": "Staff Door", "text": "ROUTE MEMORY UNSTABLE."},
+        {"speaker": "Staff Door", "text": "REQUIRED: FINAL NIGHT WALK."}
+      ],
+      [
+        {"speaker": "Staff Door", "text": "ACCESS DENIED."},
+        {"speaker": "Staff Door", "text": "ONE ROUTE UNWALKED."},
+        {"speaker": "Staff Door", "text": "REQUIRED: WALK FINAL NIGHT."}
+      ]
+    ],
+    "memory_echo_required": [
+      [
+        {"speaker": "Staff Door", "text": "RESTORE PLAYBACK LOCKED."},
+        {"speaker": "Staff Door", "text": "FINAL NIGHT ROUTE STABLE."},
+        {"speaker": "Staff Door", "text": "IDENTITY CONFLICT APPROACHING READABLE RANGE."},
+        {"speaker": "Staff Door", "text": "REQUIRED: MEMORY ECHO."}
+      ],
+      [
+        {"speaker": "Staff Door", "text": "ACCESS DENIED."},
+        {"speaker": "Staff Door", "text": "ECHO NOT STABILIZED."},
+        {"speaker": "Staff Door", "text": "REQUIRED: COMPLETE MEMORY ECHO."}
+      ]
+    ],
+    "staff_room_available": [
+      [
+        {"speaker": "Staff Door", "text": "ACCESS GRANTED."},
+        {"speaker": "Staff Door", "text": "EMPLOYEE SIGNAL ACCEPTED."},
+        {"speaker": "Staff Door", "text": "RESTORE PLAYBACK AVAILABLE."},
+        {"speaker": "Staff Door", "text": "ENTER STAFF ROOM?"}
+      ]
+    ],
+    "post_reveal_stable": [
+      [
+        {"speaker": "Staff Door", "text": "RESTORE PLAYBACK COMPLETE."},
+        {"speaker": "Staff Door", "text": "RETURN NOT REQUIRED."},
+        {"speaker": "Staff Door", "text": "ACCESS STATUS: STABLE."},
+        {"speaker": "Staff Door", "text": "PRIOR DENIALS WERE PROCEDURALLY RUDE."}
+      ]
+    ]
+  }
+}

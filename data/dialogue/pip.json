@@ -1,0 +1,78 @@
+{
+  "character_id": "pip",
+  "sets": {
+    "first_meeting": [
+      [
+        {"speaker": "Pip", "text": "Hi! I am a legally distinct prize animal."},
+        {"speaker": "Pip", "text": "My tag says NOT A BEAR in very small letters."},
+        {"speaker": "Pip", "text": "I am filled with cotton and confidential information."},
+        {"speaker": "Pip", "text": "Mostly cotton."},
+        {"speaker": "Pip", "text": "The confidential part gets itchy when someone familiar walks in."},
+        {"speaker": "Pip", "text": "You are making my stitches think."}
+      ]
+    ],
+    "after_lost_token": [
+      [
+        {"speaker": "Pip", "text": "You brought the Lost Token back."},
+        {"speaker": "Pip", "text": "Good. Tokens get lonely in pockets."},
+        {"speaker": "Pip", "text": "You used to want the blue prize."},
+        {"speaker": "Pip", "text": "You never had enough tickets."},
+        {"speaker": "Pip", "text": "Old routines leave lint everywhere."}
+      ]
+    ],
+    "prize_sort_intro": [
+      [
+        {"speaker": "Pip", "text": "Prize Sort is ready."},
+        {"speaker": "Pip", "text": "This is like archaeology, but fluffier."},
+        {"speaker": "Pip", "text": "The labels remember an order."},
+        {"speaker": "Pip", "text": "Ticket Stub first. That is where wanting starts."},
+        {"speaker": "Pip", "text": "Lost Token next. That is where returning starts."},
+        {"speaker": "Pip", "text": "Blank Employee Badge last. That one is shy."},
+        {"speaker": "Pip", "text": "Please sort gently. Some prizes bruise on the inside."}
+      ]
+    ],
+    "prize_sort_wrong": [
+      [
+        {"speaker": "Pip", "text": "Those memories are wearing each other's hats."},
+        {"speaker": "Pip", "text": "Try oldest to newest."}
+      ],
+      [
+        {"speaker": "Pip", "text": "That order makes the cotton nervous."},
+        {"speaker": "Pip", "text": "Start with the smallest want."}
+      ],
+      [
+        {"speaker": "Pip", "text": "Nope. The badge is trying to cut in line."},
+        {"speaker": "Pip", "text": "Bad badge. Patient badge."}
+      ],
+      [
+        {"speaker": "Pip", "text": "The prizes bonked together wrong."},
+        {"speaker": "Pip", "text": "Ticket. Token. Badge."}
+      ]
+    ],
+    "prize_sort_completion": [
+      [
+        {"speaker": "Pip", "text": "Prizes sorted."},
+        {"speaker": "Pip", "text": "See? The shelf sighed."},
+        {"speaker": "Pip", "text": "Some rewards remember their owners before the owners remember them."},
+        {"speaker": "Pip", "text": "The Ticket Stub remembers wanting."},
+        {"speaker": "Pip", "text": "The Lost Token remembers coming back."},
+        {"speaker": "Pip", "text": "The Blank Employee Badge remembers being hidden."},
+        {"speaker": "Pip", "text": "It is okay if you do not know why that matters yet."},
+        {"speaker": "Pip", "text": "Cotton keeps secrets until the seams are ready."}
+      ]
+    ],
+    "post_reveal": [
+      [
+        {"speaker": "Pip", "text": "There you are."},
+        {"speaker": "Pip", "text": "Yep. Still not the original."},
+        {"speaker": "Pip", "text": "That is not mean. I checked."},
+        {"speaker": "Pip", "text": "Original things can be gone and still leave kindness-shaped dents."},
+        {"speaker": "Pip", "text": "You have the dent."},
+        {"speaker": "Pip", "text": "You also have better waving."},
+        {"speaker": "Pip", "text": "Employee 04 made the arcade remember wrong."},
+        {"speaker": "Pip", "text": "You are helping it remember softly."},
+        {"speaker": "Pip", "text": "That counts in plush court."}
+      ]
+    ]
+  }
+}

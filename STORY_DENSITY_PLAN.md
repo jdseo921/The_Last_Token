@@ -17,7 +17,8 @@ Keep a 45-75 minute version of The Last Token dense, readable, and emotionally c
 3. Fractured: "The records and people remember different versions."
 4. Staff-record pressure: "A shift went missing, and someone hid it."
 5. Overloaded: "The door is listening to more than one version of me."
-6. Restored: "I was Employee 04."
+6. Conscience: "The other signal is my regret, not another person."
+7. Restored: "I was Employee 04."
 
 ## Required Story Jobs
 
@@ -32,6 +33,7 @@ Keep a 45-75 minute version of The Last Token dense, readable, and emotionally c
 | Security Tape Assembly | Staff Door / Mr. Byte | The player sees proof of entering the back room without the full name reveal. | `maintenance_sync_completed`. | `security_tape_assembly_completed` | Staff Door: "CUSTOMER RECORD NOT FOUND." | Overloaded pressure rises. | 6-9 min |
 | Final Night Walk | Staff Door / Memory System | The player physically walks through the reconstructed past before identity stabilization. | `security_tape_assembly_completed`. | `final_night_walk_completed` | Staff Door: "ONE WALKED IN. TWO SIGNALS ANSWERED." | Overloaded pressure rises. | 5-8 min |
 | Memory Echo | Memory Echo | The player stabilizes enough to survive the reveal. | `final_night_walk_completed`. | `memory_echo_completed` | Memory Echo: "The arcade stops arguing with itself." | Staff Room playback allowed. | 5-7 min |
+| Conscience Encounters | ??? / `"Player"` | Recurring regret starts hostile, becomes useful, and names itself after the reveal slideshow. | Route milestones after Truth Filter, Circuit Soda, Lost Shift File, Final Night Walk, and Staff Room reveal. | `conscience_final_room_seen`, `player_glitched_form_unlocked` | `"Player"`: "Then carry it." | Overloaded emotional pressure, no progress-count change. | 5-8 min total |
 | Staff Room Reveal | Staff Room | Employee 04 is named and prior clues resolve. | `memory_echo_completed`. | `twist_reveal_seen`, `post_reveal_roam_unlocked` | Player: "It was my name tag." | Overloaded -> Restored. | 6-8 min |
 
 ## Lore-Reading Story Jobs
@@ -73,6 +75,7 @@ Keep a 45-75 minute version of The Last Token dense, readable, and emotionally c
 - Staff systems become direct.
 - Dialogue gets shorter and sharper.
 - Security Tape Assembly and Memory Echo should avoid jokes except tiny breathers.
+- The conscience can almost say the truth, but the `"Player"` name waits until after the Staff Room reveal slideshow.
 
 ### Restored
 - NPCs can say Employee 04.

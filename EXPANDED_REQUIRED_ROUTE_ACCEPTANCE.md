@@ -32,7 +32,7 @@
 - Step 7: Security Tape Assembly.
 - Step 8: Final Night Walk.
 - Step 9: Memory Echo.
-- Step 10: Staff Room Reveal.
+- Step 10: Final Conscience Encounter and Staff Room Reveal.
 
 ## Critical Pass Route
 This is the minimum route needed to prove the required game can be completed end to end.
@@ -47,7 +47,8 @@ This is the minimum route needed to prove the required game can be completed end
 - Complete Security Tape Assembly.
 - Complete Final Night Walk.
 - Complete Memory Echo.
-- Enter Staff Room and complete the reveal slideshow.
+- Interact with the Staff Room door and enter Staff Room.
+- Complete the reveal slideshow, then complete the final self-conflict conversation before EndingPrompt.
 - Choose `Save and Continue`, return to ArcadeHub, save/load, and confirm post-reveal roam works.
 
 ## Full Completion Route
@@ -97,14 +98,17 @@ Use this when validating the required route plus optional progression.
 25. Complete Truth Filter.
 26. Return to Cabinet Row or ArcadeHub cleanly.
 27. Confirm Memory Signal becomes `Fractured`.
-28. Talk to Mr. Byte and confirm the one-time Truth Filter anecdote:
+28. Confirm Conscience Encounter 1 appears once with speaker `???` and no antagonist sprite, silhouette, or portrait window.
+29. Save and load.
+30. Confirm Conscience Encounter 1 does not repeat.
+31. Talk to Mr. Byte and confirm the one-time Truth Filter anecdote:
     - `Truth Filter passed.`
     - `Contradictions remain.`
     - `That means the memory is alive enough to argue.`
     - `Record conflict reduced. Identity conflict remains.`
-29. Talk to Mr. Byte again and confirm shorter repeat lines appear.
-30. Save and load.
-31. Confirm Truth Filter completion, Memory Signal, objective, and `mr_byte_truth_filter_anecdote_seen` persist.
+32. Talk to Mr. Byte again and confirm shorter repeat lines appear.
+33. Save and load.
+34. Confirm Truth Filter completion, Memory Signal, objective, `conscience_encounter_1_seen`, and `mr_byte_truth_filter_anecdote_seen` persist.
 32. Confirm the objective points to `Find Vendo in the Snack Alcove`.
 33. Go to Snack Alcove.
 34. Talk to Vendo.
@@ -116,13 +120,14 @@ Use this when validating the required route plus optional progression.
 37. Confirm `res://scenes/minigames/CircuitSoda.tscn` opens.
 38. Complete Circuit Soda.
 39. Return to Snack Alcove cleanly.
-40. Talk to Vendo and confirm the one-time Circuit Soda anecdote:
+40. Confirm Conscience Encounter 2 appears once with speaker `???` and no antagonist sprite, silhouette, or portrait window.
+41. Talk to Vendo and confirm the one-time Circuit Soda anecdote:
     - `Signal routed.`
     - `Unfortunately, routed does not mean understood.`
     - `Mira and Gus have records. Try not to enjoy paperwork.`
 41. Talk to Vendo again and confirm shorter repeat lines appear.
-42. Save and load.
-43. Confirm Circuit Soda completion, objective, and `vendo_circuit_anecdote_seen` persist.
+43. Save and load.
+44. Confirm Circuit Soda completion, objective, `conscience_encounter_2_seen`, and `vendo_circuit_anecdote_seen` persist.
 
 ## Lore Quest: Lost Shift File
 44. Confirm the objective reads `Objective: Find the Lost Shift File.`
@@ -141,11 +146,12 @@ Use this when validating the required route plus optional progression.
 52. Go to Cabinet Row.
 53. Read the Staff Schedule and confirm `staff_schedule_read` is true.
 54. Confirm `lost_shift_file_completed` is true.
-55. Confirm the completion notice appears:
+55. Confirm Conscience Encounter 3 appears once with speaker `???` and no antagonist sprite, silhouette, or portrait window.
+56. Confirm the completion notice appears:
     - `LOST SHIFT FILE COMPLETE`
     - `Employee 04 was assigned to Cabinet shutdown.`
-56. Save and load.
-57. Confirm Lost Shift File completion, all note-read flags, and objective persist.
+57. Save and load.
+58. Confirm Lost Shift File completion, all note-read flags, `conscience_encounter_3_seen`, and objective persist.
 
 ## Arcade Adventure: Static Service Run
 58. Confirm the objective points to `Restore service power with Gus`.
@@ -224,8 +230,9 @@ Use this when validating the required route plus optional progression.
     - `MEMORY ECHO AVAILABLE.`
     - `THE STAFF DOOR DID NOT RECORD A CUSTOMER.`
 97. Return to Staff Corridor cleanly.
-98. Save and load.
-99. Confirm Final Night Walk completion, objective, and `staff_door_final_walk_anecdote_seen` behavior persist.
+98. Confirm Conscience Encounter 4 appears once with speaker `???` and no antagonist sprite, silhouette, or portrait window.
+99. Save and load.
+100. Confirm Final Night Walk completion, objective, `conscience_encounter_4_seen`, and `staff_door_final_walk_anecdote_seen` behavior persist.
 100. Confirm the objective points to `Stabilize the Memory Echo`.
 
 ## Memory Echo
@@ -257,7 +264,7 @@ Use this when validating the required route plus optional progression.
 
 ## Staff Room Reveal
 114. Interact with the Staff Room door.
-115. Confirm it says:
+115. Confirm the door says:
     - `RESTORE PLAYBACK AVAILABLE.`
     - `ENTER STAFF ROOM?`
 116. Confirm `res://scenes/arcade/StaffRoom.tscn` opens.
@@ -266,7 +273,19 @@ Use this when validating the required route plus optional progression.
 119. Advance through the full reveal slideshow.
 120. Confirm missing reveal art uses placeholders without blocking progression.
 121. Confirm `twist_reveal_seen` is set after the slideshow.
-122. Confirm the EndingPrompt appears.
+122. Confirm the protagonist speaks first after the slideshow:
+    - `Employee 04.`
+    - `That was not a clue.`
+    - `It was my name tag.`
+123. Confirm protagonist `Player` dialogue now uses the normal neutral portrait instead of the pre-reveal blacked-out portrait.
+124. Confirm the antagonist name is displayed as `"Player"`.
+125. Confirm `"Player"` has the shaded, pixel-glitched protagonist portrait.
+126. Confirm the conversation explains the conscience sealed away hardship, poverty, exhaustion, regret, and self-blame.
+127. Confirm the protagonist explains being an arcade game maker who valued player joy over money.
+128. Confirm pride and regret are both accepted.
+129. Confirm `conscience_final_room_seen`, `conscience_name_revealed`, `player_creator_monologue_seen`, and `player_glitched_form_unlocked` become true.
+130. Confirm the player sprite changes to glitch art or the fallback glitch effect appears.
+131. Confirm the EndingPrompt appears after the conversation.
 
 ## Ending / Post-Reveal Roam
 123. Choose `Save and Continue`.
@@ -284,10 +303,12 @@ Run this once with a debug jump, old save, or temporary forced scene entry.
 - Confirm the terminal says:
    - `RESTORE PLAYBACK LOCKED.`
    - `MEMORY ECHO REQUIRED.`
+- Force or load a state where `twist_reveal_seen` is true but `conscience_final_room_seen` is false.
+- Enter `res://scenes/arcade/StaffRoom.tscn` and interact with the terminal.
+- Confirm the final self-conflict conversation can play once as a compatibility fallback.
 - Confirm no script error or soft lock occurs.
-- Load or return to the normal route and complete Memory Echo.
-- Enter Staff Room again.
-- Confirm the reveal can start normally.
+- Revisit the terminal after `conscience_final_room_seen` is true.
+- Confirm the long conversation does not replay automatically.
 
 ## Save/load Checkpoints
 Save and load at these exact checkpoints:
@@ -344,7 +365,7 @@ Every required quest must have an owner and a completion story beat:
 | Security Tape Assembly | Staff Door / Mr. Byte | Staff Corridor | `security_tape_assembly_completed` | None |
 | Final Night Walk | Staff Door / Memory System | Staff Corridor | `final_night_walk_completed` | `staff_door_final_walk_anecdote_seen` |
 | Memory Echo | Memory Echo | Staff Corridor | `memory_echo_completed` | `memory_echo_anecdote_seen` |
-| Staff Room Reveal | Staff Room Terminal | Staff Room | `twist_reveal_seen` | None |
+| Staff Room Reveal / Final Self-Conflict | Staff Room Terminal / `"Player"` | Staff Room | `twist_reveal_seen`, `conscience_final_room_seen` | None |
 
 ## Pass Criteria
 - No script errors.
@@ -359,6 +380,9 @@ Every required quest must have an owner and a completion story beat:
 - Every required owner switches to shorter repeat lines after the anecdote flag is set.
 - Memory Signal changes are clear: `Grounded -> Uneasy -> Fractured -> Overloaded`.
 - Staff Room reveal cannot happen before Memory Echo completion.
+- The final self-conflict conversation happens after the Staff Room reveal slideshow and before EndingPrompt.
+- Conscience encounters do not repeat after save/load.
+- The glitched player form persists after save/load.
 - Optional Roxy/Pip content is not required.
 - Full route feels coherent and longer than the MVP without feeling padded.
 

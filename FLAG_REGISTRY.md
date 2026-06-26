@@ -14,6 +14,15 @@
 - `rockbyte_duel_completed`
 - `story_puzzle_completed`
 - `staff_room_unlocked`
+- `conscience_encounter_1_seen`
+- `conscience_encounter_2_seen`
+- `conscience_encounter_3_seen`
+- `conscience_encounter_4_seen`
+- `conscience_final_encounter_seen`
+- `conscience_final_room_seen`
+- `conscience_name_revealed`
+- `player_glitched_form_unlocked`
+- `player_creator_monologue_seen`
 - `twist_reveal_seen`
 - `ending_seen`
 - `post_reveal_roam_unlocked`

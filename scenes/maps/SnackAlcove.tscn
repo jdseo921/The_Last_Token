@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/SnackAlcove.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="5"]
 [ext_resource type="PackedScene" path="res://scenes/arcade/HubInteractable.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://scenes/common/AnimatedAmbientProp.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/ui/QuestNotice.tscn" id="8"]
 
 [node name="SnackAlcove" type="Node2D"]
 script = ExtResource("1")
@@ -90,12 +91,17 @@ flicker_enabled = true
 
 [node name="ReturnToArcadeHub" parent="." instance=ExtResource("3")]
 position = Vector2(320, 406)
-target_scene_path = "res://scenes/arcade/ArcadeHub.tscn"
+target_scene_path = "res://scenes/maps/hallways/SnackHallway.tscn"
 target_spawn_id = "Spawn_FromSnackAlcove"
 
 [node name="ToCabinetRow" parent="." instance=ExtResource("3")]
 position = Vector2(34, 260)
-target_scene_path = "res://scenes/maps/CabinetRow.tscn"
+target_scene_path = "res://scenes/maps/hallways/CabinetSnackHallway.tscn"
+target_spawn_id = "Spawn_FromSnackAlcove"
+
+[node name="ToPrizeCorner" parent="." instance=ExtResource("3")]
+position = Vector2(606, 260)
+target_scene_path = "res://scenes/maps/hallways/SnackPrizeHallway.tscn"
 target_spawn_id = "Spawn_FromSnackAlcove"
 
 [node name="UILayer" type="Node2D" parent="."]
@@ -129,6 +135,13 @@ theme_override_font_sizes/font_size = 10
 text = "CIRCUIT SODA"
 horizontal_alignment = 1
 
+[node name="PrizeExitLabel" type="Label" parent="UILayer"]
+position = Vector2(516, 238)
+size = Vector2(98, 18)
+theme_override_font_sizes/font_size = 10
+text = "PRIZES"
+horizontal_alignment = 2
+
 [node name="InteractionPromptBackground" type="ColorRect" parent="UILayer"]
 visible = false
 position = Vector2(194, 400)
@@ -140,5 +153,7 @@ position = Vector2(200, 404)
 size = Vector2(240, 24)
 text = ""
 horizontal_alignment = 1
+
+[node name="QuestNotice" parent="." instance=ExtResource("8")]
 
 [node name="PauseMenu" parent="." instance=ExtResource("4")]

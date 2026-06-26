@@ -56,6 +56,15 @@ var final_night_walk_completed := false
 var staff_door_final_walk_anecdote_seen := false
 var memory_echo_started := false
 var memory_echo_completed := false
+var conscience_encounter_1_seen := false
+var conscience_encounter_2_seen := false
+var conscience_encounter_3_seen := false
+var conscience_encounter_4_seen := false
+var conscience_final_encounter_seen := false
+var conscience_final_room_seen := false
+var conscience_name_revealed := false
+var player_glitched_form_unlocked := false
+var player_creator_monologue_seen := false
 var twist_reveal_seen := false
 var ending_seen := false
 var post_reveal_roam_unlocked := false
@@ -362,6 +371,15 @@ func reset_for_new_game() -> void:
 	staff_door_final_walk_anecdote_seen = false
 	memory_echo_started = false
 	memory_echo_completed = false
+	conscience_encounter_1_seen = false
+	conscience_encounter_2_seen = false
+	conscience_encounter_3_seen = false
+	conscience_encounter_4_seen = false
+	conscience_final_encounter_seen = false
+	conscience_final_room_seen = false
+	conscience_name_revealed = false
+	player_glitched_form_unlocked = false
+	player_creator_monologue_seen = false
 	twist_reveal_seen = false
 	ending_seen = false
 	post_reveal_roam_unlocked = false
@@ -548,6 +566,48 @@ func complete_memory_echo() -> void:
 	final_night_walk_completed = true
 	update_memory_signal_from_progress()
 
+func mark_conscience_encounter_seen(encounter_id: String) -> void:
+	match encounter_id:
+		"after_truth_filter":
+			conscience_encounter_1_seen = true
+		"after_circuit_soda":
+			conscience_encounter_2_seen = true
+		"after_lost_shift_file":
+			conscience_encounter_3_seen = true
+		"after_final_night_walk":
+			conscience_encounter_4_seen = true
+		"final_conscience":
+			conscience_final_encounter_seen = true
+			conscience_name_revealed = true
+
+func mark_conscience_final_room_seen() -> void:
+	conscience_final_room_seen = true
+	conscience_final_encounter_seen = true
+	conscience_name_revealed = true
+	player_creator_monologue_seen = true
+	unlock_player_glitched_form()
+
+func is_conscience_encounter_seen(encounter_id: String) -> bool:
+	match encounter_id:
+		"after_truth_filter":
+			return conscience_encounter_1_seen
+		"after_circuit_soda":
+			return conscience_encounter_2_seen
+		"after_lost_shift_file":
+			return conscience_encounter_3_seen
+		"after_final_night_walk":
+			return conscience_encounter_4_seen
+		"final_conscience":
+			return conscience_final_encounter_seen or conscience_final_room_seen
+		_:
+			return false
+
+func unlock_player_glitched_form() -> void:
+	player_glitched_form_unlocked = true
+
+func should_use_glitched_player_sprite() -> bool:
+	return player_glitched_form_unlocked or post_reveal_roam_unlocked or twist_reveal_seen
+
 func complete_broken_high_score() -> void:
 	broken_high_score_completed = true
 
@@ -601,9 +661,19 @@ func mark_witness_pip_heard() -> void:
 	_complete_witness_route_if_ready()
 
 func _complete_witness_route_if_ready() -> void:
-	if witness_mira_heard and witness_gus_heard and witness_vendo_heard and witness_mr_byte_heard and witness_cabinet07_heard and witness_roxy_heard and witness_pip_heard:
+	if _post_reveal_witnesses_complete():
 		witness_route_completed = true
 		post_reveal_witness_route_completed = true
+
+func _post_reveal_witnesses_complete() -> bool:
+	var required_heard: bool = witness_mira_heard and witness_gus_heard and witness_vendo_heard and witness_mr_byte_heard and witness_cabinet07_heard
+	if not required_heard:
+		return false
+	if roxy_met and not witness_roxy_heard:
+		return false
+	if pip_met and not witness_pip_heard:
+		return false
+	return true
 
 func unlock_staff_room() -> void:
 	staff_room_unlocked = true
@@ -656,7 +726,7 @@ func get_current_quest_id() -> String:
 		return "enter_staff_room"
 	if twist_reveal_seen and not post_reveal_roam_unlocked:
 		return "finish_memory"
-	if post_reveal_roam_unlocked:
+	if post_reveal_roam_unlocked and not post_reveal_witness_route_completed:
 		return "talk_to_witnesses"
 	return ""
 
@@ -773,12 +843,12 @@ func get_current_quest_data() -> Dictionary:
 				"details": "The truth is visible now. I need to let this memory finish and see what remains afterward.",
 			}
 		"talk_to_witnesses":
-			return {
+			return _with_registry_quest_data({
 				"id": "talk_to_witnesses",
 				"title": "Talk to Those Who Remembered",
 				"summary": "Speak with the remaining witnesses.",
-				"details": "Pixel Haven remembers me differently now. Mira, Gus, Vendo, Mr. Byte, Cabinet 07, Roxy, and Pip may have changed things to say.",
-			}
+				"details": "Pixel Haven remembers me differently now. Mira, Gus, Vendo, Mr. Byte, and Cabinet 07 may have changed things to say. Roxy and Pip may add their own pieces if I met them.",
+			}, "post_reveal_witness_route")
 		_:
 			return {
 				"id": "",
@@ -882,6 +952,15 @@ func to_save_data() -> Dictionary:
 		"staff_door_final_walk_anecdote_seen": staff_door_final_walk_anecdote_seen,
 		"memory_echo_started": memory_echo_started,
 		"memory_echo_completed": memory_echo_completed,
+		"conscience_encounter_1_seen": conscience_encounter_1_seen,
+		"conscience_encounter_2_seen": conscience_encounter_2_seen,
+		"conscience_encounter_3_seen": conscience_encounter_3_seen,
+		"conscience_encounter_4_seen": conscience_encounter_4_seen,
+		"conscience_final_encounter_seen": conscience_final_encounter_seen,
+		"conscience_final_room_seen": conscience_final_room_seen,
+		"conscience_name_revealed": conscience_name_revealed,
+		"player_glitched_form_unlocked": player_glitched_form_unlocked,
+		"player_creator_monologue_seen": player_creator_monologue_seen,
 		"twist_reveal_seen": twist_reveal_seen,
 		"ending_seen": ending_seen,
 		"post_reveal_roam_unlocked": post_reveal_roam_unlocked,
@@ -997,6 +1076,15 @@ func apply_save_data(data: Dictionary) -> void:
 	staff_door_final_walk_anecdote_seen = bool(data.get("staff_door_final_walk_anecdote_seen", false))
 	memory_echo_started = bool(data.get("memory_echo_started", memory_echo_started))
 	memory_echo_completed = bool(data.get("memory_echo_completed", memory_echo_completed))
+	conscience_encounter_1_seen = bool(data.get("conscience_encounter_1_seen", conscience_encounter_1_seen))
+	conscience_encounter_2_seen = bool(data.get("conscience_encounter_2_seen", conscience_encounter_2_seen))
+	conscience_encounter_3_seen = bool(data.get("conscience_encounter_3_seen", conscience_encounter_3_seen))
+	conscience_encounter_4_seen = bool(data.get("conscience_encounter_4_seen", conscience_encounter_4_seen))
+	conscience_final_encounter_seen = bool(data.get("conscience_final_encounter_seen", conscience_final_encounter_seen))
+	conscience_final_room_seen = bool(data.get("conscience_final_room_seen", conscience_final_room_seen))
+	conscience_name_revealed = bool(data.get("conscience_name_revealed", conscience_name_revealed))
+	player_glitched_form_unlocked = bool(data.get("player_glitched_form_unlocked", player_glitched_form_unlocked))
+	player_creator_monologue_seen = bool(data.get("player_creator_monologue_seen", player_creator_monologue_seen))
 	if security_tape_assembly_completed:
 		lost_shift_file_completed = true
 		static_service_run_started = true
@@ -1093,8 +1181,9 @@ func apply_save_data(data: Dictionary) -> void:
 	witness_roxy_heard = bool(data.get("witness_roxy_heard", false))
 	witness_pip_heard = bool(data.get("witness_pip_heard", false))
 	witness_route_completed = bool(data.get("witness_route_completed", post_reveal_witness_route_completed))
-	if witness_mira_heard and witness_gus_heard and witness_vendo_heard and witness_mr_byte_heard and witness_cabinet07_heard and witness_roxy_heard and witness_pip_heard:
+	if post_reveal_witness_route_completed:
 		witness_route_completed = true
+	_complete_witness_route_if_ready()
 	if witness_route_completed:
 		post_reveal_witness_route_completed = true
 	echo_ticket_counter_seen = bool(data.get("echo_ticket_counter_seen", echo_ticket_counter_seen))

@@ -1,0 +1,92 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/maps/HallwayMap.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/common/MapTransition.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="5"]
+
+[node name="CabinetHallway" type="Node2D"]
+script = ExtResource("1")
+hallway_id = "cabinet_hallway"
+title_text = "CABINET HALLWAY"
+hint_text = "Cabinet glow leaks under the doors."
+
+[node name="Background" type="Polygon2D" parent="."]
+color = Color(0.035, 0.04, 0.065, 1)
+polygon = PackedVector2Array(0, 0, 640, 0, 640, 440, 0, 440)
+
+[node name="FloorBand" type="Polygon2D" parent="."]
+color = Color(0.09, 0.075, 0.13, 1)
+polygon = PackedVector2Array(0, 152, 640, 152, 640, 292, 0, 292)
+
+[node name="StaticStripe" type="Polygon2D" parent="."]
+color = Color(0.55, 0.36, 0.9, 0.16)
+polygon = PackedVector2Array(0, 214, 640, 214, 640, 226, 0, 226)
+
+[node name="Spawn_Default" type="Marker2D" parent="."]
+position = Vector2(92, 222)
+
+[node name="Spawn_FromArcadeHub" type="Marker2D" parent="."]
+position = Vector2(92, 222)
+
+[node name="Spawn_FromCabinetRow" type="Marker2D" parent="."]
+position = Vector2(548, 222)
+
+[node name="Player" parent="." instance=ExtResource("2")]
+position = Vector2(92, 222)
+
+[node name="ToArcadeHub" parent="." instance=ExtResource("3")]
+position = Vector2(24, 222)
+target_scene_path = "res://scenes/arcade/ArcadeHub.tscn"
+target_spawn_id = "Spawn_FromCabinetRow"
+
+[node name="ToCabinetRow" parent="." instance=ExtResource("3")]
+position = Vector2(616, 222)
+target_scene_path = "res://scenes/maps/CabinetRow.tscn"
+target_spawn_id = "Spawn_FromArcadeHub"
+
+[node name="UILayer" type="Node2D" parent="."]
+
+[node name="DialogueBox" parent="UILayer" instance=ExtResource("4")]
+
+[node name="TitleLabel" type="Label" parent="UILayer"]
+position = Vector2(24, 20)
+size = Vector2(260, 28)
+theme_override_font_sizes/font_size = 18
+text = "CABINET HALLWAY"
+
+[node name="HintLabel" type="Label" parent="UILayer"]
+position = Vector2(24, 48)
+size = Vector2(392, 34)
+theme_override_font_sizes/font_size = 10
+text = "Cabinet glow leaks under the doors."
+autowrap_mode = 3
+
+[node name="LeftLabel" type="Label" parent="UILayer"]
+position = Vector2(18, 246)
+size = Vector2(140, 18)
+theme_override_font_sizes/font_size = 9
+text = "ARCADE HUB"
+
+[node name="RightLabel" type="Label" parent="UILayer"]
+position = Vector2(486, 246)
+size = Vector2(136, 18)
+theme_override_font_sizes/font_size = 9
+text = "CABINET ROW"
+horizontal_alignment = 2
+
+[node name="InteractionPromptBackground" type="ColorRect" parent="UILayer"]
+visible = false
+position = Vector2(194, 400)
+size = Vector2(252, 30)
+color = Color(0.015, 0.018, 0.024, 0.68)
+
+[node name="InteractionPrompt" type="Label" parent="UILayer"]
+position = Vector2(200, 404)
+size = Vector2(240, 24)
+text = ""
+horizontal_alignment = 1
+
+[node name="PauseMenu" parent="." instance=ExtResource("5")]
+

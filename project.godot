@@ -26,6 +26,7 @@ SaveManager="*res://scripts/SaveManager.gd"
 AudioManager="*res://scripts/AudioManager.gd"
 DisplayOptions="*res://scripts/DisplayOptions.gd"
 GameSettings="*res://scripts/GameSettings.gd"
+ConscienceEncounterDirector="*res://scripts/ConscienceEncounterDirector.gd"
 
 [display]
 

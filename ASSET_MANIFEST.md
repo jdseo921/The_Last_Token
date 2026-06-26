@@ -50,6 +50,7 @@ assets/art/minigames/broken_high_score/
 assets/art/minigames/adventure/
 assets/art/minigames/security_tape/
 assets/art/cutscenes/
+assets/art/cutscenes/conscience/
 assets/art/cutscenes/memory_reveal/
 assets/art/ui/
 assets/art/ui/dialogue/
@@ -68,6 +69,9 @@ The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys t
 | Player post-game sprite | 32x32 | `assets/art/characters/player/player_gameplay_glitch.png` | Integrated | Glitchier post-game variant; same obscured-face silhouette. |
 | Player 8-direction walk sheet | 16 frames, 32x32 each | `assets/art/characters/player/player_walk_8dir_sheet.png` | Integrated | Regular movement sheet; 2 frames per direction. |
 | Player post-game 8-direction walk sheet | 16 frames, 32x32 each | `assets/art/characters/player/player_walk_8dir_glitch_sheet.png` | Integrated | Glitch movement sheet; 2 frames per direction. |
+| Player obscured dialogue portrait | 96x96 | `assets/art/portraits/player/player_obscured.png` | Integrated | Default protagonist dialogue portrait before the final Staff Room reveal; face and clothes are blacked out so no expression is readable. |
+| Player revealed dialogue portrait | 96x96 | `assets/art/portraits/player/player_neutral.png` | Integrated | Preserved normal protagonist portrait; used only once `twist_reveal_seen` is true, starting with the final Staff Room self-conflict and post-reveal dialogue. |
+| Player final conscience portrait | 96x96 | `assets/art/portraits/player/player_conscience_revealed.png` | Integrated | Used only when the antagonist is revealed as `"Player"` in the final Staff Room conversation; earlier `???` encounters intentionally have no sprite or portrait window. |
 | Mira sprite | 32x32 | `assets/art/characters/mira/` | Placeholder | Warm but slightly haunted silhouette. |
 | Mira diagonal facing sheet | 4 frames, 32x32 each | `assets/art/characters/mira/mira_turn_diagonal_sheet.png` | Integrated | Used when Mira turns toward the protagonist. |
 | Gus sprite | 32x32 | `assets/art/characters/gus/` | Placeholder | Practical arcade regular. |
@@ -106,6 +110,8 @@ The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys t
 | CRT overlay | 640x440 | `assets/art/ui/crt/` | Planned | Keep subtle; do not reduce readability. |
 | Dialogue portraits | 64x64 or 96x96 | `assets/art/portraits/` | In Progress | First 96x96 portrait batch generated and wired through DialogueBox; keep pending until live Godot dialogue review passes. |
 | Memory recall panels | 320x180 or 640x360 | `assets/art/cutscenes/memory_reveal/` | Placeholder | 8 reveal panels currently support fallback. |
+| Conscience overlay | 640x440 transparent overlay | `assets/art/cutscenes/conscience/conscience_overlay.png` | Planned | Optional dark/glitch overlay for `ConscienceEncounter`; current ColorRect fallback remains. |
+| Conscience glitch bars | 640x440 transparent overlay or bar strip | `assets/art/cutscenes/conscience/glitch_bars.png` | Planned | Optional bar art; scripted ColorRect glitch bars remain fallback. |
 | Rockbyte Duel screen art | 320x180 or UI pieces | `assets/art/minigames/rockbyte_duel/` | Placeholder | Keep rules and piles readable. |
 | Sync Door screen art | 320x180 or UI pieces | `assets/art/minigames/sync_door/` | Placeholder | Switch states must remain obvious. |
 | Truth Filter cabinet states | 4 frames, 64x64 each | `assets/art/minigames/truth_filter/truth_filter_cabinets_sheet.png` | Integrated | Optional state sheet with panel-color fallback. |
@@ -138,7 +144,9 @@ The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys t
 ## Dialogue Portrait Checklist
 | Portrait | Status | Notes |
 |---|---|---|
-| Player | In Progress | `player_neutral.png`; default portrait wired, explicit confusion line added. |
+| Player obscured | Integrated | `player_obscured.png`; default protagonist portrait before the Staff Room reveal, with face/clothes blacked out and no visible expression. |
+| Player revealed | In Progress | `player_neutral.png`; preserved normal portrait, switched in only after `twist_reveal_seen` during the final Staff Room event sequence and post-reveal dialogue. |
+| Player final conscience | Integrated | `player_conscience_revealed.png`; glitched shaded protagonist portrait used only by the final Staff Room `"Player"` speaker. |
 | Mira | In Progress | `mira_neutral.png`, `mira_worried.png`; default portrait wired, worried variant used on emotional lines. |
 | Gus | In Progress | `gus_neutral.png`, `gus_annoyed.png`; default portrait wired, annoyed variant used on joke/practical lines. |
 | Vendo | In Progress | `vendo_neutral.png`; machine face/display, word-by-word dialogue tone. |
@@ -147,6 +155,13 @@ The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys t
 | Staff Door | Planned | Optional mechanical portrait or no portrait. |
 | Owner Portrait | Planned | Scratched/blank portrait close-up. |
 | Employee 04 file | Planned | Corrupted file panel rather than face. |
+
+## Conscience Antagonist Planned Hooks
+- `res://assets/art/portraits/player/player_conscience_revealed.png`
+- `res://assets/art/cutscenes/conscience/conscience_overlay.png`
+- `res://assets/art/cutscenes/conscience/glitch_bars.png`
+
+The final portrait is integrated. Earlier `???` encounters do not show an antagonist sprite, silhouette, or portrait window. `ConscienceEncounter.tscn` keeps only the dark overlay, glitch bars, and dialogue panel until the Staff Room reveal names the antagonist. `Player.gd` uses the normal sprite with glitch modulation if the glitched gameplay art is missing.
 
 ## Memory Recall Panel Checklist
 | Panel | Status | Notes |

@@ -1,5 +1,7 @@
 {
   "portrait_player_neutral": "res://assets/art/portraits/player/player_neutral.png",
+  "portrait_player_obscured": "res://assets/art/portraits/player/player_obscured.png",
+  "portrait_player_conscience_revealed": "res://assets/art/portraits/player/player_conscience_revealed.png",
   "portrait_player_confused": "res://assets/art/portraits/player/player_confused.png",
   "portrait_mira_neutral": "res://assets/art/portraits/mira/mira_neutral.png",
   "portrait_mira_sad": "res://assets/art/portraits/mira/mira_sad.png",

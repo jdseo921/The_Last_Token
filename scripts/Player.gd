@@ -26,6 +26,7 @@ var interact_locked_until_msec := 0
 var movement_visual_frame := 0
 var facing_direction := "south"
 var outline_sprites: Array[AnimatedSprite2D] = []
+var glitch_fallback_tween: Tween = null
 
 @onready var interaction_area: Area2D = $InteractionArea
 @onready var body_visual: Polygon2D = $BodyVisual
@@ -73,6 +74,10 @@ func _apply_visual_scale() -> void:
 	animated_sprite.scale = PLAYER_VISUAL_SCALE
 	outline_root.scale = PLAYER_VISUAL_SCALE
 
+func refresh_visual_state() -> void:
+	_apply_sprite_art()
+	_update_movement_visual(Vector2.ZERO)
+
 func open_dialogue(dialogue_box: Node, lines: Array) -> void:
 	active_dialogue_box = dialogue_box
 	set_control_enabled(false)
@@ -110,28 +115,39 @@ func _update_movement_visual(input_vector: Vector2) -> void:
 		facing_dot.visible = movement_visual_frame == 0
 
 func _apply_sprite_art() -> void:
-	_setup_walk_animation()
+	var use_glitched_sprite := GameState.should_use_glitched_player_sprite()
+	var using_glitch_fallback := _setup_walk_animation(use_glitched_sprite)
 	if animated_sprite.visible:
 		body_visual.visible = false
 		facing_dot.visible = false
 		sprite.visible = false
 		_update_outline_animation()
+		_apply_glitch_visual_style(use_glitched_sprite, using_glitch_fallback)
 		return
-	var sprite_path := PLAYER_GLITCH_SPRITE_PATH if GameState.post_reveal_roam_unlocked else PLAYER_SPRITE_PATH
+	var sprite_path := PLAYER_GLITCH_SPRITE_PATH if use_glitched_sprite else PLAYER_SPRITE_PATH
 	var texture := _load_texture_or_null(sprite_path)
+	var using_static_glitch_fallback := false
+	if texture == null and use_glitched_sprite:
+		texture = _load_texture_or_null(PLAYER_SPRITE_PATH)
+		using_static_glitch_fallback = true
 	sprite.texture = texture
 	sprite.visible = texture != null
 	body_visual.visible = texture == null
 	facing_dot.visible = texture == null
 	_create_static_outline(texture)
+	_apply_glitch_visual_style(use_glitched_sprite, using_static_glitch_fallback or (use_glitched_sprite and texture == null))
 
-func _setup_walk_animation() -> void:
+func _setup_walk_animation(use_glitched_sprite: bool) -> bool:
 	animated_sprite.visible = false
 	animated_sprite.sprite_frames = null
-	var sheet_path := PLAYER_WALK_GLITCH_SHEET_PATH if GameState.post_reveal_roam_unlocked else PLAYER_WALK_SHEET_PATH
+	var sheet_path := PLAYER_WALK_GLITCH_SHEET_PATH if use_glitched_sprite else PLAYER_WALK_SHEET_PATH
 	var texture := _load_texture_or_null(sheet_path)
+	var using_glitch_fallback := false
+	if texture == null and use_glitched_sprite:
+		texture = _load_texture_or_null(PLAYER_WALK_SHEET_PATH)
+		using_glitch_fallback = true
 	if texture == null:
-		return
+		return use_glitched_sprite
 	var frames := SpriteFrames.new()
 	for direction_index in range(WALK_DIRECTIONS.size()):
 		var direction_name: String = WALK_DIRECTIONS[direction_index]
@@ -154,6 +170,39 @@ func _setup_walk_animation() -> void:
 	animated_sprite.visible = true
 	animated_sprite.play("idle_south")
 	_create_animated_outline(frames)
+	return using_glitch_fallback
+
+func _apply_glitch_visual_style(use_glitched_sprite: bool, using_fallback: bool) -> void:
+	_stop_glitch_fallback_tween()
+	sprite.modulate = Color.WHITE
+	animated_sprite.modulate = Color.WHITE
+	body_visual.modulate = Color.WHITE
+	facing_dot.modulate = Color.WHITE
+	if not use_glitched_sprite:
+		return
+	if not using_fallback:
+		return
+	var target := _get_visible_visual_canvas_item()
+	target.modulate = Color(0.72, 1.0, 1.0, 0.96)
+	if target != facing_dot:
+		facing_dot.modulate = Color(1.0, 0.46, 0.95, 0.9)
+	glitch_fallback_tween = create_tween()
+	glitch_fallback_tween.set_loops()
+	glitch_fallback_tween.tween_property(target, "modulate", Color(1.0, 0.48, 0.96, 0.86), 0.14)
+	glitch_fallback_tween.tween_property(target, "modulate", Color(0.56, 1.0, 1.0, 1.0), 0.18)
+	glitch_fallback_tween.tween_property(target, "modulate", Color(0.84, 0.82, 1.0, 0.92), 0.12)
+
+func _stop_glitch_fallback_tween() -> void:
+	if glitch_fallback_tween and glitch_fallback_tween.is_valid():
+		glitch_fallback_tween.kill()
+	glitch_fallback_tween = null
+
+func _get_visible_visual_canvas_item() -> CanvasItem:
+	if animated_sprite.visible:
+		return animated_sprite
+	if sprite.visible:
+		return sprite
+	return body_visual
 
 func _update_sprite_animation(is_moving: bool) -> void:
 	var animation_name := "%s_%s" % ["walk" if is_moving else "idle", facing_direction]

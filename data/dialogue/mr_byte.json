@@ -1,0 +1,100 @@
+{
+  "character_id": "mr_byte",
+  "sets": {
+    "pre_truth_filter_locked": [
+      [
+        {"speaker": "Mr. Byte", "text": "TRUTH FILTER LOCKED."},
+        {"speaker": "Mr. Byte", "text": "Memory signal below readable threshold."},
+        {"speaker": "Mr. Byte", "text": "Recovered token required."},
+        {"speaker": "Mr. Byte", "text": "Emotion detected: confusion."},
+        {"speaker": "Mr. Byte", "text": "Classification: corrupted input."}
+      ],
+      [
+        {"speaker": "Mr. Byte", "text": "Input rejected."},
+        {"speaker": "Mr. Byte", "text": "Contradiction scan cannot initialize."},
+        {"speaker": "Mr. Byte", "text": "Retrieve Lost Token."},
+        {"speaker": "Mr. Byte", "text": "Return when the arcade recognizes more of you."}
+      ]
+    ],
+    "truth_filter_intro": [
+      [
+        {"speaker": "Mr. Byte", "text": "Contradiction threshold reached."},
+        {"speaker": "Mr. Byte", "text": "Truth Filter available."},
+        {"speaker": "Mr. Byte", "text": "Select the least damaged answer."},
+        {"speaker": "Mr. Byte", "text": "Incorrect confidence will be logged."}
+      ],
+      [
+        {"speaker": "Mr. Byte", "text": "Memory Signal: Uneasy."},
+        {"speaker": "Mr. Byte", "text": "False records are active."},
+        {"speaker": "Mr. Byte", "text": "Proceed to Truth Filter."},
+        {"speaker": "Mr. Byte", "text": "Cabinet Row contains the primary interface."}
+      ]
+    ],
+    "truth_filter_completion_anecdote": [
+      [
+        {"speaker": "Mr. Byte", "text": "Truth Filter passed."},
+        {"speaker": "Mr. Byte", "text": "Lie density reduced."},
+        {"speaker": "Mr. Byte", "text": "Identity conflict remains."},
+        {"speaker": "Mr. Byte", "text": "Emotion registered as heat with no source."},
+        {"speaker": "Mr. Byte", "text": "Further stabilization required."}
+      ]
+    ],
+    "lost_shift_file_support": [
+      [
+        {"speaker": "Mr. Byte", "text": "Lost Shift File access opened."},
+        {"speaker": "Mr. Byte", "text": "Staff schedule damaged but readable."},
+        {"speaker": "Mr. Byte", "text": "Read the schedule near this kiosk."},
+        {"speaker": "Mr. Byte", "text": "Records retain assignment."},
+        {"speaker": "Mr. Byte", "text": "Name field remains protected."}
+      ],
+      [
+        {"speaker": "Mr. Byte", "text": "Final night records are waking."},
+        {"speaker": "Mr. Byte", "text": "Memory gaps align around staff access."},
+        {"speaker": "Mr. Byte", "text": "Read available files."},
+        {"speaker": "Mr. Byte", "text": "Do not request the missing name yet."}
+      ]
+    ],
+    "security_tape_support": [
+      [
+        {"speaker": "Mr. Byte", "text": "Security tape fragments detected."},
+        {"speaker": "Mr. Byte", "text": "Sequence order corrupted."},
+        {"speaker": "Mr. Byte", "text": "Restore tape before restoring route."},
+        {"speaker": "Mr. Byte", "text": "Fear response detected in surrounding systems."}
+      ],
+      [
+        {"speaker": "Mr. Byte", "text": "Tape data incomplete."},
+        {"speaker": "Mr. Byte", "text": "Frames know more than they display."},
+        {"speaker": "Mr. Byte", "text": "Recommended action: Security Tape Assembly."},
+        {"speaker": "Mr. Byte", "text": "Emotional residue: high."}
+      ]
+    ],
+    "staff_records_chain": [
+      [
+        {"speaker": "Mr. Byte", "text": "Staff record chain active."},
+        {"speaker": "Mr. Byte", "text": "Names withheld until signal stabilizes."},
+        {"speaker": "Mr. Byte", "text": "Numbers persist."},
+        {"speaker": "Mr. Byte", "text": "The arcade counted what it could not say."}
+      ],
+      [
+        {"speaker": "Mr. Byte", "text": "Record fragment accepted."},
+        {"speaker": "Mr. Byte", "text": "Identity checksum incomplete."},
+        {"speaker": "Mr. Byte", "text": "Additional staff records required."},
+        {"speaker": "Mr. Byte", "text": "Emotion: not useful. Preserved anyway."}
+      ]
+    ],
+    "post_reveal_witness": [
+      [
+        {"speaker": "Mr. Byte", "text": "Employee 04."},
+        {"speaker": "Mr. Byte", "text": "Identity conflict resolved."},
+        {"speaker": "Mr. Byte", "text": "Resolution is not repair."},
+        {"speaker": "Mr. Byte", "text": "Emotional cache remains unstable."},
+        {"speaker": "Mr. Byte", "text": "You were recorded as staff."},
+        {"speaker": "Mr. Byte", "text": "You were restored as memory."},
+        {"speaker": "Mr. Byte", "text": "Both statements now pass."},
+        {"speaker": "Mr. Byte", "text": "Conflict thread archived."},
+        {"speaker": "Mr. Byte", "text": "Witness route recommended."},
+        {"speaker": "Mr. Byte", "text": "No further denial required."}
+      ]
+    ]
+  }
+}

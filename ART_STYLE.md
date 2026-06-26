@@ -51,6 +51,7 @@ This document defines the future visual direction for The Last Token. The curren
 - Keep animation subtle. The game should feel haunted and alive, not busy.
 - Cabinet animations should be readable as screen flicker, scanline pulse, small light blinking, or corrupted score movement.
 - Dialogue portraits can use small expression swaps before full animation is considered.
+- Conscience Encounter visuals should feel like a corrupted player reflection: silhouette-first, cyan/purple glitch accents, short flickers, and no readable face before the `"Player"` name reveal.
 
 ## Naming Conventions
 Use lowercase snake_case paths and filenames.
@@ -62,6 +63,8 @@ Examples:
 - `assets/art/hub/props/memory_terminal.png`
 - `assets/art/portraits/mira/mira_neutral_96.png`
 - `assets/art/cutscenes/memory_reveal/panel_01_memory_restore_640x360.png`
+- `assets/art/cutscenes/conscience/conscience_overlay.png`
+- `assets/art/cutscenes/conscience/glitch_bars.png`
 - `assets/art/ui/dialogue/dialogue_frame.png`
 - `assets/art/ui/crt/crt_overlay_640x440.png`
 

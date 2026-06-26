@@ -1,0 +1,437 @@
+{
+  "character_id": "environment_objects",
+  "sets": {
+    "ticket_counter": [
+      [
+        {"speaker": "Narrator", "text": "The ticket counter glass reflects old prize lights."}
+      ]
+    ],
+    "ticket_counter_grounded": [
+      [
+        {"speaker": "Narrator", "text": "The ticket counter glass reflects old prize lights."},
+        {"speaker": "Narrator", "text": "A strip of tickets curls like it was dropped mid-shift."}
+      ]
+    ],
+    "ticket_counter_uneasy": [
+      [
+        {"speaker": "Narrator", "text": "The tickets twitch when you pass."},
+        {"speaker": "Narrator", "text": "The counter smells faintly of dust and warm paper."}
+      ]
+    ],
+    "ticket_counter_fractured": [
+      [
+        {"speaker": "Narrator", "text": "The ticket counter glass reflects someone standing beside you."},
+        {"speaker": "Narrator", "text": "For a moment, the reflection wears your shape."},
+        {"speaker": "Narrator", "text": "It mouths: not the first."}
+      ]
+    ],
+    "ticket_counter_overloaded": [
+      [
+        {"speaker": "Narrator", "text": "Every ticket stub points toward the Staff Door."},
+        {"speaker": "Narrator", "text": "The roll keeps counting after it runs out of numbers."}
+      ]
+    ],
+    "ticket_counter_restored": [
+      [
+        {"speaker": "Narrator", "text": "The counter is quiet now."},
+        {"speaker": "Narrator", "text": "It no longer tries to sell you proof."}
+      ]
+    ],
+    "owner_portrait_grounded": [
+      [
+        {"speaker": "Owner Portrait", "text": "A dusty portrait hangs above the arcade floor."},
+        {"speaker": "Owner Portrait", "text": "The nameplate is scratched beyond reading."}
+      ]
+    ],
+    "owner_portrait_fractured": [
+      [
+        {"speaker": "Owner Portrait", "text": "The scratches look less random now."},
+        {"speaker": "Owner Portrait", "text": "Two marks seem to repeat: 0 and 4."}
+      ]
+    ],
+    "owner_portrait_overloaded": [
+      [
+        {"speaker": "Owner Portrait", "text": "The portrait seems to be looking at the Staff Door."},
+        {"speaker": "Owner Portrait", "text": "The nameplate clicks softly in its frame."}
+      ]
+    ],
+    "owner_portrait_restored": [
+      [
+        {"speaker": "Owner Portrait", "text": "The name was never gone."},
+        {"speaker": "Owner Portrait", "text": "It waited until you could read it."},
+        {"speaker": "Owner Portrait", "text": "It says: EMPLOYEE 04."}
+      ]
+    ],
+    "broken_cabinet_grounded": [
+      [
+        {"speaker": "Broken Cabinet", "text": "The cabinet is dark."},
+        {"speaker": "Broken Cabinet", "text": "A paper sign says OUT OF ORDER."}
+      ]
+    ],
+    "broken_cabinet_fractured": [
+      [
+        {"speaker": "Broken Cabinet", "text": "RESET FAILED."},
+        {"speaker": "Broken Cabinet", "text": "EMPLOYEE SIGNAL RETURNED."}
+      ]
+    ],
+    "broken_cabinet_overloaded": [
+      [
+        {"speaker": "Broken Cabinet", "text": "STOP PRESSING E."},
+        {"speaker": "Broken Cabinet", "text": "I AM TRYING TO REMEMBER."}
+      ]
+    ],
+    "broken_cabinet_restored": [
+      [
+        {"speaker": "Broken Cabinet", "text": "I remember your first quarter."},
+        {"speaker": "Broken Cabinet", "text": "You looked happier then."},
+        {"speaker": "Broken Cabinet", "text": "Not better. Just earlier."}
+      ]
+    ],
+    "closing_checklist_grounded": [
+      [
+        {"speaker": "Closing Checklist", "text": "Sweep floors."},
+        {"speaker": "Closing Checklist", "text": "Count tickets."},
+        {"speaker": "Closing Checklist", "text": "Lock Staff Room."}
+      ]
+    ],
+    "closing_checklist_fractured": [
+      [
+        {"speaker": "Closing Checklist", "text": "CLOSING CHECKLIST"},
+        {"speaker": "Closing Checklist", "text": "Counter locked."},
+        {"speaker": "Closing Checklist", "text": "Cabinet Row dimmed."},
+        {"speaker": "Closing Checklist", "text": "Staff Door checked twice."},
+        {"speaker": "Closing Checklist", "text": "Final item scratched out."}
+      ]
+    ],
+    "closing_checklist_overloaded": [
+      [
+        {"speaker": "Closing Checklist", "text": "CLOSING CHECKLIST"},
+        {"speaker": "Closing Checklist", "text": "Two closing signatures detected."},
+        {"speaker": "Closing Checklist", "text": "One hand wrote both badly."}
+      ]
+    ],
+    "closing_checklist_restored": [
+      [
+        {"speaker": "Closing Checklist", "text": "The checklist is only paper now."},
+        {"speaker": "Closing Checklist", "text": "It stops pretending a routine can hold a night together."}
+      ]
+    ],
+    "maintenance_note_grounded": [
+      [
+        {"speaker": "Maintenance Note", "text": "Most of the note is routine cleaning nonsense."},
+        {"speaker": "Maintenance Note", "text": "A coffee ring covers the useful part."}
+      ]
+    ],
+    "maintenance_note_fractured": [
+      [
+        {"speaker": "Maintenance Note", "text": "MAINTENANCE NOTE"},
+        {"speaker": "Maintenance Note", "text": "Staff Door reported two signals after closing."},
+        {"speaker": "Maintenance Note", "text": "One signal entered."},
+        {"speaker": "Maintenance Note", "text": "One signal remained."},
+        {"speaker": "Maintenance Note", "text": "Gus note: I do not get paid enough for doors with opinions."}
+      ]
+    ],
+    "maintenance_note_overloaded": [
+      [
+        {"speaker": "Maintenance Note", "text": "The note buzzes in your hand."},
+        {"speaker": "Maintenance Note", "text": "The ink keeps rewriting the word DOOR."}
+      ]
+    ],
+    "maintenance_note_restored": [
+      [
+        {"speaker": "Maintenance Note", "text": "The last line is readable now."},
+        {"speaker": "Maintenance Note", "text": "Gus came back to check the lock."},
+        {"speaker": "Maintenance Note", "text": "He was scared and did the job anyway."}
+      ]
+    ],
+    "staff_schedule_grounded": [
+      [
+        {"speaker": "Staff Schedule", "text": "The schedule screen is scrambled."},
+        {"speaker": "Staff Schedule", "text": "Mr. Byte has not unlocked staff records yet."}
+      ]
+    ],
+    "staff_schedule_fractured": [
+      [
+        {"speaker": "Staff Schedule", "text": "STAFF SCHEDULE"},
+        {"speaker": "Staff Schedule", "text": "Final Night"},
+        {"speaker": "Staff Schedule", "text": "Mira - Counter"},
+        {"speaker": "Staff Schedule", "text": "Gus - Maintenance"},
+        {"speaker": "Staff Schedule", "text": "Employee ## - Cabinet shutdown"},
+        {"speaker": "Staff Schedule", "text": "Status: unresolved"}
+      ]
+    ],
+    "staff_schedule_overloaded": [
+      [
+        {"speaker": "Staff Schedule", "text": "The schedule repeats the final shift."},
+        {"speaker": "Staff Schedule", "text": "The last assignment is still redacted."},
+        {"speaker": "Staff Schedule", "text": "The Staff Door disagrees."}
+      ]
+    ],
+    "staff_schedule_restored": [
+      [
+        {"speaker": "Staff Schedule", "text": "The final shift no longer hides its shape."},
+        {"speaker": "Staff Schedule", "text": "Everyone was where they said they were."},
+        {"speaker": "Staff Schedule", "text": "Including you."}
+      ]
+    ],
+    "staff_records_locked": [
+      [
+        {"speaker": "Staff Record", "text": "The record terminal is sealed."},
+        {"speaker": "Staff Record", "text": "TRUTH FILTER REQUIRED."}
+      ]
+    ],
+    "staff_records_fractured": [
+      [
+        {"speaker": "Staff Record", "text": "RESTORE SYSTEM NOTE"},
+        {"speaker": "Staff Record", "text": "Subject memory incomplete."},
+        {"speaker": "Staff Record", "text": "Do not repeat name until signal stabilizes."}
+      ]
+    ],
+    "staff_records_overloaded": [
+      [
+        {"speaker": "Staff Record", "text": "Record fragment accepted."},
+        {"speaker": "Staff Record", "text": "Employee number checksum detected."},
+        {"speaker": "Staff Record", "text": "Name field still sealed."}
+      ]
+    ],
+    "staff_records_restored": [
+      [
+        {"speaker": "Staff Record", "text": "The archive stops hiding the file."},
+        {"speaker": "Staff Record", "text": "The number was a door."},
+        {"speaker": "Staff Record", "text": "The name was you."}
+      ]
+    ],
+    "truth_filter_machine_grounded": [
+      [
+        {"speaker": "Truth Filter", "text": "SIGNAL TOO QUIET."},
+        {"speaker": "Truth Filter", "text": "LOST TOKEN REQUIRED."}
+      ]
+    ],
+    "truth_filter_machine_uneasy": [
+      [
+        {"speaker": "Truth Filter", "text": "CONTRADICTION THRESHOLD REACHED."},
+        {"speaker": "Truth Filter", "text": "SORT FALSE RECORDS."}
+      ]
+    ],
+    "truth_filter_machine_fractured": [
+      [
+        {"speaker": "Truth Filter", "text": "TRUTH FILTER PASSED."},
+        {"speaker": "Truth Filter", "text": "MEMORY SIGNAL: FRACTURED."}
+      ]
+    ],
+    "truth_filter_machine_restored": [
+      [
+        {"speaker": "Truth Filter", "text": "TRUTH FILTER IDLE."},
+        {"speaker": "Truth Filter", "text": "SUBJECT NO LONGER DENIES PRIMARY RECORD."}
+      ]
+    ],
+    "circuit_soda_machine_locked": [
+      [
+        {"speaker": "Circuit Soda", "text": "SNACK ALCOVE LOCKED."},
+        {"speaker": "Circuit Soda", "text": "TRUTH FILTER REQUIRED."}
+      ]
+    ],
+    "circuit_soda_machine_fractured": [
+      [
+        {"speaker": "Circuit Soda", "text": "MEMORY FLOW UNROUTED."},
+        {"speaker": "Circuit Soda", "text": "CONNECT INPUT TO RESTORE OUTPUT."},
+        {"speaker": "Circuit Soda", "text": "DO NOT SPILL IDENTITY."}
+      ]
+    ],
+    "circuit_soda_machine_overloaded": [
+      [
+        {"speaker": "Circuit Soda", "text": "ROUTE HOLDING."},
+        {"speaker": "Circuit Soda", "text": "PRESSURE ABOVE COMFORT."}
+      ]
+    ],
+    "circuit_soda_machine_restored": [
+      [
+        {"speaker": "Circuit Soda", "text": "MEMORY FLOW RESTORED."},
+        {"speaker": "Circuit Soda", "text": "FRACTURED SIGNAL STABILIZED."}
+      ]
+    ],
+    "maintenance_sync_machine_locked": [
+      [
+        {"speaker": "Maintenance Sync", "text": "MAINTENANCE SYNC LOCKED."},
+        {"speaker": "Maintenance Sync", "text": "SERVICE POWER REQUIRED."}
+      ]
+    ],
+    "maintenance_sync_machine_circuit_required": [
+      [
+        {"speaker": "Maintenance Sync", "text": "SIGNAL ROUTE MISSING."},
+        {"speaker": "Maintenance Sync", "text": "CIRCUIT SODA REQUIRED."}
+      ]
+    ],
+    "maintenance_sync_machine_lost_shift_required": [
+      [
+        {"speaker": "Maintenance Sync", "text": "MAINTENANCE SYNC LOCKED."},
+        {"speaker": "Maintenance Sync", "text": "LOST SHIFT FILE REQUIRED."}
+      ]
+    ],
+    "maintenance_sync_machine_static_service_required": [
+      [
+        {"speaker": "Maintenance Sync", "text": "MAINTENANCE SYNC LOCKED."},
+        {"speaker": "Maintenance Sync", "text": "STATIC SERVICE REQUIRED."}
+      ]
+    ],
+    "maintenance_sync_machine_fractured": [
+      [
+        {"speaker": "Maintenance Sync", "text": "TWO SIGNALS DETECTED."},
+        {"speaker": "Maintenance Sync", "text": "DOOR LISTENING."},
+        {"speaker": "Maintenance Sync", "text": "SYNC REQUIRED."}
+      ]
+    ],
+    "maintenance_sync_machine_overloaded": [
+      [
+        {"speaker": "Maintenance Sync", "text": "ACCESS GRANTED."},
+        {"speaker": "Maintenance Sync", "text": "EMPLOYEE SIGNAL ACCEPTED."},
+        {"speaker": "Maintenance Sync", "text": "DOOR HEARD BOTH KNOCKS."}
+      ]
+    ],
+    "maintenance_sync_machine_restored": [
+      [
+        {"speaker": "Maintenance Sync", "text": "SYNC COMPLETE."},
+        {"speaker": "Maintenance Sync", "text": "NO FURTHER KNOCKS REQUIRED."}
+      ]
+    ],
+    "security_tape_terminal_locked": [
+      [
+        {"speaker": "Security Tape", "text": "SECURITY TAPE LOCKED."},
+        {"speaker": "Security Tape", "text": "MAINTENANCE SYNC REQUIRED."}
+      ]
+    ],
+    "security_tape_terminal_overloaded": [
+      [
+        {"speaker": "Security Tape", "text": "SECURITY TAPE DAMAGED."},
+        {"speaker": "Security Tape", "text": "FRAMES OUT OF ORDER."},
+        {"speaker": "Security Tape", "text": "RESTORE SEQUENCE."}
+      ]
+    ],
+    "security_tape_terminal_restored": [
+      [
+        {"speaker": "Security Tape", "text": "TAPE ORDER RESTORED."},
+        {"speaker": "Security Tape", "text": "FINAL NIGHT ROUTE PARTIAL."}
+      ]
+    ],
+    "final_night_walk_terminal_locked": [
+      [
+        {"speaker": "Memory System", "text": "FINAL NIGHT WALK LOCKED."},
+        {"speaker": "Memory System", "text": "SECURITY TAPE REQUIRED."}
+      ]
+    ],
+    "final_night_walk_terminal_overloaded": [
+      [
+        {"speaker": "Memory System", "text": "TAPE ORDER RESTORED."},
+        {"speaker": "Memory System", "text": "ROUTE MEMORY UNSTABLE."},
+        {"speaker": "Memory System", "text": "WALK THE FINAL NIGHT."}
+      ]
+    ],
+    "final_night_walk_terminal_restored": [
+      [
+        {"speaker": "Memory System", "text": "FINAL NIGHT ROUTE STABLE."},
+        {"speaker": "Memory System", "text": "MEMORY ECHO READY."}
+      ]
+    ],
+    "memory_echo_object_locked": [
+      [
+        {"speaker": "Memory Echo", "text": "MEMORY ECHO LOCKED."},
+        {"speaker": "Memory Echo", "text": "FINAL NIGHT WALK REQUIRED."}
+      ]
+    ],
+    "memory_echo_object_maintenance_required": [
+      [
+        {"speaker": "Memory Echo", "text": "SIGNAL TOO QUIET."},
+        {"speaker": "Memory Echo", "text": "MAINTENANCE SYNC REQUIRED."}
+      ]
+    ],
+    "memory_echo_object_security_tape_required": [
+      [
+        {"speaker": "Memory Echo", "text": "MEMORY ECHO LOCKED."},
+        {"speaker": "Memory Echo", "text": "SECURITY TAPE REQUIRED."}
+      ]
+    ],
+    "memory_echo_object_final_night_required": [
+      [
+        {"speaker": "Memory Echo", "text": "MEMORY ECHO LOCKED."},
+        {"speaker": "Memory Echo", "text": "FINAL NIGHT WALK REQUIRED."}
+      ]
+    ],
+    "memory_echo_object_overloaded": [
+      [
+        {"speaker": "Memory Echo", "text": "FINAL NIGHT ROUTE STABLE."},
+        {"speaker": "Memory Echo", "text": "MEMORY ECHO AVAILABLE."},
+        {"speaker": "Memory Echo", "text": "IDENTITY CONFLICT APPROACHING READABLE RANGE."}
+      ]
+    ],
+    "memory_echo_object_restored": [
+      [
+        {"speaker": "Memory Echo", "text": "Echo stabilized."},
+        {"speaker": "Memory Echo", "text": "The arcade stops arguing with itself."},
+        {"speaker": "Memory Echo", "text": "That might be worse."}
+      ]
+    ],
+    "staff_room_terminal_locked": [
+      [
+        {"speaker": "Terminal", "text": "RESTORE PLAYBACK LOCKED."},
+        {"speaker": "Terminal", "text": "MEMORY ECHO REQUIRED."}
+      ]
+    ],
+    "staff_room_terminal_available": [
+      [
+        {"speaker": "Terminal", "text": "Employee file recovered."},
+        {"speaker": "Terminal", "text": "Restoration subject found."},
+        {"speaker": "Terminal", "text": "Name: Employee 04."}
+      ]
+    ],
+    "staff_room_terminal_restored": [
+      [
+        {"speaker": "Terminal", "text": "EMPLOYEE 04 RESTORE STATUS: STABLE."},
+        {"speaker": "Terminal", "text": "CONSCIENCE ECHO INTEGRATED."},
+        {"speaker": "Terminal", "text": "MEMORY LOOP CLOSED."}
+      ]
+    ],
+    "employee_04_file_archived": [
+      [
+        {"speaker": "Employee File", "text": "EMPLOYEE 04 // STATUS: ARCHIVED RESTORE PROFILE."},
+        {"speaker": "Employee File", "text": "The photo is corrupted beyond recognition."}
+      ]
+    ],
+    "employee_04_file_restored": [
+      [
+        {"speaker": "Employee File", "text": "EMPLOYEE 04 // RESTORED MEMORY ACTIVE."},
+        {"speaker": "Employee File", "text": "The photo is yours."},
+        {"speaker": "Employee File", "text": "The file was never about someone else."}
+      ]
+    ],
+    "employee_04_file_integrated": [
+      [
+        {"speaker": "Employee File", "text": "EMPLOYEE 04 // RESTORED MEMORY ACTIVE."},
+        {"speaker": "Employee File", "text": "The photo is yours."},
+        {"speaker": "Employee File", "text": "The regret field is no longer sealed."}
+      ]
+    ],
+    "prize_counter_grounded": [
+      [
+        {"speaker": "Prize Counter", "text": "Cheap prizes watch from behind dusty glass."}
+      ]
+    ],
+    "prize_counter_uneasy": [
+      [
+        {"speaker": "Prize Counter", "text": "A blue prize has been moved to the front."},
+        {"speaker": "Prize Counter", "text": "No one admits moving it."}
+      ]
+    ],
+    "prize_counter_fractured": [
+      [
+        {"speaker": "Prize Counter", "text": "Three labels sit loose under the glass."},
+        {"speaker": "Prize Counter", "text": "Ticket Stub. Lost Token. Blank Employee Badge."}
+      ]
+    ],
+    "prize_counter_restored": [
+      [
+        {"speaker": "Prize Counter", "text": "The prize labels are neatly sorted."},
+        {"speaker": "Prize Counter", "text": "The badge no longer looks blank to you."}
+      ]
+    ]
+  }
+}

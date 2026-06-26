@@ -413,31 +413,31 @@ use_placeholder_visual = false
 
 [node name="ToCabinetRow" parent="InteractableLayer" instance=ExtResource("8")]
 position = Vector2(628, 122)
-target_scene_path = "res://scenes/maps/CabinetRow.tscn"
+target_scene_path = "res://scenes/maps/hallways/CabinetHallway.tscn"
 target_spawn_id = "Spawn_FromArcadeHub"
 
 [node name="ToSnackAlcove" parent="InteractableLayer" instance=ExtResource("8")]
 position = Vector2(628, 208)
-target_scene_path = "res://scenes/maps/SnackAlcove.tscn"
+target_scene_path = "res://scenes/maps/hallways/SnackHallway.tscn"
 target_spawn_id = "Spawn_FromArcadeHub"
 required_flag = "lying_cabinets_completed"
 locked_dialogue = Array[String](["SNACK ALCOVE LOCKED.", "TRUTH FILTER REQUIRED."])
 
 [node name="ToPrizeCorner" parent="InteractableLayer" instance=ExtResource("8")]
 position = Vector2(12, 360)
-target_scene_path = "res://scenes/maps/PrizeCorner.tscn"
+target_scene_path = "res://scenes/maps/hallways/PrizeHallway.tscn"
 target_spawn_id = "Spawn_FromArcadeHub"
 
 [node name="ToMaintenanceHall" parent="InteractableLayer" instance=ExtResource("8")]
 position = Vector2(628, 358)
-target_scene_path = "res://scenes/maps/MaintenanceHall.tscn"
+target_scene_path = "res://scenes/maps/hallways/MaintenanceHallway.tscn"
 target_spawn_id = "Spawn_FromArcadeHub"
 required_flag = "circuit_soda_completed"
 locked_dialogue = Array[String](["MAINTENANCE HALL LOCKED.", "CIRCUIT SODA ROUTE REQUIRED."])
 
 [node name="ToStaffCorridor" parent="InteractableLayer" instance=ExtResource("8")]
 position = Vector2(628, 282)
-target_scene_path = "res://scenes/maps/StaffCorridor.tscn"
+target_scene_path = "res://scenes/maps/hallways/BackHallway.tscn"
 target_spawn_id = "Spawn_FromArcadeHub"
 required_flag = "staff_corridor_unlocked"
 locked_dialogue = Array[String](["STAFF CORRIDOR LOCKED.", "SYNC DOOR ACCESS REQUIRED."])

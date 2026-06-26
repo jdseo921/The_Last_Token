@@ -7,6 +7,7 @@ Define the required playable arcade stages and optional minigames for a compact 
 - Required progress now has 10 milestones: 8 playable minigame/adventure/puzzle stages, 1 required lore investigation, and the Staff Room reveal.
 - Optional route has exactly 2 optional minigames/puzzles.
 - Lore-reading quests are tracked separately in `LORE_QUEST_PLAN.md`.
+- Conscience Encounters are short route interludes, not minigames, and do not increase the `Main: x / 10` count.
 - No combat.
 - No inventory.
 - Required stages must return to the route safely and preserve save/load.
@@ -24,7 +25,13 @@ Define the required playable arcade stages and optional minigames for a compact 
 | 7 | Security Tape Assembly | Staff Door / Mr. Byte | Staff Corridor | Puzzle | `maintenance_sync_completed` | `security_tape_assembly_completed` | Overloaded | Implemented |
 | 8 | Final Night Walk | Staff Door / Memory System | Staff Corridor | 8-bit arcade-adventure | `security_tape_assembly_completed` | `final_night_walk_completed` | Overloaded | Implemented with placeholder visuals |
 | 9 | Memory Echo | Memory Echo | Staff Corridor | Dialogue puzzle | `final_night_walk_completed` | `memory_echo_completed` | Overloaded | Implemented |
-| 10 | Staff Room Reveal | Staff Room | Staff Room | Reveal sequence | `memory_echo_completed` | `twist_reveal_seen` | Restored after ending | Implemented |
+| 10 | Staff Room Reveal | Staff Room / `"Player"` | Staff Room | Reveal sequence + final self-conflict before EndingPrompt | `memory_echo_completed` | `twist_reveal_seen`, `conscience_final_room_seen` | Restored after ending | Implemented |
+
+## Non-Minigame Route Interludes
+
+| Content | Owner | Trigger | Flags | Status |
+| --- | --- | --- | --- | --- |
+| Conscience Encounters | ??? / `"Player"` | After Truth Filter, Circuit Soda, Lost Shift File, Final Night Walk, and after the Staff Room reveal slideshow | `conscience_encounter_1_seen` through `conscience_encounter_4_seen`, `conscience_final_room_seen`, `player_glitched_form_unlocked` | Implemented as dialogue overlay plus Staff Room dialogue |
 
 ## Optional Minigames And Puzzles
 

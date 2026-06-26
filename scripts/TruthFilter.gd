@@ -44,7 +44,7 @@ const ROUND_DATA: Array[Dictionary] = [
 		"rule": "Choose the statement the arcade does not want you to read.",
 		"transition": "The arcade tests what it tried to hide.",
 		"statements": [
-			"Employee 04 left safely.",
+			"The closing employee left safely.",
 			"The backup was incomplete.",
 			"The owner closed the arcade normally.",
 		],
