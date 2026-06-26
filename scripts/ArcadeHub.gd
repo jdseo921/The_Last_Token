@@ -235,26 +235,43 @@ func _objective_hint_should_be_visible() -> bool:
 	return true
 
 func _get_objective_hint_text() -> String:
-	if not GameState.story_started:
-		return "Objective: Talk to Mira at the ticket counter."
-	if GameState.lost_token_quest_started and not GameState.rockbyte_duel_completed:
-		return "Objective: Play Cabinet 07 on the main floor."
-	if GameState.rockbyte_duel_completed and not GameState.lost_token_quest_completed:
-		return "Objective: Return the Lost Token to Mira at the counter."
-	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
-		return "Objective: CABINET ROW exit -> talk to Mr. Byte."
-	if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
-		return "Objective: SNACK ALCOVE exit -> talk to Vendo."
-	if GameState.lying_cabinets_completed and not GameState.story_puzzle_completed:
-		return "Objective: MAINTENANCE exit -> talk to Gus."
-	if GameState.story_puzzle_completed and GameState.staff_room_unlocked and not GameState.twist_reveal_seen:
-		if GameState.conscience_final_room_seen:
-			return "Objective: STAFF CORRIDOR exit -> access Staff Room files."
-		return "Objective: STAFF CORRIDOR exit -> enter Staff Room."
-	if GameState.twist_reveal_seen and not GameState.post_reveal_roam_unlocked:
-		return "Objective: Finish the memory."
-	if GameState.post_reveal_roam_unlocked:
-		return "Objective: Talk to witnesses. Start with Mira and Cabinet 07."
+	match GameState.get_current_quest_id():
+		"opening_talk_to_mira":
+			return "Objective: Talk to Mira at the ArcadeHub ticket counter."
+		"recover_lost_token":
+			return "Objective: Play Cabinet 07 on the ArcadeHub main floor."
+		"return_lost_token":
+			return "Objective: Return the Lost Token to Mira at the counter."
+		"truth_filter":
+			return "Objective: Cabinet Row -> Mr. Byte and Truth Filter."
+		"circuit_soda":
+			return "Objective: Snack Alcove -> Vendo and Circuit Soda."
+		"lost_shift_file":
+			if not GameState.closing_checklist_read:
+				return "Objective: ArcadeHub -> read the Closing Checklist."
+			if not GameState.staff_schedule_read:
+				return "Objective: Cabinet Row -> read the Staff Schedule by Mr. Byte."
+			if not GameState.maintenance_note_read:
+				return "Objective: Maintenance Hall -> read Gus's Maintenance Note."
+			return "Objective: Maintenance Hall -> tell Gus the Lost Shift File is complete."
+		"static_service_run":
+			return "Objective: Maintenance Hall -> Gus and Static Service Run."
+		"maintenance_sync":
+			return "Objective: Maintenance Hall -> Gus and Maintenance Sync."
+		"staff_corridor":
+			return "Objective: Maintenance Hall -> use the Staff Corridor exit."
+		"security_tape_assembly":
+			return "Objective: Staff Corridor -> assemble the Security Tape."
+		"final_night_walk":
+			return "Objective: Staff Corridor -> walk the Final Night route."
+		"stabilize_memory_echo":
+			return "Objective: Staff Corridor -> stabilize the Memory Echo."
+		"enter_staff_room":
+			return "Objective: Staff Corridor -> enter the Staff Room."
+		"finish_memory":
+			return "Objective: Staff Room -> finish the memory."
+		"talk_to_witnesses":
+			return "Objective: Talk to witnesses. Start with Mira and Cabinet 07."
 	return ""
 
 func _refresh_memory_signal_label() -> void:

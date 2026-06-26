@@ -26,6 +26,7 @@ var prize_sort_remaining: Array = []
 var route_cue: Control = null
 
 func _ready() -> void:
+	AudioManager.play_music_for_context("prize_corner")
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
 	_apply_background_art()

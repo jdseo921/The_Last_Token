@@ -51,6 +51,7 @@ var current_music_stream: AudioStream = null
 var music_loop_enabled := true
 var music_fade_tween: Tween = null
 var pending_fade_stop_player: AudioStreamPlayer = null
+var music_context_volume_scale := 1.0
 
 func _ready() -> void:
 	for index in range(4):
@@ -129,6 +130,7 @@ func play_success_jingle() -> void:
 	_play_sfx("success_jingle")
 
 func play_arcade_ambience() -> void:
+	music_context_volume_scale = 1.0
 	play_music("arcade_hub_grounded")
 
 func stop_arcade_ambience() -> void:
@@ -140,6 +142,7 @@ func play_music(track_id: String, fade_seconds: float = 0.75) -> void:
 		return
 	var base_name := str(MUSIC_TRACKS.get(track_id, track_id))
 	if track_id == current_music_id and active_music_player != null and active_music_player.playing:
+		active_music_player.volume_db = _get_music_volume_db()
 		return
 	var stream := _load_audio(MUSIC_DIR, base_name)
 	if stream == null:
@@ -175,6 +178,7 @@ func stop_music(fade_seconds: float = 0.5) -> void:
 	_stop_music_fade_tween()
 	current_music_id = ""
 	current_music_stream = null
+	music_context_volume_scale = 1.0
 	if active_music_player == null:
 		return
 	if fade_seconds <= 0.0 or not active_music_player.playing:
@@ -192,6 +196,7 @@ func play_music_for_context(context_id: String) -> void:
 	var track_id := _get_track_id_for_context(context_id)
 	if track_id.is_empty():
 		return
+	music_context_volume_scale = _get_volume_scale_for_context(context_id)
 	play_music(track_id)
 
 func _get_track_id_for_context(context_id: String) -> String:
@@ -204,6 +209,8 @@ func _get_track_id_for_context(context_id: String) -> String:
 			return "cabinet_row_records"
 		"snack_alcove":
 			return "snack_alcove_vendo"
+		"prize_corner":
+			return _get_arcade_hub_music_id()
 		"maintenance_hall":
 			return "maintenance_hall_static"
 		"staff_corridor":
@@ -231,6 +238,12 @@ func _get_track_id_for_context(context_id: String) -> String:
 		"post_reveal":
 			return "post_reveal_roam"
 	return ""
+
+func _get_volume_scale_for_context(context_id: String) -> float:
+	match context_id:
+		"staff_room", "ending":
+			return 0.58
+	return 1.0
 
 func _get_arcade_hub_music_id() -> String:
 	if not has_node("/root/GameState"):
@@ -325,6 +338,7 @@ func _get_music_volume_db() -> float:
 	var volume := 0.75
 	if has_node("/root/GameSettings"):
 		volume = float(get_node("/root/GameSettings").get("music_volume"))
+	volume *= music_context_volume_scale
 	return linear_to_db(maxf(volume, 0.001))
 
 func _silent_volume_db() -> float:

@@ -19,6 +19,7 @@ var pending_after_dialogue: Callable = Callable()
 var route_cue: Control = null
 
 func _ready() -> void:
+	AudioManager.play_music_for_context(_get_music_context())
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
 	title_label.text = title_text
@@ -32,6 +33,20 @@ func _ready() -> void:
 
 func can_open_pause_menu() -> bool:
 	return not _dialogue_is_active()
+
+func _get_music_context() -> String:
+	match hallway_id:
+		"cabinet_hallway", "cabinet_snack_hallway":
+			return "cabinet_row"
+		"snack_hallway", "snack_prize_hallway":
+			return "snack_alcove"
+		"prize_hallway":
+			return "prize_corner"
+		"maintenance_hallway", "maintenance_staff_hallway":
+			return "maintenance_hall"
+		"back_hallway":
+			return "staff_corridor"
+	return "arcade_hub"
 
 func start_dialogue(lines: Array, after_dialogue: Callable = Callable()) -> void:
 	pending_after_dialogue = after_dialogue

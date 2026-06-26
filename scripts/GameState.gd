@@ -743,29 +743,29 @@ func get_current_quest_data() -> Dictionary:
 			return _with_registry_quest_data({
 				"id": "recover_lost_token",
 				"title": "Recover the Lost Token",
-				"summary": "Play Cabinet 07.",
-				"details": "Mira says Cabinet 07 has my Lost Token. I need to play it and bring the token back to her.",
+				"summary": "Play Cabinet 07 on the ArcadeHub main floor.",
+				"details": "Mira says Cabinet 07 has my Lost Token. I need to play Cabinet 07 on the ArcadeHub main floor, then bring the token back to Mira at the ticket counter.",
 			}, "lost_token")
 		"return_lost_token":
 			return _with_registry_quest_data({
 				"id": "return_lost_token",
 				"title": "Return the Lost Token",
-				"summary": "Bring the token back to Mira.",
+				"summary": "Bring the token back to Mira at the ArcadeHub counter.",
 				"details": "Cabinet 07 released the Lost Token. Mira is waiting for it by the ticket counter.",
 			}, "lost_token")
 		"maintenance_sync":
 			return _with_registry_quest_data({
 				"id": "maintenance_sync",
 				"title": "Maintenance Sync",
-				"summary": "Help Gus stabilize the Staff Door signals.",
-				"details": "Vendo routed the signal, but the Staff Door still needs two unstable signals to line up. Gus says the door is listening for something doubled.",
+				"summary": "Help Gus use Maintenance Sync in Maintenance Hall.",
+				"details": "Service power is restored. Talk to Gus in Maintenance Hall, then use Maintenance Sync to line up the Staff Door signals.",
 			}, "maintenance_sync")
 		"static_service_run":
 			return _with_registry_quest_data({
 				"id": "static_service_run",
 				"title": "Static Service Run",
-				"summary": "Restore service power for the Staff Door systems.",
-				"details": "The Lost Shift File gave Gus enough context to work with the door, but the maintenance system still needs power. Run the service route and recover the Signal Fuses.",
+				"summary": "Talk to Gus in Maintenance Hall and restore service power.",
+				"details": "The Lost Shift File gave Gus enough context to work with the Staff Door, but Maintenance Hall still needs service power. Talk to Gus, then run Static Service Run.",
 			}, "static_service_run")
 		"lost_shift_file":
 			return {
@@ -773,8 +773,8 @@ func get_current_quest_data() -> Dictionary:
 				"title": "Lost Shift File",
 				"owner": "Mira / Gus / Mr. Byte",
 				"location": "ArcadeHub, Maintenance Hall, Cabinet Row",
-				"summary": "Read the records from the Final Night.",
-				"details": "The signal is routed, but the Staff Door still refuses to open. Three records from the Final Night may explain why.",
+				"summary": "Read the Closing Checklist, Staff Schedule, and Maintenance Note.",
+				"details": "The signal is routed, but the Staff Door still refuses to open. Read the Closing Checklist in ArcadeHub, the Staff Schedule in Cabinet Row, and Gus's Maintenance Note in Maintenance Hall.",
 				"required": true,
 				"starts_after": "circuit_soda_completed",
 				"minigame": "None",
@@ -784,8 +784,8 @@ func get_current_quest_data() -> Dictionary:
 			return _with_registry_quest_data({
 				"id": "staff_corridor",
 				"title": "Enter the Staff Corridor",
-				"summary": "Follow the Overloaded signal past the Staff Door.",
-				"details": "Gus stabilized the door, but the arcade is not ready to show the Staff Room yet. Something is echoing in the corridor.",
+				"summary": "Use the Staff Corridor exit past Maintenance Hall.",
+				"details": "Gus stabilized the Staff Door. Use the Staff Corridor exit so the overloaded signal can lead toward Security Tape, Final Night Walk, and Memory Echo.",
 			}, "staff_corridor")
 		"security_tape_assembly":
 			return {
@@ -793,8 +793,8 @@ func get_current_quest_data() -> Dictionary:
 				"title": "Assemble the Security Tape",
 				"owner": "Staff Door / Mr. Byte",
 				"location": "Staff Corridor",
-				"summary": "Restore the damaged Final Night sequence.",
-				"details": "The Staff Door recorded two signals, but the tape is damaged. Assemble the fragments before confronting the Memory Echo.",
+				"summary": "Use the Security Tape terminal in Staff Corridor.",
+				"details": "The Staff Door recorded two signals, but the tape is damaged. Assemble the Security Tape in Staff Corridor before Final Night Walk and Memory Echo.",
 				"required": true,
 				"starts_after": "maintenance_sync_completed",
 				"minigame": "Security Tape Assembly",
@@ -804,36 +804,36 @@ func get_current_quest_data() -> Dictionary:
 			return _with_registry_quest_data({
 				"id": "final_night_walk",
 				"title": "Final Night Walk",
-				"summary": "Walk through the reconstructed Final Night.",
-				"details": "The security tape is assembled, but the memory is still too unstable to play back. Walk the reconstructed route before confronting the Memory Echo.",
+				"summary": "Use Final Night Walk in Staff Corridor.",
+				"details": "The security tape is assembled, but the memory is still too unstable to play back. Use Final Night Walk in Staff Corridor before confronting the Memory Echo.",
 			}, "final_night_walk")
 		"stabilize_memory_echo":
 			return _with_registry_quest_data({
 				"id": "stabilize_memory_echo",
 				"title": "Stabilize the Memory Echo",
-				"summary": "Stabilize the Memory Echo.",
-				"details": "The Final Night route is stable. The Memory Echo can now stabilize the signal before the Staff Room reveals what happened.",
+				"summary": "Use Memory Echo in Staff Corridor.",
+				"details": "The Final Night route is stable. Use Memory Echo in Staff Corridor to stabilize the signal before the Staff Room reveals what happened.",
 			}, "memory_echo")
 		"circuit_soda":
 			return _with_registry_quest_data({
 				"id": "circuit_soda",
 				"title": "Route the Signal",
-				"summary": "Help Vendo stabilize the memory signal.",
-				"details": "The Truth Filter recovered a second fragment, but the signal is still misrouted. Vendo says the arcade can move a memory through the wrong machine and still recognize the flavor.",
+				"summary": "Talk to Vendo in Snack Alcove and use Circuit Soda.",
+				"details": "The Truth Filter recovered a second fragment, but the signal is still misrouted. Talk to Vendo in Snack Alcove, then use Circuit Soda.",
 			}, "circuit_soda")
 		"truth_filter":
 			return _with_registry_quest_data({
 				"id": "truth_filter",
 				"title": "Open the Truth Filter",
-				"summary": "Find Mr. Byte in Cabinet Row.",
-				"details": "The Lost Token woke a memory, but Mira says the arcade is still filtering the truth. Mr. Byte can open the Truth Filter in Cabinet Row.",
+				"summary": "Find Mr. Byte in Cabinet Row and use Truth Filter.",
+				"details": "The Lost Token woke a memory, but Mira says the arcade is still filtering the truth. Talk to Mr. Byte in Cabinet Row, then use the Truth Filter.",
 			}, "truth_filter")
 		"enter_staff_room":
 			return _with_registry_quest_data({
 				"id": "enter_staff_room",
 				"title": "Enter the Staff Room",
-				"summary": "Enter the Staff Room.",
-				"details": "The echo in the corridor stabilized. The Staff Room door is ready.",
+				"summary": "Enter the Staff Room from Staff Corridor.",
+				"details": "The Memory Echo in Staff Corridor stabilized. The Staff Room door is ready.",
 			}, "staff_corridor")
 		"finish_memory":
 			return {

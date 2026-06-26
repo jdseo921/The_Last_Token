@@ -27,6 +27,7 @@ AudioManager="*res://scripts/AudioManager.gd"
 DisplayOptions="*res://scripts/DisplayOptions.gd"
 GameSettings="*res://scripts/GameSettings.gd"
 ConscienceEncounterDirector="*res://scripts/ConscienceEncounterDirector.gd"
+DevRouteMenu="*res://scripts/DevRouteMenu.gd"
 
 [display]
 
@@ -40,3 +41,7 @@ window/stretch/aspect="keep"
 [gui]
 
 theme/custom="res://themes/retro_mechanical_theme.tres"
+
+[the_last_token]
+
+dev_route_menu_enabled=false

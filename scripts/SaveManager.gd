@@ -106,11 +106,18 @@ func collect_save_data() -> Dictionary:
 	GameState.save_progress_stage = GameState.get_story_phase_label()
 	var current_scene_path := _get_current_save_scene_path()
 	GameState.save_scene_name = current_scene_path
+	var safe_spawn_marker := _get_safe_spawn_marker_for_scene(current_scene_path)
+	var game_state_data := GameState.to_save_data()
+	game_state_data["has_arcade_return_position"] = false
+	game_state_data["arcade_return_position_x"] = 0.0
+	game_state_data["arcade_return_position_y"] = 0.0
+	game_state_data["save_player_position_x"] = 0.0
+	game_state_data["save_player_position_y"] = 0.0
 	return {
 		"slot_id": GameState.save_slot_index,
 		"save_exists": true,
 		"current_scene": current_scene_path,
-		"spawn_marker": "",
+		"spawn_marker": safe_spawn_marker,
 		"story_phase": GameState.save_progress_stage,
 		"games_completed_count": GameState.get_games_completed_count(),
 		"total_games_count": GameState.get_total_games_count(),
@@ -126,7 +133,7 @@ func collect_save_data() -> Dictionary:
 		"memory_signal_label": GameState.get_memory_signal_label(),
 		"play_time_seconds": Time.get_ticks_msec() / 1000.0,
 		"last_saved_at": GameState.save_timestamp,
-		"game_state": GameState.to_save_data(),
+		"game_state": game_state_data,
 	}
 
 func apply_save_data(data: Dictionary) -> void:
@@ -134,52 +141,53 @@ func apply_save_data(data: Dictionary) -> void:
 		GameState.reset_for_new_game()
 		var compatible_state := GameState.get_compatible_save_data_for_summary(data["game_state"])
 		GameState.apply_save_data(compatible_state)
+		GameState.clear_arcade_return_position()
 
 func load_saved_scene_or_default(data: Dictionary) -> void:
 	var scene_path := str(data.get("current_scene", ""))
 	if GameState.post_reveal_roam_unlocked:
-		SceneChanger.go_to_arcade_hub()
+		_load_scene_at_safe_spawn(SceneChanger.ARCADE_HUB_SCENE)
 		return
 	if scene_path.is_empty() or scene_path == SceneChanger.TITLE_OR_MAIN_SCENE:
-		SceneChanger.go_to_arcade_hub()
+		_load_scene_at_safe_spawn(SceneChanger.ARCADE_HUB_SCENE)
 		return
 	if scene_path == SceneChanger.SECURITY_TAPE_ASSEMBLY_SCENE:
-		SceneChanger.go_to_staff_corridor()
+		_load_scene_at_safe_spawn(SceneChanger.STAFF_CORRIDOR_SCENE)
 		return
 	if scene_path == SceneChanger.STATIC_SERVICE_RUN_SCENE:
-		SceneChanger.go_to_maintenance_hall()
+		_load_scene_at_safe_spawn(SceneChanger.MAINTENANCE_HALL_SCENE)
 		return
 	if scene_path == SceneChanger.FINAL_NIGHT_WALK_SCENE:
-		SceneChanger.go_to_staff_corridor()
+		_load_scene_at_safe_spawn(SceneChanger.STAFF_CORRIDOR_SCENE)
 		return
 	if scene_path == SceneChanger.HUB_TICKET_SWEEP_SCENE:
-		SceneChanger.go_to_arcade_hub()
+		_load_scene_at_safe_spawn(SceneChanger.ARCADE_HUB_SCENE)
 		return
 	if scene_path == SceneChanger.CABINET_TRACE_RUN_SCENE:
-		SceneChanger.go_to_cabinet_row()
+		_load_scene_at_safe_spawn(SceneChanger.CABINET_ROW_SCENE)
 		return
 	if scene_path == SceneChanger.SNACK_SERVICE_DASH_SCENE:
-		SceneChanger.go_to_snack_alcove()
+		_load_scene_at_safe_spawn(SceneChanger.SNACK_ALCOVE_SCENE)
 		return
 	if scene_path == SceneChanger.PRIZE_SHELF_RUN_SCENE:
-		SceneChanger.go_to_prize_corner()
+		_load_scene_at_safe_spawn(SceneChanger.PRIZE_CORNER_SCENE)
 		return
 	if scene_path == SceneChanger.ROCKBYTE_DUEL_SCENE or scene_path == SceneChanger.TRUTH_FILTER_SCENE or scene_path == SceneChanger.SYNC_DOOR_PUZZLE_SCENE:
-		SceneChanger.go_to_arcade_hub()
+		_load_scene_at_safe_spawn(SceneChanger.ARCADE_HUB_SCENE)
 		return
 	if scene_path.begins_with("res://scenes/cutscenes/"):
-		SceneChanger.go_to_arcade_hub()
+		_load_scene_at_safe_spawn(SceneChanger.ARCADE_HUB_SCENE)
 		return
 	if scene_path == SceneChanger.STAFF_ROOM_SCENE:
 		if GameState.memory_echo_completed and not GameState.twist_reveal_seen:
-			SceneChanger.change_scene(scene_path)
+			_load_scene_at_safe_spawn(scene_path)
 			return
-		SceneChanger.go_to_arcade_hub()
+		_load_scene_at_safe_spawn(SceneChanger.ARCADE_HUB_SCENE)
 		return
 	if ResourceLoader.exists(scene_path):
-		SceneChanger.change_scene(scene_path)
+		_load_scene_at_safe_spawn(scene_path)
 		return
-	SceneChanger.go_to_arcade_hub()
+	_load_scene_at_safe_spawn(SceneChanger.ARCADE_HUB_SCENE)
 
 func _get_current_save_scene_path() -> String:
 	var current_scene := get_tree().current_scene
@@ -213,6 +221,29 @@ func _get_current_save_scene_path() -> String:
 	if scene_path.is_empty():
 		return SceneChanger.ARCADE_HUB_SCENE
 	return scene_path
+
+func _load_scene_at_safe_spawn(scene_path: String) -> void:
+	GameState.clear_arcade_return_position()
+	GameState.set_pending_spawn_id(_get_safe_spawn_marker_for_scene(scene_path))
+	SceneChanger.change_scene(scene_path)
+
+func _get_safe_spawn_marker_for_scene(scene_path: String) -> String:
+	match scene_path:
+		SceneChanger.ARCADE_HUB_SCENE:
+			return "Spawn_Default"
+		SceneChanger.CABINET_ROW_SCENE:
+			return "Spawn_Default"
+		SceneChanger.SNACK_ALCOVE_SCENE:
+			return "Spawn_Default"
+		SceneChanger.PRIZE_CORNER_SCENE:
+			return "Spawn_Default"
+		SceneChanger.MAINTENANCE_HALL_SCENE:
+			return "Spawn_Default"
+		SceneChanger.STAFF_CORRIDOR_SCENE:
+			return "Spawn_Default"
+		SceneChanger.STAFF_ROOM_SCENE:
+			return "Spawn_Default"
+	return "Spawn_Default"
 
 func _get_slot_path(slot_id: int) -> String:
 	return "%s/slot_%d.json" % [SAVE_DIR, slot_id]

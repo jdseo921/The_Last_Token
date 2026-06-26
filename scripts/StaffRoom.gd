@@ -19,6 +19,7 @@ func _ready() -> void:
 	if player and player.has_signal("interaction_prompt_changed"):
 		player.interaction_prompt_changed.connect(_on_prompt_changed)
 	return_button.pressed.connect(_on_return_pressed)
+	_apply_spawn_position()
 	_on_prompt_changed("")
 
 func _on_prompt_changed(text: String) -> void:
@@ -27,6 +28,12 @@ func _on_prompt_changed(text: String) -> void:
 
 func can_open_pause_menu() -> bool:
 	return active_dialogue_box == null and active_cutscene == null and not reveal_in_progress
+
+func _apply_spawn_position() -> void:
+	var spawn_id := GameState.consume_pending_spawn_id("Spawn_Default")
+	var marker := get_node_or_null(spawn_id)
+	if marker is Marker2D:
+		player.global_position = marker.global_position
 
 func handle_hub_interaction(interactable: Node, player_node: Node = null) -> void:
 	match str(interactable.interactable_kind):

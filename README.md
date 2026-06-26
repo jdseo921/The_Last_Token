@@ -3,7 +3,7 @@
 The Last Token is a 2D top-down retro arcade mystery about exploring Pixel Haven, talking to strange arcade regulars, recovering a lost token, unlocking the staff room, and uncovering who the player really is.
 
 ## Status
-The project is currently an MVP candidate pending final live playtest, with Memory Slots, post-reveal roam, integrated background music, and a visual-polish pass for the reveal slideshow, hub state props, route cues, retro UI framing, and key minigame feedback. It is ready to open in Godot and export as a local test build, but should not be called live-verified until the full acceptance route passes in the Godot runtime.
+The project is currently an MVP candidate pending final live playtest, with Memory Slots, post-reveal roam, integrated background music, pre-live stabilization checkpoints, safe spawn-marker restores, and a visual-polish pass for the reveal slideshow, hub state props, route cues, retro UI framing, and key minigame feedback. It is ready to open in Godot and export as a local test build, but should not be called live-verified until the full acceptance route passes in the Godot viewport.
 
 ## Engine
 - Godot 4.x
@@ -25,7 +25,7 @@ The project is currently an MVP candidate pending final live playtest, with Memo
 ## Manual Windows Export
 No `export_presets.cfg` is currently included. Create the preset manually in Godot:
 
-1. Open the project in Godot 4.4.x.
+1. Open the project in Godot 4.7.x.
 2. Go to `Project -> Export`.
 3. Choose `Add...`.
 4. Select `Windows Desktop`.
@@ -60,7 +60,10 @@ Current required route:
 Save slots display required progress as `Main: x / 10`, plus optional games, secrets, and Memory Signal.
 
 ## Save Files
-The Esc pause menu opens save/load options with three save slots. Saves are stored under `user://saves/slot_1.json`, `slot_2.json`, and `slot_3.json`.
+The Esc pause menu opens save/load options with three save slots. Saves are stored under `user://saves/slot_1.json`, `slot_2.json`, and `slot_3.json`. Loads restore through safe scene spawn markers instead of exact player coordinates.
+
+## Dev Route Checkpoints
+The hidden route checkpoint menu is disabled by default. In a debug/editor run only, launch with `--dev-route-menu`, set `THE_LAST_TOKEN_DEV_ROUTE_MENU=1`, or enable `the_last_token/dev_route_menu_enabled`, then press `F10` to jump to required-route checkpoints for pre-live testing. Do not enable this for normal play or exports.
 
 ## QA Automation
 See `QA_AUTOMATION.md` before running automated Godot checks from Codex. Headless scene checks are useful for smoke testing, but the first quest is not considered passed until a live Godot viewport playthrough confirms it.
@@ -72,7 +75,7 @@ After the ending prompt, the player returns to ArcadeHub with post-reveal state 
 - Some map and character visuals are still simple shapes and labels, but map route cues now point to the next required room or local action, and small ambient sprite effects add readable cabinet/static/exit signals.
 - The Staff Room reveal now uses eight mono-color 8-bit panels under `assets/art/cutscenes/memory_reveal/`; the slideshow fallback still displays `MEMORY PANEL / Placeholder image pending` if an image is removed.
 - Background music is included and wired through `AudioManager`. Simple generated SFX now cover memory panels, Memory Echo accepts, Staff Door unlock, arcade button pulses, score blips, error buzzes, and success jingles.
-- Exact player position restore is placeholder-level; story state and safe scene paths are restored.
+- Exact player position restore is intentionally avoided; story state, safe scene paths, and safe spawn markers are restored.
 - Rockbyte Duel uses simple AI for MVP testing.
 
 ## Asset Notes

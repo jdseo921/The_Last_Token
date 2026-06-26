@@ -36,6 +36,7 @@ func _on_return_to_title_pressed() -> void:
 func _mark_post_reveal_state() -> void:
 	GameState.ending_seen = true
 	GameState.twist_reveal_seen = true
+	GameState.unlock_player_glitched_form()
 	GameState.post_reveal_roam_unlocked = true
 
 func _open_save_menu_before_continue() -> void:

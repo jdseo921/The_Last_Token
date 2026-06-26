@@ -46,7 +46,19 @@
   - Hallway `???` messages carry most antagonist foreshadowing after Truth Filter, Circuit Soda, Lost Shift File, and Maintenance Sync; the late Final Night Walk aftermath may still use a direct conscience encounter.
   - The final self-conflict unlocks the glitched player form after `twist_reveal_seen` and before EndingPrompt.
   - Optional content is not required.
-  - The expanded route feels longer than the original MVP without feeling padded.
+- The expanded route feels longer than the original MVP without feeling padded.
+
+## Pre-Live Stabilization Checklist
+- Status: pre-live static/smoke stabilization may pass before the full viewport run, but the project remains not live-verified until the complete Godot viewport playthrough passes.
+- Dev route checkpoints: in a debug/editor run only, launch with `--dev-route-menu` or `THE_LAST_TOKEN_DEV_ROUTE_MENU=1`, press `F10`, and confirm each checkpoint jumps to the named route state without saving automatically.
+- Checkpoint list: New Memory, After Lost Token, After Truth Filter, After Circuit Soda, After Lost Shift File, After Static Service Run, After Maintenance Sync, After Security Tape Assembly, After Final Night Walk, After Memory Echo, and Post-Reveal Roam.
+- Save/load spawn safety: every required route map and hallway has `Spawn_Default`; Staff Room also has `Spawn_Default`; loads must restore through safe scene spawn markers rather than exact player coordinates or temporary arcade return positions.
+- Objective text: every HUD objective and quest notice should name the next owner or object plus the location.
+- Blocked interactions: every locked exit or object should state the missing requirement, such as Truth Filter, Circuit Soda, Lost Shift File, Static Service Run, Maintenance Sync, Security Tape Assembly, Final Night Walk, or Memory Echo.
+- Collision/reachability static pass: ArcadeHub, Cabinet Row, Snack Alcove, Prize Corner, Maintenance Hall, Staff Corridor, Staff Room, and all hallways have reachable required interactables, exits, and safe spawn markers by current scene layout; live movement confirmation remains required.
+- Dialogue pacing: required instructions should stay brief; third-and-later repeats should stay on objective nudges; no pre-reveal dialogue outside Staff Room should fully reveal Employee 04; the final self-conflict remains long and readable.
+- Audio sanity: each scene should call an `AudioManager` context; missing music/SFX should warn or no-op without crashing; Music/SFX sliders should affect active playback; Staff Room/Ending music should sit under dialogue.
+- Final room flow: Staff Room reveal stays locked until Memory Echo is complete; final self-conflict starts only after slideshow completion; EndingPrompt appears after final self-conflict; glitched player form unlocks before post-reveal save/load.
 
 ## Dialogue QA And Anti-Bloat Checklist
 - Mira route: first meeting, Lost Token instruction, repeats, return anecdote, Lost Shift File, pre-Staff Room warning, and post-reveal witness.
@@ -644,7 +656,7 @@ Pass condition: every step above passes in a live Godot playthrough. If any step
 - Godot executable found: no.
 - Acceptance steps passed live: none.
 - Runtime issues fixed: none, because the game could not be launched.
-- Remaining blocker: install Godot 4.4.x or provide the executable path, then rerun the full route.
+- Historical blocker: the full route was not rerun in that pass; use the current Godot 4.7.x local target for the next full route.
 - Project status: not live-verified and not publishable until the full route passes in Godot.
 
 ## Final MVP Acceptance Pass
@@ -677,7 +689,7 @@ Pass condition: every step above passes in a live Godot playthrough. If any step
 20. Missing art/audio does not crash game: static pass by script behavior; live confirmation still required.
 
 ### Remaining Known Issues For Acceptance
-- Full live acceptance route still needs to be run in Godot 4.4.x.
+- Full live acceptance route still needs to be run in the Godot 4.7.x viewport.
 - Runtime-only issues such as collision bounds, focus timing, input repeat, and exported-build packaging remain unknown until live testing.
 - Missing cutscene art and audio are expected placeholders and should not block acceptance if placeholder panels/audio-safe fallbacks work.
 

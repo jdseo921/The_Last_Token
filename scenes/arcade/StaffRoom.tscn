@@ -35,6 +35,9 @@ position = Vector2(90, 148)
 interactable_kind = "employee_04_file"
 label_text = "FILE"
 
+[node name="Spawn_Default" type="Marker2D" parent="."]
+position = Vector2(144, 176)
+
 [node name="Player" parent="." instance=ExtResource("2")]
 position = Vector2(144, 176)
 

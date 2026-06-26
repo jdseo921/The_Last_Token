@@ -48,7 +48,7 @@ static func get_sequential_set(character_id: String, key: String, counter_key: S
 	var counter := 0
 	if counter_value is int:
 		counter = int(counter_value)
-	var index := counter % sets.size()
+	var index := mini(counter, sets.size() - 1)
 	_sequential_counters[safe_counter_key] = counter + 1
 	var selected_set: Variant = sets[index]
 	if selected_set is Array:
