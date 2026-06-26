@@ -44,6 +44,7 @@ func _init() -> void:
 	_expect_first_text("mr byte completion", DIALOGUE_POOL.get_lines("mr_byte", "truth_filter_completion_anecdote"), "Truth Filter passed.")
 	_expect_first_text("mr byte lost shift", DIALOGUE_POOL.get_lines("mr_byte", "lost_shift_file_support"), "Lost Shift File access opened.")
 	_expect_first_text("mr byte security tape", DIALOGUE_POOL.get_lines("mr_byte", "security_tape_support"), "Security tape fragments detected.")
+	_expect_first_text("mr byte security tape complete", DIALOGUE_POOL.get_lines("mr_byte", "security_tape_completion_anecdote"), "Tape order restored.")
 	_expect_first_text("mr byte records", DIALOGUE_POOL.get_lines("mr_byte", "staff_records_chain"), "Staff record chain active.")
 	_expect_first_text("mr byte post reveal", DIALOGUE_POOL.get_lines("mr_byte", "post_reveal_witness"), "Employee 04.")
 	_expect_contains_text("mr byte post reveal", DIALOGUE_POOL.get_lines("mr_byte", "post_reveal_witness"), "Conflict thread archived.")

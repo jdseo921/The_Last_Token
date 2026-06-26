@@ -11,18 +11,23 @@ This is planning only. Each map expansion must preserve the playable loop and sa
 - No room exists only to pad walking time.
 - Required content should be near the map's main landmark.
 - Optional content should sit off to the side, not behind confusing navigation.
+- Each major room should carry 1-2 puzzle/minigame beats plus no more than one room-specific adventure route.
+- Room adventures should use different objectives, hazards, and story flavor so they do not feel like cloned maze padding.
+- Antagonist/conscience pressure should live mostly in hallway transitions; room dialogue should remain NPC/object-led except for major climax-adjacent moments.
+- Visible walls, counters, machines, cabinets, doors, and NPC bodies should have simple collision bounds unless blocking them would make the route unclear.
+- Keep collision generous around exits and spawn points; navigation clarity matters more than pixel-perfect object tracing.
 - If a map cannot justify at least one story beat, fold the content into an existing map.
 
 ## Map Matrix
 
 | Map | Required Content | Optional Content | Owner / Landmark | Unlock | Exit Rule | Est. Route Time |
 | --- | --- | --- | --- | --- | --- | --- |
-| ArcadeHub | Rockbyte Duel, start of Lost Shift File, Staff Room return path | Owner Portrait Chain, Broken Cabinet Chain, Vendo Memory Cola Riddle | Mira, Cabinet 07, Staff Door | Start | Exits to Cabinet Row, Snack Alcove, Maintenance Hall, Staff Corridor when unlocked. | 10-14 min total across visits |
-| Cabinet Row | Truth Filter, Lost Shift File record step | Broken High Score, Staff Records Chain | Mr. Byte, Truth Filter cabinet | After Lost Token | Clear return to ArcadeHub. | 8-12 min |
-| Snack Alcove | Circuit Soda | Vendo Memory Cola Riddle, snack note flavor | Vendo, Circuit Soda machine | After Truth Filter | Clear return to ArcadeHub or Cabinet Row. | 6-9 min |
-| Prize Corner | None required | Prize Sort, post-reveal Pip witness | Pip, prize counter | After Truth Filter or as optional side path | Clear return to ArcadeHub. | 4-8 min |
-| Maintenance Hall | Lost Shift File repair-note step, Static Service Run, Maintenance Sync | Broken Cabinet or maintenance note echoes | Gus, Sync Door | After Circuit Soda | Clear return to ArcadeHub; later opens Staff Corridor. | 14-20 min |
-| Staff Corridor | Security Tape Assembly, Final Night Walk, Memory Echo | Owner Portrait final clue, Staff Records Chain | Staff Door, tape terminal, Final Night terminal, Memory Echo | After Maintenance Sync | Straight route: Maintenance Hall/Hub side -> Staff Room door. | 16-24 min |
+| ArcadeHub | Rockbyte Duel, start of Lost Shift File, Staff Room return path | Ticket Sweep adventure, Owner Portrait Chain, Broken Cabinet Chain, Vendo Memory Cola Riddle | Mira, Cabinet 07, Staff Door | Start | Exits to Cabinet Row, Snack Alcove, Maintenance Hall, Staff Corridor when unlocked. | 10-14 min total across visits |
+| Cabinet Row | Truth Filter, Lost Shift File record step | Cabinet Trace Run adventure, Broken High Score, Staff Records Chain | Mr. Byte, Truth Filter cabinet | After Lost Token | Clear return to ArcadeHub. | 8-12 min |
+| Snack Alcove | Circuit Soda | Snack Service Dash adventure, Vendo Memory Cola Riddle, snack note flavor | Vendo, Circuit Soda machine | After Truth Filter | Clear return to ArcadeHub or Cabinet Row. | 6-9 min |
+| Prize Corner | None required | Prize Shelf Run adventure, Prize Sort, post-reveal Pip witness | Pip, prize counter | After Truth Filter or as optional side path | Clear return to ArcadeHub. | 4-8 min |
+| Maintenance Hall | Lost Shift File repair-note step, Static Service Run, Maintenance Sync | Maintenance note echoes | Gus, Sync Door | After Circuit Soda | Clear return to ArcadeHub; later opens Staff Corridor. | 14-20 min |
+| Staff Corridor | Security Tape Assembly, Final Night Walk, Memory Echo | Staff Records Chain terminal | Staff Door, tape terminal, Final Night terminal, Memory Echo | After Maintenance Sync | Straight route: Maintenance Hall/Hub side -> Staff Room door. | 16-24 min |
 | Staff Room | Staff Room reveal | Post-reveal inspection details | Reveal panels, staff table | After Memory Echo | Exit returns to ArcadeHub or ending prompt. | 6-10 min |
 
 ## Area Plans
@@ -39,6 +44,7 @@ Required content:
 - Lost Shift File starts when Mira admits an old shift record is missing.
 
 Optional content:
+- Ticket Sweep adventure at the side of the ticket counter.
 - Owner Portrait Chain.
 - Broken Cabinet Chain.
 - Vendo Memory Cola Riddle if Vendo is represented in hub dialogue.
@@ -55,6 +61,7 @@ Required content:
 - Mr. Byte contributes the "clock-in mismatch" page for Lost Shift File.
 
 Optional content:
+- Cabinet Trace Run adventure in the inactive cabinet slot.
 - Roxy and Broken High Score.
 - Staff Records Chain after Lost Shift File.
 
@@ -69,6 +76,7 @@ Required content:
 - Vendo owns Circuit Soda.
 
 Optional content:
+- Snack Service Dash adventure at the service slot.
 - Vendo Memory Cola Riddle.
 - Short snack-break note that can support Staff Records Chain.
 
@@ -83,6 +91,7 @@ Required content:
 - None.
 
 Optional content:
+- Prize Shelf Run adventure on the side shelf.
 - Pip owns Prize Sort.
 - Pip can join Post-Reveal Witness Route.
 
@@ -142,6 +151,12 @@ ArcadeHub -> Cabinet Row -> Snack Alcove -> ArcadeHub/Maintenance Hall -> Cabine
 
 Optional route:
 Cabinet Row for Roxy, Prize Corner for Pip, ArcadeHub/Staff Corridor for object chains, all maps for Post-Reveal Witness Route.
+
+Antagonist route:
+Hallways carry most `???` foreshadowing. These beats should sound like a possibly hostile presence using arcade language: score, labels, lights, tickets, routes, and cabinets. Avoid direct villain speeches outside the Staff Room and the late Final Night Walk aftermath.
+
+Navigation assessment:
+The current map alignment is acceptable for the MVP: ArcadeHub remains the spoke, hallway maps create small pressure beats, and each room returns through an obvious exit. Collision should be sourced from visible prop sprites or placeholder silhouettes wherever possible, with fixed rectangles reserved for perimeter walls and hallway floor-band limits. Transition pads and spawn markers must remain open.
 
 ## Save/Load Requirements
 Each map must safely preserve:

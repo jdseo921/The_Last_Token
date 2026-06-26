@@ -32,28 +32,22 @@ func get_encounter_lines(encounter_id: String) -> Array:
 	match encounter_id:
 		"after_truth_filter":
 			return [
-				{"speaker": "???", "text": "You should not have returned.", "effect": "glitch"},
-				{"speaker": "???", "text": "Did you really think this arcade would see any light after your decision?"},
-				{"speaker": "???", "text": "The machines remember what you tried to bury.", "effect": "shake"},
-				{"speaker": "???", "text": "Keep playing. You always were better at games than consequences.", "effect": "glitch"},
+				{"speaker": "???", "text": "Truth Filter passed.", "effect": "glitch"},
+				{"speaker": "???", "text": "The cabinets are not cheering."},
+				{"speaker": "???", "text": "They are keeping score.", "effect": "shake"},
 			]
 		"after_circuit_soda":
 			return [
-				{"speaker": "???", "text": "You routed yourself through a vending machine and called it progress.", "effect": "glitch"},
-				{"speaker": "???", "text": "That is what you always did."},
-				{"speaker": "???", "text": "Take something broken."},
-				{"speaker": "???", "text": "Put a label on it."},
-				{"speaker": "???", "text": "Hope the people using it never see the wires.", "effect": "shake"},
+				{"speaker": "???", "text": "Signal routed.", "effect": "glitch"},
+				{"speaker": "???", "text": "Labels help machines behave."},
+				{"speaker": "???", "text": "They do not decide what is inside the can.", "effect": "shake"},
 			]
 		"after_lost_shift_file":
 			return [
-				{"speaker": "???", "text": "Employee number.", "effect": "silent", "pause": 0.25},
-				{"speaker": "???", "text": "There. Part of it finally crawled back."},
-				{"speaker": "???", "text": "Mira remembered the counter."},
-				{"speaker": "???", "text": "Gus remembered the door."},
-				{"speaker": "???", "text": "Mr. Byte remembered the record."},
-				{"speaker": "???", "text": "And you?", "effect": "glitch"},
-				{"speaker": "???", "text": "You remembered only enough to keep walking."},
+				{"speaker": "???", "text": "The file found a number.", "effect": "silent", "pause": 0.25},
+				{"speaker": "???", "text": "Numbers are useful in arcades."},
+				{"speaker": "???", "text": "Scores. Tickets. Employee slots."},
+				{"speaker": "???", "text": "Names come later, if the machine allows it.", "effect": "glitch"},
 			]
 		"after_final_night_walk":
 			return [
@@ -62,8 +56,7 @@ func get_encounter_lines(encounter_id: String) -> Array:
 				{"speaker": "???", "text": "Cabinet awake."},
 				{"speaker": "???", "text": "Back hall open."},
 				{"speaker": "???", "text": "Two signals in one door.", "effect": "glitch"},
-				{"speaker": "???", "text": "Still pretending the second signal is someone else?"},
-				{"speaker": "???", "text": "Fine."},
+				{"speaker": "???", "text": "One of them keeps taking your turn."},
 				{"speaker": "???", "text": "One more echo, then.", "effect": "silent", "pause": 0.2},
 			]
 		_:

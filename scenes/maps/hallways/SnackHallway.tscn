@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/HallwayMap.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/common/MapTransition.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="5"]
+[ext_resource type="Script" path="res://scripts/MapCollisionBounds.gd" id="6"]
 
 [node name="SnackHallway" type="Node2D"]
 script = ExtResource("1")
@@ -23,6 +24,10 @@ polygon = PackedVector2Array(0, 152, 640, 152, 640, 292, 0, 292)
 [node name="StaticStripe" type="Polygon2D" parent="."]
 color = Color(0.2, 0.85, 0.55, 0.14)
 polygon = PackedVector2Array(0, 214, 640, 214, 640, 226, 0, 226)
+
+[node name="CollisionBounds" type="Node2D" parent="."]
+script = ExtResource("6")
+rectangles = Array[Vector4]([Vector4(0, 0, 640, 152), Vector4(0, 292, 640, 148)])
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
 position = Vector2(92, 222)
@@ -89,4 +94,3 @@ text = ""
 horizontal_alignment = 1
 
 [node name="PauseMenu" parent="." instance=ExtResource("5")]
-

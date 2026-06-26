@@ -61,11 +61,17 @@ func _maybe_show_hallway_message() -> void:
 	var lines := _get_hallway_message_lines()
 	if lines.is_empty():
 		return
-	var counter_key := "hallway_message:%s" % hallway_id
+	var counter_key := "hallway_message:%s:%s" % [hallway_id, _get_hallway_message_phase()]
 	if GameState.get_npc_dialogue_count(counter_key) > 0:
 		return
 	GameState.increment_npc_dialogue_count(counter_key)
 	start_dialogue(lines)
+
+func _get_hallway_message_phase() -> String:
+	var quest_id := GameState.get_current_quest_id()
+	if not quest_id.is_empty():
+		return quest_id
+	return GameState.get_memory_signal_label().to_lower()
 
 func _get_hallway_message_lines() -> Array:
 	if hallway_id.is_empty() or GameState.twist_reveal_seen or GameState.post_reveal_roam_unlocked:
@@ -74,49 +80,59 @@ func _get_hallway_message_lines() -> Array:
 		"cabinet_hallway":
 			if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
 				return [
-					{"speaker": "???", "text": "The cabinets are waking because you brought them proof.", "effect": "glitch"},
-					{"speaker": "???", "text": "Proof is not forgiveness."},
+					{"speaker": "???", "text": "The cabinets wake for tokens, not mercy.", "effect": "glitch"},
+					{"speaker": "???", "text": "A prize can open a door. It cannot clear the score."},
 				]
 		"snack_hallway":
 			if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
 				return [
-					{"speaker": "???", "text": "You keep calling every route progress.", "effect": "glitch"},
-					{"speaker": "???", "text": "Some routes only circle back."},
+					{"speaker": "???", "text": "Every route in this arcade has a return path.", "effect": "glitch"},
+					{"speaker": "???", "text": "Watch which lights follow you back."},
 				]
 		"prize_hallway":
 			if GameState.lost_token_quest_completed and not GameState.memory_echo_completed:
 				return [
 					{"speaker": "???", "text": "Prizes remember hands better than names."},
-					{"speaker": "???", "text": "Careful what yours picks up.", "effect": "glitch"},
+					{"speaker": "???", "text": "Something on the shelf is choosing which hand to trust.", "effect": "glitch"},
 				]
 		"maintenance_hallway":
+			if GameState.lost_shift_file_completed and not GameState.static_service_run_completed:
+				return [
+					{"speaker": "???", "text": "The file opened a service route.", "effect": "glitch"},
+					{"speaker": "???", "text": "Service routes are where arcades hide their bad wiring."},
+				]
 			if GameState.circuit_soda_completed and not GameState.lost_shift_file_completed:
 				return [
-					{"speaker": "???", "text": "Maintenance is a nice word for hiding damage.", "effect": "glitch"},
-					{"speaker": "???", "text": "Ask Gus what the door reported."},
+					{"speaker": "???", "text": "Maintenance is a tidy word for old damage.", "effect": "glitch"},
+					{"speaker": "???", "text": "Ask Gus why the door counted one extra signal."},
 				]
 		"back_hallway":
+			if GameState.final_night_walk_completed and not GameState.memory_echo_completed:
+				return [
+					{"speaker": "???", "text": "The route played back clean."},
+					{"speaker": "???", "text": "Clean playback does not mean a clean ending.", "effect": "glitch"},
+				]
 			if GameState.staff_corridor_unlocked and not GameState.memory_echo_completed:
 				return [
-					{"speaker": "???", "text": "Back halls keep the footsteps people do not want counted."},
-					{"speaker": "???", "text": "Yours are loud tonight.", "effect": "shake"},
+					{"speaker": "???", "text": "Back halls count footsteps after the tokens stop falling."},
+					{"speaker": "???", "text": "One set keeps landing half a beat behind yours.", "effect": "shake"},
 				]
 		"cabinet_snack_hallway":
 			if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
 				return [
-					{"speaker": "???", "text": "Truth made you thirsty for a fix.", "effect": "glitch"},
-					{"speaker": "???", "text": "Try not to mistake fizz for healing."},
+					{"speaker": "???", "text": "Truth leaves a metallic taste.", "effect": "glitch"},
+					{"speaker": "???", "text": "Fizz can cover it. It cannot fix it."},
 				]
 		"snack_prize_hallway":
 			if GameState.circuit_soda_completed and not GameState.memory_echo_completed:
 				return [
 					{"speaker": "???", "text": "The prize shelf still knows what you wanted."},
-					{"speaker": "???", "text": "Wanting is not the same as deserving it.", "effect": "glitch"},
+					{"speaker": "???", "text": "Wanting is not always a safe memory.", "effect": "glitch"},
 				]
 		"maintenance_staff_hallway":
 			if GameState.maintenance_sync_completed and not GameState.memory_echo_completed:
 				return [
 					{"speaker": "???", "text": "The door heard both knocks."},
-					{"speaker": "???", "text": "Now listen to the one you keep denying.", "effect": "glitch"},
+					{"speaker": "???", "text": "The second knock is still waiting for your hand.", "effect": "glitch"},
 				]
 	return []

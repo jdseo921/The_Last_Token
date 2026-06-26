@@ -52,15 +52,19 @@ func _on_fragment_pressed(index: int) -> void:
 		return
 	var fragment: String = FRAGMENTS[index]
 	if selected_fragments.has(fragment):
+		_play_audio("play_error")
 		return
+	_play_audio("play_ui_confirm")
 	selected_fragments.append(fragment)
 	_refresh_view()
 
 func _on_submit_pressed() -> void:
 	if selected_fragments.size() != FRAGMENTS.size():
+		_play_audio("play_error")
 		status_label.text = "Select all four fragments before submitting."
 		return
 	if selected_fragments == CORRECT_ORDER:
+		_play_audio("play_quest_update")
 		GameState.complete_security_tape_assembly()
 		status_label.text = "TAPE ORDER RESTORED.\nFINAL NIGHT SEQUENCE PARTIAL.\nTHE STAFF DOOR DID NOT RECORD A CUSTOMER."
 		_set_fragment_buttons_disabled(true)
@@ -69,10 +73,13 @@ func _on_submit_pressed() -> void:
 		return_button.visible = true
 		return
 	GameState.record_security_tape_wrong_order()
+	_play_audio("play_error")
 	status_label.text = "TIMESTAMP CONFLICT.\nThe tape rewinds."
-	_reset_selection()
+	_reset_selection(false)
 
-func _reset_selection() -> void:
+func _reset_selection(play_sound: bool = true) -> void:
+	if play_sound and not selected_fragments.is_empty():
+		_play_audio("play_ui_cancel")
 	selected_fragments.clear()
 	_refresh_view()
 
@@ -96,6 +103,7 @@ func _set_fragment_buttons_disabled(disabled: bool) -> void:
 		button.disabled = disabled
 
 func _return_to_staff_corridor() -> void:
+	_play_audio("play_ui_cancel")
 	GameState.set_pending_spawn_id("Spawn_FromSecurityTape")
 	SceneChanger.go_to_staff_corridor()
 
@@ -131,3 +139,8 @@ func _load_texture_or_null(path: String) -> Texture2D:
 	if resource is Texture2D:
 		return resource
 	return null
+
+func _play_audio(method_name: String) -> void:
+	var audio_manager := get_node_or_null("/root/AudioManager")
+	if audio_manager and audio_manager.has_method(method_name):
+		audio_manager.call(method_name)

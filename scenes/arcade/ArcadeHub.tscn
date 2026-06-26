@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/ArcadeHub.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" path="res://scenes/common/MapTransition.tscn" id="8"]
 [ext_resource type="PackedScene" path="res://scenes/common/AnimatedAmbientProp.tscn" id="9"]
 [ext_resource type="PackedScene" path="res://scenes/ui/ReadableNote.tscn" id="10"]
+[ext_resource type="Script" path="res://scripts/MapCollisionBounds.gd" id="11"]
 
 [node name="ArcadeHub" type="Node2D"]
 script = ExtResource("1")
@@ -214,6 +215,11 @@ visible = false
 position = Vector2(512, 240)
 centered = false
 
+[node name="CollisionBounds" type="Node2D" parent="."]
+script = ExtResource("11")
+rectangles = Array[Vector4]([Vector4(0, 0, 640, 28), Vector4(0, 424, 640, 16), Vector4(0, 0, 16, 330), Vector4(0, 392, 16, 48), Vector4(624, 0, 16, 86), Vector4(624, 146, 16, 34), Vector4(624, 234, 16, 24), Vector4(624, 326, 16, 14)])
+visible_visual_node_paths = Array[NodePath]([NodePath("../PropLayer/TicketCounterSprite"), NodePath("../PropLayer/OwnerPortraitSprite"), NodePath("../PropLayer/Cabinet07Sprite"), NodePath("../PropLayer/Cabinet07FlickerSprite"), NodePath("../PropLayer/BrokenCabinetSprite"), NodePath("../PropLayer/TruthFilterVisual"), NodePath("../PropLayer/StaffDoorSprite"), NodePath("../InteractableLayer/Mira/VisualRoot/Sprite"), NodePath("../InteractableLayer/Mira/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Mira/VisualRoot/PlaceholderVisual"), NodePath("../InteractableLayer/Gus/VisualRoot/Sprite"), NodePath("../InteractableLayer/Gus/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Gus/VisualRoot/PlaceholderVisual"), NodePath("../InteractableLayer/Vendo/VisualRoot/Sprite"), NodePath("../InteractableLayer/Vendo/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Vendo/VisualRoot/PlaceholderVisual"), NodePath("../InteractableLayer/MrByte/VisualRoot/Sprite"), NodePath("../InteractableLayer/MrByte/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/MrByte/VisualRoot/PlaceholderVisual")])
+
 [node name="Spawn_Default" type="Marker2D" parent="."]
 position = Vector2(178, 246)
 
@@ -230,7 +236,10 @@ position = Vector2(78, 360)
 position = Vector2(576, 358)
 
 [node name="Spawn_FromStaffCorridor" type="Marker2D" parent="."]
-position = Vector2(576, 282)
+position = Vector2(596, 282)
+
+[node name="Spawn_FromHubAdventure" type="Marker2D" parent="."]
+position = Vector2(78, 252)
 
 [node name="Player" parent="." instance=ExtResource("2")]
 position = Vector2(178, 246)
@@ -309,6 +318,14 @@ modulate = Color(1, 1, 1, 0.84)
 text = "TICKET COUNTER"
 horizontal_alignment = 1
 
+[node name="TicketSweepLabel" type="Label" parent="UILayer"]
+position = Vector2(18, 236)
+size = Vector2(124, 18)
+theme_override_font_sizes/font_size = 9
+modulate = Color(1, 1, 1, 0.84)
+text = "TICKET SWEEP"
+horizontal_alignment = 1
+
 [node name="HintLabel" type="Label" parent="UILayer"]
 visible = false
 position = Vector2(32, 404)
@@ -339,6 +356,13 @@ interactable_kind = "ticket_counter"
 label_text = "TICKET COUNTER"
 show_label = false
 use_placeholder_visual = false
+
+[node name="TicketSweep" parent="InteractableLayer" instance=ExtResource("5")]
+position = Vector2(78, 214)
+interactable_kind = "ticket_sweep_adventure"
+label_text = "TICKET SWEEP"
+visual_scale = 0.85
+flicker_enabled = true
 
 [node name="ClosingChecklist" parent="InteractableLayer" instance=ExtResource("10")]
 position = Vector2(220, 158)

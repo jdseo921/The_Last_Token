@@ -21,7 +21,6 @@ func _ready() -> void:
 	_apply_spawn_position()
 	_on_prompt_changed("")
 	_refresh_sync_state()
-	call_deferred("_maybe_start_conscience_encounter")
 
 func can_open_pause_menu() -> bool:
 	return not _dialogue_is_active() and not ConscienceEncounterDirector.is_encounter_active()
@@ -269,12 +268,7 @@ func _show_lost_shift_complete_notice() -> void:
 		)
 
 func _after_lost_shift_file_completed() -> void:
-	if ConscienceEncounterDirector.maybe_start_encounter(self, "after_lost_shift_file", Callable(self, "_show_lost_shift_complete_notice")):
-		return
 	_show_lost_shift_complete_notice()
-
-func _maybe_start_conscience_encounter() -> void:
-	ConscienceEncounterDirector.maybe_start_encounter(self, "after_lost_shift_file")
 
 func _get_staff_records_completion_lines() -> Array:
 	if not GameState.staff_records_chain_completed:

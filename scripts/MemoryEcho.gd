@@ -114,6 +114,7 @@ func _show_accepted(question: Dictionary) -> void:
 	continue_button.grab_focus()
 
 func _show_retry() -> void:
+	_play_audio("play_error")
 	response_label.text = "MEMORY SIGNAL SPIKED.\nTRY AGAIN."
 	continue_mode = MODE_RETRY_QUESTION
 	continue_button.text = "Retry"
@@ -123,6 +124,7 @@ func _show_retry() -> void:
 func _on_continue_pressed() -> void:
 	if finished:
 		return
+	_play_audio("play_ui_cancel" if continue_mode == MODE_COMPLETE else "play_ui_confirm")
 	match continue_mode:
 		MODE_RETRY_QUESTION:
 			_show_question()
@@ -139,6 +141,7 @@ func _on_continue_pressed() -> void:
 
 func _show_completion() -> void:
 	GameState.complete_memory_echo()
+	_play_audio("play_quest_update")
 	echo_label.text = "MEMORY ECHO STABILIZED."
 	response_label.text = "RESTORE PLAYBACK AVAILABLE."
 	continue_mode = MODE_COMPLETE
@@ -178,3 +181,8 @@ func _join_lines(lines: Array) -> String:
 			text += "\n"
 		text += str(lines[index])
 	return text
+
+func _play_audio(method_name: String) -> void:
+	var audio_manager := get_node_or_null("/root/AudioManager")
+	if audio_manager and audio_manager.has_method(method_name):
+		audio_manager.call(method_name)

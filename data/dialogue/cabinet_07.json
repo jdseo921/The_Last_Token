@@ -19,11 +19,13 @@
       [
         {"speaker": "Cabinet 07", "text": "TOKEN RECOVERED.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_stable.png"},
         {"speaker": "Cabinet 07", "text": "SIGNAL RECOGNITION IMPROVED."},
+        {"speaker": "Cabinet 07", "text": "DUEL RESULT VERIFIED OLD TOKEN MATCH."},
         {"speaker": "Cabinet 07", "text": "RETURN TO MIRA."}
       ],
       [
         {"speaker": "Cabinet 07", "text": "ROCKBYTE COMPLETE.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_stable.png"},
         {"speaker": "Cabinet 07", "text": "LOST TOKEN: FOUND."},
+        {"speaker": "Cabinet 07", "text": "SESSION SIGNAL: ACCEPTED."},
         {"speaker": "Cabinet 07", "text": "HANDOFF REQUIRED: MIRA."}
       ]
     ],

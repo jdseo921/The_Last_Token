@@ -5,6 +5,10 @@ const ROCKBYTE_DUEL_SCENE := "res://scenes/minigames/RockbyteDuel.tscn"
 const TRUTH_FILTER_SCENE := "res://scenes/minigames/TruthFilter.tscn"
 const CIRCUIT_SODA_SCENE := "res://scenes/minigames/CircuitSoda.tscn"
 const STATIC_SERVICE_RUN_SCENE := "res://scenes/minigames/StaticServiceRun.tscn"
+const HUB_TICKET_SWEEP_SCENE := "res://scenes/minigames/HubTicketSweep.tscn"
+const CABINET_TRACE_RUN_SCENE := "res://scenes/minigames/CabinetTraceRun.tscn"
+const SNACK_SERVICE_DASH_SCENE := "res://scenes/minigames/SnackServiceDash.tscn"
+const PRIZE_SHELF_RUN_SCENE := "res://scenes/minigames/PrizeShelfRun.tscn"
 const SECURITY_TAPE_ASSEMBLY_SCENE := "res://scenes/minigames/SecurityTapeAssembly.tscn"
 const FINAL_NIGHT_WALK_SCENE := "res://scenes/minigames/FinalNightWalk.tscn"
 const BROKEN_HIGH_SCORE_SCENE := "res://scenes/minigames/BrokenHighScore.tscn"
@@ -45,6 +49,18 @@ func go_to_circuit_soda() -> void:
 
 func go_to_static_service_run() -> void:
 	change_scene(STATIC_SERVICE_RUN_SCENE)
+
+func go_to_hub_ticket_sweep() -> void:
+	change_scene(HUB_TICKET_SWEEP_SCENE)
+
+func go_to_cabinet_trace_run() -> void:
+	change_scene(CABINET_TRACE_RUN_SCENE)
+
+func go_to_snack_service_dash() -> void:
+	change_scene(SNACK_SERVICE_DASH_SCENE)
+
+func go_to_prize_shelf_run() -> void:
+	change_scene(PRIZE_SHELF_RUN_SCENE)
 
 func go_to_security_tape_assembly() -> void:
 	change_scene(SECURITY_TAPE_ASSEMBLY_SCENE)

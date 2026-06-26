@@ -95,6 +95,8 @@ func handle_hub_interaction(interactable: Node, _player_node: Node = null) -> vo
 			_handle_pip()
 		"prize_counter":
 			_handle_prize_counter()
+		"prize_shelf_adventure":
+			_handle_prize_shelf_adventure()
 		_:
 			start_dialogue([{"speaker": "System", "text": "Nothing happens."}])
 
@@ -166,6 +168,17 @@ func _handle_prize_counter() -> void:
 	start_dialogue(_get_environment_state_lines("prize_counter", [
 		{"speaker": "Prize Counter", "text": "Cheap prizes watch from behind dusty glass."},
 	]))
+
+func _handle_prize_shelf_adventure() -> void:
+	start_dialogue([
+		{"speaker": "Prize Shelf", "text": "PRIZE SHELF RUN READY."},
+		{"speaker": "Prize Shelf", "text": "Collect loose tags without snagging the hooks."},
+		{"speaker": "Prize Shelf", "text": "Optional shelf route. Pip is pretending not to judge."},
+	], Callable(self, "_go_to_prize_shelf_run"))
+
+func _go_to_prize_shelf_run() -> void:
+	GameState.set_pending_spawn_id("Spawn_FromPrizeAdventure")
+	SceneChanger.go_to_prize_shelf_run()
 
 func _start_prize_sort() -> void:
 	GameState.pip_secret_started = true
@@ -261,7 +274,7 @@ func _show_witness_route_complete_notice() -> void:
 
 func _apply_background_art() -> void:
 	var loaded := _apply_sprite_texture(background_art, BACKGROUND_ART_PATH)
-	for placeholder in [$Background, $PrizeCounterPlaceholder, $PipPlaceholder]:
+	for placeholder in [$Background, $PrizeCounterPlaceholder, $PipPlaceholder, $PrizeShelfAdventurePlaceholder]:
 		if placeholder is CanvasItem:
 			placeholder.visible = not loaded
 

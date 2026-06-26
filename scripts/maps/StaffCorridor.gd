@@ -146,11 +146,13 @@ func _handle_security_tape() -> void:
 	if GameState.security_tape_assembly_completed:
 		var completed_lines := _get_environment_lines("security_tape_terminal_restored", [
 			{"speaker": "Security Tape", "text": "TAPE ORDER RESTORED."},
-			{"speaker": "Security Tape", "text": "FINAL NIGHT ROUTE PARTIAL."},
+			{"speaker": "Security Tape", "text": "FRAMES NOW FORM A STAFF ROUTE."},
+			{"speaker": "Security Tape", "text": "FINAL NIGHT WALK REQUIRED."},
 		])
-		completed_lines.append_array(_get_mr_byte_lines("security_tape_support", [
+		completed_lines.append_array(_get_mr_byte_lines("security_tape_completion_anecdote", [
 			{"speaker": "Mr. Byte", "text": "Tape order restored."},
-			{"speaker": "Mr. Byte", "text": "Final Night sequence partial."},
+			{"speaker": "Mr. Byte", "text": "Sequence now describes a route."},
+			{"speaker": "Mr. Byte", "text": "It does not yet describe the cause."},
 		]))
 		completed_lines.append_array(_get_staff_door_lines("final_night_walk_required", [
 			{"speaker": "Staff Door", "text": "FINAL NIGHT WALK REQUIRED."},

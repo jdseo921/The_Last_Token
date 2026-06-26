@@ -47,6 +47,7 @@
         {"speaker": "Mira", "text": "That token was once just a prize."},
         {"speaker": "Mira", "text": "A cheap little thing from the counter."},
         {"speaker": "Mira", "text": "Then the arcade held onto it like proof."},
+        {"speaker": "Mira", "text": "Not because you won. Because it matched your signal."},
         {"speaker": "Mira", "text": "Proof that something here still knows you.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
         {"speaker": "Mira", "text": "I remember you helping after closing.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
         {"speaker": "Mira", "text": "Stacking chairs. Checking machines. Pretending you were not tired."},

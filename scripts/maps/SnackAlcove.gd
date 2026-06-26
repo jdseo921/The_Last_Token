@@ -21,7 +21,6 @@ func _ready() -> void:
 	_apply_spawn_position()
 	_on_prompt_changed("")
 	_refresh_circuit_soda_state()
-	call_deferred("_maybe_start_conscience_encounter")
 
 func can_open_pause_menu() -> bool:
 	return not _dialogue_is_active() and not ConscienceEncounterDirector.is_encounter_active()
@@ -87,6 +86,8 @@ func handle_hub_interaction(interactable: Node, _player_node: Node = null) -> vo
 			_handle_vendo()
 		"circuit_soda":
 			_handle_circuit_soda()
+		"snack_service_adventure":
+			_handle_snack_service_adventure()
 		_:
 			start_dialogue([{"speaker": "System", "text": "Nothing happens."}])
 
@@ -160,9 +161,26 @@ func _go_to_circuit_soda() -> void:
 	GameState.set_pending_spawn_id("Spawn_FromCircuitSoda")
 	SceneChanger.go_to_circuit_soda()
 
+func _handle_snack_service_adventure() -> void:
+	if not GameState.lying_cabinets_completed:
+		start_dialogue([
+			{"speaker": "Service Slot", "text": "SNACK SERVICE LOCKED."},
+			{"speaker": "Service Slot", "text": "TRUTH FILTER REQUIRED."},
+		])
+		return
+	start_dialogue([
+		{"speaker": "Service Slot", "text": "SNACK SERVICE DASH READY."},
+		{"speaker": "Service Slot", "text": "Collect labels without spilling the signal."},
+		{"speaker": "Service Slot", "text": "Optional stock route. Refunds still impossible."},
+	], Callable(self, "_go_to_snack_service_dash"))
+
+func _go_to_snack_service_dash() -> void:
+	GameState.set_pending_spawn_id("Spawn_FromSnackAdventure")
+	SceneChanger.go_to_snack_service_dash()
+
 func _apply_background_art() -> void:
 	var loaded := _apply_sprite_texture(background_art, BACKGROUND_ART_PATH)
-	for placeholder in [$Background, $SnackWall, $VendoPlaceholder, $CircuitSodaPlaceholder]:
+	for placeholder in [$Background, $SnackWall, $ServiceSlotPlaceholder, $VendoPlaceholder, $CircuitSodaPlaceholder]:
 		if placeholder is CanvasItem:
 			placeholder.visible = not loaded
 
@@ -170,9 +188,6 @@ func _refresh_circuit_soda_state() -> void:
 	if circuit_soda_glow == null:
 		return
 	circuit_soda_glow.visible = GameState.lying_cabinets_completed and not GameState.circuit_soda_completed
-
-func _maybe_start_conscience_encounter() -> void:
-	ConscienceEncounterDirector.maybe_start_encounter(self, "after_circuit_soda")
 
 func _is_post_reveal() -> bool:
 	return GameState.post_reveal_roam_unlocked or GameState.twist_reveal_seen

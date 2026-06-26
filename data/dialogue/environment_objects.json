@@ -310,7 +310,8 @@
     "security_tape_terminal_restored": [
       [
         {"speaker": "Security Tape", "text": "TAPE ORDER RESTORED."},
-        {"speaker": "Security Tape", "text": "FINAL NIGHT ROUTE PARTIAL."}
+        {"speaker": "Security Tape", "text": "FRAMES NOW FORM A STAFF ROUTE."},
+        {"speaker": "Security Tape", "text": "FINAL NIGHT WALK REQUIRED."}
       ]
     ],
     "final_night_walk_terminal_locked": [
@@ -329,6 +330,9 @@
     "final_night_walk_terminal_restored": [
       [
         {"speaker": "Memory System", "text": "FINAL NIGHT ROUTE STABLE."},
+        {"speaker": "Memory System", "text": "WALKBACK MATCHED SECURITY SEQUENCE."},
+        {"speaker": "Memory System", "text": "ONE WALKED IN."},
+        {"speaker": "Memory System", "text": "TWO SIGNALS ANSWERED."},
         {"speaker": "Memory System", "text": "MEMORY ECHO READY."}
       ]
     ],

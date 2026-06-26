@@ -235,7 +235,7 @@ func _finish_duel(player_won: bool) -> void:
 		_play_audio("play_token_get")
 		exit_button.text = "Return to Arcade"
 		status_label.text = "Lost Token recovered.\nReturn to Mira."
-		_show_result_popup("TWO VERSIONS FOUND.\nONE SAVED. ONE LOST.\nLost Token recovered.")
+		_show_result_popup("TOKEN SIGNAL MATCHED.\nPREVIOUS SESSION FOUND.\nLost Token recovered.")
 		exit_button.grab_focus()
 		return
 	_play_audio("play_error")

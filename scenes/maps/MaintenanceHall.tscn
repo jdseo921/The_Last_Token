@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/MaintenanceHall.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" path="res://scenes/common/AnimatedAmbientProp.tscn" id="7"]
 [ext_resource type="PackedScene" path="res://scenes/ui/ReadableNote.tscn" id="8"]
 [ext_resource type="PackedScene" path="res://scenes/ui/QuestNotice.tscn" id="9"]
+[ext_resource type="Script" path="res://scripts/MapCollisionBounds.gd" id="10"]
 
 [node name="MaintenanceHall" type="Node2D"]
 script = ExtResource("1")
@@ -54,6 +55,12 @@ speed = 0.55
 only_when_memory_signal_at_least = 2
 prop_size = Vector2(104, 118)
 prop_color = Color(0.22, 0.95, 0.72, 0.08)
+
+[node name="CollisionBounds" type="Node2D" parent="."]
+script = ExtResource("10")
+rectangles = Array[Vector4]([Vector4(0, 0, 640, 28), Vector4(0, 424, 640, 16), Vector4(0, 0, 16, 440), Vector4(624, 0, 16, 220), Vector4(624, 300, 16, 140)])
+visual_node_paths = Array[NodePath]([NodePath("../SyncDoorPlaceholder")])
+visible_visual_node_paths = Array[NodePath]([NodePath("../GusPlaceholder"), NodePath("../InteractableLayer/Gus/VisualRoot/Sprite"), NodePath("../InteractableLayer/Gus/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Gus/VisualRoot/PlaceholderVisual")])
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
 position = Vector2(320, 318)

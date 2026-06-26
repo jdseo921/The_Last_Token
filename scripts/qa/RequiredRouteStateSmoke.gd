@@ -22,20 +22,14 @@ func _init() -> void:
 
 	game_state.complete_truth_filter()
 	_check_state("04 Truth Filter complete", "circuit_soda", "Truth Filter Cleared", "Fractured", 2)
-	game_state.mark_conscience_encounter_seen("after_truth_filter")
-	_expect("04b Conscience 1", "conscience_encounter_1_seen", game_state.conscience_encounter_1_seen, true)
 
 	game_state.complete_circuit_soda()
 	_check_state("05 Circuit Soda complete", "lost_shift_file", "Lost Shift File", "Fractured", 3)
-	game_state.mark_conscience_encounter_seen("after_circuit_soda")
-	_expect("05b Conscience 2", "conscience_encounter_2_seen", game_state.conscience_encounter_2_seen, true)
 
 	game_state.read_closing_checklist()
 	game_state.read_maintenance_note()
 	game_state.read_staff_schedule()
 	_check_state("06 Lost Shift File complete", "static_service_run", "Static Service Run", "Fractured", 4)
-	game_state.mark_conscience_encounter_seen("after_lost_shift_file")
-	_expect("06b Conscience 3", "conscience_encounter_3_seen", game_state.conscience_encounter_3_seen, true)
 
 	game_state.complete_static_service_run()
 	_check_state("07 Static Service Run complete", "maintenance_sync", "Maintenance Sync", "Fractured", 5)

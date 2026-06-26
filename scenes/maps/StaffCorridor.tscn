@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/StaffCorridor.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/arcade/HubInteractable.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://scenes/ui/ReadableNote.tscn" id="7"]
 [ext_resource type="PackedScene" path="res://scenes/ui/QuestNotice.tscn" id="8"]
+[ext_resource type="Script" path="res://scripts/MapCollisionBounds.gd" id="9"]
 
 [node name="StaffCorridor" type="Node2D"]
 script = ExtResource("1")
@@ -35,6 +36,11 @@ polygon = PackedVector2Array(438, 276, 548, 276, 548, 334, 438, 334)
 [node name="StaffRoomDoorPlaceholder" type="Polygon2D" parent="."]
 color = Color(0.36, 0.08, 0.1, 1)
 polygon = PackedVector2Array(286, 40, 354, 40, 354, 126, 286, 126)
+
+[node name="CollisionBounds" type="Node2D" parent="."]
+script = ExtResource("9")
+rectangles = Array[Vector4]([Vector4(0, 0, 176, 330), Vector4(0, 392, 176, 48), Vector4(552, 0, 88, 440), Vector4(176, 424, 376, 16)])
+visual_node_paths = Array[NodePath]([NodePath("../StaffRoomDoorPlaceholder"), NodePath("../SecurityTapePlaceholder"), NodePath("../FinalNightWalkPlaceholder")])
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
 position = Vector2(320, 360)

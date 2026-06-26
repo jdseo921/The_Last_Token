@@ -500,6 +500,7 @@ func _try_collect(grid_pos: Vector2i) -> void:
 		_handle_wrong_order()
 		return
 	collected_positions.append(position_ref)
+	_play_audio("play_token_get")
 	next_collectible_index += 1
 	_refresh_tile_state(grid_pos)
 	_refresh_counter()
@@ -512,6 +513,7 @@ func _try_collect(grid_pos: Vector2i) -> void:
 	_refresh_status(message)
 
 func _handle_wrong_order() -> void:
+	_play_audio("play_error")
 	if reset_order_on_conflict:
 		var reset_positions := collected_positions.duplicate()
 		collected_positions.clear()
@@ -520,7 +522,7 @@ func _handle_wrong_order() -> void:
 		for position_ref in reset_positions:
 			var parsed_position := _parse_position_ref(str(position_ref))
 			if str(parsed_position.get("area_id", "")) == active_area_id:
-				var reset_position := _to_vector2i(parsed_position.get("position", Vector2i.ZERO))
+				var reset_position := _to_vector2i(parsed_position.get("position", Vector2i.ZERO), Vector2i.ZERO)
 				_refresh_tile_state(reset_position)
 	_reset_player(_format_lines(wrong_order_lines))
 
@@ -528,9 +530,11 @@ func _try_complete() -> void:
 	if completed or return_in_progress:
 		return
 	if collected_positions.size() < required_collectibles:
+		_play_audio("play_error")
 		_refresh_status("Exit locked.\n%s: %d / %d" % [collectible_label, collected_positions.size(), required_collectibles])
 		return
 	completed = true
+	_play_audio("play_quest_update")
 	_on_stage_completed()
 	_refresh_status(_format_lines(completion_lines))
 	return_button.visible = true
@@ -597,6 +601,11 @@ func _load_texture_or_null(path: String) -> Texture2D:
 		return resource
 	return null
 
+func _play_audio(method_name: String) -> void:
+	var audio_manager := get_node_or_null("/root/AudioManager")
+	if audio_manager and audio_manager.has_method(method_name):
+		audio_manager.call(method_name)
+
 func _on_stage_completed() -> void:
 	pass
 
@@ -604,6 +613,7 @@ func _on_return_pressed() -> void:
 	if return_in_progress:
 		return
 	return_in_progress = true
+	_play_audio("play_ui_cancel")
 	if return_button:
 		return_button.disabled = true
 	SceneChanger.go_to_arcade_hub()

@@ -21,7 +21,6 @@ func _ready() -> void:
 	_apply_spawn_position()
 	_on_prompt_changed("")
 	_refresh_truth_filter_state()
-	call_deferred("_maybe_start_conscience_encounter")
 
 func can_open_pause_menu() -> bool:
 	return not _dialogue_is_active() and not ConscienceEncounterDirector.is_encounter_active()
@@ -93,6 +92,8 @@ func handle_hub_interaction(interactable: Node, _player_node: Node = null) -> vo
 			_handle_mr_byte()
 		"truth_filter":
 			_handle_truth_filter()
+		"cabinet_trace_adventure":
+			_handle_cabinet_trace_adventure()
 		"roxy":
 			_handle_roxy()
 		"broken_high_score":
@@ -187,6 +188,17 @@ func _handle_truth_filter() -> void:
 		{"speaker": "Truth Filter", "text": "CONTRADICTION THRESHOLD REACHED."},
 		{"speaker": "Truth Filter", "text": "SORT FALSE RECORDS."},
 	]), Callable(SceneChanger, "go_to_truth_filter"))
+
+func _handle_cabinet_trace_adventure() -> void:
+	start_dialogue([
+		{"speaker": "Inactive Cabinet", "text": "CABINET TRACE RUN READY."},
+		{"speaker": "Inactive Cabinet", "text": "Follow trace sparks in order."},
+		{"speaker": "Inactive Cabinet", "text": "Optional cabinet-route practice."},
+	], Callable(self, "_go_to_cabinet_trace_run"))
+
+func _go_to_cabinet_trace_run() -> void:
+	GameState.set_pending_spawn_id("Spawn_FromCabinetAdventure")
+	SceneChanger.go_to_cabinet_trace_run()
 
 func _handle_roxy() -> void:
 	var was_roxy_met := GameState.roxy_met
@@ -314,12 +326,7 @@ func _show_lost_shift_complete_notice() -> void:
 		)
 
 func _after_lost_shift_file_completed() -> void:
-	if ConscienceEncounterDirector.maybe_start_encounter(self, "after_lost_shift_file", Callable(self, "_show_lost_shift_complete_notice")):
-		return
 	_show_lost_shift_complete_notice()
-
-func _maybe_start_conscience_encounter() -> void:
-	ConscienceEncounterDirector.maybe_start_encounter(self, "after_truth_filter")
 
 func _get_staff_records_completion_lines() -> Array:
 	if not GameState.staff_records_chain_completed:

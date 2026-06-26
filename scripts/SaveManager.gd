@@ -152,6 +152,18 @@ func load_saved_scene_or_default(data: Dictionary) -> void:
 	if scene_path == SceneChanger.FINAL_NIGHT_WALK_SCENE:
 		SceneChanger.go_to_staff_corridor()
 		return
+	if scene_path == SceneChanger.HUB_TICKET_SWEEP_SCENE:
+		SceneChanger.go_to_arcade_hub()
+		return
+	if scene_path == SceneChanger.CABINET_TRACE_RUN_SCENE:
+		SceneChanger.go_to_cabinet_row()
+		return
+	if scene_path == SceneChanger.SNACK_SERVICE_DASH_SCENE:
+		SceneChanger.go_to_snack_alcove()
+		return
+	if scene_path == SceneChanger.PRIZE_SHELF_RUN_SCENE:
+		SceneChanger.go_to_prize_corner()
+		return
 	if scene_path == SceneChanger.ROCKBYTE_DUEL_SCENE or scene_path == SceneChanger.TRUTH_FILTER_SCENE or scene_path == SceneChanger.SYNC_DOOR_PUZZLE_SCENE:
 		SceneChanger.go_to_arcade_hub()
 		return
@@ -184,6 +196,14 @@ func _get_current_save_scene_path() -> String:
 		return SceneChanger.MAINTENANCE_HALL_SCENE
 	if scene_path == SceneChanger.FINAL_NIGHT_WALK_SCENE:
 		return SceneChanger.STAFF_CORRIDOR_SCENE
+	if scene_path == SceneChanger.HUB_TICKET_SWEEP_SCENE:
+		return SceneChanger.ARCADE_HUB_SCENE
+	if scene_path == SceneChanger.CABINET_TRACE_RUN_SCENE:
+		return SceneChanger.CABINET_ROW_SCENE
+	if scene_path == SceneChanger.SNACK_SERVICE_DASH_SCENE:
+		return SceneChanger.SNACK_ALCOVE_SCENE
+	if scene_path == SceneChanger.PRIZE_SHELF_RUN_SCENE:
+		return SceneChanger.PRIZE_CORNER_SCENE
 	if scene_path == SceneChanger.ROCKBYTE_DUEL_SCENE or scene_path == SceneChanger.TRUTH_FILTER_SCENE or scene_path == SceneChanger.SYNC_DOOR_PUZZLE_SCENE:
 		return SceneChanger.ARCADE_HUB_SCENE
 	if scene_path.begins_with("res://scenes/cutscenes/"):

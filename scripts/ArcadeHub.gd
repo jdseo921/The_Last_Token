@@ -337,6 +337,8 @@ func handle_hub_interaction(interactable: Node, player_node: Node = null) -> voi
 	match str(interactable.interactable_kind):
 		"mira":
 			_handle_mira()
+		"ticket_sweep_adventure":
+			_handle_ticket_sweep_adventure()
 		"ticket_counter":
 			_handle_ticket_counter()
 		"closing_checklist":
@@ -362,6 +364,17 @@ func handle_hub_interaction(interactable: Node, player_node: Node = null) -> voi
 
 func _can_show_act2_echo() -> bool:
 	return GameState.lying_cabinets_completed and not GameState.twist_reveal_seen
+
+func _handle_ticket_sweep_adventure() -> void:
+	start_dialogue([
+		{"speaker": "Ticket Counter", "text": "TICKET SWEEP READY."},
+		{"speaker": "Ticket Counter", "text": "Collect loose tickets before the carpet keeps them."},
+		{"speaker": "Ticket Counter", "text": "Optional floor route. No prize payout."},
+	], Callable(self, "_go_to_hub_ticket_sweep"))
+
+func _go_to_hub_ticket_sweep() -> void:
+	GameState.set_pending_spawn_id("Spawn_FromHubAdventure")
+	SceneChanger.go_to_hub_ticket_sweep()
 
 func _get_ticket_counter_echo_lines() -> Array:
 	GameState.echo_ticket_counter_seen = true

@@ -43,7 +43,7 @@
   - Each quest owner gives completion dialogue, then shorter repeat lines.
   - Staff Room reveal cannot happen before Memory Echo completion.
   - Final self-conflict cannot happen before the Staff Room reveal slideshow finishes.
-  - Conscience encounters appear once after Truth Filter, Circuit Soda, Lost Shift File, and Final Night Walk.
+  - Hallway `???` messages carry most antagonist foreshadowing after Truth Filter, Circuit Soda, Lost Shift File, and Maintenance Sync; the late Final Night Walk aftermath may still use a direct conscience encounter.
   - The final self-conflict unlocks the glitched player form after `twist_reveal_seen` and before EndingPrompt.
   - Optional content is not required.
   - The expanded route feels longer than the original MVP without feeling padded.
@@ -60,6 +60,38 @@
 - Post-reveal witness route: required witnesses are Mira, Gus, Vendo, Mr. Byte, and Cabinet 07; Roxy/Pip add optional reflections unless already met.
 - Final room self-conflict: confirm `"Player"` uses the glitched protagonist portrait, no antagonist sprite appears before the name reveal, and the long dialogue remains climax-only.
 - Anti-bloat gates: required non-climax interactions stay at 10 lines or fewer, third-and-later repeats nudge objectives, and no dialogue outside Staff Room fully reveals Employee 04 before the reveal.
+
+## Minigame And Puzzle Story Relevance QA
+1. Rockbyte Duel: confirm victory says the token signal matched, Cabinet 07 says the old token match was verified, and Mira explains the token mattered because something still recognized the player.
+2. Truth Filter: confirm each round tests contradictions or hidden records, and completion points to an unresolved identity conflict without naming Employee 04.
+3. Circuit Soda: confirm the puzzle reads as routing a fractured signal, and Vendo's completion anecdote says the machine recognized the signal without the label.
+4. Static Service Run: confirm the stage objective is service power restoration and Gus explains that restored power makes Maintenance Sync possible.
+5. Maintenance Sync: confirm the puzzle requires two signals together and Gus's completion dialogue includes `Door heard both knocks.` and `Yours, and the one you forgot making.`
+6. Security Tape Assembly: confirm completion no longer reuses pre-completion support text; Mr. Byte should say the sequence describes a route but not the cause.
+7. Final Night Walk: confirm ordered frames feel like a route reconstruction, and restored terminal text includes `ONE WALKED IN.` and `TWO SIGNALS ANSWERED.`
+8. Memory Echo: confirm it stabilizes identity conflict before Staff Room access and does not reveal Employee 04 early.
+9. Optional Broken High Score and Prize Sort: confirm both reward exploration and foreshadow blank names/badges without blocking the main route.
+10. Antagonist spacing: confirm `???` appears only through hallway or conscience encounter presentation, never inside normal NPC anecdote dialogue.
+
+## Room Content Distribution QA
+1. ArcadeHub: confirm Rockbyte Duel remains the required minigame and Ticket Sweep is the single hub adventure.
+2. Cabinet Row: confirm Truth Filter and Broken High Score are the two puzzle/minigame beats, and Cabinet Trace Run is the single adventure.
+3. Snack Alcove: confirm Circuit Soda is the puzzle/minigame beat, and Snack Service Dash is the single adventure after Truth Filter.
+4. Prize Corner: confirm Prize Sort is optional and Prize Shelf Run is the single adventure; neither blocks the main route.
+5. Maintenance Hall: confirm Static Service Run remains the single adventure and Maintenance Sync remains the puzzle.
+6. Staff Corridor: confirm Final Night Walk remains the single adventure, while Security Tape Assembly and Memory Echo remain the two puzzle/minigame beats.
+7. Hallway tone: confirm hallway `???` lines foreshadow a possibly hostile figure without overwhelming the arcade theme.
+
+## Map Navigation And Collision QA
+1. ArcadeHub: confirm ticket counter, owner portrait, core machines, cabinets, Staff Door, and NPC bodies block movement, while every labeled exit remains reachable.
+2. Cabinet Row: confirm cabinet fronts block movement and the return/snack exits remain reachable after the wall bounds are active.
+3. Snack Alcove: confirm Vendo, Circuit Soda, and Service Dash block movement, with left/right exits and the bottom return still easy to hit.
+4. Prize Corner: confirm the prize counter, Pip, and Shelf Run block movement without trapping the optional path.
+5. Maintenance Hall: confirm Gus and Maintenance Sync block movement, while the Staff Corridor exit remains reachable when unlocked.
+6. Staff Corridor: confirm the side walls constrain the route, consoles/door block movement, and the ArcadeHub side exit still works.
+7. Hallways: confirm the player stays inside the visible floor band and can trigger both end transitions without fighting the collision.
+8. Spawn safety: after every transition and minigame return, confirm the player does not appear inside a collision body or on top of an interactable.
+9. Visual sync: confirm room prop collision follows the prop sprite or placeholder silhouette, not stale hand-measured boxes.
 
 ## Music QA Checklist
 1. Title music plays: `title_attract_loop`.
@@ -80,6 +112,18 @@
 16. Post-Reveal Roam music plays: `post_reveal_roam`.
 17. Music Volume setting affects playback without revealing the faded-out crossfade player.
 18. Temporarily missing music file prints a warning and does not crash.
+
+## SFX QA Checklist
+1. Button confirms play `ui_confirm` on menu choices, puzzle choices, and continue actions.
+2. Back/return/cancel actions play `ui_cancel`.
+3. Invalid actions play `error` without advancing state.
+4. Dialogue advance plays a short `dialogue_advance` tick.
+5. Interacting with NPCs/objects plays `interact`.
+6. Token/pickup actions play `token_get`.
+7. Quest notifications and completed arcade stages play `quest_update`.
+8. Save completion plays `save`.
+9. Glitch moments play `glitch` without overpowering music or dialogue.
+10. SFX Volume setting affects all SFX while Music Volume remains separate.
 
 ## Final Expanded Route Gate Result
 - Date: 2026-06-20.
