@@ -1,5 +1,6 @@
 extends Control
 
+const ARCADE_JUICE := preload("res://scripts/ArcadeJuice.gd")
 const TILE_SIZE := 28
 const GRID_ORIGIN := Vector2(48, 112)
 const DEFAULT_AREA_ID := "main"
@@ -57,6 +58,7 @@ var counter_label: Label
 var player_marker: ColorRect
 var return_button: Button
 var tile_container: Control
+var feedback_flash: ColorRect
 var tile_rects: Dictionary = {}
 var tile_markers: Dictionary = {}
 
@@ -156,12 +158,14 @@ func _rebuild_area_view(status_message: String) -> void:
 	_build_labels()
 	_build_grid()
 	_build_player()
+	_build_feedback_flash()
 	_refresh_status(status_message)
 	_refresh_counter()
 
 func _clear_children() -> void:
 	tile_rects.clear()
 	tile_markers.clear()
+	feedback_flash = null
 	for child in get_children():
 		child.queue_free()
 
@@ -214,6 +218,15 @@ func _build_background() -> void:
 	panel.size = Vector2(592, 404)
 	panel.color = Color(0.045, 0.05, 0.068, 1.0)
 	add_child(panel)
+
+func _build_feedback_flash() -> void:
+	feedback_flash = ColorRect.new()
+	feedback_flash.name = "ArcadeFeedbackFlash"
+	feedback_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
+	feedback_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	feedback_flash.visible = false
+	feedback_flash.z_index = 80
+	add_child(feedback_flash)
 
 func _build_labels() -> void:
 	var title_label := Label.new()
@@ -480,9 +493,13 @@ func _get_tile_at(grid_pos: Vector2i) -> String:
 func _handle_tile(tile: String) -> void:
 	var link := _get_area_link_for_tile(tile)
 	if link.size() > 0:
+		_play_audio("play_button_pulse")
+		_flash_feedback(ARCADE_JUICE.FLASH_CYAN, 0.12)
 		_change_area(link)
 		return
 	if tile == "H":
+		_play_audio("play_error_buzz")
+		_flash_feedback(ARCADE_JUICE.FLASH_RED, 0.32)
 		_reset_player(_format_lines(hazard_lines))
 		return
 	if tile == "C":
@@ -500,7 +517,8 @@ func _try_collect(grid_pos: Vector2i) -> void:
 		_handle_wrong_order()
 		return
 	collected_positions.append(position_ref)
-	_play_audio("play_token_get")
+	_play_audio("play_score_blip")
+	_flash_feedback(ARCADE_JUICE.FLASH_CYAN, 0.2)
 	next_collectible_index += 1
 	_refresh_tile_state(grid_pos)
 	_refresh_counter()
@@ -513,7 +531,8 @@ func _try_collect(grid_pos: Vector2i) -> void:
 	_refresh_status(message)
 
 func _handle_wrong_order() -> void:
-	_play_audio("play_error")
+	_play_audio("play_error_buzz")
+	_flash_feedback(ARCADE_JUICE.FLASH_RED, 0.34)
 	if reset_order_on_conflict:
 		var reset_positions := collected_positions.duplicate()
 		collected_positions.clear()
@@ -530,11 +549,13 @@ func _try_complete() -> void:
 	if completed or return_in_progress:
 		return
 	if collected_positions.size() < required_collectibles:
-		_play_audio("play_error")
+		_play_audio("play_error_buzz")
+		_flash_feedback(ARCADE_JUICE.FLASH_RED, 0.3)
 		_refresh_status("Exit locked.\n%s: %d / %d" % [collectible_label, collected_positions.size(), required_collectibles])
 		return
 	completed = true
-	_play_audio("play_quest_update")
+	_play_audio("play_success_jingle")
+	_flash_feedback(ARCADE_JUICE.FLASH_CYAN, 0.34)
 	_on_stage_completed()
 	_refresh_status(_format_lines(completion_lines))
 	return_button.visible = true
@@ -613,7 +634,11 @@ func _on_return_pressed() -> void:
 	if return_in_progress:
 		return
 	return_in_progress = true
-	_play_audio("play_ui_cancel")
+	_play_audio("play_button_pulse")
+	ARCADE_JUICE.pulse_control(self, return_button)
 	if return_button:
 		return_button.disabled = true
 	SceneChanger.go_to_arcade_hub()
+
+func _flash_feedback(color: Color, peak_alpha: float) -> void:
+	ARCADE_JUICE.flash_overlay(self, feedback_flash, color, peak_alpha)

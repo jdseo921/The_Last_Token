@@ -103,6 +103,7 @@ func _on_choice_cancelled() -> void:
 	_show_retry()
 
 func _show_accepted(question: Dictionary) -> void:
+	_play_audio("play_memory_accept")
 	var accepted_value: Variant = question.get("accepted", [])
 	var accepted_lines: Array = []
 	if accepted_value is Array:

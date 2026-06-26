@@ -53,6 +53,7 @@ func _apply_button_styles() -> void:
 		_style_menu_button(button)
 
 func _style_menu_button(button: Button) -> void:
+	button.text = button.text.to_upper()
 	button.add_theme_color_override("font_color", Color(0.88, 0.93, 0.96, 1.0))
 	button.add_theme_color_override("font_hover_color", Color(0.98, 1.0, 1.0, 1.0))
 	button.add_theme_color_override("font_focus_color", Color(0.98, 1.0, 1.0, 1.0))
@@ -67,7 +68,7 @@ func _make_button_style(bg_color: Color, border_color: Color, border_width: int)
 	style.bg_color = bg_color
 	style.border_color = border_color
 	style.set_border_width_all(border_width)
-	style.set_corner_radius_all(4)
+	style.set_corner_radius_all(0)
 	style.content_margin_left = 10.0
 	style.content_margin_right = 10.0
 	style.content_margin_top = 4.0

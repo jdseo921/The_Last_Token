@@ -1,5 +1,7 @@
 extends Node2D
 
+const ROUTE_CUE_SCRIPT := preload("res://scripts/RouteCue.gd")
+const AMBIENT_EFFECTS := preload("res://scripts/AmbientSpriteEffects.gd")
 const BACKGROUND_ART_PATH := "res://assets/art/maps/prize_corner/prize_corner_background_640x440.png"
 const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
 
@@ -21,11 +23,14 @@ var pending_after_dialogue: Callable = Callable()
 var choice_box: CanvasLayer = null
 var prize_sort_selected: Array = []
 var prize_sort_remaining: Array = []
+var route_cue: Control = null
 
 func _ready() -> void:
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
 	_apply_background_art()
+	_setup_ambient_sprite_effects()
+	_setup_route_cue()
 	_apply_spawn_position()
 	_on_prompt_changed("")
 
@@ -43,6 +48,15 @@ func _on_prompt_changed(text: String) -> void:
 	prompt_label.visible = not text.is_empty()
 	prompt_background.visible = prompt_label.visible
 
+func _setup_route_cue() -> void:
+	route_cue = ROUTE_CUE_SCRIPT.new()
+	ui_layer.add_child(route_cue)
+	route_cue.call("setup", "prize_corner", Vector2(24, 86), 390.0)
+
+func _refresh_route_cue() -> void:
+	if route_cue != null and is_instance_valid(route_cue) and route_cue.has_method("refresh"):
+		route_cue.call("refresh")
+
 func start_dialogue(lines: Array, after_dialogue: Callable = Callable()) -> void:
 	pending_after_dialogue = after_dialogue
 	if player and player.has_method("set_control_enabled"):
@@ -55,6 +69,7 @@ func _on_dialogue_finished() -> void:
 		pending_after_dialogue = Callable()
 	if player and player.has_method("set_control_enabled") and not _choice_box_is_open():
 		player.set_control_enabled(true)
+	_refresh_route_cue()
 
 func _dialogue_is_active() -> bool:
 	if dialogue_box == null:
@@ -277,6 +292,70 @@ func _apply_background_art() -> void:
 	for placeholder in [$Background, $PrizeCounterPlaceholder, $PipPlaceholder, $PrizeShelfAdventurePlaceholder]:
 		if placeholder is CanvasItem:
 			placeholder.visible = not loaded
+
+func _setup_ambient_sprite_effects() -> void:
+	AMBIENT_EFFECTS.create_layer(self, ui_layer, [
+		{
+			"name": "PrizeCounterGlintA",
+			"position": Vector2(180, 130),
+			"scale": Vector2(1.25, 1.25),
+			"effect_type": "random_screen_flash",
+			"speed": 0.52,
+			"intensity": 0.05,
+			"sprite_sheet_path": AMBIENT_EFFECTS.TICKET_GLINT,
+			"sprite_alpha": 0.64,
+		},
+		{
+			"name": "PrizeCounterGlintB",
+			"position": Vector2(442, 142),
+			"scale": Vector2(1.1, 1.1),
+			"effect_type": "random_screen_flash",
+			"speed": 0.68,
+			"intensity": 0.05,
+			"sprite_sheet_path": AMBIENT_EFFECTS.TICKET_GLINT,
+			"sprite_alpha": 0.58,
+		},
+		{
+			"name": "PrizeTwinkleA",
+			"position": Vector2(246, 116),
+			"scale": Vector2(1.35, 1.35),
+			"effect_type": "blink",
+			"speed": 0.55,
+			"sprite_sheet_path": AMBIENT_EFFECTS.PRIZE_TWINKLE,
+			"sprite_alpha": 0.68,
+		},
+		{
+			"name": "PrizeTwinkleB",
+			"position": Vector2(384, 118),
+			"scale": Vector2(1.25, 1.25),
+			"effect_type": "blink",
+			"speed": 0.72,
+			"sprite_sheet_path": AMBIENT_EFFECTS.PRIZE_TWINKLE,
+			"sprite_alpha": 0.62,
+			"sprite_modulate": Color(1.0, 0.78, 0.96, 1.0),
+		},
+		{
+			"name": "PipBlinkDot",
+			"position": Vector2(320, 210),
+			"scale": Vector2(1.05, 1.05),
+			"effect_type": "bob",
+			"speed": 0.58,
+			"intensity": 0.08,
+			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
+			"sprite_alpha": 0.56,
+			"sprite_modulate": Color(1.0, 0.9, 0.52, 1.0),
+		},
+		{
+			"name": "SnackRouteArrow",
+			"position": Vector2(34, 260),
+			"rotation": PI,
+			"scale": Vector2(1.35, 1.35),
+			"effect_type": "blink",
+			"speed": 0.66,
+			"sprite_sheet_path": AMBIENT_EFFECTS.NEON_ARROW,
+			"sprite_alpha": 0.64,
+		},
+	])
 
 func _apply_sprite_texture(sprite_node: Sprite2D, path: String) -> bool:
 	if sprite_node == null:

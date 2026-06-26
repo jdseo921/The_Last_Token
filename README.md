@@ -3,7 +3,7 @@
 The Last Token is a 2D top-down retro arcade mystery about exploring Pixel Haven, talking to strange arcade regulars, recovering a lost token, unlocking the staff room, and uncovering who the player really is.
 
 ## Status
-The project is currently an MVP candidate pending final live playtest, with placeholder visuals, placeholder slideshow panels, Memory Slots, post-reveal roam, and integrated background music. It is ready to open in Godot and export as a local test build, but should not be called live-verified until the full acceptance route passes in the Godot runtime.
+The project is currently an MVP candidate pending final live playtest, with Memory Slots, post-reveal roam, integrated background music, and a visual-polish pass for the reveal slideshow, hub state props, route cues, retro UI framing, and key minigame feedback. It is ready to open in Godot and export as a local test build, but should not be called live-verified until the full acceptance route passes in the Godot runtime.
 
 ## Engine
 - Godot 4.x
@@ -69,8 +69,13 @@ See `QA_AUTOMATION.md` before running automated Godot checks from Codex. Headles
 After the ending prompt, the player returns to ArcadeHub with post-reveal state unlocked. NPC dialogue changes to reflect the reveal, and the state can be saved and loaded.
 
 ## Current Placeholders
-- Visuals are simple shapes and labels.
-- Cutscene panels may be missing and display `MEMORY PANEL / Placeholder image pending`.
-- Background music is included and wired through `AudioManager`; some SFX may still be placeholder or absent.
+- Some map and character visuals are still simple shapes and labels, but map route cues now point to the next required room or local action, and small ambient sprite effects add readable cabinet/static/exit signals.
+- The Staff Room reveal now uses eight mono-color 8-bit panels under `assets/art/cutscenes/memory_reveal/`; the slideshow fallback still displays `MEMORY PANEL / Placeholder image pending` if an image is removed.
+- Background music is included and wired through `AudioManager`. Simple generated SFX now cover memory panels, Memory Echo accepts, Staff Door unlock, arcade button pulses, score blips, error buzzes, and success jingles.
 - Exact player position restore is placeholder-level; story state and safe scene paths are restored.
 - Rockbyte Duel uses simple AI for MVP testing.
+
+## Asset Notes
+Generated polish assets are deterministic and project-local. The generator lives at `tools/generate_visual_polish_assets.gd` and currently covers mono-color reveal panels, small hub/minigame sprites, ambient map effect sheets, Security Tape/Rockbyte backgrounds, and simple WAV one-shots for cutscenes, doors, and arcade feedback.
+
+The shared UI theme uses a readable retro monospace stack with pixel-style fallbacks when available. Antagonist dialogue uses the same font as protagonist dialogue, with distinct scan-jitter and flicker animation instead of a separate typeface.

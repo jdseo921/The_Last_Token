@@ -1,10 +1,13 @@
 extends Node2D
 
+const ROUTE_CUE_SCRIPT := preload("res://scripts/RouteCue.gd")
+const AMBIENT_EFFECTS := preload("res://scripts/AmbientSpriteEffects.gd")
 const BACKGROUND_ART_PATH := "res://assets/art/maps/snack_alcove/snack_alcove_background_640x440.png"
 const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
 
 @onready var player: CharacterBody2D = $Player
 @onready var background_art: Sprite2D = $BackgroundArt
+@onready var ui_layer: Node2D = $UILayer
 @onready var dialogue_box: CanvasLayer = $UILayer/DialogueBox
 @onready var prompt_label: Label = $UILayer/InteractionPrompt
 @onready var prompt_background: ColorRect = $UILayer/InteractionPromptBackground
@@ -12,12 +15,15 @@ const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
 @onready var quest_notice: CanvasLayer = $QuestNotice
 
 var pending_after_dialogue: Callable = Callable()
+var route_cue: Control = null
 
 func _ready() -> void:
 	AudioManager.play_music_for_context("snack_alcove")
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
 	_apply_background_art()
+	_setup_ambient_sprite_effects()
+	_setup_route_cue()
 	_apply_spawn_position()
 	_on_prompt_changed("")
 	_refresh_circuit_soda_state()
@@ -36,6 +42,15 @@ func _on_prompt_changed(text: String) -> void:
 	prompt_label.visible = not text.is_empty()
 	prompt_background.visible = prompt_label.visible
 
+func _setup_route_cue() -> void:
+	route_cue = ROUTE_CUE_SCRIPT.new()
+	ui_layer.add_child(route_cue)
+	route_cue.call("setup", "snack_alcove", Vector2(24, 86), 390.0)
+
+func _refresh_route_cue() -> void:
+	if route_cue != null and is_instance_valid(route_cue) and route_cue.has_method("refresh"):
+		route_cue.call("refresh")
+
 func start_dialogue(lines: Array, after_dialogue: Callable = Callable()) -> void:
 	pending_after_dialogue = after_dialogue
 	if player and player.has_method("set_control_enabled"):
@@ -49,6 +64,7 @@ func _on_dialogue_finished() -> void:
 	if player and player.has_method("set_control_enabled"):
 		player.set_control_enabled(true)
 	_refresh_circuit_soda_state()
+	_refresh_route_cue()
 
 func _dialogue_is_active() -> bool:
 	if dialogue_box == null:
@@ -183,6 +199,72 @@ func _apply_background_art() -> void:
 	for placeholder in [$Background, $SnackWall, $ServiceSlotPlaceholder, $VendoPlaceholder, $CircuitSodaPlaceholder]:
 		if placeholder is CanvasItem:
 			placeholder.visible = not loaded
+
+func _setup_ambient_sprite_effects() -> void:
+	AMBIENT_EFFECTS.create_layer(self, ui_layer, [
+		{
+			"name": "VendoBubbleSpriteA",
+			"position": Vector2(318, 128),
+			"scale": Vector2(1.55, 1.55),
+			"effect_type": "bob",
+			"speed": 0.58,
+			"intensity": 0.18,
+			"sprite_sheet_path": AMBIENT_EFFECTS.SODA_BUBBLE,
+			"sprite_alpha": 0.78,
+		},
+		{
+			"name": "VendoBubbleSpriteB",
+			"position": Vector2(342, 150),
+			"scale": Vector2(1.1, 1.1),
+			"effect_type": "bob",
+			"speed": 0.74,
+			"intensity": 0.14,
+			"sprite_sheet_path": AMBIENT_EFFECTS.SODA_BUBBLE,
+			"sprite_alpha": 0.62,
+		},
+		{
+			"name": "CircuitSodaScanline",
+			"position": Vector2(452, 134),
+			"scale": Vector2(1.8, 1.8),
+			"effect_type": "scanline_pulse",
+			"speed": 0.76,
+			"sprite_sheet_path": AMBIENT_EFFECTS.SCANLINE_BAR,
+			"sprite_frame_size": Vector2i(32, 8),
+			"sprite_alpha": 0.74,
+			"sprite_modulate": Color(0.72, 1.0, 0.86, 1.0),
+		},
+		{
+			"name": "ServiceSlotSpark",
+			"position": Vector2(198, 140),
+			"scale": Vector2(1.35, 1.35),
+			"effect_type": "random_screen_flash",
+			"speed": 0.82,
+			"intensity": 0.08,
+			"sprite_sheet_path": AMBIENT_EFFECTS.STATIC_SPARK,
+			"sprite_alpha": 0.68,
+		},
+		{
+			"name": "CabinetRouteArrow",
+			"position": Vector2(34, 260),
+			"rotation": PI,
+			"scale": Vector2(1.35, 1.35),
+			"effect_type": "blink",
+			"speed": 0.63,
+			"sprite_sheet_path": AMBIENT_EFFECTS.NEON_ARROW,
+			"sprite_alpha": 0.62,
+			"sprite_modulate": Color(0.82, 0.95, 1.0, 1.0),
+		},
+		{
+			"name": "PrizeRouteArrow",
+			"position": Vector2(606, 260),
+			"scale": Vector2(1.4, 1.4),
+			"effect_type": "blink",
+			"speed": 0.7,
+			"sprite_sheet_path": AMBIENT_EFFECTS.NEON_ARROW,
+			"sprite_alpha": 0.68,
+			"sprite_modulate": Color(1.0, 0.9, 0.54, 1.0),
+		},
+	])
 
 func _refresh_circuit_soda_state() -> void:
 	if circuit_soda_glow == null:

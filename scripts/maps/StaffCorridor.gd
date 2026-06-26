@@ -1,19 +1,25 @@
 extends Node2D
 
+const ROUTE_CUE_SCRIPT := preload("res://scripts/RouteCue.gd")
+const AMBIENT_EFFECTS := preload("res://scripts/AmbientSpriteEffects.gd")
 const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
 
 @onready var player: CharacterBody2D = $Player
+@onready var ui_layer: Node2D = $UILayer
 @onready var dialogue_box: CanvasLayer = $UILayer/DialogueBox
 @onready var prompt_label: Label = $UILayer/InteractionPrompt
 @onready var prompt_background: ColorRect = $UILayer/InteractionPromptBackground
 @onready var quest_notice: CanvasLayer = $QuestNotice
 
 var pending_after_dialogue: Callable = Callable()
+var route_cue: Control = null
 
 func _ready() -> void:
 	AudioManager.play_music_for_context("staff_corridor")
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
+	_setup_ambient_sprite_effects()
+	_setup_route_cue()
 	_apply_spawn_position()
 	_on_prompt_changed("")
 	call_deferred("_maybe_start_conscience_encounter")
@@ -32,6 +38,15 @@ func _on_prompt_changed(text: String) -> void:
 	prompt_label.visible = not text.is_empty()
 	prompt_background.visible = prompt_label.visible
 
+func _setup_route_cue() -> void:
+	route_cue = ROUTE_CUE_SCRIPT.new()
+	ui_layer.add_child(route_cue)
+	route_cue.call("setup", "staff_corridor", Vector2(24, 86), 430.0)
+
+func _refresh_route_cue() -> void:
+	if route_cue != null and is_instance_valid(route_cue) and route_cue.has_method("refresh"):
+		route_cue.call("refresh")
+
 func start_dialogue(lines: Array, after_dialogue: Callable = Callable()) -> void:
 	pending_after_dialogue = after_dialogue
 	if player and player.has_method("set_control_enabled"):
@@ -44,6 +59,7 @@ func _on_dialogue_finished() -> void:
 		pending_after_dialogue = Callable()
 	if player and player.has_method("set_control_enabled"):
 		player.set_control_enabled(true)
+	_refresh_route_cue()
 
 func _dialogue_is_active() -> bool:
 	if dialogue_box == null:
@@ -273,6 +289,84 @@ func _show_staff_records_complete_notice() -> void:
 			"STAFF RECORDS CHAIN COMPLETE",
 			"The arcade knew the number before it knew the name."
 		)
+
+func _setup_ambient_sprite_effects() -> void:
+	AMBIENT_EFFECTS.create_layer(self, ui_layer, [
+		{
+			"name": "StaffDoorLockBlink",
+			"position": Vector2(338, 86),
+			"scale": Vector2(1.55, 1.55),
+			"effect_type": "blink",
+			"speed": 0.6,
+			"sprite_sheet_path": AMBIENT_EFFECTS.STAFF_LOCK_BLINK,
+			"sprite_alpha": 0.8,
+		},
+		{
+			"name": "MemoryEchoWispA",
+			"position": Vector2(292, 190),
+			"scale": Vector2(1.55, 1.55),
+			"effect_type": "dust_mote_drift",
+			"speed": 0.44,
+			"intensity": 0.18,
+			"sprite_sheet_path": AMBIENT_EFFECTS.MEMORY_WISP,
+			"sprite_frame_size": Vector2i(24, 16),
+			"sprite_alpha": 0.76,
+		},
+		{
+			"name": "MemoryEchoWispB",
+			"position": Vector2(360, 238),
+			"scale": Vector2(1.35, 1.35),
+			"effect_type": "dust_mote_drift",
+			"speed": 0.58,
+			"intensity": 0.14,
+			"sprite_sheet_path": AMBIENT_EFFECTS.MEMORY_WISP,
+			"sprite_frame_size": Vector2i(24, 16),
+			"sprite_alpha": 0.62,
+			"sprite_modulate": Color(1.0, 0.76, 1.0, 1.0),
+		},
+		{
+			"name": "SecurityTapeScanline",
+			"position": Vector2(320, 309),
+			"scale": Vector2(2.25, 1.7),
+			"effect_type": "scanline_pulse",
+			"speed": 0.74,
+			"active_flag_optional": "maintenance_sync_completed",
+			"sprite_sheet_path": AMBIENT_EFFECTS.SCANLINE_BAR,
+			"sprite_frame_size": Vector2i(32, 8),
+			"sprite_alpha": 0.72,
+		},
+		{
+			"name": "FinalNightArrow",
+			"position": Vector2(444, 310),
+			"scale": Vector2(1.35, 1.35),
+			"effect_type": "blink",
+			"speed": 0.68,
+			"active_flag_optional": "security_tape_assembly_completed",
+			"sprite_sheet_path": AMBIENT_EFFECTS.NEON_ARROW,
+			"sprite_alpha": 0.7,
+			"sprite_modulate": Color(0.98, 0.78, 1.0, 1.0),
+		},
+		{
+			"name": "MemoryEchoReadyDot",
+			"position": Vector2(320, 260),
+			"scale": Vector2(1.25, 1.25),
+			"effect_type": "glow_pulse",
+			"speed": 0.76,
+			"active_flag_optional": "final_night_walk_completed",
+			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
+			"sprite_alpha": 0.72,
+		},
+		{
+			"name": "HubReturnArrow",
+			"position": Vector2(34, 360),
+			"rotation": PI,
+			"scale": Vector2(1.35, 1.35),
+			"effect_type": "blink",
+			"speed": 0.62,
+			"sprite_sheet_path": AMBIENT_EFFECTS.NEON_ARROW,
+			"sprite_alpha": 0.62,
+		},
+	])
 
 func _is_post_reveal() -> bool:
 	return GameState.post_reveal_roam_unlocked or GameState.twist_reveal_seen

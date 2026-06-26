@@ -1,5 +1,7 @@
 extends Control
 
+const ARCADE_JUICE := preload("res://scripts/ArcadeJuice.gd")
+
 const FRAGMENTS := [
 	"Counter lights shut off.",
 	"Cabinet 07 remains powered.",
@@ -31,11 +33,13 @@ const STATIC_OVERLAY_ART_PATH := "res://assets/art/minigames/security_tape/tape_
 
 var selected_fragments: Array[String] = []
 var fragment_buttons: Array[Button] = []
+var feedback_flash: ColorRect = null
 
 func _ready() -> void:
 	AudioManager.play_music_for_context("security_tape_assembly")
 	GameState.start_security_tape_assembly()
 	_apply_optional_art_hooks()
+	_setup_feedback_flash()
 	fragment_buttons = [fragment_a, fragment_b, fragment_c, fragment_d]
 	for index in range(fragment_buttons.size()):
 		var button: Button = fragment_buttons[index]
@@ -52,19 +56,25 @@ func _on_fragment_pressed(index: int) -> void:
 		return
 	var fragment: String = FRAGMENTS[index]
 	if selected_fragments.has(fragment):
-		_play_audio("play_error")
+		_play_audio("play_error_buzz")
+		ARCADE_JUICE.flash_overlay(self, feedback_flash, ARCADE_JUICE.FLASH_RED, 0.28)
 		return
-	_play_audio("play_ui_confirm")
+	ARCADE_JUICE.pulse_control(self, fragment_buttons[index])
+	_play_audio("play_button_pulse")
 	selected_fragments.append(fragment)
 	_refresh_view()
 
 func _on_submit_pressed() -> void:
 	if selected_fragments.size() != FRAGMENTS.size():
-		_play_audio("play_error")
-		status_label.text = "Select all four fragments before submitting."
+		ARCADE_JUICE.pulse_control(self, submit_button, ARCADE_JUICE.PULSE_RED)
+		_play_audio("play_error_buzz")
+		ARCADE_JUICE.flash_overlay(self, feedback_flash, ARCADE_JUICE.FLASH_RED, 0.28)
+		status_label.text = "TAPE HEAD BUZZES.\nSelect all four fragments before submitting."
 		return
 	if selected_fragments == CORRECT_ORDER:
-		_play_audio("play_quest_update")
+		ARCADE_JUICE.pulse_control(self, submit_button, ARCADE_JUICE.PULSE_GREEN)
+		_play_audio("play_success_jingle")
+		ARCADE_JUICE.flash_overlay(self, feedback_flash, ARCADE_JUICE.FLASH_CYAN, 0.32)
 		GameState.complete_security_tape_assembly()
 		status_label.text = "TAPE ORDER RESTORED.\nFINAL NIGHT SEQUENCE PARTIAL.\nTHE STAFF DOOR DID NOT RECORD A CUSTOMER."
 		_set_fragment_buttons_disabled(true)
@@ -73,13 +83,15 @@ func _on_submit_pressed() -> void:
 		return_button.visible = true
 		return
 	GameState.record_security_tape_wrong_order()
-	_play_audio("play_error")
-	status_label.text = "TIMESTAMP CONFLICT.\nThe tape rewinds."
+	_play_audio("play_error_buzz")
+	ARCADE_JUICE.flash_overlay(self, feedback_flash, ARCADE_JUICE.FLASH_RED, 0.34)
+	status_label.text = "TIMESTAMP CONFLICT.\nThe tape rewinds with an angry buzz."
 	_reset_selection(false)
 
 func _reset_selection(play_sound: bool = true) -> void:
 	if play_sound and not selected_fragments.is_empty():
-		_play_audio("play_ui_cancel")
+		ARCADE_JUICE.pulse_control(self, reset_button)
+		_play_audio("play_button_pulse")
 	selected_fragments.clear()
 	_refresh_view()
 
@@ -103,9 +115,19 @@ func _set_fragment_buttons_disabled(disabled: bool) -> void:
 		button.disabled = disabled
 
 func _return_to_staff_corridor() -> void:
-	_play_audio("play_ui_cancel")
+	ARCADE_JUICE.pulse_control(self, return_button)
+	_play_audio("play_button_pulse")
 	GameState.set_pending_spawn_id("Spawn_FromSecurityTape")
 	SceneChanger.go_to_staff_corridor()
+
+func _setup_feedback_flash() -> void:
+	feedback_flash = ColorRect.new()
+	feedback_flash.name = "ArcadeFeedbackFlash"
+	feedback_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
+	feedback_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	feedback_flash.visible = false
+	feedback_flash.z_index = 80
+	add_child(feedback_flash)
 
 func _apply_optional_art_hooks() -> void:
 	_add_optional_full_rect_texture(BACKGROUND_ART_PATH, 0, "SecurityTapeBackgroundArt")

@@ -4,6 +4,7 @@ const SLIDESHOW_SCENE := preload("res://scenes/cutscenes/SlideshowCutscene.tscn"
 const ENDING_PROMPT_SCENE := preload("res://scenes/cutscenes/EndingPrompt.tscn")
 const DIALOGUE_BOX_SCENE := preload("res://scenes/ui/DialogueBox.tscn")
 const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
+const MEMORY_REVEAL_PANEL_DIR := "res://assets/art/cutscenes/memory_reveal/"
 
 @onready var player: CharacterBody2D = $Player
 @onready var prompt_label: Label = $InteractionPrompt
@@ -116,14 +117,14 @@ func _start_reveal() -> void:
 		active_cutscene.connect("cutscene_finished", _on_reveal_finished, CONNECT_ONE_SHOT)
 	if active_cutscene.has_method("start_cutscene"):
 		active_cutscene.start_cutscene([
-			{"image_path": "res://assets/cutscenes/twist/panel_01.png", "caption": "The staff room was not locked to keep you out.", "effect": "fade"},
-			{"image_path": "res://assets/cutscenes/twist/panel_02.png", "caption": "It was locked because you had already been inside.", "effect": "slow_zoom"},
-			{"image_path": "res://assets/cutscenes/twist/panel_03.png", "caption": "You came here to shut Pixel Haven down.", "effect": "glitch_flash"},
-			{"image_path": "res://assets/cutscenes/twist/panel_04.png", "caption": "The machines panicked.", "effect": "fade"},
-			{"image_path": "res://assets/cutscenes/twist/panel_05.png", "caption": "The system saved what it could.", "effect": "slow_zoom"},
-			{"image_path": "res://assets/cutscenes/twist/panel_06.png", "caption": "Everyone remembered you.", "effect": "fade"},
-			{"image_path": "res://assets/cutscenes/twist/panel_07.png", "caption": "Everyone except you.", "effect": "slow_zoom"},
-			{"image_path": "res://assets/cutscenes/twist/panel_08.png", "caption": "WELCOME BACK, EMPLOYEE 04.", "effect": "glitch_flash"},
+			{"image_path": MEMORY_REVEAL_PANEL_DIR + "panel_01.png", "caption": "The staff room was not locked to keep you out.", "effect": "fade"},
+			{"image_path": MEMORY_REVEAL_PANEL_DIR + "panel_02.png", "caption": "It was locked because you had already been inside.", "effect": "slow_zoom"},
+			{"image_path": MEMORY_REVEAL_PANEL_DIR + "panel_03.png", "caption": "You came here to shut Pixel Haven down.", "effect": "glitch_flash"},
+			{"image_path": MEMORY_REVEAL_PANEL_DIR + "panel_04.png", "caption": "The machines panicked.", "effect": "fade"},
+			{"image_path": MEMORY_REVEAL_PANEL_DIR + "panel_05.png", "caption": "The system saved what it could.", "effect": "slow_zoom"},
+			{"image_path": MEMORY_REVEAL_PANEL_DIR + "panel_06.png", "caption": "Everyone remembered you.", "effect": "fade"},
+			{"image_path": MEMORY_REVEAL_PANEL_DIR + "panel_07.png", "caption": "Everyone except you.", "effect": "slow_zoom"},
+			{"image_path": MEMORY_REVEAL_PANEL_DIR + "panel_08.png", "caption": "WELCOME BACK, EMPLOYEE 04.", "effect": "glitch_flash"},
 		])
 
 func _on_reveal_finished() -> void:

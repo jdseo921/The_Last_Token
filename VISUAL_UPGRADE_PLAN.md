@@ -6,6 +6,16 @@ This plan breaks the future visual pass into safe phases. The current MVP should
 ## Current Gate: First Quest Vertical Slice
 Before starting additional visual expansion, the project should pass `FIRST_QUEST_VERTICAL_SLICE.md`.
 
+Recent polish update:
+- Staff Room reveal placeholders have been replaced with eight mono-color 8-bit panels under `assets/art/cutscenes/memory_reveal/`.
+- Hub state props now include `staff_door_open.png` and `owner_portrait_employee04.png`.
+- Static Service Run and Final Night Walk now use small optional player, collectible, hazard, and goal sprites while preserving text/shape fallback.
+- Security Tape Assembly and Rockbyte Duel have first-pass background art.
+- The global theme now defines square-corner retro panel/button borders, and route cues in hallways/side maps name the next room or local objective.
+- Core minigames now use immediate cabinet feedback: button pulse, score blip, error buzz, success jingle, and short screen flickers.
+- Hub maps and hallways now use generated 4-frame ambient sprite sheets for readable arcade motion: static sparks, scanlines, lock blinks, exit arrows, prize glints, soda bubbles, and memory wisps.
+- Text styling now leans further retro through a readable pixel/monospace theme stack, squared UI controls, uppercase cabinet chrome, and antagonist-only scan/flicker text animation that preserves the protagonist font.
+
 The active visual priority is only this loop:
 
 1. Title Menu
@@ -87,6 +97,8 @@ Exit criteria:
 
 ## Phase 5: Memory Recall Panel Art
 Goal: replace slideshow placeholders with pixel-art memory panels.
+
+Status: first pass integrated. Keep this phase open for later review/polish, but the MVP no longer depends on missing slideshow art.
 
 Tasks:
 - Create eight memory recall panels at `320x180` or `640x360`.

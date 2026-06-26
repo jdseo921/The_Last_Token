@@ -1,10 +1,13 @@
 extends Node2D
 
+const ROUTE_CUE_SCRIPT := preload("res://scripts/RouteCue.gd")
+const AMBIENT_EFFECTS := preload("res://scripts/AmbientSpriteEffects.gd")
 const BACKGROUND_ART_PATH := "res://assets/art/maps/cabinet_row/cabinet_row_background_640x440.png"
 const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
 
 @onready var player: CharacterBody2D = $Player
 @onready var background_art: Sprite2D = $BackgroundArt
+@onready var ui_layer: Node2D = $UILayer
 @onready var dialogue_box: CanvasLayer = $UILayer/DialogueBox
 @onready var prompt_label: Label = $UILayer/InteractionPrompt
 @onready var prompt_background: ColorRect = $UILayer/InteractionPromptBackground
@@ -12,12 +15,15 @@ const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
 @onready var quest_notice: CanvasLayer = $QuestNotice
 
 var pending_after_dialogue: Callable = Callable()
+var route_cue: Control = null
 
 func _ready() -> void:
 	AudioManager.play_music_for_context("cabinet_row")
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
 	_apply_background_art()
+	_setup_ambient_sprite_effects()
+	_setup_route_cue()
 	_apply_spawn_position()
 	_on_prompt_changed("")
 	_refresh_truth_filter_state()
@@ -36,6 +42,15 @@ func _on_prompt_changed(text: String) -> void:
 	prompt_label.visible = not text.is_empty()
 	prompt_background.visible = prompt_label.visible
 
+func _setup_route_cue() -> void:
+	route_cue = ROUTE_CUE_SCRIPT.new()
+	ui_layer.add_child(route_cue)
+	route_cue.call("setup", "cabinet_row", Vector2(24, 86), 390.0)
+
+func _refresh_route_cue() -> void:
+	if route_cue != null and is_instance_valid(route_cue) and route_cue.has_method("refresh"):
+		route_cue.call("refresh")
+
 func start_dialogue(lines: Array, after_dialogue: Callable = Callable()) -> void:
 	pending_after_dialogue = after_dialogue
 	if player and player.has_method("set_control_enabled"):
@@ -49,6 +64,7 @@ func _on_dialogue_finished() -> void:
 	if player and player.has_method("set_control_enabled"):
 		player.set_control_enabled(true)
 	_refresh_truth_filter_state()
+	_refresh_route_cue()
 
 func _dialogue_is_active() -> bool:
 	if dialogue_box == null:
@@ -373,6 +389,73 @@ func _apply_background_art() -> void:
 	for placeholder in [$Background, $CabinetWall, $TruthFilterPlaceholder, $MrBytePlaceholder, $DecorativeCabinetPlaceholder, $RoxyPlaceholder, $BrokenHighScorePlaceholder]:
 		if placeholder is CanvasItem:
 			placeholder.visible = not loaded
+
+func _setup_ambient_sprite_effects() -> void:
+	AMBIENT_EFFECTS.create_layer(self, ui_layer, [
+		{
+			"name": "MrByteScanlineSprite",
+			"position": Vector2(150, 138),
+			"scale": Vector2(1.65, 1.65),
+			"effect_type": "scanline_pulse",
+			"speed": 0.72,
+			"sprite_sheet_path": AMBIENT_EFFECTS.SCANLINE_BAR,
+			"sprite_frame_size": Vector2i(32, 8),
+			"sprite_alpha": 0.7,
+		},
+		{
+			"name": "TruthFilterMemoryWisp",
+			"position": Vector2(320, 128),
+			"scale": Vector2(1.6, 1.6),
+			"effect_type": "dust_mote_drift",
+			"speed": 0.45,
+			"intensity": 0.22,
+			"only_when_memory_signal_at_least": 1,
+			"active_flag_optional": "lost_token_quest_completed",
+			"sprite_sheet_path": AMBIENT_EFFECTS.MEMORY_WISP,
+			"sprite_frame_size": Vector2i(24, 16),
+			"sprite_alpha": 0.78,
+		},
+		{
+			"name": "CabinetTraceSpark",
+			"position": Vector2(420, 132),
+			"scale": Vector2(1.5, 1.5),
+			"effect_type": "random_screen_flash",
+			"speed": 0.76,
+			"intensity": 0.08,
+			"sprite_sheet_path": AMBIENT_EFFECTS.STATIC_SPARK,
+			"sprite_alpha": 0.76,
+		},
+		{
+			"name": "BrokenScoreStatic",
+			"position": Vector2(500, 126),
+			"scale": Vector2(1.45, 1.45),
+			"effect_type": "jitter",
+			"speed": 0.9,
+			"intensity": 0.09,
+			"sprite_sheet_path": AMBIENT_EFFECTS.STATIC_SPARK,
+			"sprite_alpha": 0.68,
+		},
+		{
+			"name": "ScheduleBlink",
+			"position": Vector2(214, 138),
+			"scale": Vector2(1.1, 1.1),
+			"effect_type": "blink",
+			"speed": 0.58,
+			"intensity": 0.05,
+			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
+			"sprite_alpha": 0.62,
+			"sprite_modulate": Color(1.0, 0.88, 0.45, 1.0),
+		},
+		{
+			"name": "SnackRouteArrow",
+			"position": Vector2(606, 254),
+			"scale": Vector2(1.4, 1.4),
+			"effect_type": "blink",
+			"speed": 0.68,
+			"sprite_sheet_path": AMBIENT_EFFECTS.NEON_ARROW,
+			"sprite_alpha": 0.66,
+		},
+	])
 
 func _refresh_truth_filter_state() -> void:
 	if truth_filter_glow == null:

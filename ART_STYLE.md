@@ -13,7 +13,7 @@ This document defines the future visual direction for The Last Token. The curren
 - Visual inspiration may come from haunted retro educational/minigame horror moods, but do not copy any specific copyrighted game assets, characters, layouts, logos, or UI.
 
 ## Tile And Asset Size Recommendations
-- Tiles: `16x16`.
+- Shared tile baseline: `16x16`. Keep all new simple pixel assets aligned to this grid unless a scene already needs a larger authored size.
 - Arcade-adventure tiles: `16x16` or `24x24`; keep walls, floors, hazards, collectibles, and goals readable in a small grid.
 - Arcade-adventure player: `16x16`; strong silhouette, one-frame placeholder-safe.
 - Arcade-adventure collectibles and hazards: `16x16`; use clear shape language before detail.
@@ -22,6 +22,7 @@ This document defines the future visual direction for The Last Token. The curren
 - Memory recall panels: `320x180` for low-res authored panels, `640x360` for higher-detail panels that still preserve a 16:9 composition.
 - Arcade cabinet/object sprites: use dimensions that fit the hub grid, usually `32x32`, `32x48`, `48x48`, or `64x64`.
 - UI icons and cursor-like markers: `16x16` or `32x32`.
+- Ambient map effect sheets should stay tiny and tile-readable: mostly `16x16` frames, with `32x8` scanline bars and `24x16` memory wisps when the effect needs a wider silhouette.
 - Minigame UI panels and overlays: `640x440` full-screen assets or scalable panel textures.
 
 ## Expanded Required Route Minigame Art
@@ -33,6 +34,7 @@ This document defines the future visual direction for The Last Token. The curren
 ## Color Palette Rules
 - Use dark base colors for floors, walls, counters, cabinet shells, and background space.
 - Use neon highlights for screens, signs, interactable cues, memory effects, and important status changes.
+- Current shared runtime palette centers on black-blue panels, cyan borders, green success, amber route/objective cues, and red/pink errors.
 - Limit each area to a focused palette: one dark base family, one secondary material family, and two or three highlight colors.
 - Preserve strong outlines and contrast around characters, props, and interactable silhouettes.
 - Avoid noisy gradients and over-rendered details that blur at game scale.
@@ -44,6 +46,8 @@ This document defines the future visual direction for The Last Token. The curren
 - Props and cabinets can lean slightly 3/4, but should share one consistent camera angle.
 - Minigames may use screen-space UI or a custom screen view if it better communicates the game.
 - Memory recall panels are cinematic illustrations and may use their own framing, but should still feel pixel-art consistent.
+- The current Staff Room reveal panel set is intentionally mono-color 8-bit art: one bright ink color on a dark arcade background, readable at `320x180`, with captions remaining outside the panel.
+- Character and cabinet sprite language should stay silhouette-first: characters use compact block bodies and high-contrast heads, while cabinets use tall rectangular shells, readable screens, and one obvious button/coin/control zone.
 
 ## Animation Rules
 - MVP animation: 2-frame idle loops for important NPCs, cabinet screen blink loops, or simple flicker effects.
@@ -52,6 +56,8 @@ This document defines the future visual direction for The Last Token. The curren
 - Cabinet animations should be readable as screen flicker, scanline pulse, small light blinking, or corrupted score movement.
 - Dialogue portraits can use small expression swaps before full animation is considered.
 - Conscience Encounter visuals should feel like a corrupted player reflection: silhouette-first, cyan/purple glitch accents, short flickers, and no readable face before the `"Player"` name reveal.
+- Ambient arcade effects live under `assets/art/effects/ambient/` and should use 4-frame transparent sheets with hard pixels, limited colors, and clear purpose: arrows guide exits, lock blinks imply gates, scanlines mark machines, bubbles mark Vendo/Circuit Soda, twinkles mark prizes, and wisps mark memory systems.
+- Ambient effects must remain secondary to prompts, labels, route cues, and dialogue. Keep alpha low, use `AnimatedAmbientProp` fallback behavior, and avoid filling the walkable floor with busy motion.
 
 ## Naming Conventions
 Use lowercase snake_case paths and filenames.
@@ -61,8 +67,9 @@ Examples:
 - `assets/art/characters/mira/mira_idle.png`
 - `assets/art/hub/cabinets/cabinet_07.png`
 - `assets/art/hub/props/memory_terminal.png`
+- `assets/art/effects/ambient/static_spark_sheet.png`
 - `assets/art/portraits/mira/mira_neutral_96.png`
-- `assets/art/cutscenes/memory_reveal/panel_01_memory_restore_640x360.png`
+- `assets/art/cutscenes/memory_reveal/panel_01.png`
 - `assets/art/cutscenes/conscience/conscience_overlay.png`
 - `assets/art/cutscenes/conscience/glitch_bars.png`
 - `assets/art/ui/dialogue/dialogue_frame.png`
@@ -84,10 +91,14 @@ Suggested suffixes:
 
 ## UI Style
 - Menus and dialogue boxes should remain readable before they become decorative.
-- Retro UI should use strong panel contrast, simple frames, minimal ornament, and consistent spacing.
+- Retro UI should use strong panel contrast, square-corner cyan frames, minimal ornament, and consistent spacing.
+- `themes/retro_mechanical_theme.tres` is the shared UI baseline for panel, button, and text treatment. It prefers pixel/arcade-style system fonts when available, falls back to readable monospace fonts, disables smoothing, and uses subtle one-pixel outlines/shadows for contrast.
+- UI chrome labels and cabinet-like controls should favor concise uppercase text. Longer dialogue and story text should stay readable and avoid forced all-caps unless the speaker is a machine.
+- `scripts/RouteCue.gd` owns the one-line route cue style for hallways and side maps: `LOCAL` means the objective is in this room, `ROUTE` means follow the named exit.
 - Dialogue portraits should never crowd the text area.
 - Instructions and minigame rules should stay plain and legible.
 - CRT/glitch effects should support atmosphere without hiding required information.
+- Antagonist dialogue must keep the same base font as protagonist dialogue. Distinguish it through restrained animation, such as scan jitter, flicker, reveal timing, and color modulation, not through a harder-to-read typeface.
 
 ## Replacement Rule
 Do not block MVP playability while replacing art. Every upgraded sprite, portrait, panel, or overlay should be introduced in a way that keeps the existing placeholder scene functional if the asset is missing or temporarily removed.

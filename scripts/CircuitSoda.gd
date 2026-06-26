@@ -1,6 +1,7 @@
 extends Control
 
 const TILE_SHEET_PATH := "res://assets/art/minigames/circuit_soda/circuit_soda_tiles_sheet.png"
+const ARCADE_JUICE := preload("res://scripts/ArcadeJuice.gd")
 
 const GRID_SIZE := 3
 const SIDE_N := "N"
@@ -71,6 +72,7 @@ var completed := false
 var tiles: Array[Dictionary] = []
 var tile_buttons: Array[Button] = []
 var tile_sheet_texture: Texture2D = null
+var feedback_flash: ColorRect = null
 
 func _ready() -> void:
 	AudioManager.play_music_for_context("circuit_soda")
@@ -79,6 +81,7 @@ func _ready() -> void:
 	exit_button.pressed.connect(_on_exit_pressed)
 	tile_sheet_texture = _load_texture(TILE_SHEET_PATH)
 	_create_grid_buttons()
+	_setup_feedback_flash()
 	_start_round(0)
 
 func _create_grid_buttons() -> void:
@@ -120,7 +123,11 @@ func _on_tile_pressed(index: int) -> void:
 	var tile := tiles[index]
 	if str(tile.get("shape", "")) == "blocker":
 		status_label.text = "BLOCKER: no beverage or identity may pass."
+		_play_audio("play_error_buzz")
+		ARCADE_JUICE.flash_overlay(self, feedback_flash, ARCADE_JUICE.FLASH_RED, 0.28)
 		return
+	ARCADE_JUICE.pulse_control(self, tile_buttons[index])
+	_play_audio("play_button_pulse")
 	tile["rot"] = (int(tile.get("rot", 0)) + 1) % 4
 	moves_this_round += 1
 	if moves_this_round >= 4:
@@ -133,9 +140,13 @@ func _on_tile_pressed(index: int) -> void:
 func _reset_round() -> void:
 	if completed:
 		return
+	ARCADE_JUICE.pulse_control(self, reset_button)
+	_play_audio("play_button_pulse")
 	_start_round(current_round)
 
 func _show_hint() -> void:
+	ARCADE_JUICE.pulse_control(self, hint_button)
+	_play_audio("play_score_blip")
 	status_label.text = str(ROUNDS[current_round]["hint"])
 
 func _check_win() -> void:
@@ -147,6 +158,8 @@ func _check_win() -> void:
 	if current_round + 1 >= ROUNDS.size():
 		_complete_puzzle()
 		return
+	_play_audio("play_score_blip")
+	ARCADE_JUICE.flash_overlay(self, feedback_flash, ARCADE_JUICE.FLASH_CYAN, 0.22)
 	status_label.text = "MEMORY FLOW ACCEPTED."
 	await get_tree().create_timer(0.75).timeout
 	_start_round(current_round + 1)
@@ -162,7 +175,8 @@ func _complete_puzzle() -> void:
 	hint_button.visible = false
 	exit_button.visible = true
 	exit_button.grab_focus()
-	_play_audio("play_token_get")
+	_play_audio("play_success_jingle")
+	ARCADE_JUICE.flash_overlay(self, feedback_flash, ARCADE_JUICE.FLASH_CYAN, 0.34)
 
 func _has_connected_path() -> bool:
 	var round_data := ROUNDS[current_round]
@@ -316,8 +330,18 @@ func _pos_from_index(index: int) -> Vector2i:
 	return Vector2i(index % GRID_SIZE, int(index / GRID_SIZE))
 
 func _on_exit_pressed() -> void:
-	_play_audio("play_ui_confirm")
+	ARCADE_JUICE.pulse_control(self, exit_button)
+	_play_audio("play_button_pulse")
 	SceneChanger.go_to_snack_alcove()
+
+func _setup_feedback_flash() -> void:
+	feedback_flash = ColorRect.new()
+	feedback_flash.name = "ArcadeFeedbackFlash"
+	feedback_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
+	feedback_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	feedback_flash.visible = false
+	feedback_flash.z_index = 80
+	add_child(feedback_flash)
 
 func _play_audio(method_name: String) -> void:
 	var audio_manager := get_node_or_null("/root/AudioManager")

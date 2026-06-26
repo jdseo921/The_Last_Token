@@ -1,5 +1,7 @@
 extends Control
 
+const ARCADE_JUICE := preload("res://scripts/ArcadeJuice.gd")
+
 const PHASE_BASIC := 0
 const PHASE_REVERSED := 1
 const PHASE_STABLE_PULSE := 2
@@ -79,7 +81,8 @@ func _start_phase(phase: int) -> void:
 func _on_switch_a_pressed() -> void:
 	if puzzle_solved:
 		return
-	_play_audio("play_ui_confirm")
+	ARCADE_JUICE.pulse_control(self, switch_a_button)
+	_play_audio("play_button_pulse")
 	switch_a_active = true
 	switch_a_timer.start(SWITCH_ACTIVE_SECONDS)
 	_refresh_ui()
@@ -88,7 +91,8 @@ func _on_switch_a_pressed() -> void:
 func _on_switch_b_pressed() -> void:
 	if puzzle_solved:
 		return
-	_play_audio("play_ui_confirm")
+	ARCADE_JUICE.pulse_control(self, switch_b_button)
+	_play_audio("play_button_pulse")
 	switch_b_active = true
 	switch_b_timer.start(SWITCH_ACTIVE_SECONDS)
 	_refresh_ui()
@@ -97,6 +101,7 @@ func _on_switch_b_pressed() -> void:
 func _on_confirm_sync_pressed() -> void:
 	if puzzle_solved or current_phase != PHASE_STABLE_PULSE:
 		return
+	ARCADE_JUICE.pulse_control(self, confirm_sync_button)
 	if switch_a_active and switch_b_active:
 		_complete_puzzle()
 		return
@@ -145,7 +150,8 @@ func _complete_puzzle() -> void:
 	switch_a_timer.stop()
 	switch_b_timer.stop()
 	GameState.complete_maintenance_sync()
-	_play_audio("play_ui_confirm")
+	_play_audio("play_success_jingle")
+	_play_audio("play_door_unlock")
 	door_label.text = "Staff Door: OPEN"
 	status_label.text = "TWO SIGNALS DETECTED.\nRESTORED SIGNAL PRESENT.\nMEMORY SIGNAL: OVERLOADED.\nACCESS GRANTED."
 	warning_label.text = ""
@@ -160,7 +166,8 @@ func _complete_puzzle() -> void:
 	exit_button.grab_focus()
 
 func _signal_lost() -> void:
-	_play_audio("play_error")
+	_play_audio("play_error_buzz")
+	ARCADE_JUICE.pulse_control(self, signal_bar, ARCADE_JUICE.PULSE_RED)
 	status_label.text = "Signal lost.\nTry again."
 	_reset_switches()
 	confirm_sync_button.visible = false
@@ -175,7 +182,8 @@ func _reset_switches() -> void:
 	switch_b_timer.stop()
 
 func _on_exit_pressed() -> void:
-	_play_audio("play_ui_confirm")
+	ARCADE_JUICE.pulse_control(self, exit_button)
+	_play_audio("play_button_pulse")
 	SceneChanger.go_to_maintenance_hall()
 
 func _refresh_ui() -> void:
@@ -208,7 +216,7 @@ func _refresh_signal_bar() -> void:
 			signal_bar.color = Color(0.18, 0.22, 0.34, 0.8)
 
 func _play_phase_accept() -> void:
-	_play_audio("play_ui_confirm")
+	_play_audio("play_score_blip")
 	if pulse_tween and pulse_tween.is_valid():
 		pulse_tween.kill()
 	pulse_tween = create_tween()

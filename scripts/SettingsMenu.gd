@@ -113,6 +113,7 @@ func _apply_optional_frame() -> void:
 
 func _apply_visual_style() -> void:
 	for section_label in [audio_label, dialogue_label, display_label]:
+		section_label.text = section_label.text.to_upper()
 		section_label.add_theme_constant_override("outline_size", 2)
 		section_label.add_theme_color_override("font_outline_color", Color(0.02, 0.04, 0.06, 1.0))
 	for slider in [master_slider, sfx_slider, music_slider, opacity_slider, speed_slider]:
@@ -122,19 +123,19 @@ func _apply_visual_style() -> void:
 func _style_slider(slider: HSlider) -> void:
 	var rail := StyleBoxFlat.new()
 	rail.bg_color = Color(0.18, 0.2, 0.22, 0.95)
-	rail.set_corner_radius_all(4)
+	rail.set_corner_radius_all(0)
 	rail.content_margin_top = 3.0
 	rail.content_margin_bottom = 3.0
 	var fill := StyleBoxFlat.new()
 	fill.bg_color = Color(0.52, 0.86, 0.94, 0.95)
-	fill.set_corner_radius_all(4)
+	fill.set_corner_radius_all(0)
 	fill.content_margin_top = 3.0
 	fill.content_margin_bottom = 3.0
 	var grabber := StyleBoxFlat.new()
 	grabber.bg_color = Color(0.9, 0.95, 0.98, 1.0)
 	grabber.border_color = Color(0.16, 0.25, 0.3, 1.0)
 	grabber.set_border_width_all(1)
-	grabber.set_corner_radius_all(7)
+	grabber.set_corner_radius_all(0)
 	grabber.content_margin_left = 6.0
 	grabber.content_margin_right = 6.0
 	grabber.content_margin_top = 6.0
@@ -146,13 +147,14 @@ func _style_slider(slider: HSlider) -> void:
 	slider.add_theme_stylebox_override("grabber_highlight", grabber)
 
 func _style_back_button() -> void:
+	back_button.text = back_button.text.to_upper()
 	back_button.add_theme_font_size_override("font_size", 14)
 	back_button.add_theme_color_override("font_color", Color(0.9, 0.95, 0.98, 1.0))
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(0.02, 0.03, 0.04, 0.78)
 	style.border_color = Color(0.28, 0.9, 1.0, 0.55)
 	style.set_border_width_all(1)
-	style.set_corner_radius_all(4)
+	style.set_corner_radius_all(0)
 	back_button.add_theme_stylebox_override("normal", style)
 	back_button.add_theme_stylebox_override("hover", style)
 	back_button.add_theme_stylebox_override("focus", style)

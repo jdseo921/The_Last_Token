@@ -4,6 +4,7 @@ signal encounter_finished(encounter_id: String)
 
 const ADVANCE_COOLDOWN_MSEC := 220
 const DEFAULT_LINE_LOCKOUT_MSEC := 120
+const ANTAGONIST_LETTERS_PER_SECOND := 34.0
 
 @onready var dialogue_panel: Panel = $OverlayRoot/DialoguePanel
 @onready var speaker_label: Label = $OverlayRoot/DialoguePanel/SpeakerLabel
@@ -27,11 +28,31 @@ var controlled_player_was_enabled := true
 var flicker_tween: Tween = null
 var shake_tween: Tween = null
 var panel_home_position := Vector2.ZERO
+var speaker_home_position := Vector2.ZERO
+var dialogue_home_position := Vector2.ZERO
+var current_full_text := ""
+var current_effect := "normal"
+var reveal_progress := 0.0
+var line_complete := true
+var antagonist_elapsed := 0.0
 
 func _ready() -> void:
 	visible = false
 	panel_home_position = dialogue_panel.position
+	speaker_home_position = speaker_label.position
+	dialogue_home_position = dialogue_label.position
 	_hide_identity_art()
+
+func _process(delta: float) -> void:
+	if not active:
+		return
+	_animate_antagonist_text(delta)
+	if line_complete:
+		return
+	reveal_progress += ANTAGONIST_LETTERS_PER_SECOND * _get_text_speed() * delta
+	var visible_count := mini(int(reveal_progress), current_full_text.length())
+	dialogue_label.visible_characters = visible_count
+	line_complete = visible_count >= current_full_text.length()
 
 func set_controlled_player(player_node: Node) -> void:
 	controlled_player = player_node
@@ -64,9 +85,13 @@ func _input(event: InputEvent) -> void:
 			return
 		last_advance_msec = now
 		get_viewport().set_input_as_handled()
+		if not line_complete:
+			_complete_current_line()
+			return
 		_accept_current_line()
 
 func _accept_current_line() -> void:
+	_play_audio("play_dialogue_advance")
 	current_index += 1
 	if current_index >= dialogue_lines.size():
 		_finish_encounter()
@@ -82,19 +107,30 @@ func _refresh_line() -> void:
 	var effect := str(line.get("effect", "normal"))
 	var pause_seconds := float(line.get("pause", 0.0))
 	speaker_label.text = speaker
-	dialogue_label.text = text
+	current_full_text = text
+	current_effect = effect
+	reveal_progress = 0.0
+	antagonist_elapsed = 0.0
+	line_complete = current_full_text.is_empty()
+	dialogue_label.text = current_full_text
+	dialogue_label.visible_characters = -1 if line_complete else 0
 	continue_label.visible = effect != "silent"
 	line_locked_until_msec = Time.get_ticks_msec() + DEFAULT_LINE_LOCKOUT_MSEC + int(maxf(pause_seconds, 0.0) * 1000.0)
 	_apply_line_effect(effect)
 
 func _apply_line_effect(effect: String) -> void:
 	dialogue_panel.position = panel_home_position
+	speaker_label.position = speaker_home_position
+	dialogue_label.position = dialogue_home_position
+	speaker_label.modulate = Color.WHITE
 	dialogue_label.modulate = Color.WHITE
 	match effect:
 		"glitch":
+			_play_audio("play_glitch")
 			dialogue_label.modulate = Color(0.7, 1.0, 1.0, 1.0)
 			_pulse_glitch_bars(0.42)
 		"shake":
+			_play_audio("play_glitch")
 			_start_line_shake()
 			_pulse_glitch_bars(0.32)
 		"silent":
@@ -103,9 +139,15 @@ func _apply_line_effect(effect: String) -> void:
 		_:
 			_pulse_glitch_bars(0.22)
 
+func _complete_current_line() -> void:
+	dialogue_label.text = current_full_text
+	dialogue_label.visible_characters = -1
+	line_complete = true
+
 func _finish_encounter() -> void:
 	active = false
 	visible = false
+	dialogue_label.visible_characters = -1
 	_stop_tweens()
 	_set_player_control(true)
 	encounter_finished.emit(encounter_id)
@@ -164,3 +206,38 @@ func _stop_tweens() -> void:
 	if shake_tween and shake_tween.is_valid():
 		shake_tween.kill()
 	dialogue_panel.position = panel_home_position
+	speaker_label.position = speaker_home_position
+	dialogue_label.position = dialogue_home_position
+
+func _play_audio(method_name: String) -> void:
+	var audio_manager := get_node_or_null("/root/AudioManager")
+	if audio_manager and audio_manager.has_method(method_name):
+		audio_manager.call(method_name)
+
+func _animate_antagonist_text(delta: float) -> void:
+	antagonist_elapsed += delta
+	var twitch_step := int(antagonist_elapsed * 24.0)
+	var should_twitch := twitch_step % 8 == 0
+	var direction := -1.0 if twitch_step % 2 == 0 else 1.0
+	var effect_scale := 2.0 if current_effect == "shake" else 1.0
+	var offset_x := direction * effect_scale if should_twitch else 0.0
+	dialogue_label.position = dialogue_home_position + Vector2(offset_x, 0.0)
+	speaker_label.position = speaker_home_position + Vector2(-offset_x, 0.0)
+	var pulse := (sin(antagonist_elapsed * 10.0) + 1.0) * 0.5
+	if current_effect == "silent":
+		dialogue_label.modulate = Color(0.72 + pulse * 0.08, 0.78 + pulse * 0.08, 0.88 + pulse * 0.08, 1.0)
+		speaker_label.modulate = Color(0.72, 0.86 + pulse * 0.1, 0.95, 1.0)
+		return
+	var hot_frame := int(antagonist_elapsed * 14.0) % 10 == 0
+	if hot_frame:
+		dialogue_label.modulate = Color(1.0, 0.72, 1.0, 1.0)
+		speaker_label.modulate = Color(1.0, 0.56, 0.9, 1.0)
+		return
+	dialogue_label.modulate = Color(0.82 + pulse * 0.16, 0.94 + pulse * 0.06, 1.0, 1.0)
+	speaker_label.modulate = Color(0.9 + pulse * 0.1, 0.82 + pulse * 0.16, 1.0, 1.0)
+
+func _get_text_speed() -> float:
+	var settings := get_node_or_null("/root/GameSettings")
+	if settings == null:
+		return 1.0
+	return maxf(float(settings.get("text_speed")), 0.5)

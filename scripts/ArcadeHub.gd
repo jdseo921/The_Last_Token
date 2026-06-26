@@ -1,6 +1,7 @@
 extends Node2D
 
 const ASSET_PATHS := preload("res://scripts/AssetPaths.gd")
+const AMBIENT_EFFECTS := preload("res://scripts/AmbientSpriteEffects.gd")
 const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
 const MIRA_IDLE_SHEET_PATH := "res://assets/art/characters/mira/mira_idle_sheet.png"
 const GUS_IDLE_SHEET_PATH := "res://assets/art/characters/gus/gus_idle_sheet.png"
@@ -36,6 +37,7 @@ const PORTRAIT_CABINET_07_SCREEN := "res://assets/art/portraits/mr_byte/cabinet_
 @onready var quest_notice: CanvasLayer = $QuestNotice
 @onready var intro_fade_overlay: ColorRect = $IntroFadeLayer/IntroFadeOverlay
 @onready var pause_menu: CanvasLayer = $PauseMenu
+@onready var effects_layer: Node2D = $EffectsLayer
 @onready var truth_filter_glow: Polygon2D = $EffectsLayer/TruthFilterGlow
 
 var save_slot_menu: Control = null
@@ -51,6 +53,7 @@ var aftermath_pulse_tween: Tween = null
 func _ready() -> void:
 	AudioManager.play_music_for_context("arcade_hub")
 	_apply_hub_art()
+	_setup_ambient_sprite_effects()
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
 	_apply_spawn_position()
@@ -233,25 +236,25 @@ func _objective_hint_should_be_visible() -> bool:
 
 func _get_objective_hint_text() -> String:
 	if not GameState.story_started:
-		return "Objective: Talk to Mira."
+		return "Objective: Talk to Mira at the ticket counter."
 	if GameState.lost_token_quest_started and not GameState.rockbyte_duel_completed:
-		return "Objective: Play Cabinet 07."
+		return "Objective: Play Cabinet 07 on the main floor."
 	if GameState.rockbyte_duel_completed and not GameState.lost_token_quest_completed:
-		return "Objective: Return the Lost Token to Mira."
+		return "Objective: Return the Lost Token to Mira at the counter."
 	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
-		return "Objective: Go to Cabinet Row. Talk to Mr. Byte."
+		return "Objective: CABINET ROW exit -> talk to Mr. Byte."
 	if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
-		return "Objective: Go to Snack Alcove. Talk to Vendo."
+		return "Objective: SNACK ALCOVE exit -> talk to Vendo."
 	if GameState.lying_cabinets_completed and not GameState.story_puzzle_completed:
-		return "Objective: Go to Maintenance Hall. Talk to Gus."
+		return "Objective: MAINTENANCE exit -> talk to Gus."
 	if GameState.story_puzzle_completed and GameState.staff_room_unlocked and not GameState.twist_reveal_seen:
 		if GameState.conscience_final_room_seen:
-			return "Objective: Access the Staff Room files."
-		return "Objective: Enter the Staff Room."
+			return "Objective: STAFF CORRIDOR exit -> access Staff Room files."
+		return "Objective: STAFF CORRIDOR exit -> enter Staff Room."
 	if GameState.twist_reveal_seen and not GameState.post_reveal_roam_unlocked:
 		return "Objective: Finish the memory."
 	if GameState.post_reveal_roam_unlocked:
-		return "Objective: Talk to those who remembered you."
+		return "Objective: Talk to witnesses. Start with Mira and Cabinet 07."
 	return ""
 
 func _refresh_memory_signal_label() -> void:
@@ -1019,6 +1022,139 @@ func _is_post_reveal() -> bool:
 func _store_arcade_return_position() -> void:
 	if player:
 		GameState.set_arcade_return_position(player.global_position)
+
+func _setup_ambient_sprite_effects() -> void:
+	AMBIENT_EFFECTS.add(effects_layer, [
+		{
+			"name": "Cabinet07StaticSprite",
+			"position": Vector2(490, 124),
+			"scale": Vector2(1.6, 1.6),
+			"effect_type": "random_screen_flash",
+			"speed": 0.9,
+			"intensity": 0.08,
+			"sprite_sheet_path": AMBIENT_EFFECTS.STATIC_SPARK,
+			"sprite_alpha": 0.86,
+		},
+		{
+			"name": "BrokenCabinetStaticSprite",
+			"position": Vector2(402, 356),
+			"scale": Vector2(1.35, 1.35),
+			"effect_type": "jitter",
+			"speed": 1.15,
+			"intensity": 0.1,
+			"sprite_sheet_path": AMBIENT_EFFECTS.STATIC_SPARK,
+			"sprite_alpha": 0.72,
+		},
+		{
+			"name": "TruthFilterMemoryWisp",
+			"position": Vector2(378, 244),
+			"scale": Vector2(1.4, 1.4),
+			"effect_type": "dust_mote_drift",
+			"speed": 0.42,
+			"intensity": 0.22,
+			"only_when_memory_signal_at_least": 1,
+			"active_flag_optional": "lost_token_quest_completed",
+			"sprite_sheet_path": AMBIENT_EFFECTS.MEMORY_WISP,
+			"sprite_frame_size": Vector2i(24, 16),
+			"sprite_alpha": 0.78,
+			"sprite_modulate": Color(1.0, 0.72, 1.0, 1.0),
+		},
+		{
+			"name": "StaffDoorLockBlink",
+			"position": Vector2(565, 284),
+			"scale": Vector2(1.65, 1.65),
+			"effect_type": "blink",
+			"speed": 0.7,
+			"intensity": 0.08,
+			"only_when_memory_signal_at_least": 2,
+			"sprite_sheet_path": AMBIENT_EFFECTS.STAFF_LOCK_BLINK,
+			"sprite_alpha": 0.82,
+		},
+		{
+			"name": "StaffDoorOpenPing",
+			"position": Vector2(548, 250),
+			"scale": Vector2(1.1, 1.1),
+			"effect_type": "glow_pulse",
+			"speed": 0.9,
+			"intensity": 0.08,
+			"active_flag_optional": "staff_room_unlocked",
+			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
+			"sprite_alpha": 0.8,
+			"sprite_modulate": Color(0.62, 1.0, 0.72, 1.0),
+		},
+		{
+			"name": "VendoBubbleSprite",
+			"position": Vector2(306, 281),
+			"scale": Vector2(1.45, 1.45),
+			"effect_type": "bob",
+			"speed": 0.55,
+			"intensity": 0.18,
+			"sprite_sheet_path": AMBIENT_EFFECTS.SODA_BUBBLE,
+			"sprite_alpha": 0.72,
+		},
+		{
+			"name": "MrByteScanlineSprite",
+			"position": Vector2(300, 202),
+			"scale": Vector2(1.65, 1.65),
+			"effect_type": "scanline_pulse",
+			"speed": 0.7,
+			"intensity": 0.07,
+			"sprite_sheet_path": AMBIENT_EFFECTS.SCANLINE_BAR,
+			"sprite_frame_size": Vector2i(32, 8),
+			"sprite_alpha": 0.7,
+		},
+		{
+			"name": "TicketCounterGlintA",
+			"position": Vector2(96, 138),
+			"scale": Vector2(1.25, 1.25),
+			"effect_type": "random_screen_flash",
+			"speed": 0.65,
+			"intensity": 0.05,
+			"sprite_sheet_path": AMBIENT_EFFECTS.TICKET_GLINT,
+			"sprite_alpha": 0.62,
+		},
+		{
+			"name": "TicketCounterGlintB",
+			"position": Vector2(188, 148),
+			"scale": Vector2(1.15, 1.15),
+			"effect_type": "random_screen_flash",
+			"speed": 0.52,
+			"intensity": 0.04,
+			"sprite_sheet_path": AMBIENT_EFFECTS.TICKET_GLINT,
+			"sprite_alpha": 0.58,
+		},
+		{
+			"name": "OwnerPortraitTwinkle",
+			"position": Vector2(90, 78),
+			"scale": Vector2(1.15, 1.15),
+			"effect_type": "random_screen_flash",
+			"speed": 0.48,
+			"intensity": 0.04,
+			"sprite_sheet_path": AMBIENT_EFFECTS.PRIZE_TWINKLE,
+			"sprite_alpha": 0.56,
+		},
+		{
+			"name": "CabinetRowExitArrow",
+			"position": Vector2(608, 122),
+			"scale": Vector2(1.45, 1.45),
+			"effect_type": "blink",
+			"speed": 0.78,
+			"intensity": 0.06,
+			"sprite_sheet_path": AMBIENT_EFFECTS.NEON_ARROW,
+			"sprite_alpha": 0.72,
+		},
+		{
+			"name": "PrizeExitArrow",
+			"position": Vector2(32, 360),
+			"rotation": PI,
+			"scale": Vector2(1.45, 1.45),
+			"effect_type": "blink",
+			"speed": 0.66,
+			"intensity": 0.05,
+			"sprite_sheet_path": AMBIENT_EFFECTS.NEON_ARROW,
+			"sprite_alpha": 0.66,
+		},
+	])
 
 func _apply_hub_art() -> void:
 	var has_background := _apply_sprite_texture(background_sprite, ASSET_PATHS.HUB_BACKGROUND_ARCADE)

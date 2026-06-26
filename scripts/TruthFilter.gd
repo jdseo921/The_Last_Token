@@ -5,6 +5,7 @@ const CABINET_ART_NORMAL := "normal"
 const CABINET_ART_ACTIVE := "active"
 const CABINET_ART_CORRECT := "correct"
 const CABINET_ART_WRONG := "wrong"
+const ARCADE_JUICE := preload("res://scripts/ArcadeJuice.gd")
 
 const ROUND_DATA: Array[Dictionary] = [
 	{
@@ -150,13 +151,14 @@ func _show_round() -> void:
 func _on_choice_pressed(index: int) -> void:
 	if completed or round_transition_running:
 		return
+	ARCADE_JUICE.pulse_control(self, choose_buttons[index])
 	_set_choice_buttons_enabled(false)
 	var correct_index := int(ROUND_DATA[current_round]["correct"])
 	if index != correct_index:
 		status_label.text = "MEMORY SIGNAL WOBBLED.\nTry again."
 		_set_signal_integrity("Wobbling")
 		_set_panel_state(index, CABINET_WRONG_COLOR, SCREEN_WRONG_COLOR, CABINET_ART_WRONG)
-		_play_audio("play_error")
+		_play_audio("play_error_buzz")
 		await _play_wrong_feedback(index)
 		_set_panel_state(index, CABINET_NORMAL_COLOR, SCREEN_NORMAL_COLOR, CABINET_ART_NORMAL)
 		_set_signal_integrity("Stable")
@@ -166,7 +168,7 @@ func _on_choice_pressed(index: int) -> void:
 	_set_panel_state(index, CABINET_CORRECT_COLOR, SCREEN_CORRECT_COLOR, CABINET_ART_CORRECT)
 	_set_signal_integrity("Recovered")
 	status_label.text = "Statement accepted."
-	_play_audio("play_ui_confirm")
+	_play_audio("play_score_blip")
 	await _play_correct_feedback(index)
 	status_label.text = str(ROUND_DATA[current_round]["explanation"])
 	await get_tree().create_timer(1.35).timeout
@@ -190,11 +192,12 @@ func _complete_puzzle() -> void:
 		button.visible = false
 	exit_button.visible = true
 	exit_button.text = "Return to Cabinet Row"
-	_play_audio("play_token_get")
+	_play_audio("play_success_jingle")
 	exit_button.grab_focus()
 
 func _on_exit_pressed() -> void:
-	_play_audio("play_ui_confirm")
+	ARCADE_JUICE.pulse_control(self, exit_button)
+	_play_audio("play_button_pulse")
 	SceneChanger.go_to_cabinet_row()
 
 func _set_choice_buttons_enabled(enabled: bool) -> void:
@@ -290,6 +293,7 @@ func _play_correct_feedback(index: int) -> void:
 		feedback_tween.kill()
 	var screen := cabinet_screen_rects[index]
 	feedback_tween = create_tween()
+	ARCADE_JUICE.flash_overlay(self, glitch_overlay, ARCADE_JUICE.FLASH_CYAN, 0.16)
 	feedback_tween.tween_property(screen, "modulate:a", 0.35, 0.08)
 	feedback_tween.tween_property(screen, "modulate:a", 1.0, 0.1)
 	await feedback_tween.finished

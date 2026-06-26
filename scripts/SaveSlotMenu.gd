@@ -30,6 +30,7 @@ func _ready() -> void:
 	close_button.pressed.connect(_on_close_pressed)
 	confirm_overwrite.confirmed.connect(_on_overwrite_confirmed)
 	confirm_overwrite.canceled.connect(_on_overwrite_canceled)
+	_apply_visual_style()
 	_build_slots()
 
 func open_menu(mode = MODE_SAVE) -> void:
@@ -70,7 +71,7 @@ func _build_slots() -> void:
 	slot_buttons.clear()
 	for slot_id in range(1, 4):
 		var button := Button.new()
-		button.text = "Memory Slot %d" % slot_id
+		button.text = "MEMORY SLOT %d" % slot_id
 		button.custom_minimum_size = Vector2(0, 96)
 		button.add_theme_font_size_override("font_size", 10)
 		button.pressed.connect(_on_slot_pressed.bind(slot_id))
@@ -86,10 +87,10 @@ func _refresh_slots() -> void:
 		var save_exists := bool(summary.get("save_exists", false))
 		button.disabled = false
 		if not save_exists:
-			var empty_action := "Choose to begin" if current_mode == MODE_NEW_GAME else "Cannot load"
-			button.text = "Memory Slot %d\nEMPTY SAVE\n%s" % [slot_id, empty_action]
+			var empty_action := "CHOOSE TO BEGIN" if current_mode == MODE_NEW_GAME else "CANNOT LOAD"
+			button.text = "MEMORY SLOT %d\nEMPTY SAVE\n%s" % [slot_id, empty_action]
 		else:
-			button.text = "Memory Slot %d\nStatus: %s\nMain: %d / %d\nOptional: %d / %d\nSecrets: %d / %d\nSignal: %s\nLast Saved: %s" % [
+			button.text = "MEMORY SLOT %d\nSTATUS: %s\nMAIN: %d / %d\nOPTIONAL: %d / %d\nSECRETS: %d / %d\nSIGNAL: %s\nLAST SAVED: %s" % [
 				slot_id,
 				summary.get("story_phase", "Unknown"),
 				int(summary.get("required_progress_count", 0)),
@@ -205,23 +206,30 @@ func _normalize_mode(mode) -> String:
 		return mode_text
 	return MODE_SAVE
 
+func _apply_visual_style() -> void:
+	title_label.text = title_label.text.to_upper()
+	close_button.text = close_button.text.to_upper()
+	subtitle_label.add_theme_color_override("font_color", Color(0.72, 0.92, 0.98, 1.0))
+	mode_label.add_theme_color_override("font_color", Color(0.95, 0.82, 0.48, 1.0))
+	status_label.add_theme_color_override("font_color", Color(0.78, 1.0, 0.8, 1.0))
+
 func _get_subtitle_text() -> String:
 	match current_mode:
 		MODE_NEW_GAME:
-			return "New Save - choose a slot"
+			return "NEW SAVE - CHOOSE A SLOT"
 		MODE_LOAD:
-			return "Load Save - choose a saved slot"
+			return "LOAD SAVE - CHOOSE A SAVED SLOT"
 		_:
-			return "Save File - choose a slot"
+			return "SAVE FILE - CHOOSE A SLOT"
 
 func _get_mode_display_text() -> String:
 	match current_mode:
 		MODE_SAVE:
-			return "Mode: Save File"
+			return "MODE: SAVE FILE"
 		MODE_LOAD:
-			return "Mode: Load Save"
+			return "MODE: LOAD SAVE"
 		_:
-			return "Mode: New Save"
+			return "MODE: NEW SAVE"
 
 func _focus_first_slot() -> void:
 	for button in slot_buttons:

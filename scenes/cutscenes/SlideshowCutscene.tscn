@@ -11,30 +11,86 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0, 0, 0, 1)
+color = Color(0.004, 0.006, 0.012, 1)
+
+[node name="PanelShadow" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 104.0
+offset_top = 46.0
+offset_right = 552.0
+offset_bottom = 298.0
+color = Color(0, 0, 0, 0.58)
+
+[node name="PanelBacking" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 92.0
+offset_top = 32.0
+offset_right = 548.0
+offset_bottom = 292.0
+color = Color(0.012, 0.018, 0.03, 1)
+
+[node name="PanelGlow" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 96.0
+offset_top = 36.0
+offset_right = 544.0
+offset_bottom = 288.0
+color = Color(0.08, 0.34, 0.42, 0.2)
 
 [node name="PanelTexture" type="TextureRect" parent="."]
 layout_mode = 0
-offset_left = 120.0
-offset_top = 48.0
-offset_right = 520.0
-offset_bottom = 300.0
+offset_left = 100.0
+offset_top = 38.0
+offset_right = 540.0
+offset_bottom = 286.0
 expand_mode = 1
 stretch_mode = 5
 
 [node name="MissingPanel" type="Panel" parent="."]
 visible = false
 layout_mode = 0
-offset_left = 120.0
-offset_top = 48.0
-offset_right = 520.0
-offset_bottom = 300.0
+offset_left = 100.0
+offset_top = 38.0
+offset_right = 540.0
+offset_bottom = 286.0
+
+[node name="PanelBorderTop" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 96.0
+offset_top = 34.0
+offset_right = 544.0
+offset_bottom = 38.0
+color = Color(0.36, 0.86, 0.95, 0.72)
+
+[node name="PanelBorderBottom" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 96.0
+offset_top = 286.0
+offset_right = 544.0
+offset_bottom = 290.0
+color = Color(0.36, 0.86, 0.95, 0.72)
+
+[node name="PanelBorderLeft" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 96.0
+offset_top = 34.0
+offset_right = 100.0
+offset_bottom = 290.0
+color = Color(0.36, 0.86, 0.95, 0.72)
+
+[node name="PanelBorderRight" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 540.0
+offset_top = 34.0
+offset_right = 544.0
+offset_bottom = 290.0
+color = Color(0.36, 0.86, 0.95, 0.72)
 
 [node name="MissingPanelLabel" type="Label" parent="MissingPanel"]
 offset_left = 24.0
-offset_top = 88.0
-offset_right = 376.0
-offset_bottom = 164.0
+offset_top = 82.0
+offset_right = 416.0
+offset_bottom = 166.0
 theme_override_font_sizes/font_size = 18
 text = "MEMORY PANEL
 Placeholder image pending"
@@ -54,15 +110,15 @@ horizontal_alignment = 2
 [node name="CaptionBacking" type="ColorRect" parent="."]
 layout_mode = 0
 offset_left = 48.0
-offset_top = 300.0
+offset_top = 304.0
 offset_right = 592.0
 offset_bottom = 380.0
-color = Color(0, 0, 0, 0.62)
+color = Color(0.004, 0.006, 0.012, 0.78)
 
 [node name="CaptionLabel" type="Label" parent="."]
 layout_mode = 0
 offset_left = 64.0
-offset_top = 308.0
+offset_top = 310.0
 offset_right = 576.0
 offset_bottom = 372.0
 theme_override_font_sizes/font_size = 18

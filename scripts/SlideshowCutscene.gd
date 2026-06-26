@@ -49,6 +49,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			return
 		last_advance_msec = now
 		get_viewport().set_input_as_handled()
+		_play_audio("play_dialogue_advance")
 		_next_slide()
 
 func _next_slide() -> void:
@@ -81,6 +82,7 @@ func _show_current_slide() -> void:
 	var effect := str(slide.get("effect", "fade"))
 	var duration := float(slide.get("duration", 0.5))
 	_apply_image(image_path)
+	_play_audio("play_memory_panel")
 	_apply_effect(effect, duration)
 	_enable_advance_after_delay(MIN_SLIDE_DELAY_SEC, advance_generation)
 

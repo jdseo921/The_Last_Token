@@ -13,6 +13,13 @@ const SFX_NAMES := {
 	"save": "save",
 	"error": "error",
 	"quest_update": "quest_update",
+	"memory_panel": "memory_panel",
+	"memory_accept": "memory_accept",
+	"door_unlock": "door_unlock",
+	"button_pulse": "button_pulse",
+	"score_blip": "score_blip",
+	"error_buzz": "error_buzz",
+	"success_jingle": "success_jingle",
 }
 const MUSIC_TRACKS := {
 	"title_attract_loop": "title_attract_loop",
@@ -99,6 +106,27 @@ func play_error() -> void:
 
 func play_quest_update() -> void:
 	_play_sfx("quest_update")
+
+func play_memory_panel() -> void:
+	_play_sfx("memory_panel")
+
+func play_memory_accept() -> void:
+	_play_sfx("memory_accept")
+
+func play_door_unlock() -> void:
+	_play_sfx("door_unlock")
+
+func play_button_pulse() -> void:
+	_play_sfx("button_pulse")
+
+func play_score_blip() -> void:
+	_play_sfx("score_blip")
+
+func play_error_buzz() -> void:
+	_play_sfx("error_buzz")
+
+func play_success_jingle() -> void:
+	_play_sfx("success_jingle")
 
 func play_arcade_ambience() -> void:
 	play_music("arcade_hub_grounded")

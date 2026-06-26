@@ -3,6 +3,7 @@ extends Control
 const ROUND_END_INPUT_DELAY_MSEC := 250
 const ACTIVE_ROCK_COLOR := Color(0.68, 0.72, 0.78, 1)
 const EMPTY_ROCK_COLOR := Color(0.13, 0.13, 0.16, 1)
+const ARCADE_JUICE := preload("res://scripts/ArcadeJuice.gd")
 const ACTION_QUEUE_SCRIPT := preload("res://scripts/minigames/common/MinigameActionQueue.gd")
 const CONFIG_LOADER := preload("res://scripts/minigames/common/MinigameConfigLoader.gd")
 const CONFIG_PATH := "res://data/minigames/rockbyte_duel_config.json"
@@ -59,6 +60,7 @@ var right_pile_prop: Node = null
 var visual_sequence_running := false
 var minigame_config: Dictionary = {}
 var result_popup_tween: Tween = null
+var feedback_flash: ColorRect = null
 
 func _ready() -> void:
 	AudioManager.play_music_for_context("rockbyte_duel")
@@ -66,6 +68,7 @@ func _ready() -> void:
 	_apply_config_text()
 	_apply_optional_texture(_get_config_background_path(), background_texture, background_placeholder)
 	_apply_optional_texture(frame_texture_path, frame_texture, frame_placeholder)
+	_setup_feedback_flash()
 	_setup_action_queue()
 	_setup_staged_visuals()
 	take_left_button.pressed.connect(_on_take_left_pressed)
@@ -87,12 +90,15 @@ func _unhandled_input(event: InputEvent) -> void:
 		_on_exit_pressed()
 
 func _on_take_left_pressed() -> void:
+	_pulse_button(take_left_button)
 	_take_player_turn("left")
 
 func _on_take_right_pressed() -> void:
+	_pulse_button(take_right_button)
 	_take_player_turn("right")
 
 func _on_take_both_pressed() -> void:
+	_pulse_button(take_both_button)
 	_take_player_turn("both")
 
 func _take_player_turn(choice: String) -> void:
@@ -105,7 +111,7 @@ func _take_player_turn(choice: String) -> void:
 		"left":
 			if left_pile <= 0:
 				status_label.text = "That pile is empty."
-				_play_audio("play_error")
+				_play_arcade_error()
 				return
 			left_pile -= 1
 			removed_left = 1
@@ -113,7 +119,7 @@ func _take_player_turn(choice: String) -> void:
 		"right":
 			if right_pile <= 0:
 				status_label.text = "That pile is empty."
-				_play_audio("play_error")
+				_play_arcade_error()
 				return
 			right_pile -= 1
 			removed_right = 1
@@ -121,7 +127,7 @@ func _take_player_turn(choice: String) -> void:
 		"both":
 			if left_pile <= 0 and right_pile <= 0:
 				status_label.text = "Both piles are empty."
-				_play_audio("play_error")
+				_play_arcade_error()
 				return
 			if left_pile > 0:
 				left_pile -= 1
@@ -130,7 +136,8 @@ func _take_player_turn(choice: String) -> void:
 				right_pile -= 1
 				removed_right = 1
 			player_message = "You took 1 from both piles."
-	_play_audio("play_ui_confirm")
+	_play_audio("play_button_pulse")
+	_flash_arcade(ARCADE_JUICE.FLASH_CYAN, 0.18)
 	last_message = player_message
 	status_label.text = player_message
 	_set_move_buttons_enabled(false)
@@ -155,6 +162,7 @@ func _cabinet_turn(player_message: String) -> void:
 	var removed := _get_removed_counts_for_move(cabinet_move)
 	_apply_cabinet_move(cabinet_move)
 	await _play_cabinet_move_visual(cabinet_move, int(removed.get("left", 0)), int(removed.get("right", 0)))
+	_flash_arcade(Color(1.0, 0.62, 0.22, 1.0), 0.14)
 	_refresh_counts()
 	status_label.text = "%s\n%s" % [player_message, last_message]
 	if left_pile == 0 and right_pile == 0:
@@ -232,13 +240,14 @@ func _finish_duel(player_won: bool) -> void:
 	if player_won:
 		GameState.rockbyte_duel_completed = true
 		GameState.collect_lost_token()
+		_play_audio("play_success_jingle")
 		_play_audio("play_token_get")
 		exit_button.text = "Return to Arcade"
 		status_label.text = "Lost Token recovered.\nReturn to Mira."
 		_show_result_popup("TOKEN SIGNAL MATCHED.\nPREVIOUS SESSION FOUND.\nLost Token recovered.")
 		exit_button.grab_focus()
 		return
-	_play_audio("play_error")
+	_play_arcade_error()
 	GameState.rockbyte_duel_loss_count += 1
 	loss_retry_count = GameState.rockbyte_duel_loss_count
 	status_label.text = "Duel lost.\nPress Retry Duel."
@@ -247,7 +256,8 @@ func _finish_duel(player_won: bool) -> void:
 	exit_button.grab_focus()
 
 func _on_exit_pressed() -> void:
-	_play_audio("play_ui_confirm")
+	_pulse_button(exit_button)
+	_play_audio("play_button_pulse")
 	if player_won_last_round:
 		SceneChanger.go_to_arcade_hub()
 		return
@@ -308,6 +318,25 @@ func _setup_action_queue() -> void:
 	add_child(action_queue)
 	if action_queue.has_method("set_stage"):
 		action_queue.call("set_stage", stage)
+
+func _setup_feedback_flash() -> void:
+	feedback_flash = ColorRect.new()
+	feedback_flash.name = "ArcadeFeedbackFlash"
+	feedback_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
+	feedback_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	feedback_flash.visible = false
+	feedback_flash.z_index = 90
+	add_child(feedback_flash)
+
+func _pulse_button(button: Button) -> void:
+	ARCADE_JUICE.pulse_control(self, button)
+
+func _flash_arcade(color: Color, peak_alpha: float) -> void:
+	ARCADE_JUICE.flash_overlay(self, feedback_flash, color, peak_alpha)
+
+func _play_arcade_error() -> void:
+	_play_audio("play_error_buzz")
+	_flash_arcade(ARCADE_JUICE.FLASH_RED, 0.34)
 
 func _setup_staged_visuals() -> void:
 	if stage == null:

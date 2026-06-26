@@ -36,6 +36,8 @@ assets/art/hub/tiles/
 assets/art/hub/props/
 assets/art/hub/cabinets/
 assets/art/hub/effects/
+assets/art/effects/
+assets/art/effects/ambient/
 assets/art/maps/
 assets/art/maps/cabinet_row/
 assets/art/maps/snack_alcove/
@@ -64,7 +66,7 @@ assets/audio/sfx/
 
 The lightweight path helper is `scripts/AssetPaths.gd`. It is not autoloaded; use it only when a future visual replacement needs safe optional asset loading.
 
-The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys to planned paths, but the referenced image files are not required to exist yet.
+The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys to planned or integrated paths. Deterministic 8-bit polish assets can be regenerated with `tools/generate_visual_polish_assets.gd`.
 
 | Asset | Recommended Size | Folder | Status | Notes |
 |---|---:|---|---|---|
@@ -90,9 +92,9 @@ The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys t
 | Ticket counter art | 96x48 or tiled | `assets/art/hub/props/ticket_counter.png` | Integrated | Replaces ticket counter placeholder when present. |
 | Memory terminal art | 48x32 or 64x48 | `assets/art/hub/props/memory_terminal.png` | Integrated | Replaces terminal placeholder when present. |
 | Staff door closed art | 64x96 | `assets/art/hub/props/staff_door_closed.png` | Integrated | Closed/locked staff door state. |
-| Staff door open art | 64x96 | `assets/art/hub/props/staff_door_open.png` | Planned | Open/unlocked staff door state. |
+| Staff door open art | 64x96 | `assets/art/hub/props/staff_door_open.png` | Integrated | Generated open/unlocked staff door state; `ArcadeHub` swaps to it when `staff_room_unlocked` is true. |
 | Owner portrait blank art | 48x48 | `assets/art/hub/props/owner_portrait_blank.png` | Integrated | Pre-reveal portrait state. |
-| Owner portrait Employee 04 art | 48x48 | `assets/art/hub/props/owner_portrait_employee04.png` | Planned | Post-reveal portrait state. |
+| Owner portrait Employee 04 art | 48x48 | `assets/art/hub/props/owner_portrait_employee04.png` | Integrated | Generated post-reveal portrait state; `ArcadeHub` swaps to it once the player is post-reveal. |
 | Cabinet 07 idle art | 48x64 or 64x64 | `assets/art/hub/cabinets/cabinet_07_idle.png` | Integrated | Idle cabinet state. |
 | Cabinet 07 flicker art | 48x64 or 64x64 | `assets/art/hub/cabinets/cabinet_07_flicker.png` / `cabinet_07_flicker_sheet.png` | Integrated | Optional flicker overlay/state; sheet kept for future animation. |
 | Broken cabinet art | 48x48 or 64x48 | `assets/art/hub/cabinets/broken_cabinet.png` | Integrated | Replaces broken cabinet placeholder when present. |
@@ -111,27 +113,31 @@ The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys t
 | Quest window frame | 1024x704 scalable | `assets/art/ui/menus/quest_window_frame.png` | Integrated | Quest notification and detail frame scaled to 80% of the active viewport. |
 | Title scanline overlay | 640x440 | `assets/art/ui/title/title_scanline_overlay.png` | Integrated | Subtle overlay only; must not reduce readability. |
 | CRT overlay | 640x440 | `assets/art/ui/crt/` | Planned | Keep subtle; do not reduce readability. |
+| Retro UI theme frame/text language | Theme resource | `themes/retro_mechanical_theme.tres` | Integrated | Shared square-corner cyan panel/button frames plus readable retro monospace font stack, outline, and shadow treatment. |
+| Route cue UI | Scripted UI | `scripts/RouteCue.gd` | Integrated | One-line `LOCAL` / `ROUTE` map guidance for hallways and side rooms. |
+| Antagonist dialogue text animation | Scripted UI | `scripts/DialogueBox.gd`, `scripts/ConscienceEncounter.gd` | Integrated | Uses the same font as protagonist dialogue, with scan-jitter/flicker/reveal animation for `???` and final `"Player"` lines. |
+| Ambient sprite effect helper | Scripted sprite effects | `scripts/AmbientSpriteEffects.gd` + `assets/art/effects/ambient/` | Integrated | Applies 4-frame transparent pixel sheets to hub, side rooms, Staff Corridor, and all hallway routes. |
 | Dialogue portraits | 64x64 or 96x96 | `assets/art/portraits/` | In Progress | First 96x96 portrait batch generated and wired through DialogueBox; keep pending until live Godot dialogue review passes. |
-| Memory recall panels | 320x180 or 640x360 | `assets/art/cutscenes/memory_reveal/` | Placeholder | 8 reveal panels currently support fallback. |
+| Memory recall panels | 320x180 | `assets/art/cutscenes/memory_reveal/` | Integrated | Eight mono-color 8-bit reveal panels are wired into the Staff Room slideshow; fallback remains if a file is removed. |
 | Conscience overlay | 640x440 transparent overlay | `assets/art/cutscenes/conscience/conscience_overlay.png` | Planned | Optional dark/glitch overlay for `ConscienceEncounter`; current ColorRect fallback remains. |
 | Conscience glitch bars | 640x440 transparent overlay or bar strip | `assets/art/cutscenes/conscience/glitch_bars.png` | Planned | Optional bar art; scripted ColorRect glitch bars remain fallback. |
-| Rockbyte Duel screen art | 320x180 or UI pieces | `assets/art/minigames/rockbyte_duel/` | Placeholder | Keep rules and piles readable. |
+| Rockbyte Duel background | 640x440 | `assets/art/minigames/rockbyte_duel/backgrounds/rockbyte_background.png` | Integrated | Generated arcade-cabinet backdrop; rules and pile UI remain script-owned for readability. |
 | Sync Door screen art | 320x180 or UI pieces | `assets/art/minigames/sync_door/` | Placeholder | Switch states must remain obvious. |
 | Truth Filter cabinet states | 4 frames, 64x64 each | `assets/art/minigames/truth_filter/truth_filter_cabinets_sheet.png` | Integrated | Optional state sheet with panel-color fallback. |
 | Circuit Soda tile sheet | 6 frames, 32x32 each | `assets/art/minigames/circuit_soda/circuit_soda_tiles_sheet.png` | Integrated | Optional tile icons with text-button fallback. |
 | Broken High Score screen art | 640x440 | `assets/art/minigames/broken_high_score/broken_high_score_screen.png` | Integrated | Optional screen background with flat-color fallback; feature remains non-blocking. |
-| Adventure player 8-bit sprite | 16x16 | `assets/art/minigames/adventure/player_8bit.png` | Planned | Shared optional player sprite for Static Service Run and Final Night Walk; colored square fallback remains. |
+| Adventure player 8-bit sprite | 16x16 | `assets/art/minigames/adventure/player_8bit.png` | Integrated | Shared optional player sprite for Static Service Run and Final Night Walk; colored square fallback remains. |
 | Static Service maintenance tiles | 16x16 or 24x24 tiles | `assets/art/minigames/adventure/maintenance_tiles.png` | Planned | Future tile sheet for service floor/walls; current colored placeholder grid remains readable if missing. |
-| Static Service static leak | 16x16 | `assets/art/minigames/adventure/static_leak.png` | Planned | Hazard art; must read as electrical/static leak at tile scale. |
-| Static Service signal fuse | 16x16 | `assets/art/minigames/adventure/signal_fuse.png` | Planned | Collectible art for Signal Fuses; current `F` marker remains if missing. |
-| Static Service breaker panel | 16x16 | `assets/art/minigames/adventure/breaker_panel.png` | Planned | Goal tile art; must be visibly distinct from fuses and hazards. |
-| Security Tape background | 640x440 or scalable | `assets/art/minigames/security_tape/security_tape_background.png` | Planned | Optional full-screen backdrop behind the existing panel; must not reduce text contrast. |
+| Static Service static leak | 16x16 | `assets/art/minigames/adventure/static_leak.png` | Integrated | Hazard art; reads as electrical/static leak at tile scale, with text marker fallback. |
+| Static Service signal fuse | 16x16 | `assets/art/minigames/adventure/signal_fuse.png` | Integrated | Collectible art for Signal Fuses; current `F` marker remains if missing. |
+| Static Service breaker panel | 16x16 | `assets/art/minigames/adventure/breaker_panel.png` | Integrated | Goal tile art; visually distinct from fuses and hazards. |
+| Security Tape background | 640x440 | `assets/art/minigames/security_tape/security_tape_background.png` | Integrated | Full-screen tape backdrop behind the existing panel; text contrast remains panel-owned. |
 | Security Tape fragment panel | Scalable UI panel or 96x32 per button | `assets/art/minigames/security_tape/tape_fragment_panel.png` | Planned | Optional button/panel texture for tape fragments; text labels must remain legible. |
-| Security Tape static overlay | 640x440 transparent overlay | `assets/art/minigames/security_tape/tape_static_overlay.png` | Planned | Optional subtle static layer; must ignore input and stay low-opacity. |
+| Security Tape static overlay | 640x440 transparent overlay | `assets/art/minigames/security_tape/tape_static_overlay.png` | Integrated | Subtle generated static layer; ignores input and stays low-opacity. |
 | Final Night tiles | 16x16 or 24x24 tiles | `assets/art/minigames/adventure/final_night_tiles.png` | Planned | Future tile sheet for the memory route; current purple/blue placeholder grid remains. |
-| Final Night memory frame | 16x16 | `assets/art/minigames/adventure/memory_frame.png` | Planned | Ordered collectible art; frame number/text feedback must remain readable. |
-| Final Night rewind static | 16x16 | `assets/art/minigames/adventure/rewind_static.png` | Planned | Hazard art; should feel distinct from Static Service's static leak. |
-| Final Night staff door marker | 16x16 | `assets/art/minigames/adventure/staff_door_marker.png` | Planned | Goal/exit marker art; should suggest the Staff Door without revealing Staff Room content. |
+| Final Night memory frame | 16x16 | `assets/art/minigames/adventure/memory_frame.png` | Integrated | Ordered collectible art; frame number/text feedback remains readable. |
+| Final Night rewind static | 16x16 | `assets/art/minigames/adventure/rewind_static.png` | Integrated | Hazard art; distinct from Static Service's static leak. |
+| Final Night staff door marker | 16x16 | `assets/art/minigames/adventure/staff_door_marker.png` | Integrated | Goal/exit marker art; suggests the Staff Door without revealing Staff Room content. |
 
 ## Hub Character Idle Sheet Checklist
 | Sheet | Recommended Size | Folder | Status | Notes |
@@ -186,17 +192,42 @@ The final portrait is integrated. Earlier `???` encounters do not show an antago
 | Security Tape / Final Night game | `assets/audio/music/security_tape_final_night_game.mp3` | Integrated | Security Tape Assembly and Final Night Walk. |
 | Memory Echo / conscience | `assets/audio/music/memory_echo_conscience.mp3` | Integrated | Memory Echo. |
 
+## Simple SFX Checklist
+| SFX | Path | Status | Notes |
+|---|---|---|---|
+| Memory panel cue | `assets/audio/sfx/memory_panel.wav` | Integrated | Generated short one-shot for Staff Room slideshow panel changes. |
+| Memory accept cue | `assets/audio/sfx/memory_accept.wav` | Integrated | Generated short one-shot for accepted Memory Echo answers. |
+| Door unlock cue | `assets/audio/sfx/door_unlock.wav` | Integrated | Generated short one-shot for Maintenance Sync opening the Staff Door. |
+| Button pulse cue | `assets/audio/sfx/button_pulse.wav` | Integrated | Generated short one-shot for minigame button/switch input. |
+| Score blip cue | `assets/audio/sfx/score_blip.wav` | Integrated | Generated short one-shot for correct puzzle beats and collectibles. |
+| Error buzz cue | `assets/audio/sfx/error_buzz.wav` | Integrated | Generated short one-shot for arcade-style wrong actions. |
+| Success jingle cue | `assets/audio/sfx/success_jingle.wav` | Integrated | Generated short one-shot for completed minigame/puzzle beats. |
+
+## Ambient Map Effect Checklist
+| Effect Sheet | Frame Size | Status | Notes |
+|---|---:|---|---|
+| Static spark | 4 frames, 16x16 each | Integrated | `static_spark_sheet.png`; cabinet flicker, broken screens, service sparks. |
+| Blink dot | 4 frames, 16x16 each | Integrated | `blink_dot_sheet.png`; tiny status pips and readiness markers. |
+| Scanline bar | 4 frames, 32x8 each | Integrated | `scanline_bar_sheet.png`; machine screens and hallway static stripes. |
+| Warning light | 4 frames, 16x16 each | Integrated | `warning_light_sheet.png`; maintenance route warnings. |
+| Soda bubble | 4 frames, 16x16 each | Integrated | `soda_bubble_sheet.png`; Vendo, Circuit Soda, and snack-route motion. |
+| Prize twinkle | 4 frames, 16x16 each | Integrated | `prize_twinkle_sheet.png`; prize counter and shelf glints. |
+| Memory wisp | 4 frames, 24x16 each | Integrated | `memory_wisp_sheet.png`; Truth Filter, Staff Corridor, and memory systems. |
+| Neon arrow | 4 frames, 16x16 each | Integrated | `neon_arrow_sheet.png`; route-readable exit arrows in maps and hallways. |
+| Ticket glint | 4 frames, 16x16 each | Integrated | `ticket_glint_sheet.png`; ticket/prize glass highlights. |
+| Staff lock blink | 4 frames, 16x16 each | Integrated | `staff_lock_blink_sheet.png`; Staff Door and sync-door gate feedback. |
+
 ## Memory Recall Panel Checklist
 | Panel | Status | Notes |
 |---|---|---|
-| Panel 01 | Placeholder | Opening memory beat. |
-| Panel 02 | Placeholder | Staff room context. |
-| Panel 03 | Placeholder | Shutdown intent. |
-| Panel 04 | Placeholder | Machines panic. |
-| Panel 05 | Placeholder | System saves what it can. |
-| Panel 06 | Placeholder | Everyone remembered. |
-| Panel 07 | Placeholder | Player forgot. |
-| Panel 08 | Placeholder | Employee 04 reveal. |
+| Panel 01 | Integrated | Mono-color 8-bit Staff Door lock beat. |
+| Panel 02 | Integrated | Mono-color 8-bit Staff Room / file context. |
+| Panel 03 | Integrated | Mono-color 8-bit shutdown intent. |
+| Panel 04 | Integrated | Mono-color 8-bit machine panic. |
+| Panel 05 | Integrated | Mono-color 8-bit system-save / token beat. |
+| Panel 06 | Integrated | Mono-color 8-bit everyone-remembered beat. |
+| Panel 07 | Integrated | Mono-color 8-bit player-forgot beat. |
+| Panel 08 | Integrated | Mono-color 8-bit Employee 04 reveal. |
 
 ## Integration Notes
 - Keep this manifest updated when any asset moves from planned to integrated.

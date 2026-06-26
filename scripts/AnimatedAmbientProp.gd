@@ -9,15 +9,24 @@ var effect_type := "flicker"
 @export var active_flag_optional := ""
 @export var prop_size := Vector2(64, 32)
 @export var prop_color := Color(0.45, 0.9, 1.0, 0.18)
+@export var sprite_sheet_path := ""
+@export_range(1, 16, 1) var sprite_frame_count := 1
+@export var sprite_frame_size := Vector2i(16, 16)
+@export_range(0.5, 24.0, 0.5) var sprite_fps := 6.0
+@export_range(0.0, 1.0, 0.01) var sprite_alpha := 0.82
+@export var sprite_modulate := Color.WHITE
 
 @onready var visual: Polygon2D = $Visual
+@onready var sprite: Sprite2D = $Sprite
 
 var base_position := Vector2.ZERO
 var base_scale := Vector2.ONE
 var base_color := Color.WHITE
+var base_sprite_modulate := Color.WHITE
 var elapsed := 0.0
 var rng := RandomNumberGenerator.new()
 var next_flash_time := 0.0
+var sprite_texture: Texture2D = null
 
 func _ready() -> void:
 	rng.randomize()
@@ -25,7 +34,9 @@ func _ready() -> void:
 	base_scale = scale
 	visual.color = prop_color
 	base_color = visual.color
+	base_sprite_modulate = sprite_modulate
 	_update_visual_shape()
+	_setup_sprite()
 	if random_offset:
 		elapsed = rng.randf_range(0.0, TAU)
 		next_flash_time = rng.randf_range(0.4, 2.0)
@@ -37,8 +48,10 @@ func _process(delta: float) -> void:
 		return
 	var readability_dim := _get_readability_dim()
 	visual.color = base_color
+	sprite.modulate = base_sprite_modulate
 	position = base_position
 	scale = base_scale
+	_update_sprite_frame()
 	match effect_type:
 		"glow_pulse":
 			_apply_alpha(0.45 + _wave() * 0.55, readability_dim)
@@ -74,6 +87,9 @@ func _apply_alpha(multiplier: float, readability_dim: float) -> void:
 	var next_color := base_color
 	next_color.a = clampf(base_color.a * multiplier * (1.0 + intensity), 0.0, 0.42) * readability_dim
 	visual.color = next_color
+	var next_sprite_modulate := base_sprite_modulate
+	next_sprite_modulate.a = clampf(sprite_alpha * multiplier * (1.0 + intensity), 0.0, 1.0) * readability_dim
+	sprite.modulate = next_sprite_modulate
 
 func _wave() -> float:
 	return (sin(elapsed) + 1.0) * 0.5
@@ -107,3 +123,36 @@ func _update_visual_shape() -> void:
 		Vector2(half.x, half.y),
 		Vector2(-half.x, half.y),
 	])
+
+func _setup_sprite() -> void:
+	sprite.visible = false
+	sprite.texture = null
+	sprite_texture = null
+	if sprite_sheet_path.is_empty() or not ResourceLoader.exists(sprite_sheet_path):
+		visual.visible = true
+		return
+	var resource := load(sprite_sheet_path)
+	if not resource is Texture2D:
+		visual.visible = true
+		return
+	sprite_texture = resource
+	sprite.texture = sprite_texture
+	sprite.centered = true
+	sprite.region_enabled = true
+	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	visual.visible = false
+	sprite.visible = true
+	_update_sprite_frame()
+
+func _update_sprite_frame() -> void:
+	if sprite_texture == null or not sprite.visible:
+		return
+	var frame_total := maxi(sprite_frame_count, 1)
+	var frame_width := sprite_frame_size.x
+	var frame_height := sprite_frame_size.y
+	if frame_width <= 0:
+		frame_width = maxi(int(sprite_texture.get_width() / frame_total), 1)
+	if frame_height <= 0:
+		frame_height = maxi(sprite_texture.get_height(), 1)
+	var frame_index := int(floor(elapsed * sprite_fps)) % frame_total
+	sprite.region_rect = Rect2(frame_index * frame_width, 0, frame_width, frame_height)

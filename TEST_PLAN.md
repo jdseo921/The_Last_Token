@@ -92,6 +92,8 @@
 7. Hallways: confirm the player stays inside the visible floor band and can trigger both end transitions without fighting the collision.
 8. Spawn safety: after every transition and minigame return, confirm the player does not appear inside a collision body or on top of an interactable.
 9. Visual sync: confirm room prop collision follows the prop sprite or placeholder silhouette, not stale hand-measured boxes.
+10. Route cues: confirm each hallway and side map shows either `LOCAL` for the current objective room or `ROUTE` with a named exit toward the next required room.
+11. Ambient sprite effects: confirm sparks, scanlines, blinks, arrows, bubbles, glints, and wisps enrich maps without hiding prompts, route cues, labels, collisions, or the playable path.
 
 ## Music QA Checklist
 1. Title music plays: `title_attract_loop`.
@@ -123,7 +125,15 @@
 7. Quest notifications and completed arcade stages play `quest_update`.
 8. Save completion plays `save`.
 9. Glitch moments play `glitch` without overpowering music or dialogue.
-10. SFX Volume setting affects all SFX while Music Volume remains separate.
+10. Minigame inputs play `button_pulse`, correct progress plays `score_blip`, arcade errors play `error_buzz`, and completions play `success_jingle`.
+11. SFX Volume setting affects all SFX while Music Volume remains separate.
+
+## Retro Text And Dialogue Style QA
+1. Confirm title, settings, save slot, route cue, dialogue, and minigame text use the shared readable retro font treatment.
+2. Confirm UI chrome labels and cabinet controls feel arcade-like without becoming too small, cramped, or hard to scan.
+3. Confirm protagonist `Player` dialogue and final antagonist `"Player"` dialogue use the same base font.
+4. Confirm antagonist `???` and final `"Player"` lines have distinct scan-jitter/flicker/reveal animation, while the text remains readable and can be completed with one interact press.
+5. Confirm machine dialogue still uses word-by-word reveal and normal NPC dialogue still uses letter-by-letter reveal.
 
 ## Final Expanded Route Gate Result
 - Date: 2026-06-20.
@@ -180,7 +190,7 @@
 - Static result: expected pass.
 - Mira's first-quest dialogue still calls `GameState.start_lost_token_quest`.
 - `lost_token_quest_started` is included in `GameState.to_save_data()` and restored in `apply_save_data()`.
-- Loading this state should make `GameState.get_current_quest_id()` return `recover_lost_token`, and the ArcadeHub objective should read `Objective: Play Cabinet 07.`
+- Loading this state should make `GameState.get_current_quest_id()` return `recover_lost_token`, and the ArcadeHub objective should read `Objective: Play Cabinet 07 on the main floor.`
 - Live result: still needs manual confirmation.
 
 ### Case C - During/After Rockbyte
@@ -188,7 +198,7 @@
 - Saving while current scene is Rockbyte normalizes the saved scene to ArcadeHub through `SaveManager._get_current_save_scene_path()`, so an unfinished Rockbyte run restores safely instead of restoring into the minigame.
 - Unfinished Rockbyte does not set `rockbyte_duel_completed` or `lost_token_collected`.
 - Winning Rockbyte sets `rockbyte_duel_completed = true` and calls `GameState.collect_lost_token()`.
-- Loading after victory should preserve both flags and make `GameState.get_current_quest_id()` return `return_lost_token`, with objective `Objective: Return the Lost Token to Mira.`
+- Loading after victory should preserve both flags and make `GameState.get_current_quest_id()` return `return_lost_token`, with objective `Objective: Return the Lost Token to Mira at the counter.`
 - Live result: still needs manual confirmation.
 
 ### Case D - Quest Completed
@@ -196,7 +206,7 @@
 - Mira's token-return dialogue still calls `GameState.complete_lost_token_quest`.
 - Talking to Mira again after completion should show the one-time Rockbyte anecdote, then shorter repeat lines after `mira_rockbyte_anecdote_seen`.
 - `lost_token_quest_completed`, `lost_token_collected`, `rockbyte_duel_completed`, and `mira_rockbyte_anecdote_seen` are saved and restored.
-- Loading after completion should make `GameState.get_current_quest_id()` return `truth_filter`, with objective `Objective: Find Mr. Byte in Cabinet Row.`
+- Loading after completion should make `GameState.get_current_quest_id()` return `truth_filter`, with objective `Objective: CABINET ROW exit -> talk to Mr. Byte.`
 - Because `rockbyte_duel_completed` persists, Cabinet 07 should not replay as incomplete.
 - Live result: still needs manual confirmation.
 
@@ -220,7 +230,7 @@ Run this only after confirming the first quest still works.
 
 1. Complete the Lost Token quest.
 2. Confirm Memory Signal reads `Uneasy`.
-3. Confirm the objective reads `Objective: Find Mr. Byte in Cabinet Row.`
+3. Confirm the objective reads `Objective: CABINET ROW exit -> talk to Mr. Byte.`
 4. Go to Cabinet Row.
 5. Talk to Mr. Byte and confirm:
    - `Contradiction threshold reached.`
@@ -237,7 +247,7 @@ Run this only after confirming the first quest still works.
 14. Confirm Conscience Encounter 1 appears once with speaker `???` and no antagonist sprite, silhouette, or portrait window.
 15. Save and load.
 16. Confirm Conscience Encounter 1 does not repeat.
-17. Confirm the objective reads `Objective: Find Vendo in the Snack Alcove.`
+17. Confirm the objective reads `Objective: SNACK ALCOVE exit -> talk to Vendo.`
 15. Talk to Mr. Byte and confirm the first-time anecdote:
    - `Truth Filter passed.`
    - `Lie density reduced.`
@@ -691,8 +701,8 @@ Pass condition: every step above passes in a live Godot playthrough. If any step
 
 ### Remaining Known Issues
 - A full live playthrough in the Godot editor is still required to confirm collisions, focus behavior, and button input timing end-to-end.
-- Cutscene image files under `res://assets/cutscenes/twist/` may be missing by design and should show placeholder panels.
-- Background music files are included; optional missing SFX or temporarily missing music should keep gameplay non-breaking.
+- Staff Room reveal panels are integrated under `res://assets/art/cutscenes/memory_reveal/`; temporarily removing one should still show the placeholder panel.
+- Background music files and registered SFX are included; optional missing audio should keep gameplay non-breaking.
 - Player position/facing restoration is placeholder-level; the save system restores story state and scene path, not exact room placement.
 
 ### End-to-End MVP Status
@@ -991,9 +1001,9 @@ Run this after Prize Corner is reachable. This content is optional and must not 
 7. Confirm the expanded counters remain stable.
 
 ## 13. Known Placeholders
-- Cutscene panel images under `res://assets/cutscenes/twist/` may be missing and should show placeholder panels.
-- Background music files are included; optional missing SFX or temporarily missing music should not crash.
-- Visuals are placeholder shapes and labels.
+- Staff Room reveal panel images are integrated under `res://assets/art/cutscenes/memory_reveal/`; the missing-panel fallback should still work if an asset is removed.
+- Background music files and registered SFX are included; optional missing audio should not crash.
+- Some map, character, and UI visuals remain placeholder shapes and labels after the first visual polish pass.
 - Rockbyte Duel uses simple/randomized cabinet moves, so retries may be needed.
 - Save/load restores GameState and scene path, but exact player position restoration is still placeholder-level.
 - Title Menu restore opens the Memory Slot menu; full polished title flow is not final.
