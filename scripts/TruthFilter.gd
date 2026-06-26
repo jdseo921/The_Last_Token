@@ -100,6 +100,7 @@ var round_transition_running := false
 var cabinet_sheet_texture: Texture2D = null
 
 func _ready() -> void:
+	AudioManager.play_music_for_context("truth_filter")
 	for index in range(choose_buttons.size()):
 		choose_buttons[index].pressed.connect(_on_choice_pressed.bind(index))
 	exit_button.pressed.connect(_on_exit_pressed)

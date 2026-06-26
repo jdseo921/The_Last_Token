@@ -3,7 +3,7 @@
 The Last Token is a 2D top-down retro arcade mystery about exploring Pixel Haven, talking to strange arcade regulars, recovering a lost token, unlocking the staff room, and uncovering who the player really is.
 
 ## Status
-The project is currently an MVP candidate pending final live playtest, with placeholder visuals, placeholder slideshow panels, Memory Slots, post-reveal roam, and optional audio hooks. It is ready to open in Godot and export as a local test build, but should not be called live-verified until the full acceptance route passes in the Godot runtime.
+The project is currently an MVP candidate pending final live playtest, with placeholder visuals, placeholder slideshow panels, Memory Slots, post-reveal roam, and integrated background music. It is ready to open in Godot and export as a local test build, but should not be called live-verified until the full acceptance route passes in the Godot runtime.
 
 ## Engine
 - Godot 4.x
@@ -71,6 +71,6 @@ After the ending prompt, the player returns to ArcadeHub with post-reveal state 
 ## Current Placeholders
 - Visuals are simple shapes and labels.
 - Cutscene panels may be missing and display `MEMORY PANEL / Placeholder image pending`.
-- Audio hooks are present, but final sound effects and music are not included.
+- Background music is included and wired through `AudioManager`; some SFX may still be placeholder or absent.
 - Exact player position restore is placeholder-level; story state and safe scene paths are restored.
 - Rockbyte Duel uses simple AI for MVP testing.

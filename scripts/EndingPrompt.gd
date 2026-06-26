@@ -9,6 +9,7 @@ var save_slot_menu: Control = null
 var return_to_title_confirm: ConfirmationDialog = null
 
 func _ready() -> void:
+	AudioManager.play_music_for_context("ending")
 	save_and_continue_button.pressed.connect(_on_save_and_continue_pressed)
 	return_to_title_button.pressed.connect(_on_return_to_title_pressed)
 	_build_return_to_title_confirm()

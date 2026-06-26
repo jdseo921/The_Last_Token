@@ -61,6 +61,26 @@
 - Final room self-conflict: confirm `"Player"` uses the glitched protagonist portrait, no antagonist sprite appears before the name reveal, and the long dialogue remains climax-only.
 - Anti-bloat gates: required non-climax interactions stay at 10 lines or fewer, third-and-later repeats nudge objectives, and no dialogue outside Staff Room fully reveals Employee 04 before the reveal.
 
+## Music QA Checklist
+1. Title music plays: `title_attract_loop`.
+2. ArcadeHub grounded music plays on a new game: `arcade_hub_grounded`.
+3. ArcadeHub changes to uneasy/fractured music after progression: `arcade_hub_uneasy_fractured`.
+4. Cabinet Row music plays: `cabinet_row_records`.
+5. Snack Alcove music plays: `snack_alcove_vendo`.
+6. Maintenance Hall music plays: `maintenance_hall_static`.
+7. Staff Corridor music plays: `staff_corridor_overloaded`.
+8. Staff Room reveal music plays: `staff_room_reveal_bed`.
+9. Rockbyte Duel music plays: `rockbyte_duel_game`.
+10. Truth Filter music plays: `truth_filter_game`.
+11. Circuit Soda music plays: `circuit_soda_game`.
+12. Static Service Run music plays: `static_service_run_game`.
+13. Maintenance Sync music plays: `maintenance_sync_game`.
+14. Security Tape Assembly and Final Night Walk music plays: `security_tape_final_night_game`.
+15. Memory Echo music plays: `memory_echo_conscience`.
+16. Post-Reveal Roam music plays: `post_reveal_roam`.
+17. Music Volume setting affects playback without revealing the faded-out crossfade player.
+18. Temporarily missing music file prints a warning and does not crash.
+
 ## Final Expanded Route Gate Result
 - Date: 2026-06-20.
 - Method: Codex/Godot 4.7 headless smoke plus static route review. This is not a live viewport playthrough.
@@ -314,10 +334,10 @@ Run this after Lost Shift File completion and before Maintenance Sync, when Memo
 5. Confirm `res://scenes/minigames/StaticServiceRun.tscn` opens.
 6. Confirm title and objective text explain:
    `STATIC SERVICE RUN`
-   `Collect 3 Signal Fuses.`
+   `Collect 16 Signal Fuses.`
    `Avoid static leaks.`
    `Reach the breaker panel.`
-7. Collect 3 Signal Fuses.
+7. Collect 16 Signal Fuses.
 8. Touch a static leak once and confirm:
    `STATIC DISCHARGE.`
    `Signal reset.`
@@ -628,7 +648,7 @@ Pass condition: every step above passes in a live Godot playthrough. If any step
 ### Remaining Known Issues
 - A full live playthrough in the Godot editor is still required to confirm collisions, focus behavior, and button input timing end-to-end.
 - Cutscene image files under `res://assets/cutscenes/twist/` may be missing by design and should show placeholder panels.
-- Audio files may be missing by design; AudioManager should keep gameplay non-breaking.
+- Background music files are included; optional missing SFX or temporarily missing music should keep gameplay non-breaking.
 - Player position/facing restoration is placeholder-level; the save system restores story state and scene path, not exact room placement.
 
 ### End-to-End MVP Status
@@ -928,7 +948,7 @@ Run this after Prize Corner is reachable. This content is optional and must not 
 
 ## 13. Known Placeholders
 - Cutscene panel images under `res://assets/cutscenes/twist/` may be missing and should show placeholder panels.
-- Audio files may be missing; AudioManager should fail silently.
+- Background music files are included; optional missing SFX or temporarily missing music should not crash.
 - Visuals are placeholder shapes and labels.
 - Rockbyte Duel uses simple/randomized cabinet moves, so retries may be needed.
 - Save/load restores GameState and scene path, but exact player position restoration is still placeholder-level.

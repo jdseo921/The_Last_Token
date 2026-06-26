@@ -61,6 +61,7 @@ var finished := false
 var glitch_tween: Tween = null
 
 func _ready() -> void:
+	AudioManager.play_music_for_context("memory_echo")
 	speaker_label.text = "Memory Echo"
 	continue_button.pressed.connect(_on_continue_pressed)
 	if choice_box.has_signal("choice_selected"):

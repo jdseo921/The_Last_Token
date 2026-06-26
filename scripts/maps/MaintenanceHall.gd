@@ -14,6 +14,7 @@ const BACKGROUND_ART_PATH := "res://assets/art/maps/maintenance_hall/maintenance
 var pending_after_dialogue: Callable = Callable()
 
 func _ready() -> void:
+	AudioManager.play_music_for_context("maintenance_hall")
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
 	_apply_background_art()

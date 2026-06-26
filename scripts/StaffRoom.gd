@@ -14,6 +14,7 @@ var active_dialogue_box: Node = null
 var reveal_in_progress := false
 
 func _ready() -> void:
+	AudioManager.play_music_for_context("staff_room")
 	if player and player.has_signal("interaction_prompt_changed"):
 		player.interaction_prompt_changed.connect(_on_prompt_changed)
 	return_button.pressed.connect(_on_return_pressed)

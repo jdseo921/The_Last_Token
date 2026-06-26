@@ -11,6 +11,7 @@ const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
 var pending_after_dialogue: Callable = Callable()
 
 func _ready() -> void:
+	AudioManager.play_music_for_context("staff_corridor")
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
 	_apply_spawn_position()

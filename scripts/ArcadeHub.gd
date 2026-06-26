@@ -49,6 +49,7 @@ var memory_signal_tween: Tween = null
 var aftermath_pulse_tween: Tween = null
 
 func _ready() -> void:
+	AudioManager.play_music_for_context("arcade_hub")
 	_apply_hub_art()
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
@@ -265,6 +266,7 @@ func _refresh_memory_signal_label() -> void:
 			memory_signal_label.modulate = Color(0.82, 0.95, 1.0, 1.0)
 		_:
 			memory_signal_label.modulate = Color.WHITE
+	AudioManager.play_music_for_context("arcade_hub")
 
 func _dialogue_is_active() -> bool:
 	if dialogue_box == null:

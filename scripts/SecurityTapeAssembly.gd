@@ -33,6 +33,7 @@ var selected_fragments: Array[String] = []
 var fragment_buttons: Array[Button] = []
 
 func _ready() -> void:
+	AudioManager.play_music_for_context("security_tape_assembly")
 	GameState.start_security_tape_assembly()
 	_apply_optional_art_hooks()
 	fragment_buttons = [fragment_a, fragment_b, fragment_c, fragment_d]

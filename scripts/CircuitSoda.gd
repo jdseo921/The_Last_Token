@@ -73,6 +73,7 @@ var tile_buttons: Array[Button] = []
 var tile_sheet_texture: Texture2D = null
 
 func _ready() -> void:
+	AudioManager.play_music_for_context("circuit_soda")
 	reset_button.pressed.connect(_reset_round)
 	hint_button.pressed.connect(_show_hint)
 	exit_button.pressed.connect(_on_exit_pressed)

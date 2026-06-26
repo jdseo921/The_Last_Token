@@ -1,14 +1,22 @@
 extends "res://scripts/minigames/adventure/ArcadeAdventureStage.gd"
 
 func _ready() -> void:
+	AudioManager.play_music_for_context("static_service_run")
 	GameState.start_static_service_run()
-	configure_stage({
+	configure_stage(get_stage_config())
+
+static func get_stage_config() -> Dictionary:
+	return {
 		"title": "STATIC SERVICE RUN",
-		"objective": "Gus needs the Staff Door systems powered. Collect 3 Signal Fuses, avoid static leaks, and reach the breaker panel.",
+		"objective": "Restore service power across the back halls. Collect 16 Signal Fuses, route through service doors, avoid static leaks, then reach BRK.",
 		"collectible_label": "Fuses",
-		"required_collectibles": 3,
+		"required_collectibles": 16,
+		"target_minutes": 5,
+		"tile_size": 20,
+		"grid_origin": Vector2(32, 126),
+		"side_panel_x": 430,
 		"controls_hint": "Move: WASD / Arrow Keys",
-		"goal_hint": "Collect 3 Signal Fuses, then reach BRK.",
+		"goal_hint": "Collect all 16 fuses, then reach BRK.",
 		"collectible_marker": "F",
 		"hazard_marker": "ZAP",
 		"goal_marker": "BRK",
@@ -27,23 +35,107 @@ func _ready() -> void:
 			"STAFF DOOR SYSTEMS ONLINE.",
 			"MAINTENANCE SYNC AVAILABLE.",
 		],
-		"layout": [
-			"############",
-			"#P..C......#",
-			"#.####.##..#",
-			"#....#..H..#",
-			"#.##.#.###.#",
-			"#..H...C...#",
-			"#.######.#.#",
-			"#..C.....G.#",
-			"############",
+		"start_area": "entry",
+		"areas": [
+			{
+				"id": "entry",
+				"name": "Service Entry",
+				"layout": [
+					"##################",
+					"#P..C....#....2..#",
+					"#.####.#.#.####..#",
+					"#....#.#...#.....#",
+					"###..#.#####.###.#",
+					"#1...#...H...#...#",
+					"#.######.#####.#.#",
+					"#....C.......#.#.#",
+					"#.##########.#.#.#",
+					"#C.............#.#",
+					"##################",
+				],
+			},
+			{
+				"id": "crawl",
+				"name": "Fuse Crawl",
+				"layout": [
+					"##################",
+					"#1....#....C.....#",
+					"#.###.#.######.#.#",
+					"#...#.#....H...#.#",
+					"###.#.#######.##.#",
+					"#...#.....C.#....#",
+					"#.#######.#.####.#",
+					"#.....H...#....3.#",
+					"#.##############.#",
+					"#..............C.#",
+					"##################",
+				],
+			},
+			{
+				"id": "relay",
+				"name": "Relay Spine",
+				"layout": [
+					"##################",
+					"#2....C.....#..5.#",
+					"#.######.##.#.##.#",
+					"#....H...#..#....#",
+					"###.######.#####.#",
+					"#3..#....C.....#.#",
+					"#.###.########.#.#",
+					"#.....#..H..#..4.#",
+					"#.###.#.###.#.##.#",
+					"#...C............#",
+					"##################",
+				],
+			},
+			{
+				"id": "storage",
+				"name": "Parts Storage",
+				"layout": [
+					"##################",
+					"#4....#.....C....#",
+					"#.###.#.########.#",
+					"#...#.#....H.....#",
+					"###.#.#######.##.#",
+					"#...#.....C.#....#",
+					"#.#######.#.####.#",
+					"#.....H...#......#",
+					"#.##############.#",
+					"#..............C.#",
+					"##################",
+				],
+			},
+			{
+				"id": "breaker",
+				"name": "Breaker Room",
+				"layout": [
+					"##################",
+					"#5..C....#....C..#",
+					"#.####.#.#.####..#",
+					"#....#.#...#..H..#",
+					"###..#.#####.###.#",
+					"#C...#.......#...#",
+					"#.######.#####.#.#",
+					"#....H.......#.#.#",
+					"#.##########.#.#.#",
+					"#......C.....E...#",
+					"##################",
+				],
+			},
 		],
-		"player_adventure_sprite_path": "res://assets/art/minigames/adventure/player_8bit.png",
-		"tile_sheet_path": "res://assets/art/minigames/adventure/maintenance_tiles.png",
-		"hazard_sprite_path": "res://assets/art/minigames/adventure/static_leak.png",
-		"collectible_sprite_path": "res://assets/art/minigames/adventure/signal_fuse.png",
-		"goal_sprite_path": "res://assets/art/minigames/adventure/breaker_panel.png",
-	})
+		"area_links": [
+			{"from_area": "entry", "marker": "1", "label": "DUCT", "target_area": "crawl", "target_spawn": Vector2i(2, 1)},
+			{"from_area": "crawl", "marker": "1", "label": "ENT", "target_area": "entry", "target_spawn": Vector2i(2, 5)},
+			{"from_area": "entry", "marker": "2", "label": "RLY", "target_area": "relay", "target_spawn": Vector2i(2, 1)},
+			{"from_area": "relay", "marker": "2", "label": "ENT", "target_area": "entry", "target_spawn": Vector2i(14, 1)},
+			{"from_area": "crawl", "marker": "3", "label": "RLY", "target_area": "relay", "target_spawn": Vector2i(2, 5)},
+			{"from_area": "relay", "marker": "3", "label": "DUCT", "target_area": "crawl", "target_spawn": Vector2i(15, 7)},
+			{"from_area": "relay", "marker": "4", "label": "STOR", "target_area": "storage", "target_spawn": Vector2i(2, 1)},
+			{"from_area": "storage", "marker": "4", "label": "RLY", "target_area": "relay", "target_spawn": Vector2i(15, 7)},
+			{"from_area": "relay", "marker": "5", "label": "BRK", "target_area": "breaker", "target_spawn": Vector2i(2, 1)},
+			{"from_area": "breaker", "marker": "5", "label": "RLY", "target_area": "relay", "target_spawn": Vector2i(15, 1)},
+		],
+	}
 
 func _on_stage_completed() -> void:
 	GameState.complete_static_service_run()

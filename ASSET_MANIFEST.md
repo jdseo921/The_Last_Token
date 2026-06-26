@@ -1,7 +1,7 @@
 # ASSET_MANIFEST.md
 
 ## Purpose
-This manifest tracks planned visual assets for The Last Token. It is a production checklist, not a requirement to add all assets before MVP testing.
+This manifest tracks planned visual and audio assets for The Last Token. It is a production checklist, not a requirement to add all assets before MVP testing.
 
 Status values:
 - `Placeholder`: current simple shape/text is acceptable for MVP.
@@ -57,6 +57,9 @@ assets/art/ui/dialogue/
 assets/art/ui/title/
 assets/art/ui/menus/
 assets/art/ui/crt/
+assets/audio/
+assets/audio/music/
+assets/audio/sfx/
 ```
 
 The lightweight path helper is `scripts/AssetPaths.gd`. It is not autoloaded; use it only when a future visual replacement needs safe optional asset loading.
@@ -120,7 +123,7 @@ The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys t
 | Adventure player 8-bit sprite | 16x16 | `assets/art/minigames/adventure/player_8bit.png` | Planned | Shared optional player sprite for Static Service Run and Final Night Walk; colored square fallback remains. |
 | Static Service maintenance tiles | 16x16 or 24x24 tiles | `assets/art/minigames/adventure/maintenance_tiles.png` | Planned | Future tile sheet for service floor/walls; current colored placeholder grid remains readable if missing. |
 | Static Service static leak | 16x16 | `assets/art/minigames/adventure/static_leak.png` | Planned | Hazard art; must read as electrical/static leak at tile scale. |
-| Static Service signal fuse | 16x16 | `assets/art/minigames/adventure/signal_fuse.png` | Planned | Collectible art for 3 Signal Fuses; current `F` marker remains if missing. |
+| Static Service signal fuse | 16x16 | `assets/art/minigames/adventure/signal_fuse.png` | Planned | Collectible art for Signal Fuses; current `F` marker remains if missing. |
 | Static Service breaker panel | 16x16 | `assets/art/minigames/adventure/breaker_panel.png` | Planned | Goal tile art; must be visibly distinct from fuses and hazards. |
 | Security Tape background | 640x440 or scalable | `assets/art/minigames/security_tape/security_tape_background.png` | Planned | Optional full-screen backdrop behind the existing panel; must not reduce text contrast. |
 | Security Tape fragment panel | Scalable UI panel or 96x32 per button | `assets/art/minigames/security_tape/tape_fragment_panel.png` | Planned | Optional button/panel texture for tape fragments; text labels must remain legible. |
@@ -162,6 +165,26 @@ The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys t
 - `res://assets/art/cutscenes/conscience/glitch_bars.png`
 
 The final portrait is integrated. Earlier `???` encounters do not show an antagonist sprite, silhouette, or portrait window. `ConscienceEncounter.tscn` keeps only the dark overlay, glitch bars, and dialogue panel until the Staff Room reveal names the antagonist. `Player.gd` uses the normal sprite with glitch modulation if the glitched gameplay art is missing.
+
+## Music Track Checklist
+| Track | Path | Status | Notes |
+|---|---|---|---|
+| Title attract loop | `assets/audio/music/title_attract_loop.mp3` | Integrated | Title Menu. |
+| Arcade hub grounded | `assets/audio/music/arcade_hub_grounded.mp3` | Integrated | ArcadeHub while Memory Signal is Grounded. |
+| Arcade hub uneasy/fractured | `assets/audio/music/arcade_hub_uneasy_fractured.mp3` | Integrated | ArcadeHub after Memory Signal changes before post-reveal. |
+| Cabinet Row records | `assets/audio/music/cabinet_row_records.mp3` | Integrated | Cabinet Row. |
+| Snack Alcove Vendo | `assets/audio/music/snack_alcove_vendo.mp3` | Integrated | Snack Alcove. |
+| Maintenance Hall static | `assets/audio/music/maintenance_hall_static.mp3` | Integrated | Maintenance Hall. |
+| Staff Corridor overloaded | `assets/audio/music/staff_corridor_overloaded.mp3` | Integrated | Staff Corridor. |
+| Staff Room reveal bed | `assets/audio/music/staff_room_reveal_bed.mp3` | Integrated | Staff Room and Ending Prompt. |
+| Post-reveal roam | `assets/audio/music/post_reveal_roam.mp3` | Integrated | ArcadeHub post-reveal roam. |
+| Rockbyte Duel game | `assets/audio/music/rockbyte_duel_game.mp3` | Integrated | Rockbyte Duel. |
+| Truth Filter game | `assets/audio/music/truth_filter_game.mp3` | Integrated | Truth Filter. |
+| Circuit Soda game | `assets/audio/music/circuit_soda_game.mp3` | Integrated | Circuit Soda. |
+| Static Service Run game | `assets/audio/music/static_service_run_game.mp3` | Integrated | Static Service Run. |
+| Maintenance Sync game | `assets/audio/music/maintenance_sync_game.mp3` | Integrated | Maintenance Sync. |
+| Security Tape / Final Night game | `assets/audio/music/security_tape_final_night_game.mp3` | Integrated | Security Tape Assembly and Final Night Walk. |
+| Memory Echo / conscience | `assets/audio/music/memory_echo_conscience.mp3` | Integrated | Memory Echo. |
 
 ## Memory Recall Panel Checklist
 | Panel | Status | Notes |

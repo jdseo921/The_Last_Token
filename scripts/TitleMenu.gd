@@ -29,6 +29,7 @@ var background_tween: Tween = null
 var rng := RandomNumberGenerator.new()
 
 func _ready() -> void:
+	AudioManager.play_music_for_context("title")
 	rng.randomize()
 	_apply_optional_art()
 	_apply_button_styles()

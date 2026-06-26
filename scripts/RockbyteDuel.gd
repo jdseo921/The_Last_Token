@@ -61,6 +61,7 @@ var minigame_config: Dictionary = {}
 var result_popup_tween: Tween = null
 
 func _ready() -> void:
+	AudioManager.play_music_for_context("rockbyte_duel")
 	minigame_config = CONFIG_LOADER.load_config(CONFIG_PATH)
 	_apply_config_text()
 	_apply_optional_texture(_get_config_background_path(), background_texture, background_placeholder)

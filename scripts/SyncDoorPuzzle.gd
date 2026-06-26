@@ -32,6 +32,7 @@ var puzzle_solved := false
 var pulse_tween: Tween = null
 
 func _ready() -> void:
+	AudioManager.play_music_for_context("maintenance_sync")
 	switch_a_button.pressed.connect(_on_switch_a_pressed)
 	switch_b_button.pressed.connect(_on_switch_b_pressed)
 	confirm_sync_button.pressed.connect(_on_confirm_sync_pressed)

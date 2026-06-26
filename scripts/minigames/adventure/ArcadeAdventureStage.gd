@@ -2,6 +2,7 @@ extends Control
 
 const TILE_SIZE := 28
 const GRID_ORIGIN := Vector2(48, 112)
+const DEFAULT_AREA_ID := "main"
 
 var stage_title := "ARCADE ADVENTURE"
 var objective_text := "Collect everything and reach the exit."
@@ -30,11 +31,23 @@ var tile_sheet_path := ""
 var hazard_sprite_path := ""
 var collectible_sprite_path := ""
 var goal_sprite_path := ""
+var tile_size := TILE_SIZE
+var grid_origin := GRID_ORIGIN
+var side_panel_x := 404
+var move_step_interval := 0.18
+var move_cooldown_seconds := 0.0
+var stage_areas: Array[Dictionary] = []
+var area_links: Array[Dictionary] = []
+var active_area_id := DEFAULT_AREA_ID
+var start_area_id := DEFAULT_AREA_ID
+var area_layouts: Dictionary = {}
+var area_names: Dictionary = {}
+var area_spawns: Dictionary = {}
 
 var player_grid_pos := Vector2i.ZERO
 var spawn_grid_pos := Vector2i.ZERO
-var collectible_positions: Array[Vector2i] = []
-var collected_positions: Array[Vector2i] = []
+var collectible_positions: Array[String] = []
+var collected_positions: Array[String] = []
 var next_collectible_index := 0
 var completed := false
 var return_in_progress := false
@@ -75,6 +88,21 @@ func configure_stage(config: Dictionary) -> void:
 	hazard_sprite_path = str(config.get("hazard_sprite_path", ""))
 	collectible_sprite_path = str(config.get("collectible_sprite_path", ""))
 	goal_sprite_path = str(config.get("goal_sprite_path", ""))
+	tile_size = int(config.get("tile_size", TILE_SIZE))
+	grid_origin = _to_vector2(config.get("grid_origin", GRID_ORIGIN), GRID_ORIGIN)
+	side_panel_x = int(config.get("side_panel_x", side_panel_x))
+	move_step_interval = float(config.get("move_step_interval", move_step_interval))
+	if move_step_interval <= 0.0:
+		move_step_interval = 0.18
+	stage_areas = _to_dictionary_array(config.get("areas", []))
+	area_links = _to_dictionary_array(config.get("area_links", []))
+	start_area_id = str(config.get("start_area", DEFAULT_AREA_ID))
+	if stage_areas.is_empty():
+		stage_areas.append({
+			"id": DEFAULT_AREA_ID,
+			"name": stage_title,
+			"layout": layout,
+		})
 	_build_stage()
 
 func _ready() -> void:
@@ -99,16 +127,36 @@ func _to_string_array(value: Variant) -> Array[String]:
 			result.append(str(item))
 	return result
 
+func _to_dictionary_array(value: Variant) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if value is Array:
+		for item in value:
+			if item is Dictionary:
+				result.append(item)
+	return result
+
+func _to_vector2(value: Variant, fallback: Vector2) -> Vector2:
+	if value is Vector2:
+		return value
+	if value is Vector2i:
+		return Vector2(value)
+	return fallback
+
 func _build_stage() -> void:
 	completed = false
 	return_in_progress = false
+	move_cooldown_seconds = 0.0
+	_scan_stage()
+	_rebuild_area_view("")
+
+func _rebuild_area_view(status_message: String) -> void:
 	_clear_children()
-	_scan_layout()
+	_apply_active_layout()
 	_build_background()
 	_build_labels()
 	_build_grid()
 	_build_player()
-	_refresh_status("")
+	_refresh_status(status_message)
 	_refresh_counter()
 
 func _clear_children() -> void:
@@ -117,23 +165,42 @@ func _clear_children() -> void:
 	for child in get_children():
 		child.queue_free()
 
-func _scan_layout() -> void:
+func _scan_stage() -> void:
+	area_layouts.clear()
+	area_names.clear()
+	area_spawns.clear()
 	collectible_positions.clear()
 	collected_positions.clear()
 	next_collectible_index = 0
 	spawn_grid_pos = Vector2i.ZERO
 	player_grid_pos = Vector2i.ZERO
-	for y in range(layout.size()):
-		var row := layout[y]
-		for x in range(row.length()):
-			var tile := row.substr(x, 1)
-			if tile == "P":
-				spawn_grid_pos = Vector2i(x, y)
-				player_grid_pos = spawn_grid_pos
-			elif tile == "C":
-				collectible_positions.append(Vector2i(x, y))
+	var fallback_area_id := DEFAULT_AREA_ID
+	for index in range(stage_areas.size()):
+		var area := stage_areas[index]
+		var area_id := str(area.get("id", "area_%d" % index))
+		if index == 0:
+			fallback_area_id = area_id
+		var area_layout := _to_string_array(area.get("layout", []))
+		area_layouts[area_id] = area_layout
+		area_names[area_id] = str(area.get("name", area_id))
+		for y in range(area_layout.size()):
+			var row := area_layout[y]
+			for x in range(row.length()):
+				var tile := row.substr(x, 1)
+				if tile == "P":
+					area_spawns[area_id] = Vector2i(x, y)
+				elif tile == "C":
+					collectible_positions.append(_make_position_ref(area_id, Vector2i(x, y)))
 	if required_collectibles <= 0:
 		required_collectibles = collectible_positions.size()
+	if not area_layouts.has(start_area_id):
+		start_area_id = fallback_area_id
+	active_area_id = start_area_id
+	spawn_grid_pos = area_spawns.get(active_area_id, Vector2i.ZERO)
+	player_grid_pos = spawn_grid_pos
+
+func _apply_active_layout() -> void:
+	layout = area_layouts.get(active_area_id, [])
 
 func _build_background() -> void:
 	var background := ColorRect.new()
@@ -167,53 +234,60 @@ func _build_labels() -> void:
 	add_child(objective_label)
 
 	counter_label = Label.new()
-	counter_label.position = Vector2(404, 112)
-	counter_label.size = Vector2(178, 26)
+	counter_label.position = Vector2(side_panel_x, 112)
+	counter_label.size = Vector2(596 - side_panel_x, 26)
 	counter_label.add_theme_font_size_override("font_size", 12)
 	add_child(counter_label)
 
 	status_label = Label.new()
-	status_label.position = Vector2(404, 148)
-	status_label.size = Vector2(178, 130)
+	status_label.position = Vector2(side_panel_x, 148)
+	status_label.size = Vector2(596 - side_panel_x, 130)
 	status_label.add_theme_font_size_override("font_size", 12)
 	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(status_label)
 
 	var controls_label := Label.new()
-	controls_label.position = Vector2(404, 282)
-	controls_label.size = Vector2(178, 42)
+	controls_label.position = Vector2(side_panel_x, 282)
+	controls_label.size = Vector2(596 - side_panel_x, 42)
 	controls_label.add_theme_font_size_override("font_size", 10)
 	controls_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	controls_label.text = "%s\n%s" % [controls_hint, goal_hint]
 	add_child(controls_label)
 
 	var legend_label := Label.new()
-	legend_label.position = Vector2(404, 318)
-	legend_label.size = Vector2(178, 24)
+	legend_label.position = Vector2(side_panel_x, 318)
+	legend_label.size = Vector2(596 - side_panel_x, 24)
 	legend_label.add_theme_font_size_override("font_size", 9)
 	legend_label.text = _get_legend_text()
 	add_child(legend_label)
 
 	return_button = Button.new()
-	return_button.position = Vector2(426, 342)
+	return_button.position = Vector2(side_panel_x + 22, 342)
 	return_button.size = Vector2(134, 34)
 	return_button.text = "Return"
 	return_button.visible = false
 	return_button.pressed.connect(_on_return_pressed)
 	add_child(return_button)
 
+	var area_label := Label.new()
+	area_label.position = Vector2(grid_origin.x, grid_origin.y - 20)
+	area_label.size = Vector2(side_panel_x - grid_origin.x - 12, 18)
+	area_label.add_theme_font_size_override("font_size", 10)
+	area_label.text = _get_active_area_name()
+	add_child(area_label)
+
 func _build_grid() -> void:
 	tile_container = Control.new()
 	tile_container.name = "TileGrid"
-	tile_container.position = GRID_ORIGIN
+	tile_container.position = grid_origin
 	add_child(tile_container)
 	for y in range(layout.size()):
 		var row := layout[y]
 		for x in range(row.length()):
 			var tile := row.substr(x, 1)
 			var tile_rect := ColorRect.new()
-			tile_rect.position = Vector2(x * TILE_SIZE, y * TILE_SIZE)
-			tile_rect.size = Vector2(TILE_SIZE - 2, TILE_SIZE - 2)
+			tile_rect.position = Vector2(x * tile_size, y * tile_size)
+			tile_rect.size = Vector2(tile_size - 2, tile_size - 2)
 			tile_rect.color = _get_tile_color(tile)
 			tile_container.add_child(tile_rect)
 			tile_rects[Vector2i(x, y)] = tile_rect
@@ -233,7 +307,7 @@ func _build_grid() -> void:
 func _build_player() -> void:
 	player_marker = ColorRect.new()
 	player_marker.name = "AdventurePlayer"
-	player_marker.size = Vector2(TILE_SIZE - 8, TILE_SIZE - 8)
+	player_marker.size = Vector2(tile_size - 8, tile_size - 8)
 	player_marker.color = player_color
 	tile_container.add_child(player_marker)
 	_add_optional_player_sprite()
@@ -269,7 +343,7 @@ func _add_optional_tile_sprite(tile: String, tile_position: Vector2) -> void:
 		return
 	var sprite := TextureRect.new()
 	sprite.position = tile_position
-	sprite.size = Vector2(TILE_SIZE - 2, TILE_SIZE - 2)
+	sprite.size = Vector2(tile_size - 2, tile_size - 2)
 	sprite.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	sprite.texture = texture
@@ -290,11 +364,13 @@ func _get_tile_color(tile: String) -> Color:
 		"N":
 			return Color(0.28, 0.28, 0.45, 1.0)
 		_:
+			if _get_area_link_for_tile(tile).size() > 0:
+				return Color(0.18, 0.42, 0.58, 1.0)
 			return floor_color
 
 func _get_tile_marker(tile: String, grid_pos: Vector2i) -> String:
 	if tile == "C":
-		var index := collectible_positions.find(grid_pos)
+		var index := collectible_positions.find(_make_position_ref(active_area_id, grid_pos))
 		if index >= 0:
 			if ordered_collectibles:
 				return str(index + 1)
@@ -307,30 +383,88 @@ func _get_tile_marker(tile: String, grid_pos: Vector2i) -> String:
 		return goal_marker
 	if tile == "G":
 		return goal_marker
+	var link := _get_area_link_for_tile(tile)
+	if link.size() > 0:
+		return str(link.get("label", tile))
 	return ""
 
-func _unhandled_input(event: InputEvent) -> void:
-	if completed or return_in_progress:
-		return
-	if event.is_action_pressed("move_up"):
-		_try_move(Vector2i(0, -1))
-	elif event.is_action_pressed("move_down"):
-		_try_move(Vector2i(0, 1))
-	elif event.is_action_pressed("move_left"):
-		_try_move(Vector2i(-1, 0))
-	elif event.is_action_pressed("move_right"):
-		_try_move(Vector2i(1, 0))
+func _get_active_area_name() -> String:
+	return str(area_names.get(active_area_id, active_area_id))
 
-func _try_move(direction: Vector2i) -> void:
+func _make_position_ref(area_id: String, grid_pos: Vector2i) -> String:
+	return "%s:%d,%d" % [area_id, grid_pos.x, grid_pos.y]
+
+func _parse_position_ref(position_ref: String) -> Dictionary:
+	var parts := position_ref.split(":", false, 1)
+	if parts.size() != 2:
+		return {"area_id": "", "position": Vector2i.ZERO}
+	var coords := parts[1].split(",", false, 1)
+	if coords.size() != 2:
+		return {"area_id": parts[0], "position": Vector2i.ZERO}
+	return {
+		"area_id": parts[0],
+		"position": Vector2i(int(coords[0]), int(coords[1])),
+	}
+
+func _get_area_link_for_tile(tile: String) -> Dictionary:
+	if tile.is_empty():
+		return {}
+	for link in area_links:
+		if str(link.get("from_area", "")) == active_area_id and str(link.get("marker", "")) == tile:
+			return link
+	return {}
+
+func _change_area(link: Dictionary) -> void:
+	var target_area_id := str(link.get("target_area", ""))
+	if target_area_id.is_empty() or not area_layouts.has(target_area_id):
+		_refresh_status("Passage signal missing.")
+		return
+	active_area_id = target_area_id
+	var fallback_spawn: Vector2i = area_spawns.get(active_area_id, Vector2i.ZERO)
+	spawn_grid_pos = _to_vector2i(link.get("target_spawn", fallback_spawn), fallback_spawn)
+	player_grid_pos = spawn_grid_pos
+	move_cooldown_seconds = move_step_interval
+	_rebuild_area_view("Entered %s." % _get_active_area_name())
+
+func _to_vector2i(value: Variant, fallback: Vector2i) -> Vector2i:
+	if value is Vector2i:
+		return value
+	if value is Vector2:
+		return Vector2i(int(value.x), int(value.y))
+	return fallback
+
+func _process(delta: float) -> void:
 	if completed or return_in_progress:
 		return
+	if move_cooldown_seconds > 0.0:
+		move_cooldown_seconds = maxf(0.0, move_cooldown_seconds - delta)
+		if move_cooldown_seconds > 0.0:
+			return
+	var direction := _get_input_direction()
+	if direction == Vector2i.ZERO:
+		return
+	var moved := _try_move(direction)
+	move_cooldown_seconds = move_step_interval if moved else move_step_interval * 0.5
+
+func _get_input_direction() -> Vector2i:
+	var input_vector := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	if input_vector == Vector2.ZERO:
+		return Vector2i.ZERO
+	if absf(input_vector.x) >= absf(input_vector.y):
+		return Vector2i(1 if input_vector.x > 0.0 else -1, 0)
+	return Vector2i(0, 1 if input_vector.y > 0.0 else -1)
+
+func _try_move(direction: Vector2i) -> bool:
+	if completed or return_in_progress:
+		return false
 	var next_pos := player_grid_pos + direction
 	if _is_wall(next_pos):
 		_refresh_status("Blocked.")
-		return
+		return false
 	player_grid_pos = next_pos
 	_update_player_marker()
 	_handle_tile(_get_tile_at(player_grid_pos))
+	return true
 
 func _is_wall(grid_pos: Vector2i) -> bool:
 	return _get_tile_at(grid_pos) == "#"
@@ -344,6 +478,10 @@ func _get_tile_at(grid_pos: Vector2i) -> String:
 	return row.substr(grid_pos.x, 1)
 
 func _handle_tile(tile: String) -> void:
+	var link := _get_area_link_for_tile(tile)
+	if link.size() > 0:
+		_change_area(link)
+		return
 	if tile == "H":
 		_reset_player(_format_lines(hazard_lines))
 		return
@@ -354,13 +492,14 @@ func _handle_tile(tile: String) -> void:
 		_try_complete()
 
 func _try_collect(grid_pos: Vector2i) -> void:
-	if collected_positions.has(grid_pos):
+	var position_ref := _make_position_ref(active_area_id, grid_pos)
+	if collected_positions.has(position_ref):
 		return
-	var collectible_index := collectible_positions.find(grid_pos)
+	var collectible_index := collectible_positions.find(position_ref)
 	if ordered_collectibles and collectible_index != next_collectible_index:
 		_handle_wrong_order()
 		return
-	collected_positions.append(grid_pos)
+	collected_positions.append(position_ref)
 	next_collectible_index += 1
 	_refresh_tile_state(grid_pos)
 	_refresh_counter()
@@ -378,8 +517,11 @@ func _handle_wrong_order() -> void:
 		collected_positions.clear()
 		next_collectible_index = 0
 		_refresh_counter()
-		for position in reset_positions:
-			_refresh_tile_state(position)
+		for position_ref in reset_positions:
+			var parsed_position := _parse_position_ref(str(position_ref))
+			if str(parsed_position.get("area_id", "")) == active_area_id:
+				var reset_position := _to_vector2i(parsed_position.get("position", Vector2i.ZERO))
+				_refresh_tile_state(reset_position)
 	_reset_player(_format_lines(wrong_order_lines))
 
 func _try_complete() -> void:
@@ -401,7 +543,7 @@ func _reset_player(message: String) -> void:
 func _update_player_marker() -> void:
 	if player_marker == null:
 		return
-	player_marker.position = Vector2(player_grid_pos.x * TILE_SIZE + 4, player_grid_pos.y * TILE_SIZE + 4)
+	player_marker.position = Vector2(player_grid_pos.x * tile_size + 4, player_grid_pos.y * tile_size + 4)
 
 func _refresh_counter() -> void:
 	if counter_label:
@@ -416,7 +558,8 @@ func _refresh_tile_state(grid_pos: Vector2i) -> void:
 	var tile_rect: ColorRect = tile_rects.get(grid_pos, null)
 	if tile_rect == null:
 		return
-	if tile == "C" and collected_positions.has(grid_pos):
+	var position_ref := _make_position_ref(active_area_id, grid_pos)
+	if tile == "C" and collected_positions.has(position_ref):
 		tile_rect.color = floor_color.lightened(0.18)
 		var marker: Label = tile_markers.get(grid_pos, null)
 		if marker:
