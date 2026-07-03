@@ -27,9 +27,13 @@ func _ready() -> void:
 	_apply_spawn_position()
 	_on_prompt_changed("")
 	_refresh_truth_filter_state()
+	call_deferred("_maybe_start_conscience_encounter")
 
 func can_open_pause_menu() -> bool:
 	return not _dialogue_is_active() and not ConscienceEncounterDirector.is_encounter_active()
+
+func _maybe_start_conscience_encounter() -> void:
+	ConscienceEncounterDirector.maybe_start_encounter(self, "after_truth_filter")
 
 func _apply_spawn_position() -> void:
 	var spawn_id := GameState.consume_pending_spawn_id()

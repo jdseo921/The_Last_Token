@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <defs>
+    <radialGradient id="rupt7" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#e0459e" stop-opacity="0.5"/>
+      <stop offset="60%" stop-color="#7a2ea0" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#7a2ea0" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="360" fill="#120826"/>
+  <rect y="286" width="640" height="74" fill="#0b0418"/>
+  <circle cx="320" cy="165" r="300" fill="url(#rupt7)"/>
+  <!-- machine tendrils (cyan) reaching a warm mote -->
+  <path d="M40 152 Q180 150 300 178" fill="none" stroke="#3fd0d8" stroke-width="3" opacity="0.5"/>
+  <path d="M600 152 Q460 150 344 178" fill="none" stroke="#3fd0d8" stroke-width="3" opacity="0.5"/>
+  <!-- the ??? self, offset left -->
+  <g>
+    <circle cx="300" cy="150" r="30" fill="#7a2060"/>
+    <path d="M262 288 Q260 200 300 190 Q322 195 330 220 L318 288 Z" fill="#7a2060"/>
+    <path d="M300 122 a30 30 0 0 1 26 16 l-22 10 Z" fill="#3fd0d8" opacity="0.75"/>
+  </g>
+  <!-- the him self, offset right -->
+  <g>
+    <circle cx="342" cy="150" r="30" fill="#2a1a52"/>
+    <path d="M320 288 L322 220 Q330 196 352 192 Q384 202 382 288 Z" fill="#2a1a52"/>
+    <path d="M342 122 a30 30 0 0 1 26 16 l-22 10 Z" fill="#e59a3c" opacity="0.6"/>
+  </g>
+  <!-- jagged split line -->
+  <path d="M322 116 L312 158 L326 194 L314 234 L328 284" fill="none" stroke="#ff4d6d" stroke-width="4" opacity="0.9"/>
+  <!-- the memory mote being drawn away -->
+  <circle cx="322" cy="178" r="16" fill="#ffcf6b" opacity="0.45"/>
+  <circle cx="322" cy="178" r="7" fill="#fff3cf"/>
+</svg>

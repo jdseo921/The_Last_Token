@@ -34,6 +34,7 @@
       [
         {"speaker": "Mr. Byte", "text": "Truth Filter passed.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_stable.png"},
         {"speaker": "Mr. Byte", "text": "Lie density reduced."},
+        {"speaker": "Mr. Byte", "text": "Note: a correct answer is not the same as a settled one."},
         {"speaker": "Mr. Byte", "text": "Identity conflict remains.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_error.png"},
         {"speaker": "Mr. Byte", "text": "Emotion registered as heat with no source."},
         {"speaker": "Mr. Byte", "text": "Further stabilization required."}
@@ -45,7 +46,8 @@
         {"speaker": "Mr. Byte", "text": "Staff schedule damaged but readable."},
         {"speaker": "Mr. Byte", "text": "Read the schedule near this kiosk."},
         {"speaker": "Mr. Byte", "text": "Records retain assignment."},
-        {"speaker": "Mr. Byte", "text": "Name field remains protected."}
+        {"speaker": "Mr. Byte", "text": "Name field remains protected."},
+        {"speaker": "Mr. Byte", "text": "Protection lifts when the signal reads clean."}
       ],
       [
         {"speaker": "Mr. Byte", "text": "Final night records are waking.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_error.png"},

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <defs>
+    <radialGradient id="harsh6" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#ff5a7a" stop-opacity="0.5"/>
+      <stop offset="60%" stop-color="#c02850" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#c02850" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="360" fill="#100626"/>
+  <rect y="286" width="640" height="74" fill="#0a0418"/>
+  <circle cx="320" cy="140" r="290" fill="url(#harsh6)"/>
+  <!-- big cabinet -->
+  <rect x="176" y="28" width="288" height="232" rx="16" fill="#181038" stroke="#31245e" stroke-width="5"/>
+  <rect x="202" y="52" width="236" height="150" rx="8" fill="#12071c" stroke="#40203a" stroke-width="4"/>
+  <!-- score line climbing, then flatline crash -->
+  <polyline points="212,150 236,120 258,138 282,92 306,140 330,104 352,150" fill="none" stroke="#3fd0d8" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M352 150 L430 150" fill="none" stroke="#ff4d6d" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="352" cy="150" r="5" fill="#ff4d6d"/>
+  <rect x="214" y="216" width="212" height="14" rx="6" fill="#31245e"/>
+  <!-- small bowed figure before it -->
+  <circle cx="320" cy="248" r="15" fill="#0c0620"/>
+  <path d="M320 233 a15 15 0 0 1 13 8 l-11 6 Z" fill="#ff5a7a" opacity="0.4"/>
+  <path d="M305 300 Q303 262 320 258 Q337 262 335 300 Z" fill="#0c0620"/>
+</svg>

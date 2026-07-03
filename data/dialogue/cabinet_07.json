@@ -19,6 +19,9 @@
       [
         {"speaker": "Cabinet 07", "text": "TOKEN RECOVERED.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_stable.png"},
         {"speaker": "Cabinet 07", "text": "SIGNAL RECOGNITION IMPROVED."},
+        {"speaker": "Cabinet 07", "text": "ONE WIN LOGGED."},
+        {"speaker": "Cabinet 07", "text": "ONE WIN DOES NOT COMPLETE A PLAYER."},
+        {"speaker": "Cabinet 07", "text": "IDENTITY: STILL MISSING."},
         {"speaker": "Cabinet 07", "text": "DUEL RESULT VERIFIED OLD TOKEN MATCH."},
         {"speaker": "Cabinet 07", "text": "RETURN TO MIRA."}
       ],

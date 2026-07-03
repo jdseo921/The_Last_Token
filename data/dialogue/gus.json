@@ -18,8 +18,11 @@
       [
         {"speaker": "Gus", "text": "Pixel Haven used to have more staff.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
         {"speaker": "Gus", "text": "Then the schedule started looking like a ransom note."},
+        {"speaker": "Gus", "text": "The one who ran the place built half these cabinets by hand."},
+        {"speaker": "Gus", "text": "Paid the light bill late so the games could stay a quarter cheaper."},
         {"speaker": "Gus", "text": "Old staff. Old machines. Same floor stains."},
         {"speaker": "Gus", "text": "Somehow I am still the one with a mop."},
+        {"speaker": "Gus", "text": "Some names you do not say until the person is ready to hear them."},
         {"speaker": "Gus", "text": "Mira is at the counter if you need actual direction."}
       ]
     ],

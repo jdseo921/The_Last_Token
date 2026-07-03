@@ -20,6 +20,8 @@
         {"speaker": "Vendo", "text": "Previous sessions left residue in slot B."},
         {"speaker": "Vendo", "text": "Mostly dust. Some regret. One gum wrapper with leadership potential."},
         {"speaker": "Vendo", "text": "Old staff used to buy grape soda after closing.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
+        {"speaker": "Vendo", "text": "One of them wired me to remember faces instead of coins."},
+        {"speaker": "Vendo", "text": "Terrible for margins. He never seemed to care about margins."},
         {"speaker": "Vendo", "text": "Now the grape soda buys time by pretending not to remember them."},
         {"speaker": "Vendo", "text": "Questionable customer service remains available."},
         {"speaker": "Vendo", "text": "For non-carbonated answers, consult Mira at the counter."}

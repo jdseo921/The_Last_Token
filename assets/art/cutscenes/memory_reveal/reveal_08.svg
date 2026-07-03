@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <rect width="640" height="360" fill="#0c0a22"/>
+  <rect y="290" width="640" height="70" fill="#07061a"/>
+  <!-- distant cabinets that still remember -->
+  <g stroke="#241d50" stroke-width="3" fill="#140f34">
+    <rect x="30" y="150" width="70" height="112" rx="8"/>
+    <rect x="120" y="156" width="64" height="106" rx="8"/>
+    <rect x="456" y="156" width="64" height="106" rx="8"/>
+    <rect x="540" y="150" width="70" height="112" rx="8"/>
+  </g>
+  <g>
+    <rect x="42" y="164" width="46" height="34" rx="4" fill="#c78a3a" opacity="0.8"/>
+    <rect x="132" y="170" width="40" height="32" rx="4" fill="#2f9aa4" opacity="0.8"/>
+    <rect x="466" y="170" width="40" height="32" rx="4" fill="#2f9aa4" opacity="0.8"/>
+    <rect x="552" y="164" width="46" height="34" rx="4" fill="#c78a3a" opacity="0.8"/>
+  </g>
+  <!-- small faded figure, no warm rim -->
+  <circle cx="320" cy="214" r="16" fill="#3a3a52"/>
+  <path d="M302 288 Q300 230 320 226 Q340 230 338 288 Z" fill="#3a3a52"/>
+  <!-- blank scratched nameplate above him -->
+  <rect x="292" y="166" width="56" height="18" rx="3" fill="#161430" stroke="#2a2850" stroke-width="2"/>
+  <g stroke="#4a4870" stroke-width="2" opacity="0.7">
+    <line x1="300" y1="175" x2="312" y2="175"/>
+    <line x1="318" y1="175" x2="326" y2="175"/>
+    <line x1="332" y1="175" x2="340" y2="175"/>
+  </g>
+</svg>

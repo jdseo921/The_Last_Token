@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <defs>
+    <radialGradient id="warm1" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#ffcf6b" stop-opacity="0.85"/>
+      <stop offset="45%" stop-color="#f2953a" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#f2953a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- base -->
+  <rect width="640" height="360" fill="#140a2e"/>
+  <rect y="270" width="640" height="90" fill="#0c0620"/>
+  <!-- warm glow -->
+  <circle cx="430" cy="175" r="200" fill="url(#warm1)"/>
+  <!-- cabinet being built -->
+  <g>
+    <rect x="452" y="78" width="150" height="214" rx="14" fill="#1d1444"/>
+    <rect x="452" y="78" width="150" height="214" rx="14" fill="none" stroke="#3a2a6e" stroke-width="5"/>
+    <rect x="470" y="98" width="114" height="82" rx="8" fill="#ffb84d"/>
+    <rect x="470" y="98" width="114" height="82" rx="8" fill="none" stroke="#ffe3a3" stroke-width="4"/>
+    <rect x="484" y="200" width="86" height="14" rx="7" fill="#3a2a6e"/>
+    <rect x="484" y="226" width="86" height="10" rx="5" fill="#2a1c56"/>
+  </g>
+  <!-- workbench -->
+  <rect x="70" y="250" width="330" height="20" rx="6" fill="#241653"/>
+  <rect x="96" y="270" width="16" height="70" fill="#1a1140"/>
+  <rect x="356" y="270" width="16" height="70" fill="#1a1140"/>
+  <!-- the maker, hunched, focused -->
+  <g>
+    <!-- stool -->
+    <rect x="150" y="250" width="14" height="66" fill="#160e36"/>
+    <!-- torso leaning toward the work -->
+    <path d="M150 252 Q150 190 196 176 L236 208 Q214 250 208 252 Z" fill="#2a1a52"/>
+    <path d="M196 176 Q214 184 236 208 L224 214 Q206 190 190 186 Z" fill="#e59a3c"/>
+    <!-- head -->
+    <circle cx="196" cy="158" r="26" fill="#2a1a52"/>
+    <path d="M196 132 a26 26 0 0 1 24 16 l-20 8 Z" fill="#e59a3c"/>
+    <!-- arm reaching to the spark -->
+    <path d="M214 208 Q300 214 372 206" fill="none" stroke="#2a1a52" stroke-width="20" stroke-linecap="round"/>
+    <path d="M214 206 Q300 210 370 202" fill="none" stroke="#e59a3c" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <!-- solder spark -->
+  <g>
+    <circle cx="392" cy="202" r="26" fill="#ffcf6b" opacity="0.5"/>
+    <path d="M392 182 L398 198 L414 202 L398 206 L392 222 L386 206 L370 202 L386 198 Z" fill="#fff3cf"/>
+  </g>
+</svg>

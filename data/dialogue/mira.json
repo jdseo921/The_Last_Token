@@ -5,18 +5,25 @@
       [
         {"speaker": "Mira", "text": "You made it back.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
         {"speaker": "Mira", "text": "I was afraid the door had forgotten you for good.", "portrait": "res://assets/art/portraits/mira/mira_afraid.png"},
+        {"speaker": "Player", "text": "I know this place."},
+        {"speaker": "Player", "text": "I do not know why I know this place."},
         {"speaker": "Player", "text": "Do I know you?"},
         {"speaker": "Mira", "text": "Yes."},
         {"speaker": "Mira", "text": "But not in a way I can explain all at once."},
         {"speaker": "Player", "text": "That is not comforting."},
-        {"speaker": "Mira", "text": "I know. I am trying to keep it gentle.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"}
+        {"speaker": "Mira", "text": "I know. I am trying to keep it gentle.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
+        {"speaker": "Mira", "text": "The room has to remember you before I am allowed to."},
+        {"speaker": "Mira", "text": "If I say too much too soon, it will not hold."}
       ]
     ],
     "lost_token_quest_instruction": [
       [
-        {"speaker": "Mira", "text": "Cabinet 07 has your Lost Token."},
-        {"speaker": "Mira", "text": "Go to the cabinet row."},
-        {"speaker": "Mira", "text": "Bring the token back to me."}
+        {"speaker": "Mira", "text": "Cabinet 07 has been holding your Lost Token."},
+        {"speaker": "Mira", "text": "It kept it the way this place keeps everything."},
+        {"speaker": "Mira", "text": "A little too long, and a little too tightly."},
+        {"speaker": "Mira", "text": "Go to Cabinet Row. Win it back from the machine."},
+        {"speaker": "Mira", "text": "Then bring it to me."},
+        {"speaker": "Mira", "text": "I would like to watch you hold something that is yours."}
       ]
     ],
     "lost_token_active_repeat": [

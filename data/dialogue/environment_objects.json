@@ -9,6 +9,7 @@
     "ticket_counter_grounded": [
       [
         {"speaker": "Narrator", "text": "The ticket counter glass reflects old prize lights."},
+        {"speaker": "Narrator", "text": "The prize rates are still taped up, crossed out and lowered twice."},
         {"speaker": "Narrator", "text": "A strip of tickets curls like it was dropped mid-shift."}
       ]
     ],
@@ -39,20 +40,32 @@
     ],
     "owner_portrait_grounded": [
       [
-        {"speaker": "Owner Portrait", "text": "A dusty portrait hangs above the arcade floor."},
+        {"speaker": "Owner Portrait", "text": "A dusty portrait hangs above the arcade floor, angled like it used to watch the door."},
+        {"speaker": "Owner Portrait", "text": "The figure wears a staff shirt, not an owner's suit."},
+        {"speaker": "Owner Portrait", "text": "The name patch has been worn blank."},
+        {"speaker": "Owner Portrait", "text": "A faded sticker on the frame reads: LAST ONE OUT LOCKS UP."},
         {"speaker": "Owner Portrait", "text": "The nameplate is scratched beyond reading."}
+      ]
+    ],
+    "owner_portrait_uneasy": [
+      [
+        {"speaker": "Owner Portrait", "text": "The scratched nameplate catches the light differently now."},
+        {"speaker": "Owner Portrait", "text": "Something under the scratches is trying to surface."},
+        {"speaker": "Owner Portrait", "text": "Not yet. The signal is still too faint to hold a name."}
       ]
     ],
     "owner_portrait_fractured": [
       [
         {"speaker": "Owner Portrait", "text": "The scratches look less random now."},
-        {"speaker": "Owner Portrait", "text": "Two marks seem to repeat: 0 and 4."}
+        {"speaker": "Owner Portrait", "text": "Two marks seem to repeat: 0 and 4."},
+        {"speaker": "Owner Portrait", "text": "Someone scratched at the name like they could not stand to be the one in the frame."}
       ]
     ],
     "owner_portrait_overloaded": [
       [
         {"speaker": "Owner Portrait", "text": "The portrait seems to be looking at the Staff Door."},
-        {"speaker": "Owner Portrait", "text": "The nameplate clicks softly in its frame."}
+        {"speaker": "Owner Portrait", "text": "The eyes look tired in a way cheap paint should not be able to hold."},
+        {"speaker": "Owner Portrait", "text": "The nameplate clicks softly in its frame, like it wants to be read and dreads it."}
       ]
     ],
     "owner_portrait_restored": [

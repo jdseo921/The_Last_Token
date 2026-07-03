@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <defs>
+    <linearGradient id="door5" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3a5a86"/>
+      <stop offset="100%" stop-color="#20304e"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" fill="#0c1330"/>
+  <rect y="290" width="640" height="70" fill="#070c20"/>
+  <!-- dark cabinets behind (unlit) -->
+  <g fill="#141a3a" stroke="#1e2650" stroke-width="3">
+    <rect x="36" y="150" width="82" height="122" rx="8"/>
+    <rect x="150" y="150" width="82" height="122" rx="8"/>
+  </g>
+  <g fill="#101636"><rect x="52" y="164" width="52" height="40" rx="4"/><rect x="166" y="164" width="52" height="40" rx="4"/></g>
+  <!-- exit door with faint outside light -->
+  <rect x="470" y="96" width="150" height="200" rx="6" fill="url(#door5)"/>
+  <rect x="470" y="96" width="150" height="200" rx="6" fill="none" stroke="#4a6a96" stroke-width="4"/>
+  <rect x="492" y="120" width="48" height="152" fill="#6f8fbe" opacity="0.4"/>
+  <!-- exit sign -->
+  <rect x="510" y="68" width="70" height="20" rx="4" fill="#12301f"/>
+  <rect x="516" y="73" width="58" height="10" rx="2" fill="#3fd07a" opacity="0.85"/>
+  <!-- figure with key at the threshold -->
+  <circle cx="386" cy="176" r="17" fill="#141c42"/>
+  <path d="M386 160 a17 17 0 0 1 14 9 l-12 7 Z" fill="#6f8fbe" opacity="0.6"/>
+  <path d="M366 268 Q364 214 386 208 Q410 214 408 268 Z" fill="#141c42"/>
+  <path d="M402 224 Q430 220 452 214" fill="none" stroke="#141c42" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="458" cy="212" r="7" fill="#ffd27a"/>
+  <rect x="458" y="209" width="13" height="6" rx="1" fill="#ffd27a"/>
+</svg>

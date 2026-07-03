@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1060" height="790" viewBox="0 0 1060 790" font-family="Arial, Helvetica, sans-serif">
+  <rect width="1060" height="790" fill="#0e0a20"/>
+  <text x="40" y="40" font-size="24" font-weight="bold" fill="#ffcf6b">PIXEL HAVEN — Rough Floor Plan</text>
+  <text x="40" y="60" font-size="12" fill="#8f9ec0">Structure-first layout (FNAF-1 style): central hub · front-of-house public loop · gated back-of-house. Visuals/NPCs dressed later.</text>
+
+  <!-- ============ CONNECTIONS (drawn behind boxes) ============ -->
+  <g stroke="#4a6a96" stroke-width="3" fill="none">
+    <line x1="530" y1="150" x2="530" y2="180"/>            <!-- FrontEntrance-Hub -->
+    <line x1="192" y1="223" x2="232" y2="223"/>            <!-- Restrooms-Party -->
+    <line x1="428" y1="223" x2="432" y2="223"/>            <!-- Party-Hub -->
+    <line x1="628" y1="223" x2="632" y2="223"/>            <!-- Hub-CabinetRow -->
+    <line x1="330" y1="266" x2="330" y2="300"/>            <!-- Party-Prize -->
+    <line x1="730" y1="266" x2="730" y2="300"/>            <!-- CabinetRow-Snack -->
+    <line x1="428" y1="343" x2="632" y2="343"/>            <!-- Prize-Snack (loop bottom) -->
+  </g>
+  <g stroke="#8a4a6a" stroke-width="3" fill="none">
+    <line x1="628" y1="471" x2="632" y2="471"/>            <!-- Maintenance-Workshop -->
+    <line x1="628" y1="591" x2="632" y2="591"/>            <!-- StaffCorridor-MemoryCore -->
+  </g>
+
+  <!-- ============ GATES (red dashed) ============ -->
+  <g stroke="#ff5a6a" stroke-width="3" stroke-dasharray="7 6" fill="none">
+    <line x1="530" y1="266" x2="530" y2="428"/>           <!-- Hub -> Maintenance -->
+    <line x1="530" y1="514" x2="530" y2="548"/>           <!-- Maintenance -> StaffCorridor -->
+    <line x1="530" y1="634" x2="530" y2="668"/>           <!-- StaffCorridor -> StaffRoom -->
+  </g>
+  <!-- back-of-house divider -->
+  <line x1="150" y1="404" x2="828" y2="404" stroke="#ff5a6a" stroke-width="1.5" stroke-dasharray="3 5" opacity="0.5"/>
+  <text x="150" y="398" font-size="12" font-weight="bold" fill="#ff7a86">▼ BACK OF HOUSE — staff only, progressively gated</text>
+  <g font-size="10.5" fill="#ff9aa4">
+    <text x="332" y="300">gate: circuit_soda_completed</text>
+    <text x="540" y="536">gate: staff_corridor_unlocked</text>
+    <text x="540" y="656">gate: memory_echo_completed</text>
+  </g>
+
+  <!-- ============ ROOM BOXES ============ -->
+  <!-- helper style: front = indigo #1e2a4a / steel; back = plum #2a1830 / magenta; NEW = amber border -->
+
+  <!-- Front Entrance (NEW) -->
+  <g>
+    <rect x="432" y="64" width="196" height="86" rx="10" fill="#1e2a4a" stroke="#f2a640" stroke-width="2.5"/>
+    <rect x="580" y="70" width="42" height="18" rx="4" fill="#f2a640"/>
+    <text x="601" y="83" font-size="11" font-weight="bold" fill="#241400" text-anchor="middle">NEW</text>
+    <text x="530" y="92" font-size="15" font-weight="bold" fill="#eef0fb" text-anchor="middle">FRONT ENTRANCE</text>
+    <text x="530" y="114" font-size="10.5" fill="#9fb0d0" text-anchor="middle">wake point · locked exit</text>
+    <text x="530" y="130" font-size="10.5" fill="#9fb0d0" text-anchor="middle">arcade history · closing notice</text>
+  </g>
+
+  <!-- Restrooms (NEW, small) -->
+  <g>
+    <rect x="40" y="180" width="152" height="86" rx="10" fill="#1e2a4a" stroke="#f2a640" stroke-width="2.5"/>
+    <rect x="146" y="186" width="42" height="18" rx="4" fill="#f2a640"/>
+    <text x="167" y="199" font-size="11" font-weight="bold" fill="#241400" text-anchor="middle">NEW</text>
+    <text x="116" y="208" font-size="14" font-weight="bold" fill="#eef0fb" text-anchor="middle">RESTROOMS</text>
+    <text x="116" y="230" font-size="10.5" fill="#9fb0d0" text-anchor="middle">mirror foreshadow</text>
+    <text x="116" y="246" font-size="10.5" fill="#9fb0d0" text-anchor="middle">(two signals) · secret</text>
+  </g>
+
+  <!-- Party Room (NEW) -->
+  <g>
+    <rect x="232" y="180" width="196" height="86" rx="10" fill="#1e2a4a" stroke="#f2a640" stroke-width="2.5"/>
+    <rect x="380" y="186" width="42" height="18" rx="4" fill="#f2a640"/>
+    <text x="401" y="199" font-size="11" font-weight="bold" fill="#241400" text-anchor="middle">NEW</text>
+    <text x="330" y="208" font-size="15" font-weight="bold" fill="#eef0fb" text-anchor="middle">PARTY ROOM</text>
+    <text x="330" y="230" font-size="10.5" fill="#9fb0d0" text-anchor="middle">community photos · lore</text>
+    <text x="330" y="246" font-size="10.5" fill="#9fb0d0" text-anchor="middle">birthday high-score (opt)</text>
+  </g>
+
+  <!-- Arcade Hub (central, highlighted) -->
+  <g>
+    <rect x="432" y="180" width="196" height="86" rx="10" fill="#26325a" stroke="#7fd0d8" stroke-width="3.5"/>
+    <text x="530" y="206" font-size="16" font-weight="bold" fill="#bff0f3" text-anchor="middle">★ ARCADE HUB</text>
+    <text x="530" y="228" font-size="10.5" fill="#b9c8e6" text-anchor="middle">Mira · Rockbyte Duel</text>
+    <text x="530" y="244" font-size="10.5" fill="#b9c8e6" text-anchor="middle">owner portrait · central anchor</text>
+  </g>
+
+  <!-- Cabinet Row -->
+  <g>
+    <rect x="632" y="180" width="196" height="86" rx="10" fill="#1e2a4a" stroke="#4a6a96" stroke-width="2.5"/>
+    <text x="730" y="206" font-size="15" font-weight="bold" fill="#eef0fb" text-anchor="middle">CABINET ROW</text>
+    <text x="730" y="228" font-size="10.5" fill="#9fb0d0" text-anchor="middle">Truth Filter · Mr. Byte</text>
+    <text x="730" y="244" font-size="10.5" fill="#9fb0d0" text-anchor="middle">Broken High Score · records</text>
+  </g>
+
+  <!-- Prize Corner -->
+  <g>
+    <rect x="232" y="300" width="196" height="86" rx="10" fill="#1e2a4a" stroke="#4a6a96" stroke-width="2.5"/>
+    <text x="330" y="326" font-size="15" font-weight="bold" fill="#eef0fb" text-anchor="middle">PRIZE CORNER</text>
+    <text x="330" y="348" font-size="10.5" fill="#9fb0d0" text-anchor="middle">Prize Sort · Pip</text>
+    <text x="330" y="364" font-size="10.5" fill="#9fb0d0" text-anchor="middle">blank badge · secret</text>
+  </g>
+
+  <!-- Snack Alcove -->
+  <g>
+    <rect x="632" y="300" width="196" height="86" rx="10" fill="#1e2a4a" stroke="#4a6a96" stroke-width="2.5"/>
+    <text x="730" y="326" font-size="15" font-weight="bold" fill="#eef0fb" text-anchor="middle">SNACK ALCOVE</text>
+    <text x="730" y="348" font-size="10.5" fill="#9fb0d0" text-anchor="middle">Circuit Soda · Vendo</text>
+    <text x="730" y="364" font-size="10.5" fill="#9fb0d0" text-anchor="middle">old-staff lore · breather</text>
+  </g>
+
+  <!-- Maintenance Hall -->
+  <g>
+    <rect x="432" y="428" width="196" height="86" rx="10" fill="#2a1830" stroke="#6a3050" stroke-width="2.5"/>
+    <text x="530" y="454" font-size="15" font-weight="bold" fill="#f3e0ec" text-anchor="middle">MAINTENANCE HALL</text>
+    <text x="530" y="476" font-size="10.5" fill="#c99ab4" text-anchor="middle">Static Run · Sync Door · Gus</text>
+    <text x="530" y="492" font-size="10.5" fill="#c99ab4" text-anchor="middle">maintenance note</text>
+  </g>
+
+  <!-- Workshop (NEW) -->
+  <g>
+    <rect x="632" y="428" width="196" height="86" rx="10" fill="#2a1830" stroke="#f2a640" stroke-width="2.5"/>
+    <rect x="780" y="434" width="42" height="18" rx="4" fill="#f2a640"/>
+    <text x="801" y="447" font-size="11" font-weight="bold" fill="#241400" text-anchor="middle">NEW</text>
+    <text x="730" y="454" font-size="15" font-weight="bold" fill="#f3e0ec" text-anchor="middle">WORKSHOP</text>
+    <text x="730" y="476" font-size="10.5" fill="#c99ab4" text-anchor="middle">maker's workbench</text>
+    <text x="730" y="492" font-size="10.5" fill="#c99ab4" text-anchor="middle">prototype game (opt)</text>
+  </g>
+
+  <!-- Staff Corridor -->
+  <g>
+    <rect x="432" y="548" width="196" height="86" rx="10" fill="#2a1830" stroke="#6a3050" stroke-width="2.5"/>
+    <text x="530" y="574" font-size="15" font-weight="bold" fill="#f3e0ec" text-anchor="middle">STAFF CORRIDOR</text>
+    <text x="530" y="596" font-size="10.5" fill="#c99ab4" text-anchor="middle">Security Tape · Final Night</text>
+    <text x="530" y="612" font-size="10.5" fill="#c99ab4" text-anchor="middle">staff records</text>
+  </g>
+
+  <!-- Memory Core (NEW) -->
+  <g>
+    <rect x="632" y="548" width="196" height="86" rx="10" fill="#2a1830" stroke="#f2a640" stroke-width="2.5"/>
+    <rect x="780" y="554" width="42" height="18" rx="4" fill="#f2a640"/>
+    <text x="801" y="567" font-size="11" font-weight="bold" fill="#241400" text-anchor="middle">NEW</text>
+    <text x="730" y="574" font-size="15" font-weight="bold" fill="#f3e0ec" text-anchor="middle">MEMORY CORE</text>
+    <text x="730" y="596" font-size="10.5" fill="#c99ab4" text-anchor="middle">memory banks · late lore</text>
+    <text x="730" y="612" font-size="10.5" fill="#c99ab4" text-anchor="middle">the saved memories</text>
+  </g>
+
+  <!-- Staff Room (climax) -->
+  <g>
+    <rect x="432" y="668" width="196" height="86" rx="10" fill="#3a1030" stroke="#e0459e" stroke-width="3.5"/>
+    <text x="530" y="694" font-size="15" font-weight="bold" fill="#ffc7e6" text-anchor="middle">★ STAFF ROOM</text>
+    <text x="530" y="716" font-size="10.5" fill="#e6a8cc" text-anchor="middle">THE REVEAL · self-conflict</text>
+    <text x="530" y="732" font-size="10.5" fill="#e6a8cc" text-anchor="middle">climax</text>
+  </g>
+
+  <!-- ============ LEGEND ============ -->
+  <g>
+    <rect x="856" y="180" width="176" height="200" rx="10" fill="#141024" stroke="#2a2444" stroke-width="1.5"/>
+    <text x="872" y="206" font-size="13" font-weight="bold" fill="#ffcf6b">LEGEND</text>
+    <rect x="872" y="222" width="26" height="16" rx="4" fill="#1e2a4a" stroke="#4a6a96" stroke-width="2"/>
+    <text x="908" y="235" font-size="11" fill="#c8d2ea">front of house</text>
+    <rect x="872" y="248" width="26" height="16" rx="4" fill="#2a1830" stroke="#6a3050" stroke-width="2"/>
+    <text x="908" y="261" font-size="11" fill="#c8d2ea">back of house</text>
+    <rect x="872" y="274" width="26" height="16" rx="4" fill="#1e2a4a" stroke="#f2a640" stroke-width="2.5"/>
+    <text x="908" y="287" font-size="11" fill="#c8d2ea">NEW room</text>
+    <line x1="872" y1="308" x2="898" y2="308" stroke="#4a6a96" stroke-width="3"/>
+    <text x="908" y="312" font-size="11" fill="#c8d2ea">walk-through</text>
+    <line x1="872" y1="330" x2="898" y2="330" stroke="#ff5a6a" stroke-width="3" stroke-dasharray="6 5"/>
+    <text x="908" y="334" font-size="11" fill="#c8d2ea">story gate</text>
+    <text x="872" y="360" font-size="10" fill="#8f9ec0">★ = key story room</text>
+  </g>
+
+  <text x="40" y="778" font-size="10.5" fill="#6f7ba0">Front loop: Hub → Cabinet Row → Snack Alcove → Prize Corner → Party Room → Hub  (no dead-ends). Snack entry keeps its lying_cabinets gate.</text>
+</svg>
