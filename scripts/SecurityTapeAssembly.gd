@@ -32,18 +32,25 @@ const STATIC_OVERLAY_ART_PATH := "res://assets/art/minigames/security_tape/tape_
 @onready var fragment_d: Button = $Panel/Fragments/FragmentD
 
 var selected_fragments: Array[String] = []
+var display_fragments: Array = []
 var fragment_buttons: Array[Button] = []
 var feedback_flash: ColorRect = null
 
 func _ready() -> void:
 	AudioManager.play_music_for_context("security_tape_assembly")
+	ArcadeScreen.apply(self, "res://assets/art/minigames/security_tape/backgrounds/security_tape_screen.svg")
 	GameState.start_security_tape_assembly()
 	_apply_optional_art_hooks()
 	_setup_feedback_flash()
 	fragment_buttons = [fragment_a, fragment_b, fragment_c, fragment_d]
+	display_fragments = FRAGMENTS.duplicate()
+	randomize()
+	display_fragments.shuffle()
+	while display_fragments == FRAGMENTS:
+		display_fragments.shuffle()
 	for index in range(fragment_buttons.size()):
 		var button: Button = fragment_buttons[index]
-		button.text = FRAGMENTS[index]
+		button.text = display_fragments[index]
 		button.pressed.connect(_on_fragment_pressed.bind(index))
 	submit_button.pressed.connect(_on_submit_pressed)
 	reset_button.pressed.connect(_reset_selection)
@@ -52,9 +59,9 @@ func _ready() -> void:
 	_refresh_view()
 
 func _on_fragment_pressed(index: int) -> void:
-	if index < 0 or index >= FRAGMENTS.size():
+	if index < 0 or index >= display_fragments.size():
 		return
-	var fragment: String = FRAGMENTS[index]
+	var fragment: String = display_fragments[index]
 	if selected_fragments.has(fragment):
 		_play_audio("play_error_buzz")
 		ARCADE_JUICE.flash_overlay(self, feedback_flash, ARCADE_JUICE.FLASH_RED, 0.28)
@@ -105,7 +112,7 @@ func _refresh_view() -> void:
 	selected_label.text = "\n".join(lines)
 	for index in range(fragment_buttons.size()):
 		var button: Button = fragment_buttons[index]
-		button.disabled = selected_fragments.has(FRAGMENTS[index]) or GameState.security_tape_assembly_completed
+		button.disabled = selected_fragments.has(display_fragments[index]) or GameState.security_tape_assembly_completed
 	hint_label.visible = GameState.security_tape_wrong_order_count >= 2 and not GameState.security_tape_assembly_completed
 	submit_button.disabled = GameState.security_tape_assembly_completed
 	reset_button.disabled = GameState.security_tape_assembly_completed

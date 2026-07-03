@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <radialGradient id="ic_glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#3fd0d8" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#3fd0d8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ic_coin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffe3a3"/>
+      <stop offset="100%" stop-color="#f0a83c"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="24" fill="#0b0620"/>
+  <rect x="4" y="4" width="120" height="120" rx="20" fill="#160e2e" stroke="#2a1a4a" stroke-width="2"/>
+  <ellipse cx="64" cy="66" rx="52" ry="52" fill="url(#ic_glow)"/>
+  <circle cx="64" cy="64" r="38" fill="#1a1030" stroke="#3fd0d8" stroke-width="4"/>
+  <circle cx="64" cy="64" r="30" fill="url(#ic_coin)"/>
+  <circle cx="64" cy="64" r="30" fill="none" stroke="#fff2c8" stroke-opacity="0.6" stroke-width="1.5"/>
+  <rect x="60" y="46" width="8" height="36" rx="4" fill="#7a4a12"/>
+  <circle cx="52" cy="52" r="6" fill="#fff8e0" opacity="0.7"/>
+  <circle cx="20" cy="20" r="3" fill="#e0459e"/>
+  <circle cx="108" cy="20" r="3" fill="#3fd0d8"/>
+</svg>

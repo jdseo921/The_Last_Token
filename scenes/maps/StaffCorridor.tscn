@@ -39,7 +39,7 @@ polygon = PackedVector2Array(286, 40, 354, 40, 354, 126, 286, 126)
 
 [node name="CollisionBounds" type="Node2D" parent="."]
 script = ExtResource("9")
-rectangles = Array[Vector4]([Vector4(0, 0, 176, 330), Vector4(0, 392, 176, 48), Vector4(552, 0, 88, 440), Vector4(176, 424, 376, 16)])
+rectangles = Array[Vector4]([Vector4(0, 0, 176, 330), Vector4(0, 392, 176, 48), Vector4(552, 0, 88, 200), Vector4(552, 280, 88, 160), Vector4(176, 424, 376, 16)])
 visual_node_paths = Array[NodePath]([NodePath("../StaffRoomDoorPlaceholder"), NodePath("../SecurityTapePlaceholder"), NodePath("../FinalNightWalkPlaceholder")])
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
@@ -56,6 +56,9 @@ position = Vector2(320, 348)
 
 [node name="Spawn_FromFinalNightWalk" type="Marker2D" parent="."]
 position = Vector2(492, 348)
+
+[node name="Spawn_FromMemoryCore" type="Marker2D" parent="."]
+position = Vector2(500, 240)
 
 [node name="Player" parent="." instance=ExtResource("2")]
 position = Vector2(320, 360)
@@ -106,6 +109,11 @@ target_spawn_id = "Spawn_FromStaffCorridor"
 [node name="ReturnToArcadeHub" parent="." instance=ExtResource("3")]
 position = Vector2(34, 360)
 target_scene_path = "res://scenes/maps/hallways/BackHallway.tscn"
+target_spawn_id = "Spawn_FromStaffCorridor"
+
+[node name="ToMemoryCore" parent="." instance=ExtResource("3")]
+position = Vector2(596, 240)
+target_scene_path = "res://scenes/maps/MemoryCore.tscn"
 target_spawn_id = "Spawn_FromStaffCorridor"
 
 [node name="UILayer" type="Node2D" parent="."]

@@ -64,6 +64,7 @@ var feedback_flash: ColorRect = null
 
 func _ready() -> void:
 	AudioManager.play_music_for_context("rockbyte_duel")
+	ArcadeScreen.apply(self)
 	minigame_config = CONFIG_LOADER.load_config(CONFIG_PATH)
 	_apply_config_text()
 	_apply_optional_texture(_get_config_background_path(), background_texture, background_placeholder)

@@ -143,7 +143,7 @@ static func _fallback_quests() -> Dictionary:
 			"details": "Vendo routed the signal, but the Staff Door still needs two unstable signals to line up. Gus says the door is listening for something doubled.",
 			"minigame": "Maintenance Sync",
 			"required": true,
-			"starts_after": "lost_shift_file_completed",
+			"starts_after": "static_service_run_completed",
 			"completion_dialogue": [
 				{"speaker": "Gus", "text": "Door's listening now."},
 				{"speaker": "Gus", "text": "I do not like doors that listen."},

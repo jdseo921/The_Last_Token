@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="440" viewBox="0 0 640 440">
+  <defs>
+    <radialGradient id="vig" cx="50%" cy="48%" r="74%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="60%" stop-color="#000000" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#000205" stop-opacity="0.6"/>
+    </radialGradient>
+  </defs>
+  <!-- vignette (darken screen edges) -->
+  <rect width="640" height="440" fill="url(#vig)"/>
+  <!-- bezel outer glow -->
+  <rect x="9" y="9" width="622" height="422" rx="22" fill="none" stroke="#3fd0d8" stroke-opacity="0.16" stroke-width="15"/>
+  <!-- bezel main -->
+  <rect x="9" y="9" width="622" height="422" rx="22" fill="none" stroke="#9fe0e8" stroke-width="4"/>
+  <rect x="9" y="9" width="622" height="422" rx="22" fill="none" stroke="#e6fbfd" stroke-opacity="0.5" stroke-width="1.5"/>
+  <!-- corner brackets -->
+  <g stroke="#e6fbfd" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.85">
+    <path d="M28 46 L28 28 L46 28"/>
+    <path d="M594 28 L612 28 L612 46"/>
+    <path d="M28 394 L28 412 L46 412"/>
+    <path d="M594 412 L612 412 L612 394"/>
+  </g>
+  <!-- faint CRT glare, upper-left -->
+  <path d="M22 22 Q210 46 44 210 Q30 110 22 22 Z" fill="#ffffff" opacity="0.03"/>
+</svg>

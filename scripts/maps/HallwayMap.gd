@@ -277,6 +277,7 @@ func _get_hallway_message_lines() -> Array:
 				return [
 					{"speaker": "???", "text": "The route played back clean."},
 					{"speaker": "???", "text": "Clean playback does not mean a clean ending.", "effect": "glitch"},
+					{"speaker": "???", "text": "The one walking behind you is carrying what you set down.", "effect": "shake"},
 				]
 			if GameState.staff_corridor_unlocked and not GameState.memory_echo_completed:
 				return [

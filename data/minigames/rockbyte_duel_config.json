@@ -1,7 +1,7 @@
 {
   "minigame_id": "rockbyte_duel",
   "title": "ROCKBYTE DUEL",
-  "background": "res://assets/art/minigames/rockbyte_duel/backgrounds/rockbyte_background.png",
+  "background": "res://assets/art/minigames/rockbyte_duel/backgrounds/rockbyte_screen.svg",
   "participants": [
     {
       "actor_id": "player",

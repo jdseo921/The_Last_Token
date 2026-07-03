@@ -35,6 +35,7 @@ var pulse_tween: Tween = null
 
 func _ready() -> void:
 	AudioManager.play_music_for_context("maintenance_sync")
+	ArcadeScreen.apply(self, "res://assets/art/minigames/sync_door/backgrounds/sync_door_screen.svg")
 	switch_a_button.pressed.connect(_on_switch_a_pressed)
 	switch_b_button.pressed.connect(_on_switch_b_pressed)
 	confirm_sync_button.pressed.connect(_on_confirm_sync_pressed)
@@ -231,9 +232,17 @@ func _set_button_panel_color(button: Button, color: Color) -> void:
 	style.border_width_right = 2
 	style.border_width_top = 2
 	style.border_width_bottom = 2
+	var hover := style.duplicate() as StyleBoxFlat
+	hover.border_color = Color(0.85, 0.98, 1.0, 1.0)
+	var pressed := style.duplicate() as StyleBoxFlat
+	pressed.border_color = Color(1.0, 0.95, 0.5, 1.0)
+	pressed.border_width_left = 3
+	pressed.border_width_right = 3
+	pressed.border_width_top = 3
+	pressed.border_width_bottom = 3
 	button.add_theme_stylebox_override("normal", style)
-	button.add_theme_stylebox_override("hover", style)
-	button.add_theme_stylebox_override("pressed", style)
+	button.add_theme_stylebox_override("hover", hover)
+	button.add_theme_stylebox_override("pressed", pressed)
 
 func _set_door_color(color: Color) -> void:
 	var style := StyleBoxFlat.new()

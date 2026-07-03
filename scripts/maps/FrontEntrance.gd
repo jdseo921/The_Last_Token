@@ -4,6 +4,8 @@ extends Node2D
 # Purposes: the locked exit ("why can't I leave"), arcade history, closing notice.
 # Placeholder lore; final text/visuals dressed in the later passes.
 
+const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
+
 @onready var player: CharacterBody2D = $Player
 @onready var dialogue_box: CanvasLayer = $UILayer/DialogueBox
 @onready var prompt_label: Label = $UILayer/InteractionPrompt
@@ -53,24 +55,28 @@ func _dialogue_is_active() -> bool:
 func handle_hub_interaction(interactable: Node, _player_node: Node = null) -> void:
 	match str(interactable.interactable_kind):
 		"locked_exit":
-			start_dialogue([
-				{"speaker": "Front Doors", "text": "The main doors are locked from the outside."},
-				{"speaker": "Front Doors", "text": "The closing notice is still taped to the glass."},
-				{"speaker": "Player", "text": "Why can I not just leave?"},
-				{"speaker": "Player", "text": "..."},
-				{"speaker": "Player", "text": "Something here is not finished with me yet."},
-			])
+			start_dialogue(_get_env_state("front_doors", [
+				{"speaker": "Front Doors", "text": "The main doors are chained shut from the outside."},
+				{"speaker": "Front Doors", "text": "Something here is not finished with you yet."},
+			]))
 		"arcade_history":
-			start_dialogue([
-				{"speaker": "History Board", "text": "PIXEL HAVEN - loved, for a while."},
-				{"speaker": "History Board", "text": "Photos of full weekends. Tournament nights. A staff that used to be larger."},
-				{"speaker": "History Board", "text": "The most recent photos have been taken down."},
-			])
+			start_dialogue(_get_env_state("arcade_history", [
+				{"speaker": "History Board", "text": "Photos of fuller years. The most recent ones have been taken down."},
+			]))
 		"closing_notice":
-			start_dialogue([
+			start_dialogue(_get_env_state("closing_notice", [
 				{"speaker": "Closing Notice", "text": "NOTICE: Pixel Haven will close after final maintenance."},
-				{"speaker": "Closing Notice", "text": "Thank you for every quarter."},
 				{"speaker": "Closing Notice", "text": "The signature at the bottom is scratched out."},
-			])
+			]))
 		_:
 			start_dialogue([{"speaker": "System", "text": "Nothing happens."}])
+
+func _is_post_reveal() -> bool:
+	return GameState.post_reveal_roam_unlocked or GameState.twist_reveal_seen
+
+func _get_env_state(key: String, fallback: Array) -> Array:
+	if _is_post_reveal():
+		var restored: Array = DIALOGUE_POOL.get_lines("environment_objects", key + "_restored", [])
+		if not restored.is_empty():
+			return restored
+	return DIALOGUE_POOL.get_lines("environment_objects", key, fallback)

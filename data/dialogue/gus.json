@@ -79,6 +79,12 @@
     ],
     "static_service_run_intro": [
       [
+        {"speaker": "Gus", "text": "You read the file. I can tell.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
+        {"speaker": "Gus", "text": "You have got the face people get after reading their own name somewhere they did not expect."},
+        {"speaker": "Player", "text": "I did not see a name."},
+        {"speaker": "Gus", "text": "No. But you looked for one.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
+        {"speaker": "Gus", "text": "The old late-shift used to make sure I clocked out before they did. Never the other way."},
+        {"speaker": "Gus", "text": "Anyway. Cheerier work.", "portrait": "res://assets/art/portraits/gus/gus_annoyed.png"},
         {"speaker": "Gus", "text": "The file gives me enough to work with."},
         {"speaker": "Gus", "text": "But the service route is dead."},
         {"speaker": "Gus", "text": "Restore the service power."},
@@ -116,6 +122,7 @@
         {"speaker": "Gus", "text": "Part of you matched something it lost.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"},
         {"speaker": "Gus", "text": "Door heard both knocks."},
         {"speaker": "Gus", "text": "Yours, and the one you forgot making."},
+        {"speaker": "Gus", "text": "Whoever ran this place carried it on a back that was already tired.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
         {"speaker": "Gus", "text": "I am calling that fixed because I want lunch.", "portrait": "res://assets/art/portraits/gus/gus_annoyed.png"}
       ]
     ],
@@ -130,6 +137,8 @@
         {"speaker": "Gus", "text": "So I called it maintenance and kept moving."},
         {"speaker": "Gus", "text": "You were staff."},
         {"speaker": "Gus", "text": "Still are, in the ways that matter.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
+        {"speaker": "Gus", "text": "You always said routine was easier to carry than fear."},
+        {"speaker": "Gus", "text": "Whole time you were the most scared one here, still sweeping up."},
         {"speaker": "Gus", "text": "I do not want to clean around another absence.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"}
       ]
     ]

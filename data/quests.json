@@ -10,12 +10,6 @@
 			"minigame": "Rockbyte Duel",
 			"required": true,
 			"starts_after": "story_started",
-			"completion_dialogue": [
-				{"speaker": "Mira", "text": "You brought it back."},
-				{"speaker": "Mira", "text": "That token used to be just a prize."},
-				{"speaker": "Mira", "text": "Then it became proof that part of you could still return."},
-				{"speaker": "Mira", "text": "It remembered you before you did."}
-			],
 			"memory_signal_after": "Uneasy"
 		},
 		"truth_filter": {
@@ -28,12 +22,6 @@
 			"minigame": "Truth Filter",
 			"required": true,
 			"starts_after": "lost_token_quest_completed",
-			"completion_dialogue": [
-				{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
-				{"speaker": "Mr. Byte", "text": "Contradictions remain."},
-				{"speaker": "Mr. Byte", "text": "That means the memory is alive enough to argue."},
-				{"speaker": "Mr. Byte", "text": "Record conflict reduced. Identity conflict remains."}
-			],
 			"memory_signal_after": "Fractured"
 		},
 		"circuit_soda": {
@@ -46,12 +34,6 @@
 			"minigame": "Circuit Soda",
 			"required": true,
 			"starts_after": "lying_cabinets_completed",
-			"completion_dialogue": [
-				{"speaker": "Vendo", "text": "Signal routed."},
-				{"speaker": "Vendo", "text": "You successfully became beverage-adjacent data."},
-				{"speaker": "Vendo", "text": "I would offer a receipt, but the printer remembers too much."},
-				{"speaker": "Vendo", "text": "Your label is still missing, but the machine knows what shelf you go on."}
-			],
 			"memory_signal_after": "Fractured"
 		},
 		"maintenance_sync": {
@@ -63,13 +45,7 @@
 			"details": "Service power is restored. Talk to Gus in Maintenance Hall, then use Maintenance Sync to line up the Staff Door signals.",
 			"minigame": "Maintenance Sync",
 			"required": true,
-			"starts_after": "lost_shift_file_completed",
-			"completion_dialogue": [
-				{"speaker": "Gus", "text": "Door's listening now."},
-				{"speaker": "Gus", "text": "I do not like doors that listen."},
-				{"speaker": "Gus", "text": "But if it opens, part of you matched something it lost."},
-				{"speaker": "Gus", "text": "Door heard both knocks. Yours, and the one you forgot making."}
-			],
+			"starts_after": "static_service_run_completed",
 			"memory_signal_after": "Overloaded"
 		},
 		"lost_shift_file": {
@@ -82,10 +58,6 @@
 			"minigame": "None",
 			"required": true,
 			"starts_after": "circuit_soda_completed",
-			"completion_dialogue": [
-				{"speaker": "Quest", "text": "LOST SHIFT FILE COMPLETE"},
-				{"speaker": "Quest", "text": "A redacted staff number was assigned to Cabinet shutdown."}
-			],
 			"memory_signal_after": "Fractured"
 		},
 		"static_service_run": {
@@ -98,12 +70,6 @@
 			"minigame": "Static Service Run",
 			"required": true,
 			"starts_after": "lost_shift_file_completed",
-			"completion_dialogue": [
-				{"speaker": "Gus", "text": "Power's back."},
-				{"speaker": "Gus", "text": "Door's awake."},
-				{"speaker": "Gus", "text": "That is usually good news, except when the door is smarter than the staff."},
-				{"speaker": "Gus", "text": "Now we can sync the two signals."}
-			],
 			"memory_signal_after": "Fractured"
 		},
 		"staff_corridor": {
@@ -116,10 +82,6 @@
 			"minigame": "None",
 			"required": true,
 			"starts_after": "maintenance_sync_completed",
-			"completion_dialogue": [
-				{"speaker": "Staff Door", "text": "ACCESS GRANTED."},
-				{"speaker": "Staff Door", "text": "EMPLOYEE SIGNAL ACCEPTED."}
-			],
 			"memory_signal_after": "Overloaded"
 		},
 		"security_tape_assembly": {
@@ -132,10 +94,6 @@
 			"minigame": "Security Tape Assembly",
 			"required": true,
 			"starts_after": "maintenance_sync_completed",
-			"completion_dialogue": [
-				{"speaker": "Mr. Byte", "text": "Tape order restored."},
-				{"speaker": "Staff Door", "text": "The Staff Door did not record a customer."}
-			],
 			"memory_signal_after": "Overloaded"
 		},
 		"final_night_walk": {
@@ -148,12 +106,6 @@
 			"minigame": "Final Night Walk",
 			"required": true,
 			"starts_after": "security_tape_assembly_completed",
-			"completion_dialogue": [
-				{"speaker": "Staff Door", "text": "ROUTE ACCEPTED."},
-				{"speaker": "Staff Door", "text": "FINAL NIGHT SEQUENCE STABILIZED."},
-				{"speaker": "Staff Door", "text": "ONE WALKED IN."},
-				{"speaker": "Staff Door", "text": "TWO SIGNALS ANSWERED."}
-			],
 			"memory_signal_after": "Overloaded"
 		},
 		"memory_echo": {
@@ -166,11 +118,6 @@
 			"minigame": "Memory Echo",
 			"required": true,
 			"starts_after": "final_night_walk_completed",
-			"completion_dialogue": [
-				{"speaker": "Memory Echo", "text": "Echo stabilized."},
-				{"speaker": "Memory Echo", "text": "The arcade stops arguing with itself."},
-				{"speaker": "Memory Echo", "text": "That might be worse."}
-			],
 			"memory_signal_after": "Overloaded"
 		},
 		"broken_high_score": {
@@ -183,11 +130,6 @@
 			"minigame": "Broken High Score",
 			"required": false,
 			"starts_after": "rockbyte_duel_completed",
-			"completion_dialogue": [
-				{"speaker": "Roxy", "text": "Huh. Your score came back."},
-				{"speaker": "Roxy", "text": "That usually does not happen after a reset."},
-				{"speaker": "Roxy", "text": "Do not let it go to your head. You still walk like a tutorial."}
-			],
 			"memory_signal_after": "No Change"
 		},
 		"prize_counter_secret": {
@@ -200,10 +142,6 @@
 			"minigame": "Prize Sort",
 			"required": false,
 			"starts_after": "lying_cabinets_completed",
-			"completion_dialogue": [
-				{"speaker": "Pip", "text": "Prizes sorted."},
-				{"speaker": "Pip", "text": "Some rewards remember their owner before the owner remembers them."}
-			],
 			"memory_signal_after": "No Change"
 		},
 		"staff_records_chain": {
@@ -216,10 +154,6 @@
 			"minigame": "None",
 			"required": false,
 			"starts_after": "lying_cabinets_completed",
-			"completion_dialogue": [
-				{"speaker": "Quest", "text": "STAFF RECORDS CHAIN COMPLETE"},
-				{"speaker": "Quest", "text": "The arcade knew the number before it knew the name."}
-			],
 			"memory_signal_after": "No Change"
 		},
 		"post_reveal_witness_route": {
@@ -232,11 +166,6 @@
 			"minigame": "None",
 			"required": false,
 			"starts_after": "post_reveal_roam_unlocked",
-			"completion_dialogue": [
-				{"speaker": "Quest", "text": "POST-REVEAL WITNESSES COMPLETE"},
-				{"speaker": "Quest", "text": "Pixel Haven remembers you in pieces."},
-				{"speaker": "Quest", "text": "Together, they almost make a person."}
-			],
 			"memory_signal_after": "Restored"
 		}
 	}

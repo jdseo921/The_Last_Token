@@ -62,6 +62,13 @@ const SCREEN_NORMAL_COLOR := Color(0.28, 0.9, 0.95, 0.42)
 const SCREEN_CORRECT_COLOR := Color(0.34, 1.0, 0.72, 0.84)
 const SCREEN_WRONG_COLOR := Color(1.0, 0.2, 0.55, 0.76)
 
+const LIE_DRIFT_BASE := 5.0
+const LIE_DRIFT_PER_ROUND := 2.5
+const LIE_WRONG_PENALTY := 22.0
+const LIE_CORRECT_RELIEF := 34.0
+const LIE_START := 16.0
+const LIE_MAX := 100.0
+
 @onready var rule_label: Label = $RulePanel/RuleLabel
 @onready var memory_signal_label: Label = $SignalPanel/SignalVBox/MemorySignalLabel
 @onready var signal_integrity_label: Label = $SignalPanel/SignalVBox/SignalIntegrityLabel
@@ -99,9 +106,12 @@ var completed := false
 var feedback_tween: Tween = null
 var round_transition_running := false
 var cabinet_sheet_texture: Texture2D = null
+var lie_density := 0.0
+var round_active := false
 
 func _ready() -> void:
 	AudioManager.play_music_for_context("truth_filter")
+	ArcadeScreen.apply(self, "res://assets/art/minigames/truth_filter/backgrounds/truth_filter_screen.svg")
 	for index in range(choose_buttons.size()):
 		choose_buttons[index].pressed.connect(_on_choice_pressed.bind(index))
 	exit_button.pressed.connect(_on_exit_pressed)
@@ -122,6 +132,7 @@ func _start_puzzle() -> void:
 
 func _begin_round() -> void:
 	round_transition_running = true
+	round_active = false
 	_set_choice_buttons_enabled(false)
 	var round_data := ROUND_DATA[current_round]
 	rule_label.text = "Round %d / %d" % [current_round + 1, ROUND_DATA.size()]
@@ -143,28 +154,34 @@ func _show_round() -> void:
 		statement_labels[index].text = str(statements[index])
 		_set_panel_state(index, CABINET_NORMAL_COLOR, SCREEN_NORMAL_COLOR, CABINET_ART_NORMAL)
 		cabinet_panels[index].position = Vector2.ZERO
-	status_label.text = "Read the rule. Choose the matching cabinet."
+	status_label.text = "Read the rule. Sort the true record before the lie density climbs."
 	_set_signal_integrity("Stable")
 	_set_choice_buttons_enabled(true)
+	lie_density = LIE_START
+	round_active = true
+	_update_density()
 	choose_buttons[0].grab_focus()
 
 func _on_choice_pressed(index: int) -> void:
 	if completed or round_transition_running:
 		return
+	round_active = false
 	ARCADE_JUICE.pulse_control(self, choose_buttons[index])
 	_set_choice_buttons_enabled(false)
 	var correct_index := int(ROUND_DATA[current_round]["correct"])
 	if index != correct_index:
-		status_label.text = "MEMORY SIGNAL WOBBLED.\nTry again."
+		lie_density = min(LIE_MAX - 1.0, lie_density + LIE_WRONG_PENALTY)
+		status_label.text = "FALSE RECORD SORTED.\nLie density spikes. Try again."
 		_set_signal_integrity("Wobbling")
 		_set_panel_state(index, CABINET_WRONG_COLOR, SCREEN_WRONG_COLOR, CABINET_ART_WRONG)
 		_play_audio("play_error_buzz")
 		await _play_wrong_feedback(index)
 		_set_panel_state(index, CABINET_NORMAL_COLOR, SCREEN_NORMAL_COLOR, CABINET_ART_NORMAL)
-		_set_signal_integrity("Stable")
 		_set_choice_buttons_enabled(true)
+		round_active = true
 		choose_buttons[index].grab_focus()
 		return
+	lie_density = max(0.0, lie_density - LIE_CORRECT_RELIEF)
 	_set_panel_state(index, CABINET_CORRECT_COLOR, SCREEN_CORRECT_COLOR, CABINET_ART_CORRECT)
 	_set_signal_integrity("Recovered")
 	status_label.text = "Statement accepted."
@@ -180,6 +197,7 @@ func _on_choice_pressed(index: int) -> void:
 
 func _complete_puzzle() -> void:
 	completed = true
+	round_active = false
 	round_transition_running = false
 	GameState.complete_truth_filter()
 	memory_signal_label.text = "Memory Signal: %s" % GameState.get_memory_signal_label()
@@ -198,6 +216,7 @@ func _complete_puzzle() -> void:
 func _on_exit_pressed() -> void:
 	ARCADE_JUICE.pulse_control(self, exit_button)
 	_play_audio("play_button_pulse")
+	GameState.set_pending_spawn_id("Spawn_FromTruthFilter")
 	SceneChanger.go_to_cabinet_row()
 
 func _set_choice_buttons_enabled(enabled: bool) -> void:
@@ -307,3 +326,31 @@ func _play_audio(method_name: String) -> void:
 	var audio_manager := get_node_or_null("/root/AudioManager")
 	if audio_manager and audio_manager.has_method(method_name):
 		audio_manager.call(method_name)
+
+func _process(delta: float) -> void:
+	if completed or not round_active:
+		return
+	lie_density += (LIE_DRIFT_BASE + LIE_DRIFT_PER_ROUND * current_round) * delta
+	if lie_density >= LIE_MAX:
+		_destabilize()
+		return
+	_update_density()
+
+func _update_density() -> void:
+	signal_integrity_label.text = "Lie Density: %d%%" % int(lie_density)
+	if lie_density >= 70.0:
+		signal_integrity_label.modulate = Color(1.0, 0.42, 0.6, 1.0)
+	elif lie_density >= 40.0:
+		signal_integrity_label.modulate = Color(1.0, 0.86, 0.5, 1.0)
+	else:
+		signal_integrity_label.modulate = Color(0.62, 1.0, 0.88, 1.0)
+	var legibility: float = clampf(1.2 - lie_density / 100.0, 0.4, 1.0)
+	for label in statement_labels:
+		label.modulate.a = legibility
+
+func _destabilize() -> void:
+	lie_density = 55.0
+	_play_audio("play_error_buzz")
+	ARCADE_JUICE.flash_overlay(self, glitch_overlay, ARCADE_JUICE.FLASH_RED, 0.3)
+	status_label.text = "LIE DENSITY CRITICAL.\nThe filter purges the static and re-lists. Read faster."
+	_update_density()

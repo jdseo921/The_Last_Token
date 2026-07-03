@@ -59,6 +59,7 @@
         {"speaker": "Mira", "text": "I remember you helping after closing.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
         {"speaker": "Mira", "text": "Stacking chairs. Checking machines. Pretending you were not tired."},
         {"speaker": "Mira", "text": "You always made the work look smaller than it was."},
+        {"speaker": "Mira", "text": "You used to tell the kids who lost that a game ending was just a turn ending, not the whole world."},
         {"speaker": "Mira", "text": "Now the arcade is trying to make you look back.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"}
       ]
     ],
@@ -114,7 +115,13 @@
         {"speaker": "Mira", "text": "Guilty for being relieved when you came back wrong instead of not at all."},
         {"speaker": "Mira", "text": "But you came back with the hard parts too."},
         {"speaker": "Mira", "text": "You came back enough to be spoken to."},
-        {"speaker": "Mira", "text": "I am so relieved I get to remember you gently.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"}
+        {"speaker": "Mira", "text": "I am so relieved I get to remember you gently.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
+        {"speaker": "Mira", "text": "You spent your whole life telling people a single loss is not the end."},
+        {"speaker": "Mira", "text": "Let me say it back to you, since you never could.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
+        {"speaker": "Mira", "text": "It was not the end."},
+        {"speaker": "Mira", "text": "A single win never set you for life."},
+        {"speaker": "Mira", "text": "And a single loss never finished it."},
+        {"speaker": "Mira", "text": "You are still here. That is the part that gets to matter now.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"}
       ]
     ]
   }

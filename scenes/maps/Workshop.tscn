@@ -1,0 +1,106 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://scripts/maps/Workshop.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/common/MapTransition.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/arcade/HubInteractable.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/ui/QuestNotice.tscn" id="7"]
+[ext_resource type="Script" path="res://scripts/MapCollisionBounds.gd" id="8"]
+
+[node name="Workshop" type="Node2D"]
+script = ExtResource("1")
+
+[node name="Background" type="Polygon2D" parent="."]
+color = Color(0.04, 0.045, 0.043, 1)
+polygon = PackedVector2Array(0, 0, 640, 0, 640, 440, 0, 440)
+
+[node name="BenchPlaceholder" type="Polygon2D" parent="."]
+color = Color(0.2, 0.16, 0.12, 1)
+polygon = PackedVector2Array(120, 150, 300, 150, 300, 208, 120, 208)
+
+[node name="CabinetsPlaceholder" type="Polygon2D" parent="."]
+color = Color(0.14, 0.16, 0.2, 1)
+polygon = PackedVector2Array(360, 116, 470, 116, 470, 226, 360, 226)
+
+[node name="CollisionBounds" type="Node2D" parent="."]
+script = ExtResource("8")
+rectangles = Array[Vector4]([Vector4(0, 0, 640, 28), Vector4(0, 424, 640, 16), Vector4(0, 0, 16, 440), Vector4(624, 0, 16, 220), Vector4(624, 300, 16, 140)])
+visual_node_paths = Array[NodePath]([])
+
+[node name="Spawn_Default" type="Marker2D" parent="."]
+position = Vector2(300, 320)
+
+[node name="Spawn_FromMaintenanceHall" type="Marker2D" parent="."]
+position = Vector2(540, 260)
+
+[node name="Player" parent="." instance=ExtResource("2")]
+position = Vector2(300, 320)
+
+[node name="InteractableLayer" type="Node2D" parent="."]
+
+[node name="Workbench" parent="InteractableLayer" instance=ExtResource("6")]
+position = Vector2(206, 250)
+interactable_kind = "workbench"
+label_text = "WORKBENCH"
+use_placeholder_visual = true
+idle_bob_enabled = true
+
+[node name="PrototypeCabinet" parent="InteractableLayer" instance=ExtResource("6")]
+position = Vector2(414, 258)
+interactable_kind = "prototype_cabinet"
+label_text = "PROTOTYPE"
+use_placeholder_visual = true
+idle_bob_enabled = true
+
+[node name="SpareParts" parent="InteractableLayer" instance=ExtResource("6")]
+position = Vector2(108, 330)
+interactable_kind = "spare_parts"
+label_text = "SPARE PARTS"
+use_placeholder_visual = true
+
+[node name="ToMaintenanceHall" parent="." instance=ExtResource("3")]
+position = Vector2(606, 260)
+target_scene_path = "res://scenes/maps/MaintenanceHall.tscn"
+target_spawn_id = "Spawn_FromWorkshop"
+
+[node name="UILayer" type="Node2D" parent="."]
+
+[node name="DialogueBox" parent="UILayer" instance=ExtResource("5")]
+
+[node name="TitleLabel" type="Label" parent="UILayer"]
+position = Vector2(24, 20)
+size = Vector2(300, 28)
+theme_override_font_sizes/font_size = 18
+text = "WORKSHOP"
+
+[node name="HintLabel" type="Label" parent="UILayer"]
+position = Vector2(24, 48)
+size = Vector2(430, 42)
+theme_override_font_sizes/font_size = 10
+text = "The back room where the games were made by hand."
+autowrap_mode = 3
+
+[node name="ToMaintLabel" type="Label" parent="UILayer"]
+position = Vector2(506, 246)
+size = Vector2(114, 18)
+theme_override_font_sizes/font_size = 9
+text = "MAINTENANCE"
+horizontal_alignment = 2
+
+[node name="InteractionPromptBackground" type="ColorRect" parent="UILayer"]
+visible = false
+position = Vector2(194, 400)
+size = Vector2(252, 30)
+color = Color(0.015, 0.018, 0.024, 0.68)
+
+[node name="InteractionPrompt" type="Label" parent="UILayer"]
+position = Vector2(200, 404)
+size = Vector2(240, 24)
+text = ""
+horizontal_alignment = 1
+
+[node name="PauseMenu" parent="." instance=ExtResource("4")]
+
+[node name="QuestNotice" parent="." instance=ExtResource("7")]

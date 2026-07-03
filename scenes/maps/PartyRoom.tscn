@@ -30,7 +30,7 @@ polygon = PackedVector2Array(430, 246, 520, 246, 520, 330, 430, 330)
 
 [node name="CollisionBounds" type="Node2D" parent="."]
 script = ExtResource("8")
-rectangles = Array[Vector4]([Vector4(0, 0, 640, 28), Vector4(0, 424, 640, 16), Vector4(0, 0, 16, 190), Vector4(0, 250, 16, 190), Vector4(624, 0, 16, 440)])
+rectangles = Array[Vector4]([Vector4(0, 0, 640, 28), Vector4(0, 424, 640, 16), Vector4(0, 0, 16, 190), Vector4(0, 250, 16, 190), Vector4(624, 0, 16, 190), Vector4(624, 250, 16, 190)])
 visual_node_paths = Array[NodePath]([NodePath("../StagePlaceholder"), NodePath("../PhotoWallPlaceholder"), NodePath("../CabinetPlaceholder")])
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
@@ -38,6 +38,9 @@ position = Vector2(320, 320)
 
 [node name="Spawn_FromFrontEntrance" type="Marker2D" parent="."]
 position = Vector2(96, 220)
+
+[node name="Spawn_FromRestrooms" type="Marker2D" parent="."]
+position = Vector2(520, 220)
 
 [node name="Player" parent="." instance=ExtResource("2")]
 position = Vector2(320, 320)
@@ -68,6 +71,11 @@ idle_bob_enabled = true
 [node name="ToFrontEntrance" parent="." instance=ExtResource("3")]
 position = Vector2(34, 220)
 target_scene_path = "res://scenes/maps/FrontEntrance.tscn"
+target_spawn_id = "Spawn_FromPartyRoom"
+
+[node name="ToRestrooms" parent="." instance=ExtResource("3")]
+position = Vector2(606, 220)
+target_scene_path = "res://scenes/maps/Restrooms.tscn"
 target_spawn_id = "Spawn_FromPartyRoom"
 
 [node name="UILayer" type="Node2D" parent="."]

@@ -94,6 +94,11 @@
     ],
     "circuit_soda_intro": [
       [
+        {"speaker": "Vendo", "text": "Welcome back to the only machine that missed you.", "portrait": "res://assets/art/portraits/vendo/vendo_smug.png"},
+        {"speaker": "Vendo", "text": "Complimentary trivia, no purchase required: this arcade used to close at a reasonable hour."},
+        {"speaker": "Vendo", "text": "Then someone started staying past close to keep it breathing."},
+        {"speaker": "Vendo", "text": "Their tab with this building only ever ran one direction. Out of them."},
+        {"speaker": "Vendo", "text": "I never caught their name. My scanner only reads barcodes and regret.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
         {"speaker": "Vendo", "text": "Memory Signal: Fractured.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
         {"speaker": "Vendo", "text": "Your identity is leaking through unauthorized beverage channels."},
         {"speaker": "Vendo", "text": "Insert unstable signal into Circuit Soda."},

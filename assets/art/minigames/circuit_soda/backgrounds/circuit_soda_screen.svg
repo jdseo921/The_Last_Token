@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="440" viewBox="0 0 640 440">
+  <defs>
+    <linearGradient id="cs_bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#04241f"/>
+      <stop offset="100%" stop-color="#02100e"/>
+    </linearGradient>
+    <radialGradient id="cs_glow" cx="45%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#52e0a0" stop-opacity="0.42"/>
+      <stop offset="100%" stop-color="#52e0a0" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="440" fill="url(#cs_bg)"/>
+  <ellipse cx="290" cy="220" rx="240" ry="160" fill="url(#cs_glow)"/>
+
+  <!-- circuit board traces -->
+  <g stroke="#127a5a" stroke-opacity="0.55" stroke-width="2" fill="none">
+    <path d="M40 90 H180 V180 H300"/>
+    <path d="M40 200 H120 V300 H260 V360"/>
+    <path d="M600 120 H460 V220 H360"/>
+    <path d="M600 300 H520 V150 H420"/>
+    <path d="M300 40 V120 H360"/>
+  </g>
+  <!-- live current (bright segments) -->
+  <g stroke="#5cf0c0" stroke-width="2.5" fill="none" stroke-opacity="0.9">
+    <path d="M40 90 H180 V150"/>
+    <path d="M460 220 H360"/>
+    <path d="M120 300 H260"/>
+  </g>
+
+  <!-- trace nodes -->
+  <g fill="#0a3a2e" stroke="#52e0a0" stroke-width="2">
+    <circle cx="180" cy="180" r="7"/>
+    <circle cx="300" cy="180" r="7"/>
+    <circle cx="120" cy="300" r="7"/>
+    <circle cx="260" cy="360" r="7"/>
+    <circle cx="460" cy="220" r="7"/>
+    <circle cx="360" cy="120" r="7"/>
+    <circle cx="520" cy="150" r="7"/>
+  </g>
+  <g fill="#ffcf6b">
+    <circle cx="300" cy="180" r="3"/>
+    <circle cx="460" cy="220" r="3"/>
+    <circle cx="120" cy="300" r="3"/>
+  </g>
+
+  <!-- vending machine silhouette (right edge) -->
+  <g>
+    <rect x="556" y="150" width="72" height="200" rx="6" fill="#06342a" stroke="#52e0a0" stroke-width="2.5"/>
+    <rect x="566" y="162" width="52" height="70" rx="3" fill="#031f1a" stroke="#3fd0d8" stroke-width="1.5"/>
+    <rect x="566" y="244" width="52" height="10" rx="2" fill="#52e0a0" opacity="0.7"/>
+    <rect x="566" y="262" width="34" height="8" rx="2" fill="#3fd0d8" opacity="0.6"/>
+    <rect x="576" y="300" width="32" height="20" rx="2" fill="#0a3a2e" stroke="#ffcf6b" stroke-width="1.5"/>
+  </g>
+
+  <!-- rising bubbles -->
+  <g fill="#7ff0cc">
+    <circle cx="70" cy="380" r="4" opacity="0.6"/>
+    <circle cx="88" cy="350" r="3" opacity="0.5"/>
+    <circle cx="60" cy="320" r="2.5" opacity="0.4"/>
+    <circle cx="100" cy="300" r="2" opacity="0.35"/>
+  </g>
+  <circle cx="500" cy="90" r="2.5" fill="#5cf0c0" opacity="0.6"/>
+  <circle cx="220" cy="70" r="2" fill="#ffe3a3" opacity="0.5"/>
+</svg>

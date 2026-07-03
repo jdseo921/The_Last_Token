@@ -32,11 +32,18 @@ var tile_sheet_path := ""
 var hazard_sprite_path := ""
 var collectible_sprite_path := ""
 var goal_sprite_path := ""
+var background_screen_path := ""
 var tile_size := TILE_SIZE
 var grid_origin := GRID_ORIGIN
 var side_panel_x := 404
 var move_step_interval := 0.18
 var move_cooldown_seconds := 0.0
+var fog_enabled := false
+var fog_radius := 3
+var hazards_blink := false
+var hazard_blink_interval := 1.6
+var hazards_dangerous := true
+var hazard_blink_timer := 0.0
 var stage_areas: Array[Dictionary] = []
 var area_links: Array[Dictionary] = []
 var active_area_id := DEFAULT_AREA_ID
@@ -90,12 +97,19 @@ func configure_stage(config: Dictionary) -> void:
 	hazard_sprite_path = str(config.get("hazard_sprite_path", ""))
 	collectible_sprite_path = str(config.get("collectible_sprite_path", ""))
 	goal_sprite_path = str(config.get("goal_sprite_path", ""))
+	background_screen_path = str(config.get("background_screen_path", ""))
 	tile_size = int(config.get("tile_size", TILE_SIZE))
 	grid_origin = _to_vector2(config.get("grid_origin", GRID_ORIGIN), GRID_ORIGIN)
 	side_panel_x = int(config.get("side_panel_x", side_panel_x))
 	move_step_interval = float(config.get("move_step_interval", move_step_interval))
 	if move_step_interval <= 0.0:
 		move_step_interval = 0.18
+	fog_enabled = bool(config.get("fog_enabled", false))
+	fog_radius = int(config.get("fog_radius", 3))
+	hazards_blink = bool(config.get("hazards_blink", false))
+	hazard_blink_interval = float(config.get("hazard_blink_interval", 1.6))
+	if hazard_blink_interval <= 0.0:
+		hazard_blink_interval = 1.6
 	stage_areas = _to_dictionary_array(config.get("areas", []))
 	area_links = _to_dictionary_array(config.get("area_links", []))
 	start_area_id = str(config.get("start_area", DEFAULT_AREA_ID))
@@ -148,8 +162,11 @@ func _build_stage() -> void:
 	completed = false
 	return_in_progress = false
 	move_cooldown_seconds = 0.0
+	hazards_dangerous = true
+	hazard_blink_timer = 0.0
 	_scan_stage()
 	_rebuild_area_view("")
+	ArcadeScreen.apply(self)
 
 func _rebuild_area_view(status_message: String) -> void:
 	_clear_children()
@@ -167,6 +184,9 @@ func _clear_children() -> void:
 	tile_markers.clear()
 	feedback_flash = null
 	for child in get_children():
+		if child.name == "ArcadeScanlines" or child.name == "ArcadeCRTOverlay":
+			continue
+		remove_child(child)
 		child.queue_free()
 
 func _scan_stage() -> void:
@@ -207,17 +227,45 @@ func _apply_active_layout() -> void:
 	layout = area_layouts.get(active_area_id, [])
 
 func _build_background() -> void:
-	var background := ColorRect.new()
-	background.name = "Background"
-	background.set_anchors_preset(Control.PRESET_FULL_RECT)
-	background.color = Color(0.018, 0.02, 0.028, 1.0)
-	add_child(background)
+	var screen_tex := _load_texture_or_null(background_screen_path)
+	if screen_tex != null:
+		var screen := TextureRect.new()
+		screen.name = "ScreenBackground"
+		screen.set_anchors_preset(Control.PRESET_FULL_RECT)
+		screen.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		screen.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		screen.texture = screen_tex
+		add_child(screen)
+	else:
+		var background := ColorRect.new()
+		background.name = "Background"
+		background.set_anchors_preset(Control.PRESET_FULL_RECT)
+		background.color = Color(0.018, 0.02, 0.028, 1.0)
+		add_child(background)
 	var panel := ColorRect.new()
 	panel.name = "Panel"
-	panel.position = Vector2(24, 18)
-	panel.size = Vector2(592, 404)
-	panel.color = Color(0.045, 0.05, 0.068, 1.0)
+	if screen_tex != null:
+		var cols := 0
+		for row in layout:
+			cols = maxi(cols, row.length())
+		var gw := cols * tile_size
+		var gh := layout.size() * tile_size
+		panel.position = Vector2(grid_origin.x - 12, grid_origin.y - 12)
+		panel.size = Vector2(gw + 24, gh + 24)
+		panel.color = Color(0.02, 0.025, 0.035, 0.66)
+	else:
+		panel.position = Vector2(24, 18)
+		panel.size = Vector2(592, 404)
+		panel.color = Color(0.045, 0.05, 0.068, 1.0)
 	add_child(panel)
+	if screen_tex != null:
+		var side := ColorRect.new()
+		side.name = "SidePanelBacking"
+		side.position = Vector2(side_panel_x - 12, grid_origin.y - 26)
+		side.size = Vector2(632 - side_panel_x, 300)
+		side.color = Color(0.02, 0.025, 0.035, 0.72)
+		add_child(side)
 
 func _build_feedback_flash() -> void:
 	feedback_flash = ColorRect.new()
@@ -437,6 +485,8 @@ func _change_area(link: Dictionary) -> void:
 	spawn_grid_pos = _to_vector2i(link.get("target_spawn", fallback_spawn), fallback_spawn)
 	player_grid_pos = spawn_grid_pos
 	move_cooldown_seconds = move_step_interval
+	hazards_dangerous = true
+	hazard_blink_timer = 0.0
 	_rebuild_area_view("Entered %s." % _get_active_area_name())
 
 func _to_vector2i(value: Variant, fallback: Vector2i) -> Vector2i:
@@ -449,6 +499,7 @@ func _to_vector2i(value: Variant, fallback: Vector2i) -> Vector2i:
 func _process(delta: float) -> void:
 	if completed or return_in_progress:
 		return
+	_update_hazard_blink(delta)
 	if move_cooldown_seconds > 0.0:
 		move_cooldown_seconds = maxf(0.0, move_cooldown_seconds - delta)
 		if move_cooldown_seconds > 0.0:
@@ -498,6 +549,8 @@ func _handle_tile(tile: String) -> void:
 		_change_area(link)
 		return
 	if tile == "H":
+		if hazards_blink and not hazards_dangerous:
+			return
 		_play_audio("play_error_buzz")
 		_flash_feedback(ARCADE_JUICE.FLASH_RED, 0.32)
 		_reset_player(_format_lines(hazard_lines))
@@ -569,6 +622,7 @@ func _update_player_marker() -> void:
 	if player_marker == null:
 		return
 	player_marker.position = Vector2(player_grid_pos.x * tile_size + 4, player_grid_pos.y * tile_size + 4)
+	_update_fog()
 
 func _refresh_counter() -> void:
 	if counter_label:
@@ -642,3 +696,47 @@ func _on_return_pressed() -> void:
 
 func _flash_feedback(color: Color, peak_alpha: float) -> void:
 	ARCADE_JUICE.flash_overlay(self, feedback_flash, color, peak_alpha)
+
+func _update_fog() -> void:
+	if not fog_enabled:
+		return
+	for pos in tile_rects.keys():
+		var a := _fog_alpha_for(pos)
+		var rect: ColorRect = tile_rects[pos]
+		if rect:
+			rect.modulate.a = a
+		var marker: Label = tile_markers.get(pos, null)
+		if marker:
+			marker.modulate.a = a
+
+func _fog_alpha_for(pos: Vector2i) -> float:
+	if not fog_enabled:
+		return 1.0
+	var d: int = maxi(absi(pos.x - player_grid_pos.x), absi(pos.y - player_grid_pos.y))
+	if d > fog_radius + 1:
+		return 0.26
+	elif d > fog_radius:
+		return 0.6
+	return 1.0
+
+func _update_hazard_blink(delta: float) -> void:
+	if not hazards_blink:
+		return
+	hazard_blink_timer += delta
+	if hazard_blink_timer >= hazard_blink_interval:
+		hazard_blink_timer = 0.0
+		hazards_dangerous = not hazards_dangerous
+		_recolor_hazards()
+
+func _recolor_hazards() -> void:
+	for pos in tile_rects.keys():
+		if _get_tile_at(pos) != "H":
+			continue
+		var rect: ColorRect = tile_rects[pos]
+		if rect:
+			rect.color = hazard_color if hazards_dangerous else hazard_color.darkened(0.62)
+		var marker: Label = tile_markers.get(pos, null)
+		if marker:
+			var mcol := Color.WHITE if hazards_dangerous else Color(0.5, 0.5, 0.55, 1.0)
+			mcol.a = _fog_alpha_for(pos)
+			marker.modulate = mcol

@@ -211,10 +211,9 @@ func _handle_truth_filter() -> void:
 
 func _handle_cabinet_trace_adventure() -> void:
 	start_dialogue([
-		{"speaker": "Inactive Cabinet", "text": "CABINET TRACE RUN READY."},
-		{"speaker": "Inactive Cabinet", "text": "Follow trace sparks in order."},
-		{"speaker": "Inactive Cabinet", "text": "Optional cabinet-route practice."},
-	], Callable(self, "_go_to_cabinet_trace_run"))
+		{"speaker": "Idle Cabinet", "text": "This cabinet is dark. Its trace board was pulled for parts long ago."},
+		{"speaker": "Idle Cabinet", "text": "One good machine on this row still runs. That was always the way here."},
+	])
 
 func _go_to_cabinet_trace_run() -> void:
 	GameState.set_pending_spawn_id("Spawn_FromCabinetAdventure")

@@ -84,7 +84,8 @@
     "broken_cabinet_fractured": [
       [
         {"speaker": "Broken Cabinet", "text": "RESET FAILED."},
-        {"speaker": "Broken Cabinet", "text": "EMPLOYEE SIGNAL RETURNED."}
+        {"speaker": "Broken Cabinet", "text": "EMPLOYEE SIGNAL RETURNED."},
+        {"speaker": "Broken Cabinet", "text": "YOU USED TO KEEP ME RUNNING LONG AFTER IT MADE SENSE."}
       ]
     ],
     "broken_cabinet_overloaded": [
@@ -113,7 +114,8 @@
         {"speaker": "Closing Checklist", "text": "Counter locked."},
         {"speaker": "Closing Checklist", "text": "Cabinet Row dimmed."},
         {"speaker": "Closing Checklist", "text": "Staff Door checked twice."},
-        {"speaker": "Closing Checklist", "text": "Final item scratched out."}
+        {"speaker": "Closing Checklist", "text": "Final item scratched out."},
+        {"speaker": "Closing Checklist", "text": "The closing shift is signed by one name, over and over, as if no one else could be asked to be here."}
       ]
     ],
     "closing_checklist_overloaded": [
@@ -170,6 +172,9 @@
         {"speaker": "Staff Schedule", "text": "Mira - Counter"},
         {"speaker": "Staff Schedule", "text": "Gus - Maintenance"},
         {"speaker": "Staff Schedule", "text": "Employee ## - Cabinet shutdown"},
+        {"speaker": "Player", "text": "Cabinet shutdown."},
+        {"speaker": "Player", "text": "Why does reading that make my hands cold?"},
+        {"speaker": "Staff Schedule", "text": "The redacted name is scratched hardest, as if someone could not stand to be on this list."},
         {"speaker": "Staff Schedule", "text": "Status: unresolved"}
       ]
     ],
@@ -448,6 +453,159 @@
       [
         {"speaker": "Prize Counter", "text": "The prize labels are neatly sorted."},
         {"speaker": "Prize Counter", "text": "The badge no longer looks blank to you."}
+      ]
+    ],
+    "front_doors": [
+      [
+        {"speaker": "Front Doors", "text": "The main doors are chained shut from the outside."},
+        {"speaker": "Front Doors", "text": "A closing notice is taped to the glass, facing out, as if the street still needed telling."},
+        {"speaker": "Player", "text": "Why can I not just leave?"},
+        {"speaker": "Player", "text": "..."},
+        {"speaker": "Player", "text": "Something here is not finished with me yet."}
+      ]
+    ],
+    "front_doors_restored": [
+      [
+        {"speaker": "Front Doors", "text": "The chain is still there. Somehow it matters less now."},
+        {"speaker": "Front Doors", "text": "You were never trapped in here."},
+        {"speaker": "Front Doors", "text": "You were held. There is a difference."}
+      ]
+    ],
+    "arcade_history": [
+      [
+        {"speaker": "History Board", "text": "A corkboard of photos: full weekends, tournament nights, a staff that used to be larger."},
+        {"speaker": "History Board", "text": "The dates run out a few years back."},
+        {"speaker": "History Board", "text": "The most recent photos have been taken down. The pins are still there."}
+      ]
+    ],
+    "closing_notice": [
+      [
+        {"speaker": "Closing Notice", "text": "NOTICE: Pixel Haven will close following final maintenance."},
+        {"speaker": "Closing Notice", "text": "Thank you for every quarter."},
+        {"speaker": "Closing Notice", "text": "The signature under it has been scratched down to the paper."}
+      ]
+    ],
+    "closing_notice_restored": [
+      [
+        {"speaker": "Closing Notice", "text": "The scratched-out signature is legible now, if you already know the name."},
+        {"speaker": "Closing Notice", "text": "It was signed by the one person who could not bear to sign it."}
+      ]
+    ],
+    "party_community_wall": [
+      [
+        {"speaker": "Community Wall", "text": "Rows of party photos: birthday hats, gap-toothed grins, prize animals bigger than the kids holding them."},
+        {"speaker": "Community Wall", "text": "In the corner of almost every shot, the same figure stands half in frame."},
+        {"speaker": "Community Wall", "text": "Never the center. Always making sure everyone else fit."}
+      ]
+    ],
+    "party_community_wall_restored": [
+      [
+        {"speaker": "Community Wall", "text": "You know the half-in-frame figure now."},
+        {"speaker": "Community Wall", "text": "He kept himself at the edge so the picture would be about the kids."}
+      ]
+    ],
+    "party_mascot_stage": [
+      [
+        {"speaker": "Party Stage", "text": "A little stage for a mascot costume that never quite worked."},
+        {"speaker": "Party Stage", "text": "Kids' drawings are still taped along the front."},
+        {"speaker": "Party Stage", "text": "One reads THANK YOU FOR THE FREE GO, in enormous crayon."},
+        {"speaker": "Party Stage", "text": "It is not addressed to anyone. It did not need to be."}
+      ]
+    ],
+    "party_birthday_cabinet": [
+      [
+        {"speaker": "Birthday Cabinet", "text": "PARTY HIGH SCORE - a cheerful, forgiving little game."},
+        {"speaker": "Birthday Cabinet", "text": "The target score is set absurdly low."},
+        {"speaker": "Birthday Cabinet", "text": "Someone wanted every kid to walk away a winner."}
+      ]
+    ],
+    "workshop_bench": [
+      [
+        {"speaker": "Workbench", "text": "A workbench under a hooded lamp, tools laid out in a patient row."},
+        {"speaker": "Workbench", "text": "Half-built cabinets lean against the wall, each one shaped by hand."},
+        {"speaker": "Workbench", "text": "Whoever worked here cared more about the games than about being paid for them."}
+      ]
+    ],
+    "workshop_bench_restored": [
+      [
+        {"speaker": "Workbench", "text": "The tools are exactly where you left them."},
+        {"speaker": "Workbench", "text": "Your hands remember the weight of every one."}
+      ]
+    ],
+    "workshop_prototype": [
+      [
+        {"speaker": "Prototype", "text": "An unfinished cabinet. No coin slot cut into it yet."},
+        {"speaker": "Prototype", "text": "A note is taped over the dark screen: MAKE THIS ONE FREE."},
+        {"speaker": "Prototype", "text": "It was never finished. The arcade closed first."},
+        {"speaker": "Prototype", "text": "The kind of thing you meant to get to once the money settled. The money never settled."}
+      ]
+    ],
+    "workshop_spare_parts": [
+      [
+        {"speaker": "Spare Parts", "text": "Bins of joysticks, buttons, cracked screens."},
+        {"speaker": "Spare Parts", "text": "Nothing here is new."},
+        {"speaker": "Spare Parts", "text": "Everything here was kept alive long past the point of sense."},
+        {"speaker": "Spare Parts", "text": "That was the whole job, really."}
+      ]
+    ],
+    "memory_banks": [
+      [
+        {"speaker": "Memory Bank", "text": "Banks of old drives hum in the dark, warm to the touch."},
+        {"speaker": "Memory Bank", "text": "Each one holds a memory the arcade refused to lose."},
+        {"speaker": "Memory Bank", "text": "Faces. Voices. Closing nights. Small kindnesses nobody else recorded."},
+        {"speaker": "Memory Bank", "text": "All of it kept."}
+      ]
+    ],
+    "memory_core_terminal": [
+      [
+        {"speaker": "Core Terminal", "text": "CORE STATUS: STABLE."},
+        {"speaker": "Core Terminal", "text": "WHEN THE FLOOR WENT DARK, THE SYSTEM SAVED WHAT IT COULD."},
+        {"speaker": "Core Terminal", "text": "IT COULD NOT SAVE EVERYTHING."},
+        {"speaker": "Core Terminal", "text": "IT CHOSE PEOPLE OVER PROFIT. ONE LAST TIME."},
+        {"speaker": "Core Terminal", "text": "IT LEARNED THAT FROM SOMEONE."}
+      ]
+    ],
+    "memory_sealed_drive": [
+      [
+        {"speaker": "Sealed Drive", "text": "One drive is labeled only with a number. The rest of the label is scratched away."},
+        {"speaker": "Sealed Drive", "text": "It runs warmer than the others."},
+        {"speaker": "Sealed Drive", "text": "It has been waiting a long time to be read."}
+      ]
+    ],
+    "memory_sealed_drive_restored": [
+      [
+        {"speaker": "Sealed Drive", "text": "The sealed drive is open now."},
+        {"speaker": "Sealed Drive", "text": "It was never corrupted. It was protected."},
+        {"speaker": "Sealed Drive", "text": "There is a difference, and you are the difference."}
+      ]
+    ],
+    "restroom_mirror": [
+      [
+        {"speaker": "Mirror", "text": "A cracked mirror over a dry sink."},
+        {"speaker": "Mirror", "text": "For a moment, two figures stand where only one should."},
+        {"speaker": "Mirror", "text": "One of them finishes moving a half-second after you do."},
+        {"speaker": "Mirror", "text": "When you look again, there is only you. Probably."}
+      ]
+    ],
+    "restroom_mirror_restored": [
+      [
+        {"speaker": "Mirror", "text": "The mirror shows one figure now."},
+        {"speaker": "Mirror", "text": "It took both of you to get back to that."}
+      ]
+    ],
+    "restroom_stall": [
+      [
+        {"speaker": "Stall", "text": "An out-of-order stall, its door ajar."},
+        {"speaker": "Stall", "text": "A hand-drawn HIGH SCORE list is taped inside, going back years."},
+        {"speaker": "Stall", "text": "Every name on the list is written in the same handwriting."},
+        {"speaker": "Stall", "text": "Someone kept the record alive by pretending to be a crowd."}
+      ]
+    ],
+    "restroom_token": [
+      [
+        {"speaker": "Windowsill", "text": "A single arcade token sits half behind the pipe."},
+        {"speaker": "Windowsill", "text": "Cold. Older than the others."},
+        {"speaker": "Windowsill", "text": "It fits your hand like it remembers being held."}
       ]
     ]
   }

@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="440" viewBox="0 0 640 440">
+  <defs>
+    <linearGradient id="tf_bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#241033"/>
+      <stop offset="100%" stop-color="#080512"/>
+    </linearGradient>
+    <radialGradient id="tf_lens" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffe3a3" stop-opacity="0.85"/>
+      <stop offset="55%" stop-color="#ffcf6b" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ffcf6b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="tf_true" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#3fe0b0" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#3fe0b0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="tf_lie" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#e0455e" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#e0455e" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="440" fill="url(#tf_bg)"/>
+
+  <!-- diagnostic grid -->
+  <g stroke="#4a2f6a" stroke-opacity="0.4" stroke-width="1">
+    <line x1="0" y1="110" x2="640" y2="110"/>
+    <line x1="0" y1="330" x2="640" y2="330"/>
+    <line x1="160" y1="0" x2="160" y2="440"/>
+    <line x1="320" y1="0" x2="320" y2="440"/>
+    <line x1="480" y1="0" x2="480" y2="440"/>
+  </g>
+
+  <!-- scan band -->
+  <rect x="0" y="150" width="640" height="140" fill="#5a2f8a" opacity="0.10"/>
+  <line x1="0" y1="150" x2="640" y2="150" stroke="#b98cff" stroke-opacity="0.5" stroke-width="1.5"/>
+  <line x1="0" y1="290" x2="640" y2="290" stroke="#b98cff" stroke-opacity="0.5" stroke-width="1.5"/>
+
+  <!-- central filter lens -->
+  <ellipse cx="320" cy="70" rx="150" ry="70" fill="url(#tf_lens)"/>
+  <circle cx="320" cy="70" r="40" fill="#160a26" stroke="#ffcf6b" stroke-width="3"/>
+  <circle cx="320" cy="70" r="28" fill="none" stroke="#ffe3a3" stroke-opacity="0.7" stroke-width="1.5"/>
+  <circle cx="320" cy="70" r="14" fill="#ffcf6b" opacity="0.85"/>
+  <line x1="320" y1="110" x2="320" y2="150" stroke="#ffcf6b" stroke-opacity="0.5" stroke-width="2"/>
+
+  <!-- three verdict daises (A / B / C) -->
+  <g>
+    <ellipse cx="140" cy="322" rx="92" ry="26" fill="url(#tf_true)"/>
+    <ellipse cx="140" cy="320" rx="80" ry="22" fill="#0f2a26" stroke="#3fe0b0" stroke-width="2.5"/>
+  </g>
+  <g>
+    <ellipse cx="320" cy="322" rx="92" ry="26" fill="url(#tf_lens)"/>
+    <ellipse cx="320" cy="320" rx="80" ry="22" fill="#241a10" stroke="#ffcf6b" stroke-width="2.5"/>
+  </g>
+  <g>
+    <ellipse cx="500" cy="322" rx="92" ry="26" fill="url(#tf_lie)"/>
+    <ellipse cx="500" cy="320" rx="80" ry="22" fill="#2a1018" stroke="#e0455e" stroke-width="2.5"/>
+  </g>
+
+  <!-- side verdict bars: truth (left, green) vs lie (right, red) -->
+  <g>
+    <rect x="26" y="170" width="10" height="40" rx="2" fill="#3fe0b0" opacity="0.8"/>
+    <rect x="26" y="216" width="10" height="26" rx="2" fill="#3fe0b0" opacity="0.5"/>
+    <rect x="26" y="248" width="10" height="52" rx="2" fill="#3fe0b0" opacity="0.65"/>
+  </g>
+  <g>
+    <rect x="604" y="170" width="10" height="30" rx="2" fill="#e0455e" opacity="0.8"/>
+    <rect x="604" y="206" width="10" height="48" rx="2" fill="#e0455e" opacity="0.55"/>
+    <rect x="604" y="260" width="10" height="34" rx="2" fill="#e0455e" opacity="0.7"/>
+  </g>
+
+  <!-- ambient scanner motes -->
+  <circle cx="210" cy="130" r="2.5" fill="#b98cff" opacity="0.6"/>
+  <circle cx="430" cy="120" r="2.5" fill="#ffe3a3" opacity="0.55"/>
+  <circle cx="96" cy="360" r="2" fill="#3fe0b0" opacity="0.5"/>
+  <circle cx="548" cy="360" r="2" fill="#e0455e" opacity="0.5"/>
+</svg>

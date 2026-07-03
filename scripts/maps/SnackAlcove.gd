@@ -182,17 +182,10 @@ func _go_to_circuit_soda() -> void:
 	SceneChanger.go_to_circuit_soda()
 
 func _handle_snack_service_adventure() -> void:
-	if not GameState.lying_cabinets_completed:
-		start_dialogue([
-			{"speaker": "Service Slot", "text": "SNACK SERVICE LOCKED."},
-			{"speaker": "Service Slot", "text": "TRUTH FILTER REQUIRED."},
-		])
-		return
 	start_dialogue([
-		{"speaker": "Service Slot", "text": "SNACK SERVICE DASH READY."},
-		{"speaker": "Service Slot", "text": "Collect labels without spilling the signal."},
-		{"speaker": "Service Slot", "text": "Optional stock route. Refunds still impossible."},
-	], Callable(self, "_go_to_snack_service_dash"))
+		{"speaker": "Service Slot", "text": "The service slot is jammed with old labels."},
+		{"speaker": "Service Slot", "text": "Vendo insists this is a feature. Refunds remain impossible."},
+	])
 
 func _go_to_snack_service_dash() -> void:
 	GameState.set_pending_spawn_id("Spawn_FromSnackAdventure")

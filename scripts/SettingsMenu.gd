@@ -140,24 +140,43 @@ func _style_slider(slider: HSlider) -> void:
 	grabber.content_margin_right = 6.0
 	grabber.content_margin_top = 6.0
 	grabber.content_margin_bottom = 6.0
+	var fill_hi := StyleBoxFlat.new()
+	fill_hi.bg_color = Color(0.72, 0.98, 1.0, 1.0)
+	fill_hi.set_corner_radius_all(0)
+	fill_hi.content_margin_top = 3.0
+	fill_hi.content_margin_bottom = 3.0
+	var grabber_hi := grabber.duplicate() as StyleBoxFlat
+	grabber_hi.bg_color = Color(1.0, 1.0, 1.0, 1.0)
+	grabber_hi.border_color = Color(0.3, 0.95, 1.0, 1.0)
 	slider.add_theme_stylebox_override("slider", rail)
 	slider.add_theme_stylebox_override("grabber_area", fill)
-	slider.add_theme_stylebox_override("grabber_area_highlight", fill)
+	slider.add_theme_stylebox_override("grabber_area_highlight", fill_hi)
 	slider.add_theme_stylebox_override("grabber", grabber)
-	slider.add_theme_stylebox_override("grabber_highlight", grabber)
+	slider.add_theme_stylebox_override("grabber_highlight", grabber_hi)
 
 func _style_back_button() -> void:
 	back_button.text = back_button.text.to_upper()
 	back_button.add_theme_font_size_override("font_size", 14)
 	back_button.add_theme_color_override("font_color", Color(0.9, 0.95, 0.98, 1.0))
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.02, 0.03, 0.04, 0.78)
-	style.border_color = Color(0.28, 0.9, 1.0, 0.55)
-	style.set_border_width_all(1)
-	style.set_corner_radius_all(0)
-	back_button.add_theme_stylebox_override("normal", style)
-	back_button.add_theme_stylebox_override("hover", style)
-	back_button.add_theme_stylebox_override("focus", style)
+	var normal := StyleBoxFlat.new()
+	normal.bg_color = Color(0.02, 0.03, 0.04, 0.78)
+	normal.border_color = Color(0.28, 0.9, 1.0, 0.55)
+	normal.set_border_width_all(1)
+	normal.set_corner_radius_all(0)
+	var hover := normal.duplicate() as StyleBoxFlat
+	hover.bg_color = Color(0.05, 0.08, 0.1, 0.92)
+	hover.border_color = Color(0.4, 0.98, 1.0, 0.95)
+	var pressed := normal.duplicate() as StyleBoxFlat
+	pressed.bg_color = Color(0.09, 0.03, 0.07, 0.94)
+	pressed.border_color = Color(1.0, 0.36, 0.72, 0.95)
+	var focus := normal.duplicate() as StyleBoxFlat
+	focus.bg_color = Color(0.05, 0.07, 0.09, 0.5)
+	focus.border_color = Color(1.0, 0.88, 0.32, 0.95)
+	focus.set_border_width_all(2)
+	back_button.add_theme_stylebox_override("normal", normal)
+	back_button.add_theme_stylebox_override("hover", hover)
+	back_button.add_theme_stylebox_override("pressed", pressed)
+	back_button.add_theme_stylebox_override("focus", focus)
 
 func _play_audio(method_name: String) -> void:
 	var audio_manager := get_node_or_null("/root/AudioManager")

@@ -60,16 +60,16 @@ Legend: **[game]** playable stage · **[NPC]** character · **[lore]** readable/
 | **Snack Alcove** | keep | [game] Circuit Soda (Vendo); [lore] Vendo's old-staff musings; [breather] comic relief. |
 | **Prize Corner** | keep | [game/secret] Prize Sort (Pip); [lore] prize counter + the Blank Employee Badge; [secret] witness route. |
 | **Party Room** | **NEW — built** | [lore] community wall — birthday photos with the owner half-in-frame, kids' drawings, a mascot stage (the arcade as "somewhere kinder to go"); [secret] an optional "birthday high-score" cabinet; [breather] faded celebration. |
-| **Restrooms / Mirror Nook** | NEW — spec'd | [lore/atmosphere] a mirror that briefly shows two signals standing where one stands (the strongest pre-reveal foreshadow); [secret] a hidden token. Small nook off the loop. |
+| **Restrooms / Mirror Nook** | NEW — built | [lore/atmosphere] a mirror that briefly shows two signals standing where one stands (the strongest pre-reveal foreshadow); [secret] a hidden token. Small nook off the loop. |
 
 ### Back of house (staff, gated)
 
 | Room | Status | Purposes |
 |---|---|---|
 | **Maintenance Hall** | keep | [game] Static Service Run + Maintenance Sync (Gus); [NPC] Gus; [lore] maintenance note. |
-| **Workshop / Storage** | NEW — spec'd | [lore] the maker's workbench — where 04 built the cabinets by hand (pays off cutscene panel 1); broken cabinets, spare parts; [secret] an unfinished prototype game he never shipped. Deepest maker lore. |
+| **Workshop / Storage** | NEW — built | [lore] the maker's workbench — where 04 built the cabinets by hand (pays off cutscene panel 1); broken cabinets, spare parts; [secret] an unfinished prototype game he never shipped. Deepest maker lore. |
 | **Staff Corridor** | keep | [game] Security Tape + Final Night Walk; [lore] staff records 03. |
-| **Memory Core / Basement** | NEW — spec'd | [lore] the arcade's memory heart — banks of drives literally holding everyone's memory of 04 (pays off "the system saved what it could"); a quiet, late, gated lore beat before the Staff Room. Candidate future home for Memory Echo. |
+| **Memory Core / Basement** | NEW — built | [lore] the arcade's memory heart — banks of drives literally holding everyone's memory of 04 (pays off "the system saved what it could"); a quiet, late, gated lore beat before the Staff Room. Candidate future home for Memory Echo. |
 | **Staff Room** | keep | [climax] the reveal + self-conflict. |
 
 ## Connectivity (adjacency, new plan)
@@ -82,6 +82,6 @@ Legend: **[game]** playable stage · **[NPC]** character · **[lore]** readable/
 
 Each new room is a copy of the minimal room pattern (PrizeCorner): a 640×440 `Node2D` with `Background`, `CollisionBounds` (perimeter walls with **door gaps**), `Spawn_From<Origin>` markers, `Player`, an `InteractableLayer` of purpose stubs, `MapTransition` exits, and a `UILayer` (DialogueBox + InteractionPrompt). Rooms connect via a lightweight hallway or a direct `MapTransition`. Visuals and final NPC/lore text are **placeholders**, to be dressed in the later art/story passes.
 
-- **Built this pass:** Party Room, Front Entrance — navigable, wired into the front loop, with purpose stubs and placeholder lore.
-- **Spec'd (next tranche):** Workshop, Memory Core, Restrooms — same recipe, wired into the back branch / loop as above.
-- **Verification note:** scenes are authored to the established pattern and syntactically validated, but a **Godot editor open + playtest pass** is required to confirm navigation, spawns, and collision door-gaps in-engine (there is no headless render here).
+- **Built, wired & cross-validated (all 5 new rooms):** Front Entrance, Party Room, Restrooms (front loop); Workshop (off Maintenance Hall); Memory Core (off Staff Corridor). Every `MapTransition.target_spawn_id` resolves to an existing marker in its target scene (verified across all 8 involved scenes), spawn markers are cleared of the 72×40 exit triggers, and each room carries purpose stubs + placeholder lore.
+- **Verification note:** scenes are authored to the established pattern and statically validated (refs resolve, spawn round-trips consistent, scripts balanced), but a **Godot editor open + playtest pass** is required to confirm navigation, spawns, and collision door-gaps in-engine (there is no headless render here).
+- **Later passes:** dress visuals + final NPC/lore text (the new rooms currently use hardcoded placeholder dialogue rather than the DialoguePool — fine for a shell, worth formalizing when the text is finalized).

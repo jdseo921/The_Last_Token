@@ -312,6 +312,7 @@ func _play_opening_intro() -> void:
 	dialogue_box.start_dialogue([
 		{"speaker": "Player", "text": "Pixel Haven. The name is already in my head. My own name is not."},
 		{"speaker": "Player", "text": "I remember carpet patterns, machine hum, and the smell of old tickets. I do not remember walking in."},
+		{"speaker": "Player", "text": "I think I used to like it here after everyone left. The quiet always felt earned."},
 		{"speaker": "Player", "text": "Something is missing from my pocket. A token, maybe. Or the reason I came back."},
 	])
 	await dialogue_box.dialogue_finished

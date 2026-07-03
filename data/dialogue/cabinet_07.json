@@ -64,7 +64,9 @@
         {"speaker": "Cabinet 07", "text": "MEMORY SIGNAL: OVERLOADED.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_alert.png"},
         {"speaker": "Cabinet 07", "text": "LOCK RESPONSE: LISTENING."},
         {"speaker": "Cabinet 07", "text": "TWO INPUTS NEAR DOOR."},
-        {"speaker": "Cabinet 07", "text": "ONE INPUT DENIES SOURCE."}
+        {"speaker": "Cabinet 07", "text": "ONE INPUT DENIES SOURCE."},
+        {"speaker": "Cabinet 07", "text": "THIS MACHINE LEARNED TO SAVE PLAYERS BEFORE PROFIT."},
+        {"speaker": "Cabinet 07", "text": "IT LEARNED THAT FROM SOMEONE."}
       ],
       [
         {"speaker": "Cabinet 07", "text": "STATUS: TOO MUCH SIGNAL.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_alert.png"},
@@ -78,6 +80,8 @@
         {"speaker": "Cabinet 07", "text": "EMPLOYEE 04 RESTORE STATUS: STABLE.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_stable.png"},
         {"speaker": "Cabinet 07", "text": "WELCOME BACK, EMPLOYEE 04."},
         {"speaker": "Cabinet 07", "text": "IDENTITY CONFLICT: CLOSED."},
+        {"speaker": "Cabinet 07", "text": "ONE WIN DID NOT COMPLETE YOU."},
+        {"speaker": "Cabinet 07", "text": "THE WHOLE PLAYER DID."},
         {"speaker": "Cabinet 07", "text": "PREVIOUS SESSION: CLOSED."},
         {"speaker": "Cabinet 07", "text": "CURRENT SESSION: YOURS."},
         {"speaker": "Cabinet 07", "text": "PLAYER SIGNAL ACCEPTED."}

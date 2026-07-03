@@ -76,6 +76,7 @@ var feedback_flash: ColorRect = null
 
 func _ready() -> void:
 	AudioManager.play_music_for_context("circuit_soda")
+	ArcadeScreen.apply(self, "res://assets/art/minigames/circuit_soda/backgrounds/circuit_soda_screen.svg")
 	reset_button.pressed.connect(_reset_round)
 	hint_button.pressed.connect(_show_hint)
 	exit_button.pressed.connect(_on_exit_pressed)

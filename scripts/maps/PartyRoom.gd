@@ -4,6 +4,8 @@ extends Node2D
 # Purposes: community-photo lore (the owner half in frame), mascot stage,
 # an optional "birthday high-score" cabinet. Placeholder lore; dressed later.
 
+const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
+
 @onready var player: CharacterBody2D = $Player
 @onready var dialogue_box: CanvasLayer = $UILayer/DialogueBox
 @onready var prompt_label: Label = $UILayer/InteractionPrompt
@@ -53,21 +55,28 @@ func _dialogue_is_active() -> bool:
 func handle_hub_interaction(interactable: Node, _player_node: Node = null) -> void:
 	match str(interactable.interactable_kind):
 		"community_photos":
-			start_dialogue([
-				{"speaker": "Community Wall", "text": "Rows of photos: birthday parties, tournament winners, staff pulling faces."},
+			start_dialogue(_get_env_state("party_community_wall", [
 				{"speaker": "Community Wall", "text": "In the corner of almost every shot, the same figure stands half in frame."},
-				{"speaker": "Community Wall", "text": "Never the center of attention. Always making sure everyone else fit."},
-			])
+				{"speaker": "Community Wall", "text": "Always making sure everyone else fit."},
+			]))
 		"mascot_stage":
-			start_dialogue([
-				{"speaker": "Party Stage", "text": "A little stage for a mascot that never quite worked."},
+			start_dialogue(_get_env_state("party_mascot_stage", [
 				{"speaker": "Party Stage", "text": "Kids' drawings are still taped along the front."},
-				{"speaker": "Party Stage", "text": "One reads: THANK YOU FOR THE FREE GO. It is not signed to anyone in particular."},
-			])
+				{"speaker": "Party Stage", "text": "One reads: THANK YOU FOR THE FREE GO."},
+			]))
 		"birthday_cabinet":
-			start_dialogue([
-				{"speaker": "Birthday Cabinet", "text": "PARTY HIGH SCORE - a cheerful little game for the corner."},
-				{"speaker": "Birthday Cabinet", "text": "Optional. Someone kept the score low on purpose, so kids could always win."},
-			])
+			start_dialogue(_get_env_state("party_birthday_cabinet", [
+				{"speaker": "Birthday Cabinet", "text": "Someone kept the score low on purpose, so kids could always win."},
+			]))
 		_:
 			start_dialogue([{"speaker": "System", "text": "Nothing happens."}])
+
+func _is_post_reveal() -> bool:
+	return GameState.post_reveal_roam_unlocked or GameState.twist_reveal_seen
+
+func _get_env_state(key: String, fallback: Array) -> Array:
+	if _is_post_reveal():
+		var restored: Array = DIALOGUE_POOL.get_lines("environment_objects", key + "_restored", [])
+		if not restored.is_empty():
+			return restored
+	return DIALOGUE_POOL.get_lines("environment_objects", key, fallback)

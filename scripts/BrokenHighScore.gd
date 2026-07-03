@@ -1,8 +1,18 @@
 extends Control
 
+# Broken High Score (optional) — reflex "score repair" race against Roxy's ghost.
+# The board lies (9999). The real record's digits flicker; LOCK them only while they
+# hold still. Repair TARGET_REPAIRS digits before Roxy's ghost runs the score to GHOST_TARGET.
+
 const SCREEN_ART_PATH := "res://assets/art/minigames/broken_high_score/broken_high_score_screen.png"
-const REAL_TARGET := 99
-const SCORE_STEP := 10
+
+const TARGET_REPAIRS := 5
+const GHOST_TARGET := 30.0
+const GHOST_RATE := 3.2          # ghost points gained per second
+const MISS_PENALTY := 3.0
+const LOCK_REWARD := 1.5         # locking a digit nudges the ghost back
+const FLICKER_INTERVAL := 0.08
+const GLYPHS := ["9", "?", "4", "#", "0", "8", "%", "6"]
 
 @onready var background: ColorRect = $Background
 @onready var background_art: TextureRect = $BackgroundArt
@@ -15,67 +25,114 @@ const SCORE_STEP := 10
 @onready var reset_button: Button = $MainPanel/ButtonRow/ResetButton
 @onready var exit_button: Button = $MainPanel/ButtonRow/ExitButton
 
-var score := 0
+var repairs := 0
+var ghost := 0.0
 var completed := false
+var running := false
+var flicker_accum := 0.0
+var cycle_accum := 0.0
+var cycle_len := 1.3
+var stable_window := 0.45
+var stable := false
 
 func _ready() -> void:
 	score_button.pressed.connect(_on_score_pressed)
 	reset_button.pressed.connect(_on_reset_pressed)
 	exit_button.pressed.connect(_on_exit_pressed)
+	randomize()
 	_apply_screen_art()
+	ArcadeScreen.apply(self)
 	_start_game()
 
 func _start_game() -> void:
-	score = 0
+	repairs = 0
+	ghost = 0.0
 	completed = false
-	instruction_label.text = "BROKEN HIGH SCORE\nThe target says 9999.\nSome digits are broken.\nReach the real score."
-	fake_target_label.text = "TARGET: 9999"
-	corrupted_digit_label.text = "9?9?"
-	status_label.text = "The cabinet insists the target is 9999. It is not convincing."
+	running = true
+	cycle_accum = 0.0
+	cycle_len = 1.3
+	stable_window = 0.45
+	stable = false
+	instruction_label.text = "BROKEN HIGH SCORE\nThe board screams 9999. It is lying.\nLOCK the record only when the digits hold still.\nBeat Roxy's ghost to the real score."
+	score_button.text = "LOCK"
 	score_button.visible = true
 	reset_button.visible = true
 	exit_button.visible = false
-	_refresh_score()
+	status_label.text = "Roxy: \"Bet you cannot even read a real score.\""
+	_refresh()
 	score_button.grab_focus()
 
+func _process(delta: float) -> void:
+	if not running or completed:
+		return
+	ghost += GHOST_RATE * delta
+	if ghost >= GHOST_TARGET:
+		_lose_round()
+		return
+	cycle_accum += delta
+	if cycle_accum >= cycle_len:
+		cycle_accum = 0.0
+		cycle_len = max(randf_range(1.0, 1.5) - 0.05 * repairs, 0.7)
+		stable_window = clamp(0.46 - 0.04 * repairs, 0.24, 0.46)
+	stable = cycle_accum >= (cycle_len - stable_window)
+	flicker_accum += delta
+	if stable:
+		corrupted_digit_label.text = "0 0 0 0"
+	elif flicker_accum >= FLICKER_INTERVAL:
+		flicker_accum = 0.0
+		corrupted_digit_label.text = "%s %s %s %s" % [_rand_glyph(), _rand_glyph(), _rand_glyph(), _rand_glyph()]
+	_refresh()
+
+func _rand_glyph() -> String:
+	return GLYPHS[randi() % GLYPHS.size()]
+
 func _on_score_pressed() -> void:
-	if completed:
+	if completed or not running:
 		return
-	score += SCORE_STEP
-	_play_audio("play_ui_confirm")
-	_refresh_score()
-	if score >= REAL_TARGET:
-		_complete_game()
-		return
-	status_label.text = "Score accepted. The last two digits keep flickering."
+	if stable:
+		repairs += 1
+		ghost = max(0.0, ghost - LOCK_REWARD)
+		_play_audio("play_score_blip")
+		status_label.text = "Digit locked. %d of %d restored." % [repairs, TARGET_REPAIRS]
+		if repairs >= TARGET_REPAIRS:
+			_complete_game()
+			return
+	else:
+		ghost = min(GHOST_TARGET - 0.01, ghost + MISS_PENALTY)
+		_play_audio("play_error_buzz")
+		status_label.text = "Locked static. Roxy's ghost gains."
+	_refresh()
 
 func _on_reset_pressed() -> void:
 	if completed:
 		return
-	score = 0
-	status_label.text = "Score reset. Previous record still smells like static."
-	_refresh_score()
+	_start_game()
+
+func _lose_round() -> void:
+	repairs = 0
+	ghost = 0.0
+	cycle_accum = 0.0
+	_play_audio("play_error_buzz")
+	status_label.text = "Roxy: \"Ghost wins. Again.\"\nThe board resets. Try actually watching this time."
+	_refresh()
 
 func _complete_game() -> void:
 	completed = true
+	running = false
 	GameState.complete_broken_high_score()
 	score_button.visible = false
 	reset_button.visible = false
 	exit_button.visible = true
-	fake_target_label.text = "TARGET: 9999"
-	corrupted_digit_label.text = "0099"
-	status_label.text = "PREVIOUS SCORE FOUND.\nEMPLOYEE ## - 000000.\nRECORD RESTORED."
-	_play_audio("play_token_get")
+	corrupted_digit_label.text = "0 0 9 9"
+	fake_target_label.text = "ROXY GHOST: BEATEN"
+	score_label.text = "RECORD RESTORED"
+	status_label.text = "PREVIOUS SCORE FOUND.\nThe points came back clean. The name stayed blank.\nRoxy: \"...Fine. That was almost impressive.\""
+	_play_audio("play_success_jingle")
 	exit_button.grab_focus()
 
-func _refresh_score() -> void:
-	score_label.text = "SCORE: %04d" % score
-	if score >= 90:
-		corrupted_digit_label.text = "00??"
-	elif score >= 50:
-		corrupted_digit_label.text = "0?9?"
-	else:
-		corrupted_digit_label.text = "9?9?"
+func _refresh() -> void:
+	fake_target_label.text = "ROXY GHOST: %02d / %02d" % [int(ghost), int(GHOST_TARGET)]
+	score_label.text = "REPAIRED: %d / %d" % [repairs, TARGET_REPAIRS]
 
 func _on_exit_pressed() -> void:
 	_play_audio("play_ui_confirm")

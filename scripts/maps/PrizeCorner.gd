@@ -187,10 +187,9 @@ func _handle_prize_counter() -> void:
 
 func _handle_prize_shelf_adventure() -> void:
 	start_dialogue([
-		{"speaker": "Prize Shelf", "text": "PRIZE SHELF RUN READY."},
-		{"speaker": "Prize Shelf", "text": "Collect loose tags without snagging the hooks."},
-		{"speaker": "Prize Shelf", "text": "Optional shelf route. Pip is pretending not to judge."},
-	], Callable(self, "_go_to_prize_shelf_run"))
+		{"speaker": "Prize Shelf", "text": "The shelf-run rail is unplugged. Loose tags rest where they fell."},
+		{"speaker": "Prize Shelf", "text": "Pip says the good prizes were never on the rail anyway."},
+	])
 
 func _go_to_prize_shelf_run() -> void:
 	GameState.set_pending_spawn_id("Spawn_FromPrizeAdventure")
