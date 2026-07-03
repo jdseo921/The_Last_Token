@@ -10,7 +10,7 @@ func _init() -> void:
 	game_state = GAME_STATE_SCRIPT.new()
 	root.add_child(game_state)
 	game_state.reset_for_new_game()
-	_check_state("01 New Memory", "opening_talk_to_mira", "New Memory", "Grounded", 0)
+	_check_state("01 New Memory", "opening_look_around", "New Memory", "Grounded", 0)
 
 	game_state.start_lost_token_quest()
 	game_state.rockbyte_duel_completed = true
@@ -18,40 +18,46 @@ func _init() -> void:
 	_check_state("02 Rockbyte complete", "return_lost_token", "Lost Token Found", "Grounded", 1)
 
 	game_state.complete_lost_token_quest()
-	_check_state("03 Lost Token returned", "truth_filter", "Truth Filter", "Uneasy", 1)
+	_check_state("03 Lost Token returned", "broken_high_score", "Broken High Score", "Uneasy", 1)
+
+	game_state.complete_broken_high_score()
+	_check_state("03b Broken High Score complete", "truth_filter", "Truth Filter", "Uneasy", 2)
 
 	game_state.complete_truth_filter()
-	_check_state("04 Truth Filter complete", "circuit_soda", "Truth Filter Cleared", "Fractured", 2)
+	_check_state("04 Truth Filter complete", "circuit_soda", "Truth Filter Cleared", "Fractured", 3)
 
 	game_state.complete_circuit_soda()
-	_check_state("05 Circuit Soda complete", "lost_shift_file", "Lost Shift File", "Fractured", 3)
+	_check_state("05 Circuit Soda complete", "prize_sort", "Prize Sort", "Fractured", 4)
+
+	game_state.complete_pip_secret()
+	_check_state("05b Prize Sort complete", "lost_shift_file", "Lost Shift File", "Fractured", 5)
 
 	game_state.read_closing_checklist()
 	game_state.read_maintenance_note()
 	game_state.read_staff_schedule()
-	_check_state("06 Lost Shift File complete", "static_service_run", "Static Service Run", "Fractured", 4)
+	_check_state("06 Lost Shift File complete", "static_service_run", "Static Service Run", "Fractured", 6)
 
 	game_state.complete_static_service_run()
-	_check_state("07 Static Service Run complete", "maintenance_sync", "Maintenance Sync", "Fractured", 5)
+	_check_state("07 Static Service Run complete", "maintenance_sync", "Maintenance Sync", "Fractured", 7)
 
 	game_state.complete_maintenance_sync()
-	_check_state("08 Maintenance Sync complete", "security_tape_assembly", "Security Tape Assembly", "Overloaded", 6)
+	_check_state("08 Maintenance Sync complete", "security_tape_assembly", "Security Tape Assembly", "Overloaded", 8)
 
 	game_state.complete_security_tape_assembly()
-	_check_state("09 Security Tape complete", "final_night_walk", "Final Night Walk", "Overloaded", 7)
+	_check_state("09 Security Tape complete", "final_night_walk", "Final Night Walk", "Overloaded", 9)
 
 	game_state.complete_final_night_walk()
-	_check_state("10 Final Night Walk complete", "stabilize_memory_echo", "Memory Echo", "Overloaded", 8)
+	_check_state("10 Final Night Walk complete", "stabilize_memory_echo", "Memory Echo", "Overloaded", 10)
 	game_state.mark_conscience_encounter_seen("after_final_night_walk")
 	_expect("10b Conscience 4", "conscience_encounter_4_seen", game_state.conscience_encounter_4_seen, true)
 
 	game_state.complete_memory_echo()
-	_check_state("11 Memory Echo complete", "enter_staff_room", "Staff Room", "Overloaded", 9)
+	_check_state("11 Memory Echo complete", "enter_staff_room", "Staff Room", "Overloaded", 11)
 
 	game_state.mark_twist_reveal_seen()
-	_check_state("12 Reveal slideshow complete", "finish_memory", "Truth Revealed", "Overloaded", 10)
+	_check_state("12 Reveal slideshow complete", "finish_memory", "Truth Revealed", "Overloaded", 12)
 	game_state.mark_conscience_final_room_seen()
-	_check_state("12b Final Room Conscience complete", "finish_memory", "Truth Revealed", "Overloaded", 10)
+	_check_state("12b Final Room Conscience complete", "finish_memory", "Truth Revealed", "Overloaded", 12)
 	_expect("12b Final Room Conscience complete", "conscience_final_room_seen", game_state.conscience_final_room_seen, true)
 	_expect("12b Final Room Conscience complete", "conscience_name_revealed", game_state.conscience_name_revealed, true)
 	_expect("12b Final Room Conscience complete", "player_creator_monologue_seen", game_state.player_creator_monologue_seen, true)
@@ -59,7 +65,7 @@ func _init() -> void:
 	_expect("12b Final Room Conscience complete", "should_use_glitched_player_sprite", game_state.should_use_glitched_player_sprite(), true)
 
 	game_state.unlock_post_reveal_roam()
-	_check_state("13 Post-Reveal Roam", "talk_to_witnesses", "Post-Reveal Roam", "Restored", 10)
+	_check_state("13 Post-Reveal Roam", "talk_to_witnesses", "Post-Reveal Roam", "Restored", 12)
 	_expect("13 Post-Reveal Roam", "quest_required", bool(game_state.get_current_quest_data().get("required", true)), false)
 	_expect("13 Post-Reveal Roam", "witness_route_completed", game_state.witness_route_completed, false)
 	_mark_core_witnesses()

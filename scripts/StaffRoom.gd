@@ -5,6 +5,7 @@ const ENDING_PROMPT_SCENE := preload("res://scenes/cutscenes/EndingPrompt.tscn")
 const DIALOGUE_BOX_SCENE := preload("res://scenes/ui/DialogueBox.tscn")
 const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
 const MEMORY_REVEAL_PANEL_DIR := "res://assets/art/cutscenes/memory_reveal/"
+const BACKGROUND_ART_PATH := "res://assets/art/maps/staff_room/staff_room_background_640x440.png"
 
 @onready var player: CharacterBody2D = $Player
 @onready var prompt_label: Label = $InteractionPrompt
@@ -16,6 +17,8 @@ var reveal_in_progress := false
 
 func _ready() -> void:
 	AudioManager.play_music_for_context("staff_room")
+	_apply_background_art()
+	_apply_room_bounds()
 	if player and player.has_signal("interaction_prompt_changed"):
 		player.interaction_prompt_changed.connect(_on_prompt_changed)
 	return_button.pressed.connect(_on_return_pressed)
@@ -28,6 +31,38 @@ func _on_prompt_changed(text: String) -> void:
 
 func can_open_pause_menu() -> bool:
 	return active_dialogue_box == null and active_cutscene == null and not reveal_in_progress
+
+func _apply_background_art() -> void:
+	if not ResourceLoader.exists(BACKGROUND_ART_PATH):
+		return
+	var tex := load(BACKGROUND_ART_PATH)
+	if not tex is Texture2D:
+		return
+	var spr := Sprite2D.new()
+	spr.name = "BackgroundArt"
+	spr.texture = tex
+	spr.centered = false
+	spr.position = Vector2.ZERO
+	add_child(spr)
+	move_child(spr, 0)
+	for placeholder_name in ["Floor", "BackWall", "TerminalGlow", "EmployeeFileVisual", "EmployeeFileLabel"]:
+		var node := get_node_or_null(NodePath(placeholder_name))
+		if node is CanvasItem:
+			(node as CanvasItem).visible = false
+
+func _apply_room_bounds() -> void:
+	if has_node("RoomBounds"):
+		return
+	var body := StaticBody2D.new()
+	body.name = "RoomBounds"
+	add_child(body)
+	for r in [Rect2(0, 0, 640, 44), Rect2(0, 404, 640, 36), Rect2(0, 0, 40, 440), Rect2(600, 0, 40, 440), Rect2(218, 58, 214, 116)]:
+		var cs := CollisionShape2D.new()
+		var shape := RectangleShape2D.new()
+		shape.size = r.size
+		cs.shape = shape
+		cs.position = r.position + r.size * 0.5
+		body.add_child(cs)
 
 func _apply_spawn_position() -> void:
 	var spawn_id := GameState.consume_pending_spawn_id("Spawn_Default")

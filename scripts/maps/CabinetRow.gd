@@ -4,6 +4,7 @@ const ROUTE_CUE_SCRIPT := preload("res://scripts/RouteCue.gd")
 const AMBIENT_EFFECTS := preload("res://scripts/AmbientSpriteEffects.gd")
 const BACKGROUND_ART_PATH := "res://assets/art/maps/cabinet_row/cabinet_row_background_640x440.png"
 const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
+const QUEST_REGISTRY := preload("res://scripts/QuestRegistry.gd")
 
 @onready var player: CharacterBody2D = $Player
 @onready var background_art: Sprite2D = $BackgroundArt
@@ -259,13 +260,20 @@ func _handle_roxy() -> void:
 			{"speaker": "Roxy", "text": "You look like someone who loses to menus."},
 			{"speaker": "Roxy", "text": "Try the Broken High Score cabinet."},
 			{"speaker": "Roxy", "text": "The screen lies, but badly."},
-		]))
+		]), Callable(self, "_announce_optional_quest").bind("broken_high_score"))
 		return
 	start_dialogue(_get_roxy_sequential_lines("broken_high_score_hint", [
 		{"speaker": "Roxy", "text": "Finally. Player Two showed up."},
 		{"speaker": "Roxy", "text": "Try the Broken High Score cabinet."},
 		{"speaker": "Roxy", "text": "The screen lies, but badly."},
 	]))
+
+func _announce_optional_quest(quest_id: String) -> void:
+	if quest_notice == null or not quest_notice.has_method("show_notification"):
+		return
+	var data := QUEST_REGISTRY.get_quest(quest_id)
+	if not data.is_empty():
+		quest_notice.call("show_notification", data)
 
 func _handle_broken_high_score() -> void:
 	if not _broken_high_score_unlocked():

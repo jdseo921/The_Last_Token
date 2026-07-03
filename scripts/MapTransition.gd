@@ -7,16 +7,42 @@ extends Area2D
 @export var locked_dialogue: Array[String] = []
 @export var auto_transition_on_body_entered := true
 
+const ARM_DELAY_SECONDS := 0.35
+
 var transition_started := false
+var armed := false
 
 func _ready() -> void:
 	body_entered.connect(_on_body_entered)
+	body_exited.connect(_on_body_exited)
+	# Do not auto-transition on the frame the player spawns in. If the spawn point
+	# overlaps this trigger (common when a room's exit sits next to its spawn), the
+	# player would be bounced straight back. Arm only after a short delay, and if
+	# they spawn already inside, require them to step out first.
+	call_deferred("_arm_after_spawn")
+
+func _arm_after_spawn() -> void:
+	await get_tree().create_timer(ARM_DELAY_SECONDS).timeout
+	if is_instance_valid(self) and not _player_overlapping():
+		armed = true
+
+func _player_overlapping() -> bool:
+	for body in get_overlapping_bodies():
+		if body is CharacterBody2D:
+			return true
+	return false
 
 func interact(_player: Node = null) -> void:
 	_try_transition()
 
+func _on_body_exited(body: Node) -> void:
+	if body is CharacterBody2D and not _player_overlapping():
+		armed = true
+
 func _on_body_entered(body: Node) -> void:
 	if not auto_transition_on_body_entered:
+		return
+	if not armed:
 		return
 	if body is CharacterBody2D:
 		_try_transition()

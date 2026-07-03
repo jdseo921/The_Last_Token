@@ -1,7 +1,7 @@
 extends Control
 class_name RouteCue
 
-const DEFAULT_SIZE := Vector2(340, 34)
+const DEFAULT_SIZE := Vector2(340, 48)
 const TILE_SIZE := 16
 const PANEL_COLOR := Color(0.015, 0.018, 0.028, 0.9)
 const BORDER_COLOR := Color(0.25, 0.9, 1.0, 0.82)
@@ -35,6 +35,23 @@ func refresh() -> void:
 		return
 	route_label.text = hint
 	route_label.modulate = LOCAL_COLOR if hint.begins_with("LOCAL") else TEXT_COLOR
+	_fit_to_text()
+
+func _fit_to_text() -> void:
+	if route_label == null or background_panel == null:
+		return
+	var inner_width := maxf(size.x - 20.0, 80.0)
+	var text_height := 16.0
+	var font := route_label.get_theme_font("font")
+	if font != null:
+		var font_size := route_label.get_theme_font_size("font_size")
+		text_height = font.get_multiline_string_size(route_label.text, HORIZONTAL_ALIGNMENT_LEFT, inner_width, font_size).y
+	var box_height := maxf(text_height + 14.0, 26.0)
+	size.y = box_height
+	custom_minimum_size = size
+	background_panel.size = Vector2(size.x, box_height)
+	route_label.position = Vector2(10, 5)
+	route_label.size = Vector2(inner_width, box_height - 10.0)
 
 static func get_current_hint(current_location_id: String) -> String:
 	var state := _get_game_state()
@@ -42,12 +59,18 @@ static func get_current_hint(current_location_id: String) -> String:
 		return ""
 	var quest_id := str(state.call("get_current_quest_id"))
 	match quest_id:
+		"opening_look_around":
+			return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Look around. Talk to whoever is still here.")
 		"opening_talk_to_mira":
 			return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Talk to Mira at the ticket counter.")
 		"recover_lost_token":
 			return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Play Cabinet 07 on the main floor.")
 		"return_lost_token":
 			return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Return the Lost Token to Mira.")
+		"broken_high_score":
+			return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Beat Roxy's Broken High Score cabinet.")
+		"prize_sort":
+			return _local_or_route(current_location_id, "prize_corner", "LOCAL: Help Pip with the Prize Sort.")
 		"truth_filter":
 			return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Talk to Mr. Byte, then use Truth Filter.")
 		"circuit_soda":

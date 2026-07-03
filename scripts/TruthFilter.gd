@@ -52,6 +52,17 @@ const ROUND_DATA: Array[Dictionary] = [
 		"correct": 1,
 		"explanation": "The backup was incomplete. The arcade did not want that read.",
 	},
+	{
+		"rule": "Two records are static wearing words. Choose the one with a lucid heart.",
+		"transition": "The arcade tests what it still believes about you.",
+		"statements": [
+			"This place was built to be somewhere kinder to go.",
+			"You were only ever a visitor here.",
+			"The arcade closed because nobody cared.",
+		],
+		"correct": 0,
+		"explanation": "Somewhere kinder to go. The static cannot spell that away.",
+	},
 ]
 
 const CABINET_NORMAL_COLOR := Color(0.08, 0.09, 0.14, 1.0)
@@ -68,6 +79,13 @@ const LIE_WRONG_PENALTY := 22.0
 const LIE_CORRECT_RELIEF := 34.0
 const LIE_START := 16.0
 const LIE_MAX := 100.0
+
+const CORRUPT_GLYPHS := "▓▒░#%&@?!"
+const FLICKER_LUCID_BASE := 1.15
+const FLICKER_LUCID_PER_ROUND := 0.14
+const FLICKER_LUCID_MIN := 0.38
+const FLICKER_CORRUPT_BASE := 0.3
+const FLICKER_CORRUPT_PER_ROUND := 0.06
 
 @onready var rule_label: Label = $RulePanel/RuleLabel
 @onready var memory_signal_label: Label = $SignalPanel/SignalVBox/MemorySignalLabel
@@ -108,6 +126,10 @@ var round_transition_running := false
 var cabinet_sheet_texture: Texture2D = null
 var lie_density := 0.0
 var round_active := false
+var cabinet_home_positions: Array[Vector2] = []
+var corrupted_statements: Array[String] = []
+var flicker_timers: Array[float] = []
+var flicker_lucid: Array[bool] = []
 
 func _ready() -> void:
 	AudioManager.play_music_for_context("truth_filter")
@@ -119,6 +141,9 @@ func _ready() -> void:
 	_start_puzzle()
 
 func _start_puzzle() -> void:
+	if cabinet_home_positions.is_empty():
+		for panel in cabinet_panels:
+			cabinet_home_positions.append(panel.position)
 	current_round = 0
 	completed = false
 	round_transition_running = false
@@ -150,11 +175,17 @@ func _show_round() -> void:
 	var round_data := ROUND_DATA[current_round]
 	rule_label.text = "Round %d / %d\n%s" % [current_round + 1, ROUND_DATA.size(), str(round_data["rule"])]
 	var statements: Array = round_data["statements"]
+	corrupted_statements.clear()
+	flicker_timers.clear()
+	flicker_lucid.clear()
 	for index in range(statement_labels.size()):
 		statement_labels[index].text = str(statements[index])
+		corrupted_statements.append(_corrupt_text(str(statements[index]), current_round))
+		flicker_timers.append(-0.55 * index)
+		flicker_lucid.append(true)
 		_set_panel_state(index, CABINET_NORMAL_COLOR, SCREEN_NORMAL_COLOR, CABINET_ART_NORMAL)
-		cabinet_panels[index].position = Vector2.ZERO
-	status_label.text = "Read the rule. Sort the true record before the lie density climbs."
+		cabinet_panels[index].position = cabinet_home_positions[index] if index < cabinet_home_positions.size() else cabinet_panels[index].position
+	status_label.text = "Records flicker between truth and static.\nRead them lucid. Sort before the lie density climbs."
 	_set_signal_integrity("Stable")
 	_set_choice_buttons_enabled(true)
 	lie_density = LIE_START
@@ -166,6 +197,7 @@ func _on_choice_pressed(index: int) -> void:
 	if completed or round_transition_running:
 		return
 	round_active = false
+	_show_true_statements()
 	ARCADE_JUICE.pulse_control(self, choose_buttons[index])
 	_set_choice_buttons_enabled(false)
 	var correct_index := int(ROUND_DATA[current_round]["correct"])
@@ -297,12 +329,13 @@ func _play_wrong_feedback(index: int) -> void:
 	glitch_overlay.visible = true
 	glitch_overlay.modulate.a = 0.0
 	var panel := cabinet_panels[index]
-	panel.position = Vector2.ZERO
+	var home: Vector2 = cabinet_home_positions[index] if index < cabinet_home_positions.size() else panel.position
+	panel.position = home
 	feedback_tween = create_tween()
 	feedback_tween.tween_property(glitch_overlay, "modulate:a", 0.35, 0.06)
-	feedback_tween.tween_property(panel, "position", Vector2(-4, 0), 0.04)
-	feedback_tween.tween_property(panel, "position", Vector2(4, 0), 0.04)
-	feedback_tween.tween_property(panel, "position", Vector2.ZERO, 0.05)
+	feedback_tween.tween_property(panel, "position", home + Vector2(-4, 0), 0.04)
+	feedback_tween.tween_property(panel, "position", home + Vector2(4, 0), 0.04)
+	feedback_tween.tween_property(panel, "position", home, 0.05)
 	feedback_tween.tween_property(glitch_overlay, "modulate:a", 0.0, 0.12)
 	feedback_tween.tween_callback(_hide_glitch_overlay)
 	await feedback_tween.finished
@@ -319,8 +352,8 @@ func _play_correct_feedback(index: int) -> void:
 
 func _hide_glitch_overlay() -> void:
 	glitch_overlay.visible = false
-	for panel in cabinet_panels:
-		panel.position = Vector2.ZERO
+	for index in range(cabinet_panels.size()):
+		cabinet_panels[index].position = cabinet_home_positions[index] if index < cabinet_home_positions.size() else cabinet_panels[index].position
 
 func _play_audio(method_name: String) -> void:
 	var audio_manager := get_node_or_null("/root/AudioManager")
@@ -335,6 +368,44 @@ func _process(delta: float) -> void:
 		_destabilize()
 		return
 	_update_density()
+	_update_flicker(delta)
+
+func _update_flicker(delta: float) -> void:
+	if flicker_timers.size() != statement_labels.size():
+		return
+	var lucid_time: float = maxf(
+		FLICKER_LUCID_BASE - FLICKER_LUCID_PER_ROUND * current_round - lie_density * 0.004,
+		FLICKER_LUCID_MIN
+	)
+	var corrupt_time: float = FLICKER_CORRUPT_BASE + FLICKER_CORRUPT_PER_ROUND * current_round
+	var statements: Array = ROUND_DATA[current_round]["statements"]
+	for index in range(statement_labels.size()):
+		flicker_timers[index] += delta
+		var limit := lucid_time if flicker_lucid[index] else corrupt_time
+		if flicker_timers[index] >= limit:
+			flicker_timers[index] = 0.0
+			flicker_lucid[index] = not flicker_lucid[index]
+			if flicker_lucid[index]:
+				statement_labels[index].text = str(statements[index])
+			else:
+				statement_labels[index].text = corrupted_statements[index]
+
+func _show_true_statements() -> void:
+	var statements: Array = ROUND_DATA[current_round]["statements"]
+	for index in range(statement_labels.size()):
+		statement_labels[index].text = str(statements[index])
+
+func _corrupt_text(text: String, seed_round: int) -> String:
+	var out := ""
+	for i in range(text.length()):
+		var ch := text[i]
+		if ch == " ":
+			out += " "
+		elif (i * 31 + seed_round * 17 + text.length()) % 100 < 52:
+			out += CORRUPT_GLYPHS[(i * 7 + seed_round * 3) % CORRUPT_GLYPHS.length()]
+		else:
+			out += ch
+	return out
 
 func _update_density() -> void:
 	signal_integrity_label.text = "Lie Density: %d%%" % int(lie_density)

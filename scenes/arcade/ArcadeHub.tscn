@@ -21,26 +21,32 @@ visible = false
 centered = false
 
 [node name="FloorLayer" type="Node2D" parent="."]
+visible = false
 
 [node name="WallLayer" type="Node2D" parent="."]
+visible = false
 
 [node name="PropLayer" type="Node2D" parent="."]
+visible = false
 
 [node name="InteractableLayer" type="Node2D" parent="."]
 
 [node name="EffectsLayer" type="Node2D" parent="."]
 
 [node name="SpawnGlow" type="Polygon2D" parent="EffectsLayer"]
+visible = false
 color = Color(0.18, 0.82, 0.9, 0.2)
 polygon = PackedVector2Array(146, 228, 210, 228, 224, 246, 210, 264, 146, 264, 132, 246)
 
 [node name="MiraQuestGlow" type="Polygon2D" parent="EffectsLayer"]
+visible = false
 color = Color(1, 0.36, 0.72, 0.13)
-polygon = PackedVector2Array(116, 148, 232, 148, 252, 190, 232, 224, 116, 224, 96, 190)
+polygon = PackedVector2Array(84, 140, 160, 140, 176, 170, 160, 190, 84, 190, 68, 170)
 
 [node name="Cabinet07QuestGlow" type="Polygon2D" parent="EffectsLayer"]
-color = Color(0.16, 0.88, 1, 0.16)
-polygon = PackedVector2Array(420, 78, 560, 78, 580, 152, 552, 190, 426, 190, 400, 152)
+visible = false
+color = Color(0.16, 0.88, 1, 0.14)
+polygon = PackedVector2Array(524, 66, 594, 66, 606, 120, 592, 150, 528, 150, 514, 120)
 
 [node name="TruthFilterGlow" type="Polygon2D" parent="EffectsLayer"]
 visible = false
@@ -48,7 +54,7 @@ color = Color(0.8, 0.2, 1, 0.12)
 polygon = PackedVector2Array(340, 196, 430, 196, 448, 258, 420, 306, 336, 306, 312, 258)
 
 [node name="AmbientCabinet07Flicker" parent="EffectsLayer" instance=ExtResource("9")]
-position = Vector2(490, 124)
+position = Vector2(558, 72)
 effect_type = "flicker"
 intensity = 0.08
 speed = 0.75
@@ -56,7 +62,7 @@ prop_size = Vector2(76, 36)
 prop_color = Color(0.12, 0.88, 1, 0.16)
 
 [node name="AmbientTruthFilterFlicker" parent="EffectsLayer" instance=ExtResource("9")]
-position = Vector2(378, 244)
+position = Vector2(320, 214)
 effect_type = "random_screen_flash"
 intensity = 0.07
 speed = 0.65
@@ -66,7 +72,7 @@ prop_size = Vector2(74, 36)
 prop_color = Color(0.85, 0.28, 1, 0.12)
 
 [node name="AmbientStaffDoorPulse" parent="EffectsLayer" instance=ExtResource("9")]
-position = Vector2(546, 280)
+position = Vector2(386, 360)
 effect_type = "glow_pulse"
 intensity = 0.09
 speed = 0.58
@@ -75,7 +81,7 @@ prop_size = Vector2(82, 104)
 prop_color = Color(0.95, 0.24, 0.32, 0.09)
 
 [node name="AmbientVendoBlink" parent="EffectsLayer" instance=ExtResource("9")]
-position = Vector2(304, 286)
+position = Vector2(505, 318)
 effect_type = "blink"
 intensity = 0.05
 speed = 0.7
@@ -83,7 +89,7 @@ prop_size = Vector2(56, 34)
 prop_color = Color(0.2, 1, 0.58, 0.1)
 
 [node name="AmbientMrByteBlink" parent="EffectsLayer" instance=ExtResource("9")]
-position = Vector2(300, 202)
+position = Vector2(300, 74)
 effect_type = "blink"
 intensity = 0.05
 speed = 0.85
@@ -91,7 +97,7 @@ prop_size = Vector2(54, 30)
 prop_color = Color(0.32, 0.75, 1, 0.1)
 
 [node name="AmbientBrokenCabinetFlicker" parent="EffectsLayer" instance=ExtResource("9")]
-position = Vector2(402, 356)
+position = Vector2(86, 320)
 effect_type = "flicker"
 intensity = 0.04
 speed = 0.45
@@ -217,7 +223,7 @@ centered = false
 
 [node name="CollisionBounds" type="Node2D" parent="."]
 script = ExtResource("11")
-rectangles = Array[Vector4]([Vector4(0, 0, 640, 28), Vector4(0, 424, 110, 16), Vector4(190, 424, 450, 16), Vector4(0, 0, 16, 330), Vector4(0, 392, 16, 48), Vector4(624, 0, 16, 86), Vector4(624, 146, 16, 34), Vector4(624, 234, 16, 24), Vector4(624, 326, 16, 14)])
+rectangles = Array[Vector4]([Vector4(32, 40, 576, 18), Vector4(32, 40, 14, 176), Vector4(32, 278, 14, 122), Vector4(594, 40, 14, 176), Vector4(594, 278, 14, 122), Vector4(32, 384, 324, 16), Vector4(414, 384, 194, 16), Vector4(52, 84, 158, 30), Vector4(172, 84, 38, 96), Vector4(242, 56, 305, 76), Vector4(292, 196, 60, 88), Vector4(474, 296, 68, 86), Vector4(54, 300, 64, 86), Vector4(356, 355, 58, 45)])
 visible_visual_node_paths = Array[NodePath]([NodePath("../PropLayer/TicketCounterSprite"), NodePath("../PropLayer/OwnerPortraitSprite"), NodePath("../PropLayer/Cabinet07Sprite"), NodePath("../PropLayer/Cabinet07FlickerSprite"), NodePath("../PropLayer/BrokenCabinetSprite"), NodePath("../PropLayer/TruthFilterVisual"), NodePath("../PropLayer/StaffDoorSprite"), NodePath("../InteractableLayer/Mira/VisualRoot/Sprite"), NodePath("../InteractableLayer/Mira/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Mira/VisualRoot/PlaceholderVisual"), NodePath("../InteractableLayer/Gus/VisualRoot/Sprite"), NodePath("../InteractableLayer/Gus/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Gus/VisualRoot/PlaceholderVisual"), NodePath("../InteractableLayer/Vendo/VisualRoot/Sprite"), NodePath("../InteractableLayer/Vendo/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Vendo/VisualRoot/PlaceholderVisual"), NodePath("../InteractableLayer/MrByte/VisualRoot/Sprite"), NodePath("../InteractableLayer/MrByte/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/MrByte/VisualRoot/PlaceholderVisual")])
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
@@ -301,34 +307,6 @@ size = Vector2(156, 18)
 theme_override_font_sizes/font_size = 10
 text = "Memory Signal: Grounded"
 
-[node name="STAFF ONLY" type="Label" parent="UILayer"]
-position = Vector2(512, 220)
-theme_override_font_sizes/font_size = 11
-text = "STAFF DOOR"
-
-[node name="CABINET 07" type="Label" parent="UILayer"]
-position = Vector2(438, 74)
-size = Vector2(104, 20)
-theme_override_font_sizes/font_size = 11
-text = "CABINET 07"
-horizontal_alignment = 1
-
-[node name="TicketCounterLabel" type="Label" parent="UILayer"]
-position = Vector2(50, 160)
-size = Vector2(166, 18)
-theme_override_font_sizes/font_size = 9
-modulate = Color(1, 1, 1, 0.84)
-text = "TICKET COUNTER"
-horizontal_alignment = 1
-
-[node name="TicketSweepLabel" type="Label" parent="UILayer"]
-position = Vector2(18, 236)
-size = Vector2(124, 18)
-theme_override_font_sizes/font_size = 9
-modulate = Color(1, 1, 1, 0.84)
-text = "TICKET SWEEP"
-horizontal_alignment = 1
-
 [node name="HintLabel" type="Label" parent="UILayer"]
 visible = false
 position = Vector2(32, 404)
@@ -344,7 +322,7 @@ But some machines are still awake."
 autowrap_mode = 3
 
 [node name="Mira" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(176, 190)
+position = Vector2(120, 158)
 interactable_kind = "mira"
 label_text = "MIRA"
 idle_sheet_path = "res://assets/art/characters/mira/mira_idle_sheet.png"
@@ -354,26 +332,26 @@ visual_scale = 1.1
 use_placeholder_visual = false
 
 [node name="TicketCounter" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(132, 154)
+position = Vector2(130, 102)
 interactable_kind = "ticket_counter"
 label_text = "TICKET COUNTER"
 show_label = false
 use_placeholder_visual = false
 
 [node name="TicketSweep" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(78, 214)
+position = Vector2(178, 300)
 interactable_kind = "ticket_sweep_adventure"
 label_text = "TICKET SWEEP"
 visual_scale = 0.85
-flicker_enabled = true
+use_placeholder_visual = false
 
 [node name="ClosingChecklist" parent="InteractableLayer" instance=ExtResource("10")]
-position = Vector2(220, 158)
+position = Vector2(172, 102)
 interactable_kind = "closing_checklist"
 label_text = "CHECKLIST"
 
 [node name="Gus" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(300, 130)
+position = Vector2(415, 182)
 interactable_kind = "gus"
 label_text = "GUS"
 idle_sheet_path = "res://assets/art/characters/gus/gus_idle_sheet.png"
@@ -383,26 +361,26 @@ visual_scale = 1.1
 use_placeholder_visual = false
 
 [node name="Vendo" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(304, 292)
+position = Vector2(505, 344)
 interactable_kind = "vendo"
 label_text = "VENDO"
-idle_sheet_path = "res://assets/art/characters/vendo/vendo_idle_sheet.png"
+idle_sheet_path = ""
 idle_animation_enabled = false
 use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="Cabinet07" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(490, 150)
+position = Vector2(558, 98)
 interactable_kind = "cabinet07"
 label_text = "CABINET 07"
-sprite_texture_path = "res://assets/art/hub/cabinets/cabinet_07_idle.png"
-idle_sheet_path = "res://assets/art/hub/cabinets/cabinet_07_flicker.png"
+sprite_texture_path = ""
+idle_sheet_path = ""
 idle_animation_enabled = false
 use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="MrByte" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(300, 212)
+position = Vector2(246, 184)
 interactable_kind = "mr_byte"
 label_text = "MR. BYTE"
 idle_sheet_path = "res://assets/art/characters/mr_byte/mr_byte_idle_sheet.png"
@@ -411,102 +389,62 @@ use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="BrokenCabinet" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(402, 374)
+position = Vector2(86, 344)
 interactable_kind = "broken_cabinet"
 label_text = "BROKEN CABINET"
-sprite_texture_path = "res://assets/art/hub/cabinets/broken_cabinet.png"
+sprite_texture_path = ""
 use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="TruthFilter" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(378, 276)
+position = Vector2(320, 242)
 interactable_kind = "truth_filter"
 label_text = "TRUTH FILTER"
 use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="StaffDoor" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(546, 300)
+position = Vector2(386, 376)
 interactable_kind = "staff_door"
 label_text = "STAFF DOOR"
 use_placeholder_visual = false
 
 [node name="OwnerPortrait" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(90, 92)
+position = Vector2(132, 58)
 interactable_kind = "owner_portrait"
 label_text = "OWNER PORTRAIT"
 show_label = false
 use_placeholder_visual = false
 
 [node name="ToCabinetRow" parent="InteractableLayer" instance=ExtResource("8")]
-position = Vector2(628, 122)
+position = Vector2(621, 245)
 target_scene_path = "res://scenes/maps/hallways/CabinetHallway.tscn"
 target_spawn_id = "Spawn_FromArcadeHub"
 
-[node name="ToSnackAlcove" parent="InteractableLayer" instance=ExtResource("8")]
-position = Vector2(628, 208)
-target_scene_path = "res://scenes/maps/hallways/SnackHallway.tscn"
-target_spawn_id = "Spawn_FromArcadeHub"
-required_flag = "lying_cabinets_completed"
-locked_dialogue = Array[String](["SNACK ALCOVE LOCKED.", "TRUTH FILTER REQUIRED."])
-
-[node name="ToPrizeCorner" parent="InteractableLayer" instance=ExtResource("8")]
-position = Vector2(12, 360)
-target_scene_path = "res://scenes/maps/hallways/PrizeHallway.tscn"
-target_spawn_id = "Spawn_FromArcadeHub"
-
 [node name="ToMaintenanceHall" parent="InteractableLayer" instance=ExtResource("8")]
-position = Vector2(628, 358)
+position = Vector2(386, 406)
 target_scene_path = "res://scenes/maps/hallways/MaintenanceHallway.tscn"
 target_spawn_id = "Spawn_FromArcadeHub"
 required_flag = "circuit_soda_completed"
 locked_dialogue = Array[String](["MAINTENANCE HALL LOCKED.", "CIRCUIT SODA ROUTE REQUIRED."])
 
-[node name="ToStaffCorridor" parent="InteractableLayer" instance=ExtResource("8")]
-position = Vector2(628, 282)
-target_scene_path = "res://scenes/maps/hallways/BackHallway.tscn"
-target_spawn_id = "Spawn_FromArcadeHub"
-required_flag = "staff_corridor_unlocked"
-locked_dialogue = Array[String](["STAFF CORRIDOR LOCKED.", "MAINTENANCE SYNC REQUIRED."])
-
 [node name="ToFrontEntrance" parent="InteractableLayer" instance=ExtResource("8")]
-position = Vector2(140, 416)
+position = Vector2(19, 245)
 target_scene_path = "res://scenes/maps/FrontEntrance.tscn"
 target_spawn_id = "Spawn_FromArcadeHub"
 
 [node name="CabinetRowExitLabel" type="Label" parent="UILayer"]
-position = Vector2(524, 104)
+position = Vector2(524, 232)
 size = Vector2(98, 18)
 theme_override_font_sizes/font_size = 9
 text = "CABINET ROW"
 horizontal_alignment = 2
 
-[node name="SnackExitLabel" type="Label" parent="UILayer"]
-position = Vector2(522, 190)
-size = Vector2(100, 18)
+[node name="FrontEntranceExitLabel" type="Label" parent="UILayer"]
+position = Vector2(20, 260)
+size = Vector2(130, 18)
 theme_override_font_sizes/font_size = 9
-text = "SNACK ALCOVE"
-horizontal_alignment = 2
-
-[node name="PrizeExitLabel" type="Label" parent="UILayer"]
-position = Vector2(18, 340)
-size = Vector2(104, 18)
-theme_override_font_sizes/font_size = 9
-text = "PRIZE CORNER"
-
-[node name="MaintenanceExitLabel" type="Label" parent="UILayer"]
-position = Vector2(502, 340)
-size = Vector2(120, 18)
-theme_override_font_sizes/font_size = 9
-text = "MAINTENANCE"
-horizontal_alignment = 2
-
-[node name="StaffCorridorExitLabel" type="Label" parent="UILayer"]
-position = Vector2(512, 262)
-size = Vector2(110, 18)
-theme_override_font_sizes/font_size = 9
-text = "STAFF CORRIDOR"
-horizontal_alignment = 2
+text = "FRONT ENTRANCE"
 
 [node name="PauseMenu" parent="." instance=ExtResource("6")]
 

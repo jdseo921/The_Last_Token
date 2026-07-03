@@ -22,24 +22,26 @@ stretch_mode = 5
 
 [node name="SpeakerName" type="Label" parent="Panel"]
 offset_left = 16.0
-offset_top = 10.0
-offset_right = 560.0
-offset_bottom = 36.0
-theme_override_font_sizes/font_size = 18
+offset_top = 8.0
+offset_right = 574.0
+offset_bottom = 32.0
+theme_override_font_sizes/font_size = 16
 text = "Speaker"
 
 [node name="DialogueText" type="Label" parent="Panel"]
 offset_left = 16.0
-offset_top = 44.0
-offset_right = 560.0
-offset_bottom = 114.0
+offset_top = 38.0
+offset_right = 574.0
+offset_bottom = 128.0
+theme_override_font_sizes/font_size = 12
 text = "Dialogue goes here."
 autowrap_mode = 3
 
 [node name="ContinuePrompt" type="Label" parent="Panel"]
 offset_left = 16.0
-offset_top = 124.0
-offset_right = 560.0
-offset_bottom = 150.0
+offset_top = 132.0
+offset_right = 574.0
+offset_bottom = 154.0
+theme_override_font_sizes/font_size = 11
 text = "PRESS E / SPACE"
 horizontal_alignment = 2

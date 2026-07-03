@@ -31,15 +31,16 @@ position = Vector2(52, 168)
 text = "EMPLOYEE 04 FILE"
 
 [node name="Employee04File" parent="." instance=ExtResource("3")]
-position = Vector2(90, 148)
+position = Vector2(244, 182)
 interactable_kind = "employee_04_file"
 label_text = "FILE"
+use_placeholder_visual = false
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
-position = Vector2(144, 176)
+position = Vector2(320, 312)
 
 [node name="Player" parent="." instance=ExtResource("2")]
-position = Vector2(144, 176)
+position = Vector2(320, 312)
 
 [node name="InteractionPrompt" type="Label" parent="."]
 position = Vector2(24, 272)
@@ -73,6 +74,7 @@ offset_bottom = 84.0
 text = "Return to Arcade"
 
 [node name="RevealTerminal" parent="." instance=ExtResource("3")]
-position = Vector2(192, 144)
+position = Vector2(320, 182)
 interactable_kind = "reveal_terminal"
 label_text = "TERMINAL"
+use_placeholder_visual = false

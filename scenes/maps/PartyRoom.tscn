@@ -101,27 +101,6 @@ size = Vector2(120, 18)
 theme_override_font_sizes/font_size = 9
 text = "ENTRANCE"
 
-[node name="StageLabel" type="Label" parent="UILayer"]
-position = Vector2(240, 154)
-size = Vector2(160, 18)
-theme_override_font_sizes/font_size = 9
-text = "MASCOT STAGE"
-horizontal_alignment = 1
-
-[node name="PhotoLabel" type="Label" parent="UILayer"]
-position = Vector2(96, 334)
-size = Vector2(148, 18)
-theme_override_font_sizes/font_size = 9
-text = "COMMUNITY WALL"
-horizontal_alignment = 1
-
-[node name="CabinetLabel" type="Label" parent="UILayer"]
-position = Vector2(420, 334)
-size = Vector2(110, 18)
-theme_override_font_sizes/font_size = 9
-text = "PARTY HIGH SCORE"
-horizontal_alignment = 1
-
 [node name="InteractionPromptBackground" type="ColorRect" parent="UILayer"]
 visible = false
 position = Vector2(194, 400)

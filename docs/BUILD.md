@@ -2,13 +2,11 @@
 
 Engine: **Godot 4.7.stable**. Target: **Windows Desktop** (x86_64). The export preset lives in `export_presets.cfg` at the repo root and is already configured; it excludes `tools/`, `tmp/`, `docs/`, and `*.md` from the shipped build.
 
-## One-time setup: export templates
+**Status: a verified release build exists** — `build/windows/TheLastToken.exe` + `TheLastToken.pck` (ship both together; `build/` is gitignored). The exported exe was smoke-tested headless: boots to the title menu, exit 0.
 
-A build needs the matching export templates, which are **not** part of the engine download. Confirm they are missing / install them:
+## One-time setup: export templates (already installed)
 
-- Templates live in `%APPDATA%\Godot\export_templates\4.7.stable\` (Windows).
-- Easiest install: open the project in the Godot editor → **Editor → Manage Export Templates → Download and Install** (pick the 4.7.stable mirror).
-- Offline alternative: download `Godot_v4.7-stable_export_templates.tpz` from the official mirror and use **Install from File** in the same dialog.
+Templates live in `%APPDATA%\Godot\export_templates\4.7.stable\`; `windows_release_x86_64.exe` is installed. If they ever go missing: Godot editor → **Editor → Manage Export Templates → Download and Install**, or install `Godot_v4.7-stable_export_templates.tpz` from file.
 
 ## Validate before building
 

@@ -197,6 +197,19 @@ func _on_dialogue_finished() -> void:
 	_refresh_objective_hint()
 	_refresh_hub_art_states()
 	_maybe_show_quest_notification()
+	_maybe_play_opening_monologue()
+
+func _maybe_play_opening_monologue() -> void:
+	# After the player has poked around and talked to a few NPCs, the protagonist
+	# reflects and points himself at Mira, which is what starts the first quest.
+	if not GameState.opening_monologue_due():
+		return
+	GameState.opening_hint_monologue_seen = true
+	start_dialogue([
+		{"speaker": "Player", "text": "Everyone here talks like they knew me before I walked in."},
+		{"speaker": "Player", "text": "And the woman at the counter keeps glancing over. Mira."},
+		{"speaker": "Player", "text": "Like she has been waiting for me to walk up. I should go see what she wants."},
+	])
 
 func _choice_box_is_open() -> bool:
 	return choice_box != null and is_instance_valid(choice_box) and choice_box.visible
@@ -236,6 +249,8 @@ func _objective_hint_should_be_visible() -> bool:
 
 func _get_objective_hint_text() -> String:
 	match GameState.get_current_quest_id():
+		"opening_look_around":
+			return "Objective: Look around. Talk to whoever is still here."
 		"opening_talk_to_mira":
 			return "Objective: Talk to Mira at the ArcadeHub ticket counter."
 		"recover_lost_token":
@@ -355,7 +370,10 @@ func _maybe_show_quest_notification() -> void:
 	GameState.mark_current_quest_announced()
 
 func handle_hub_interaction(interactable: Node, player_node: Node = null) -> void:
-	match str(interactable.interactable_kind):
+	var kind := str(interactable.interactable_kind)
+	if GameState.opening_look_around_active() and kind in ["mira", "gus", "vendo", "mr_byte", "cabinet07", "owner_portrait", "broken_cabinet", "closing_checklist", "staff_door"]:
+		GameState.register_opening_talk()
+	match kind:
 		"mira":
 			_handle_mira()
 		"ticket_sweep_adventure":
@@ -428,6 +446,13 @@ func _handle_mira() -> void:
 		return
 	if _can_show_act2_echo() and not GameState.echo_ticket_counter_seen:
 		start_dialogue(_get_ticket_counter_echo_lines())
+		return
+	if GameState.opening_look_around_active():
+		start_dialogue(_get_mira_lines("opening_deflect_look_around", [
+			{"speaker": "Mira", "text": "You just walked in. Take a breath.", "portrait": PORTRAIT_MIRA_WORRIED},
+			{"speaker": "Mira", "text": "Look around first. See what still knows you."},
+			{"speaker": "Mira", "text": "When you are ready, come find me at the counter."},
+		]))
 		return
 	if not GameState.lost_token_quest_started:
 		GameState.mira_intro_seen = true

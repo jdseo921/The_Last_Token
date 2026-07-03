@@ -214,7 +214,22 @@ func _open_prize_sort_choice() -> void:
 		choice_box.connect("choice_cancelled", _on_prize_sort_choice_cancelled, CONNECT_ONE_SHOT)
 	var slot := prize_sort_selected.size() + 1
 	var question := "PRIZE SORT\nArrange the prizes from oldest memory to newest memory.\nChoose item %d." % slot
+	if not prize_sort_selected.is_empty():
+		var last_item: String = str(prize_sort_selected[prize_sort_selected.size() - 1])
+		var reaction := _get_pip_item_reaction(last_item)
+		if not reaction.is_empty():
+			question = "%s\n\n%s" % [reaction, question]
 	choice_box.open_choice(question, prize_sort_remaining)
+
+func _get_pip_item_reaction(item: String) -> String:
+	match item:
+		"Ticket Stub":
+			return "Pip hugs the Ticket Stub: \"Where wanting starts. It is still warm.\""
+		"Lost Token":
+			return "Pip taps the Lost Token: \"It hums. It remembers coming back.\""
+		"Blank Employee Badge":
+			return "Pip whispers at the badge: \"It pretends to sleep. It is listening.\""
+	return ""
 
 func _on_prize_sort_choice_selected(index: int) -> void:
 	if choice_box and is_instance_valid(choice_box):

@@ -121,27 +121,6 @@ theme_override_font_sizes/font_size = 10
 text = "Pip watches the prize labels and remembers more than a plush should."
 autowrap_mode = 3
 
-[node name="PrizeCounterLabel" type="Label" parent="UILayer"]
-position = Vector2(110, 184)
-size = Vector2(420, 20)
-theme_override_font_sizes/font_size = 10
-text = "PRIZE COUNTER"
-horizontal_alignment = 1
-
-[node name="PipLabel" type="Label" parent="UILayer"]
-position = Vector2(270, 258)
-size = Vector2(100, 20)
-theme_override_font_sizes/font_size = 10
-text = "PIP"
-horizontal_alignment = 1
-
-[node name="PrizeShelfRunLabel" type="Label" parent="UILayer"]
-position = Vector2(414, 258)
-size = Vector2(110, 20)
-theme_override_font_sizes/font_size = 10
-text = "SHELF RUN"
-horizontal_alignment = 1
-
 [node name="InteractionPromptBackground" type="ColorRect" parent="UILayer"]
 visible = false
 position = Vector2(194, 400)

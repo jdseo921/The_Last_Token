@@ -75,9 +75,9 @@ text = "Fragment"
 
 [node name="SelectedTitle" type="Label" parent="Panel"]
 layout_mode = 0
-offset_left = 296.0
+offset_left = 372.0
 offset_top = 104.0
-offset_right = 508.0
+offset_right = 532.0
 offset_bottom = 124.0
 theme_override_font_sizes/font_size = 12
 text = "RESTORED ORDER"
@@ -85,31 +85,31 @@ horizontal_alignment = 1
 
 [node name="SelectedLabel" type="Label" parent="Panel"]
 layout_mode = 0
-offset_left = 296.0
+offset_left = 372.0
 offset_top = 130.0
-offset_right = 508.0
-offset_bottom = 220.0
-theme_override_font_sizes/font_size = 11
+offset_right = 532.0
+offset_bottom = 250.0
+theme_override_font_sizes/font_size = 10
 text = "1. [empty]"
 autowrap_mode = 3
 
 [node name="HintLabel" type="Label" parent="Panel"]
 visible = false
 layout_mode = 0
-offset_left = 296.0
-offset_top = 224.0
-offset_right = 508.0
-offset_bottom = 266.0
-theme_override_font_sizes/font_size = 11
+offset_left = 372.0
+offset_top = 254.0
+offset_right = 532.0
+offset_bottom = 306.0
+theme_override_font_sizes/font_size = 10
 text = "Hint: The counter went dark before Cabinet 07 stayed awake."
 autowrap_mode = 3
 
 [node name="Controls" type="HBoxContainer" parent="Panel"]
 layout_mode = 0
 offset_left = 124.0
-offset_top = 286.0
+offset_top = 312.0
 offset_right = 420.0
-offset_bottom = 322.0
+offset_bottom = 348.0
 theme_override_constants/separation = 14
 alignment = 1
 
@@ -124,9 +124,9 @@ text = "Submit"
 [node name="StatusLabel" type="Label" parent="Panel"]
 layout_mode = 0
 offset_left = 48.0
-offset_top = 334.0
+offset_top = 354.0
 offset_right = 496.0
-offset_bottom = 374.0
+offset_bottom = 394.0
 theme_override_font_sizes/font_size = 12
 text = ""
 horizontal_alignment = 1
@@ -135,8 +135,8 @@ autowrap_mode = 3
 [node name="ReturnButton" type="Button" parent="Panel"]
 visible = false
 layout_mode = 0
-offset_left = 204.0
-offset_top = 374.0
-offset_right = 340.0
-offset_bottom = 404.0
+offset_left = 436.0
+offset_top = 314.0
+offset_right = 532.0
+offset_bottom = 346.0
 text = "Return"

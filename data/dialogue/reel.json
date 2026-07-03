@@ -1,0 +1,230 @@
+{
+  "character_id": "reel",
+  "sets": {
+    "first_meeting": [
+      [
+        {
+          "speaker": "Reel",
+          "text": "Oh. A request. Been a while since anyone worked my buttons.",
+          "portrait": "res://assets/art/portraits/reel/reel_warm.png"
+        },
+        {
+          "speaker": "Reel",
+          "text": "I am the house sound. Every night that ever played here, I kept the setlist."
+        },
+        {
+          "speaker": "Reel",
+          "text": "Most of my catalog is closing-time songs now. The slow ones."
+        },
+        {
+          "speaker": "Reel",
+          "text": "You do not scan like a stranger. You scan like a track I have not cued in years."
+        },
+        {
+          "speaker": "Reel",
+          "text": "There is a skip in you tonight. Like the needle keeps landing a groove late."
+        },
+        {
+          "speaker": "Reel",
+          "text": "Pick something, or just stand there. The quiet counts as a song too."
+        }
+      ]
+    ],
+    "early_flavor": [
+      [
+        {
+          "speaker": "Reel",
+          "text": "Now spinning: nothing, beautifully.",
+          "portrait": "res://assets/art/portraits/reel/reel_wistful.png"
+        },
+        {
+          "speaker": "Reel",
+          "text": "The arcade used to have a house mix."
+        },
+        {
+          "speaker": "Reel",
+          "text": "Someone taped over the ad reel with real songs."
+        },
+        {
+          "speaker": "Reel",
+          "text": "Said the players deserved a soundtrack, not a sales pitch."
+        },
+        {
+          "speaker": "Reel",
+          "text": "He never signed the tapes. I kept them anyway."
+        }
+      ],
+      [
+        {
+          "speaker": "Reel",
+          "text": "B-side fact: every high score used to get a little fanfare.",
+          "portrait": "res://assets/art/portraits/reel/reel_wistful.png"
+        },
+        {
+          "speaker": "Reel",
+          "text": "Eight notes. Cheap ones."
+        },
+        {
+          "speaker": "Reel",
+          "text": "People lit up like it was a whole orchestra."
+        },
+        {
+          "speaker": "Reel",
+          "text": "Joy on a budget was the entire business model."
+        },
+        {
+          "speaker": "Reel",
+          "text": "I miss being loud."
+        }
+      ],
+      [
+        {
+          "speaker": "Reel",
+          "text": "A song ends. People treat that like a tragedy.",
+          "portrait": "res://assets/art/portraits/reel/reel_wistful.png"
+        },
+        {
+          "speaker": "Reel",
+          "text": "It is not."
+        },
+        {
+          "speaker": "Reel",
+          "text": "The song ending is just the room going quiet enough to want another."
+        },
+        {
+          "speaker": "Reel",
+          "text": "The owner built that into the closing chime. Soft, not final."
+        },
+        {
+          "speaker": "Reel",
+          "text": "Ask Mira. She knows the words better than the melody."
+        }
+      ]
+    ],
+    "static_service_run_score": [
+      [
+        {
+          "speaker": "Reel",
+          "text": "Power is coming back in patches. So is the music.",
+          "portrait": "res://assets/art/portraits/reel/reel_warm.png"
+        },
+        {
+          "speaker": "Reel",
+          "text": "Every breaker you flip, a channel wakes up. Listen for it."
+        },
+        {
+          "speaker": "Reel",
+          "text": "Keep moving. When the main line hits, the whole floor sings again."
+        },
+        {
+          "speaker": "Reel",
+          "text": "A dead route is not a dead song. It is a song waiting on the current."
+        }
+      ]
+    ],
+    "memory_echo_intro": [
+      [
+        {
+          "speaker": "Reel",
+          "text": "This is the last set. The one the arcade never got to finish.",
+          "portrait": "res://assets/art/portraits/reel/reel_wistful.png"
+        },
+        {
+          "speaker": "Reel",
+          "text": "Your memories are loose on the tape. Some real, some rerecorded over."
+        },
+        {
+          "speaker": "Reel",
+          "text": "I will play them past you. Catch the ones that are actually yours."
+        },
+        {
+          "speaker": "Reel",
+          "text": "You will know them. Your songs carry a certain amount of tired in them."
+        },
+        {
+          "speaker": "Reel",
+          "text": "Something keeps re-cutting the track while I spin it."
+        },
+        {
+          "speaker": "Reel",
+          "text": "Do not trust the version that sounds too clean to be a memory."
+        }
+      ]
+    ],
+    "memory_echo_completion": [
+      [
+        {
+          "speaker": "Reel",
+          "text": "That is your setlist. Rough, honest, yours.",
+          "portrait": "res://assets/art/portraits/reel/reel_warm.png"
+        },
+        {
+          "speaker": "Reel",
+          "text": "The tracks you kept all say the same thing under the melody."
+        },
+        {
+          "speaker": "Reel",
+          "text": "A good song does not end because one night went sideways. It only changes key."
+        },
+        {
+          "speaker": "Reel",
+          "text": "Hold onto those ones."
+        },
+        {
+          "speaker": "Reel",
+          "text": "The next room is going to try to make you forget the tune."
+        }
+      ]
+    ],
+    "overloaded_phase": [
+      [
+        {
+          "speaker": "Reel",
+          "text": "The signal is drowning me out. Everything is playing at once.",
+          "portrait": "res://assets/art/portraits/reel/reel_wistful.png"
+        },
+        {
+          "speaker": "Reel",
+          "text": "This is what a memory sounds like right before it lands or breaks."
+        },
+        {
+          "speaker": "Reel",
+          "text": "I cannot pick the track for you anymore."
+        },
+        {
+          "speaker": "Reel",
+          "text": "Whatever plays in that back room, it is your song to finish."
+        }
+      ]
+    ],
+    "post_reveal_witness": [
+      [
+        {
+          "speaker": "Reel",
+          "text": "Employee 04. The one who taped songs over the ad reel.",
+          "portrait": "res://assets/art/portraits/reel/reel_sincere.png"
+        },
+        {
+          "speaker": "Reel",
+          "text": "I finally get to credit the artist."
+        },
+        {
+          "speaker": "Reel",
+          "text": "You gave a failing arcade a soundtrack because you thought people deserved one."
+        },
+        {
+          "speaker": "Reel",
+          "text": "For a while your track played half a beat behind itself. It sits right now."
+        },
+        {
+          "speaker": "Reel",
+          "text": "Me, I never close a set just because the floor emptied. I keep the tape rolling."
+        },
+        {
+          "speaker": "Reel",
+          "text": "You are still here, still working the buttons. That is the only chart that mattered."
+        }
+      ]
+    ]
+  }
+}

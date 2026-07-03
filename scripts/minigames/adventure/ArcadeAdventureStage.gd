@@ -44,6 +44,17 @@ var hazards_blink := false
 var hazard_blink_interval := 1.6
 var hazards_dangerous := true
 var hazard_blink_timer := 0.0
+var moving_hazard_defs: Array[Dictionary] = []
+var conscience_hazard_lines: Array[String] = []
+var moving_hazard_color := Color(0.96, 0.36, 0.46, 1.0)
+var moving_hazard_sprite_path := ""
+var active_moving_hazards: Array = []
+var breaker_reveal_enabled := false
+var breaker_reveal_radius := 3
+var lit_cells: Dictionary = {}
+var secret_lines: Array[String] = []
+var secret_flag := ""
+var secret_found := false
 var stage_areas: Array[Dictionary] = []
 var area_links: Array[Dictionary] = []
 var active_area_id := DEFAULT_AREA_ID
@@ -110,6 +121,14 @@ func configure_stage(config: Dictionary) -> void:
 	hazard_blink_interval = float(config.get("hazard_blink_interval", 1.6))
 	if hazard_blink_interval <= 0.0:
 		hazard_blink_interval = 1.6
+	moving_hazard_defs = _to_dictionary_array(config.get("moving_hazards", []))
+	conscience_hazard_lines = _to_string_array(config.get("conscience_hazard_lines", conscience_hazard_lines))
+	moving_hazard_color = config.get("moving_hazard_color", moving_hazard_color)
+	moving_hazard_sprite_path = str(config.get("moving_hazard_sprite_path", ""))
+	breaker_reveal_enabled = bool(config.get("breaker_reveal", false))
+	breaker_reveal_radius = int(config.get("breaker_reveal_radius", 3))
+	secret_lines = _to_string_array(config.get("secret_lines", []))
+	secret_flag = str(config.get("secret_flag", ""))
 	stage_areas = _to_dictionary_array(config.get("areas", []))
 	area_links = _to_dictionary_array(config.get("area_links", []))
 	start_area_id = str(config.get("start_area", DEFAULT_AREA_ID))
@@ -175,6 +194,7 @@ func _rebuild_area_view(status_message: String) -> void:
 	_build_labels()
 	_build_grid()
 	_build_player()
+	_build_moving_hazards()
 	_build_feedback_flash()
 	_refresh_status(status_message)
 	_refresh_counter()
@@ -182,6 +202,7 @@ func _rebuild_area_view(status_message: String) -> void:
 func _clear_children() -> void:
 	tile_rects.clear()
 	tile_markers.clear()
+	active_moving_hazards.clear()
 	feedback_flash = null
 	for child in get_children():
 		if child.name == "ArcadeScanlines" or child.name == "ArcadeCRTOverlay":
@@ -190,6 +211,7 @@ func _clear_children() -> void:
 		child.queue_free()
 
 func _scan_stage() -> void:
+	lit_cells.clear()
 	area_layouts.clear()
 	area_names.clear()
 	area_spawns.clear()
@@ -263,7 +285,7 @@ func _build_background() -> void:
 		var side := ColorRect.new()
 		side.name = "SidePanelBacking"
 		side.position = Vector2(side_panel_x - 12, grid_origin.y - 26)
-		side.size = Vector2(632 - side_panel_x, 300)
+		side.size = Vector2(632 - side_panel_x, 322)
 		side.color = Color(0.02, 0.025, 0.035, 0.72)
 		add_child(side)
 
@@ -308,22 +330,22 @@ func _build_labels() -> void:
 	add_child(status_label)
 
 	var controls_label := Label.new()
-	controls_label.position = Vector2(side_panel_x, 282)
-	controls_label.size = Vector2(596 - side_panel_x, 42)
+	controls_label.position = Vector2(side_panel_x, 278)
+	controls_label.size = Vector2(596 - side_panel_x, 56)
 	controls_label.add_theme_font_size_override("font_size", 10)
 	controls_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	controls_label.text = "%s\n%s" % [controls_hint, goal_hint]
 	add_child(controls_label)
 
 	var legend_label := Label.new()
-	legend_label.position = Vector2(side_panel_x, 318)
-	legend_label.size = Vector2(596 - side_panel_x, 24)
-	legend_label.add_theme_font_size_override("font_size", 9)
+	legend_label.position = Vector2(side_panel_x, 338)
+	legend_label.size = Vector2(596 - side_panel_x, 22)
+	legend_label.add_theme_font_size_override("font_size", 8)
 	legend_label.text = _get_legend_text()
 	add_child(legend_label)
 
 	return_button = Button.new()
-	return_button.position = Vector2(side_panel_x + 22, 342)
+	return_button.position = Vector2(side_panel_x + 22, 368)
 	return_button.size = Vector2(134, 34)
 	return_button.text = "Return"
 	return_button.visible = false
@@ -422,6 +444,8 @@ func _get_tile_color(tile: String) -> Color:
 			return goal_color
 		"G":
 			return goal_color
+		"S":
+			return floor_color.lightened(0.10) if not secret_found else floor_color
 		"N":
 			return Color(0.28, 0.28, 0.45, 1.0)
 		_:
@@ -488,6 +512,7 @@ func _change_area(link: Dictionary) -> void:
 	hazards_dangerous = true
 	hazard_blink_timer = 0.0
 	_rebuild_area_view("Entered %s." % _get_active_area_name())
+	_on_area_entered(active_area_id)
 
 func _to_vector2i(value: Variant, fallback: Vector2i) -> Vector2i:
 	if value is Vector2i:
@@ -500,6 +525,7 @@ func _process(delta: float) -> void:
 	if completed or return_in_progress:
 		return
 	_update_hazard_blink(delta)
+	_update_moving_hazards(delta)
 	if move_cooldown_seconds > 0.0:
 		move_cooldown_seconds = maxf(0.0, move_cooldown_seconds - delta)
 		if move_cooldown_seconds > 0.0:
@@ -528,6 +554,7 @@ func _try_move(direction: Vector2i) -> bool:
 	player_grid_pos = next_pos
 	_update_player_marker()
 	_handle_tile(_get_tile_at(player_grid_pos))
+	_check_moving_hazard_collision()
 	return true
 
 func _is_wall(grid_pos: Vector2i) -> bool:
@@ -558,6 +585,9 @@ func _handle_tile(tile: String) -> void:
 	if tile == "C":
 		_try_collect(player_grid_pos)
 		return
+	if tile == "S":
+		_trigger_secret()
+		return
 	if tile == "G" or tile == "E":
 		_try_complete()
 
@@ -572,6 +602,8 @@ func _try_collect(grid_pos: Vector2i) -> void:
 	collected_positions.append(position_ref)
 	_play_audio("play_score_blip")
 	_flash_feedback(ARCADE_JUICE.FLASH_CYAN, 0.2)
+	if breaker_reveal_enabled:
+		_light_area_around(grid_pos)
 	next_collectible_index += 1
 	_refresh_tile_state(grid_pos)
 	_refresh_counter()
@@ -609,9 +641,56 @@ func _try_complete() -> void:
 	completed = true
 	_play_audio("play_success_jingle")
 	_flash_feedback(ARCADE_JUICE.FLASH_CYAN, 0.34)
+	_retreat_moving_hazards()
 	_on_stage_completed()
 	_refresh_status(_format_lines(completion_lines))
 	return_button.visible = true
+
+func _retreat_moving_hazards() -> void:
+	# The antagonist pulls back: patrols fade out instead of vanishing.
+	for h: Dictionary in active_moving_hazards:
+		var rect: ColorRect = h.get("rect", null)
+		if rect != null and is_instance_valid(rect):
+			var tween := create_tween()
+			tween.tween_property(rect, "modulate:a", 0.0, 0.9)
+	active_moving_hazards.clear()
+
+func _trigger_secret() -> void:
+	if secret_found:
+		return
+	secret_found = true
+	_play_audio("play_success_jingle")
+	_flash_feedback(ARCADE_JUICE.FLASH_CYAN, 0.3)
+	if breaker_reveal_enabled:
+		_light_whole_area()
+	if not secret_flag.is_empty():
+		var gs := get_node_or_null("/root/GameState")
+		if gs != null:
+			gs.set(secret_flag, true)
+	_refresh_status(_format_lines(secret_lines))
+
+func _light_whole_area() -> void:
+	for y in range(layout.size()):
+		var row := layout[y]
+		for x in range(row.length()):
+			if row.substr(x, 1) != "#":
+				lit_cells[_make_position_ref(active_area_id, Vector2i(x, y))] = true
+	_update_fog()
+	_position_moving_hazards()
+
+func trigger_blackout(message: String, speed_multiplier: float = 0.7) -> void:
+	# The antagonist cuts the power: all restored light is lost, patrols speed up.
+	lit_cells.clear()
+	_play_audio("play_error_buzz")
+	_flash_feedback(Color(0.9, 0.2, 0.4, 1.0), 0.5)
+	_update_fog()
+	_position_moving_hazards()
+	for h: Dictionary in active_moving_hazards:
+		h["interval"] = maxf(0.18, float(h.get("interval", 0.5)) * speed_multiplier)
+	_refresh_status(message)
+
+func _on_area_entered(_area_id: String) -> void:
+	pass
 
 func _reset_player(message: String) -> void:
 	player_grid_pos = spawn_grid_pos
@@ -623,6 +702,7 @@ func _update_player_marker() -> void:
 		return
 	player_marker.position = Vector2(player_grid_pos.x * tile_size + 4, player_grid_pos.y * tile_size + 4)
 	_update_fog()
+	_position_moving_hazards()
 
 func _refresh_counter() -> void:
 	if counter_label:
@@ -655,7 +735,7 @@ func _get_legend_text() -> String:
 	var collectible_name := collectible_label
 	if collectible_name.ends_with("s"):
 		collectible_name = collectible_name.substr(0, collectible_name.length() - 1)
-	return "%s = %s  %s = Hazard  %s = Goal" % [
+	return "%s=%s  %s=Hazard  %s=Goal" % [
 		collectible_marker if not collectible_marker.is_empty() else "C",
 		collectible_name,
 		hazard_marker,
@@ -712,12 +792,24 @@ func _update_fog() -> void:
 func _fog_alpha_for(pos: Vector2i) -> float:
 	if not fog_enabled:
 		return 1.0
+	if breaker_reveal_enabled and lit_cells.has(_make_position_ref(active_area_id, pos)):
+		return 1.0
 	var d: int = maxi(absi(pos.x - player_grid_pos.x), absi(pos.y - player_grid_pos.y))
 	if d > fog_radius + 1:
-		return 0.26
+		return 0.22
 	elif d > fog_radius:
-		return 0.6
+		return 0.55
 	return 1.0
+
+func _light_area_around(center: Vector2i) -> void:
+	for dy in range(-breaker_reveal_radius, breaker_reveal_radius + 1):
+		for dx in range(-breaker_reveal_radius, breaker_reveal_radius + 1):
+			var cell := Vector2i(center.x + dx, center.y + dy)
+			if _get_tile_at(cell) == "#":
+				continue
+			lit_cells[_make_position_ref(active_area_id, cell)] = true
+	_update_fog()
+	_position_moving_hazards()
 
 func _update_hazard_blink(delta: float) -> void:
 	if not hazards_blink:
@@ -740,3 +832,130 @@ func _recolor_hazards() -> void:
 			var mcol := Color.WHITE if hazards_dangerous else Color(0.5, 0.5, 0.55, 1.0)
 			mcol.a = _fog_alpha_for(pos)
 			marker.modulate = mcol
+
+func _build_moving_hazards() -> void:
+	active_moving_hazards.clear()
+	if moving_hazard_defs.is_empty() or tile_container == null:
+		return
+	for def: Dictionary in moving_hazard_defs:
+		if str(def.get("area", active_area_id)) != active_area_id:
+			continue
+		var waypoints := _expand_hazard_waypoints(def)
+		if waypoints.size() <= 1:
+			continue
+		var rect := ColorRect.new()
+		rect.size = Vector2(tile_size - 6, tile_size - 6)
+		rect.color = moving_hazard_color
+		tile_container.add_child(rect)
+		var hazard_tex := _load_texture_or_null(moving_hazard_sprite_path)
+		if hazard_tex != null:
+			var hsprite := TextureRect.new()
+			hsprite.size = rect.size
+			hsprite.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			hsprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			hsprite.texture = hazard_tex
+			rect.color = Color(1, 1, 1, 0)
+			rect.add_child(hsprite)
+		var label_text := "" if hazard_tex != null else str(def.get("marker", hazard_marker))
+		if not label_text.is_empty():
+			var lbl := Label.new()
+			lbl.size = rect.size
+			lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			lbl.add_theme_font_size_override("font_size", 9)
+			lbl.text = label_text
+			rect.add_child(lbl)
+		var interval := float(def.get("interval", 0.5))
+		if interval <= 0.0:
+			interval = 0.5
+		var start_index := clampi(int(def.get("start_index", 0)), 0, waypoints.size() - 1)
+		active_moving_hazards.append({
+			"rect": rect,
+			"waypoints": waypoints,
+			"index": start_index,
+			"dir": 1,
+			"timer": 0.0,
+			"interval": interval,
+			"cell": waypoints[start_index],
+		})
+	_position_moving_hazards()
+
+func _expand_hazard_waypoints(def: Dictionary) -> Array:
+	var explicit: Variant = def.get("waypoints", null)
+	if explicit is Array and (explicit as Array).size() > 0:
+		var out: Array = []
+		for item: Variant in explicit as Array:
+			out.append(_to_vector2i(item, Vector2i.ZERO))
+		return out
+	var axis := str(def.get("axis", "h"))
+	var line := int(def.get("line", 1))
+	var from_i := int(def.get("from", 1))
+	var to_i := int(def.get("to", from_i))
+	var wps: Array = []
+	var step := 1 if to_i >= from_i else -1
+	var i := from_i
+	while true:
+		if axis == "v":
+			wps.append(Vector2i(line, i))
+		else:
+			wps.append(Vector2i(i, line))
+		if i == to_i:
+			break
+		i += step
+	return wps
+
+func _position_moving_hazards() -> void:
+	for h: Dictionary in active_moving_hazards:
+		var rect: ColorRect = h.get("rect", null)
+		if rect == null or not is_instance_valid(rect):
+			continue
+		var cell: Vector2i = h.get("cell", Vector2i.ZERO)
+		rect.position = Vector2(cell.x * tile_size + 3, cell.y * tile_size + 3)
+		rect.modulate.a = _fog_alpha_for(cell)
+
+func _update_moving_hazards(delta: float) -> void:
+	if active_moving_hazards.is_empty():
+		return
+	var stepped := false
+	for h: Dictionary in active_moving_hazards:
+		h["timer"] = float(h.get("timer", 0.0)) + delta
+		if h["timer"] >= float(h.get("interval", 0.5)):
+			h["timer"] = 0.0
+			_step_moving_hazard(h)
+			stepped = true
+	if stepped:
+		_position_moving_hazards()
+		_check_moving_hazard_collision()
+
+func _step_moving_hazard(h: Dictionary) -> void:
+	var wps: Array = h.get("waypoints", [])
+	if wps.size() <= 1:
+		return
+	var idx := int(h.get("index", 0))
+	var dir := int(h.get("dir", 1))
+	idx += dir
+	if idx >= wps.size():
+		idx = maxi(wps.size() - 2, 0)
+		dir = -1
+	elif idx < 0:
+		idx = mini(1, wps.size() - 1)
+		dir = 1
+	h["index"] = idx
+	h["dir"] = dir
+	h["cell"] = wps[idx]
+
+func _check_moving_hazard_collision() -> void:
+	if completed or return_in_progress:
+		return
+	for h: Dictionary in active_moving_hazards:
+		if h.get("cell", Vector2i.ZERO) == player_grid_pos:
+			_hit_by_moving_hazard()
+			return
+
+func _hit_by_moving_hazard() -> void:
+	_play_audio("play_error_buzz")
+	_flash_feedback(ARCADE_JUICE.FLASH_RED, 0.34)
+	var lines: Array[String] = conscience_hazard_lines if not conscience_hazard_lines.is_empty() else hazard_lines
+	_reset_player(_format_lines(lines))
+	for h: Dictionary in active_moving_hazards:
+		h["timer"] = 0.0

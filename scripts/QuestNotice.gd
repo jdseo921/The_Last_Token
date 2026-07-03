@@ -27,6 +27,22 @@ func _ready() -> void:
 	close_button.pressed.connect(_on_close_pressed)
 	_apply_frame_art()
 
+func _input(event: InputEvent) -> void:
+	# Let the player dismiss an auto notification early. Details mode (close_button
+	# visible) keeps its own button and is left alone here.
+	if not visible or close_button.visible:
+		return
+	if event.is_action_pressed("interact") or event.is_action_pressed("ui_accept") or event.is_action_pressed("ui_cancel"):
+		get_viewport().set_input_as_handled()
+		_dismiss_notification()
+
+func _dismiss_notification() -> void:
+	if hide_tween and hide_tween.is_valid():
+		hide_tween.kill()
+	hide_tween = create_tween()
+	hide_tween.tween_property(panel, "modulate:a", 0.0, 0.18)
+	hide_tween.tween_callback(hide)
+
 func show_notification(quest_data: Dictionary) -> void:
 	notification_token += 1
 	_configure_window(

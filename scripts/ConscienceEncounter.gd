@@ -6,6 +6,7 @@ const ADVANCE_COOLDOWN_MSEC := 220
 const DEFAULT_LINE_LOCKOUT_MSEC := 120
 const ANTAGONIST_LETTERS_PER_SECOND := 34.0
 
+@onready var overlay_root: Control = $OverlayRoot
 @onready var dialogue_panel: Panel = $OverlayRoot/DialoguePanel
 @onready var speaker_label: Label = $OverlayRoot/DialoguePanel/SpeakerLabel
 @onready var dialogue_label: Label = $OverlayRoot/DialoguePanel/DialogueLabel
@@ -27,6 +28,7 @@ var had_controlled_player := false
 var controlled_player_was_enabled := true
 var flicker_tween: Tween = null
 var shake_tween: Tween = null
+var fade_tween: Tween = null
 var panel_home_position := Vector2.ZERO
 var speaker_home_position := Vector2.ZERO
 var dialogue_home_position := Vector2.ZERO
@@ -63,6 +65,10 @@ func start_encounter(new_encounter_id: String, lines: Array) -> void:
 	current_index = 0
 	active = not dialogue_lines.is_empty()
 	visible = active
+	if active:
+		# Fade the dimmed overlay in rather than popping so it lands as a mood shift.
+		overlay_root.modulate.a = 0.0
+		_fade_overlay(1.0, 0.45)
 	last_advance_msec = Time.get_ticks_msec()
 	line_locked_until_msec = last_advance_msec + DEFAULT_LINE_LOCKOUT_MSEC
 	_set_player_control(false)
@@ -146,12 +152,29 @@ func _complete_current_line() -> void:
 
 func _finish_encounter() -> void:
 	active = false
-	visible = false
 	dialogue_label.visible_characters = -1
 	_stop_tweens()
+	if not visible:
+		_cleanup_and_free()
+		return
+	# Fade the overlay back out, then hand control back and let the world resume.
+	if fade_tween and fade_tween.is_valid():
+		fade_tween.kill()
+	fade_tween = create_tween()
+	fade_tween.tween_property(overlay_root, "modulate:a", 0.0, 0.4)
+	fade_tween.tween_callback(_cleanup_and_free)
+
+func _cleanup_and_free() -> void:
+	visible = false
 	_set_player_control(true)
 	encounter_finished.emit(encounter_id)
 	queue_free()
+
+func _fade_overlay(target_a: float, duration: float) -> void:
+	if fade_tween and fade_tween.is_valid():
+		fade_tween.kill()
+	fade_tween = create_tween()
+	fade_tween.tween_property(overlay_root, "modulate:a", target_a, duration)
 
 func _set_player_control(enabled: bool) -> void:
 	if controlled_player == null or not is_instance_valid(controlled_player):

@@ -2,6 +2,8 @@ extends Node2D
 
 const ROUTE_CUE_SCRIPT := preload("res://scripts/RouteCue.gd")
 const AMBIENT_EFFECTS := preload("res://scripts/AmbientSpriteEffects.gd")
+const HALLWAY_BG_DIR := "res://assets/art/maps/hallways/"
+const HALLWAY_PLACEHOLDERS := ["Background", "FloorBand", "StaticStripe"]
 
 @export var hallway_id := ""
 @export var title_text := "HALLWAY"
@@ -20,6 +22,7 @@ var route_cue: Control = null
 
 func _ready() -> void:
 	AudioManager.play_music_for_context(_get_music_context())
+	_apply_background_art()
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
 	title_label.text = title_text
@@ -33,6 +36,25 @@ func _ready() -> void:
 
 func can_open_pause_menu() -> bool:
 	return not _dialogue_is_active()
+
+func _apply_background_art() -> void:
+	var path := HALLWAY_BG_DIR + hallway_id + "_background_640x440.png"
+	if hallway_id.is_empty() or not ResourceLoader.exists(path):
+		return
+	var tex := load(path)
+	if not tex is Texture2D:
+		return
+	var spr := Sprite2D.new()
+	spr.name = "BackgroundArt"
+	spr.texture = tex
+	spr.centered = false
+	spr.position = Vector2.ZERO
+	add_child(spr)
+	move_child(spr, 0)
+	for placeholder_name in HALLWAY_PLACEHOLDERS:
+		var node := get_node_or_null(NodePath(placeholder_name))
+		if node is CanvasItem:
+			(node as CanvasItem).visible = false
 
 func _get_music_context() -> String:
 	match hallway_id:

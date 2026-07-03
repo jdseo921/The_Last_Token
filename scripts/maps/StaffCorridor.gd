@@ -3,6 +3,8 @@ extends Node2D
 const ROUTE_CUE_SCRIPT := preload("res://scripts/RouteCue.gd")
 const AMBIENT_EFFECTS := preload("res://scripts/AmbientSpriteEffects.gd")
 const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
+const BACKGROUND_ART_PATH := "res://assets/art/maps/staff_corridor/staff_corridor_background_640x440.png"
+const BACKGROUND_PLACEHOLDERS := ["Background", "CorridorPath", "MemoryEchoPlaceholder", "SecurityTapePlaceholder", "FinalNightWalkPlaceholder", "StaffRoomDoorPlaceholder"]
 
 @onready var player: CharacterBody2D = $Player
 @onready var ui_layer: Node2D = $UILayer
@@ -16,6 +18,7 @@ var route_cue: Control = null
 
 func _ready() -> void:
 	AudioManager.play_music_for_context("staff_corridor")
+	_apply_background_art()
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
 	_setup_ambient_sprite_effects()
@@ -26,6 +29,24 @@ func _ready() -> void:
 
 func can_open_pause_menu() -> bool:
 	return not _dialogue_is_active() and not ConscienceEncounterDirector.is_encounter_active()
+
+func _apply_background_art() -> void:
+	if not ResourceLoader.exists(BACKGROUND_ART_PATH):
+		return
+	var tex := load(BACKGROUND_ART_PATH)
+	if not tex is Texture2D:
+		return
+	var spr := Sprite2D.new()
+	spr.name = "BackgroundArt"
+	spr.texture = tex
+	spr.centered = false
+	spr.position = Vector2.ZERO
+	add_child(spr)
+	move_child(spr, 0)
+	for placeholder_name in BACKGROUND_PLACEHOLDERS:
+		var node := get_node_or_null(NodePath(placeholder_name))
+		if node is CanvasItem:
+			(node as CanvasItem).visible = false
 
 func _apply_spawn_position() -> void:
 	var spawn_id := GameState.consume_pending_spawn_id()

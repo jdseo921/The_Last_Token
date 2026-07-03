@@ -261,7 +261,7 @@ static func _fallback_quests() -> Dictionary:
 			"summary": "Restore a corrupted high-score record.",
 			"details": "The score claims the target is 9999, but the display is broken. The real record may be much smaller and much stranger.",
 			"minigame": "Broken High Score",
-			"required": false,
+			"required": true,
 			"starts_after": "rockbyte_duel_completed",
 			"completion_dialogue": [
 				{"speaker": "Roxy", "text": "Huh. Your score came back."},
@@ -278,8 +278,8 @@ static func _fallback_quests() -> Dictionary:
 			"summary": "Arrange three prize labels by memory state.",
 			"details": "Pip says the prize labels remember an order: Ticket Stub, Lost Token, then Blank Employee Badge.",
 			"minigame": "Prize Sort",
-			"required": false,
-			"starts_after": "lying_cabinets_completed",
+			"required": true,
+			"starts_after": "circuit_soda_completed",
 			"completion_dialogue": [
 				{"speaker": "Pip", "text": "Prizes sorted."},
 				{"speaker": "Pip", "text": "Some rewards remember their owner before the owner remembers them."},

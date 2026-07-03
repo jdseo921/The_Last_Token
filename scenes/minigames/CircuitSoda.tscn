@@ -85,17 +85,17 @@ autowrap_mode = 3
 
 [node name="GridPanel" type="Panel" parent="MainPanel"]
 layout_mode = 0
-offset_left = 158.0
-offset_top = 152.0
-offset_right = 398.0
-offset_bottom = 332.0
+offset_left = 134.0
+offset_top = 146.0
+offset_right = 422.0
+offset_bottom = 338.0
 
 [node name="Grid" type="GridContainer" parent="MainPanel/GridPanel"]
 layout_mode = 0
 offset_left = 8.0
 offset_top = 8.0
-offset_right = 232.0
-offset_bottom = 172.0
+offset_right = 280.0
+offset_bottom = 184.0
 columns = 3
 theme_override_constants/h_separation = 4
 theme_override_constants/v_separation = 4
@@ -103,16 +103,16 @@ theme_override_constants/v_separation = 4
 [node name="StatusPanel" type="Panel" parent="MainPanel"]
 layout_mode = 0
 offset_left = 24.0
-offset_top = 342.0
+offset_top = 344.0
 offset_right = 532.0
-offset_bottom = 374.0
+offset_bottom = 372.0
 
 [node name="StatusLabel" type="Label" parent="MainPanel/StatusPanel"]
 layout_mode = 0
 offset_left = 10.0
-offset_top = 4.0
+offset_top = 2.0
 offset_right = 498.0
-offset_bottom = 28.0
+offset_bottom = 26.0
 theme_override_font_sizes/font_size = 11
 text = "Route Memory Input to Restore Output."
 horizontal_alignment = 1
@@ -122,24 +122,24 @@ autowrap_mode = 3
 [node name="ButtonRow" type="HBoxContainer" parent="MainPanel"]
 layout_mode = 0
 offset_left = 104.0
-offset_top = 382.0
+offset_top = 376.0
 offset_right = 452.0
-offset_bottom = 418.0
+offset_bottom = 406.0
 theme_override_constants/separation = 12
 alignment = 1
 
 [node name="ResetButton" type="Button" parent="MainPanel/ButtonRow"]
-custom_minimum_size = Vector2(100, 34)
+custom_minimum_size = Vector2(100, 30)
 layout_mode = 2
 text = "Reset"
 
 [node name="HintButton" type="Button" parent="MainPanel/ButtonRow"]
-custom_minimum_size = Vector2(100, 34)
+custom_minimum_size = Vector2(100, 30)
 layout_mode = 2
 text = "Hint"
 
 [node name="ExitButton" type="Button" parent="MainPanel/ButtonRow"]
 visible = false
-custom_minimum_size = Vector2(136, 34)
+custom_minimum_size = Vector2(136, 30)
 layout_mode = 2
 text = "Return to Snack"

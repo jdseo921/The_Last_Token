@@ -12,8 +12,8 @@ script = ExtResource("1")
 shape = SubResource("1")
 
 [node name="Visual" type="Polygon2D" parent="."]
-color = Color(0.1, 0.8, 0.9, 0.22)
-polygon = PackedVector2Array(-36, -20, 36, -20, 44, 0, 36, 20, -36, 20, -44, 0)
+color = Color(0.4, 0.92, 1, 0.12)
+polygon = PackedVector2Array(-20, -10, 20, -10, 26, 0, 20, 10, -20, 10, -26, 0)
 
 [node name="Label" type="Label" parent="."]
 offset_left = -70.0

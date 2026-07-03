@@ -60,6 +60,7 @@
         {"speaker": "Mira", "text": "Stacking chairs. Checking machines. Pretending you were not tired."},
         {"speaker": "Mira", "text": "You always made the work look smaller than it was."},
         {"speaker": "Mira", "text": "You used to tell the kids who lost that a game ending was just a turn ending, not the whole world."},
+        {"speaker": "Mira", "text": "Though today there is a distance in you. Like the words reach me a beat after you decide them."},
         {"speaker": "Mira", "text": "Now the arcade is trying to make you look back.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"}
       ]
     ],
@@ -97,6 +98,8 @@
         {"speaker": "Mira", "text": "The signal is loud now.", "portrait": "res://assets/art/portraits/mira/mira_afraid.png"},
         {"speaker": "Mira", "text": "Not angry."},
         {"speaker": "Mira", "text": "Scared."},
+        {"speaker": "Mira", "text": "You seem so far from here right now. Like part of you already walked ahead, and only the tired rest of you stayed to hear me."},
+        {"speaker": "Mira", "text": "I do not know how much of you I am about to lose in there. Maybe all of you. Maybe none."},
         {"speaker": "Mira", "text": "When the Staff Room opens, do not rush past what it shows you."},
         {"speaker": "Mira", "text": "You have survived every answer so far."},
         {"speaker": "Mira", "text": "Survive this one slowly.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"}
@@ -113,6 +116,8 @@
         {"speaker": "Mira", "text": "I waited because I did not know what else counted as helping."},
         {"speaker": "Mira", "text": "I felt guilty for waiting.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
         {"speaker": "Mira", "text": "Guilty for being relieved when you came back wrong instead of not at all."},
+        {"speaker": "Mira", "text": "For a while it was like talking to you through glass. You were here, and somewhere far off, all at once."},
+        {"speaker": "Mira", "text": "I never understood what happened to you out there. None of us did. Whatever it was, you were the only one who had to face it."},
         {"speaker": "Mira", "text": "But you came back with the hard parts too."},
         {"speaker": "Mira", "text": "You came back enough to be spoken to."},
         {"speaker": "Mira", "text": "I am so relieved I get to remember you gently.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},

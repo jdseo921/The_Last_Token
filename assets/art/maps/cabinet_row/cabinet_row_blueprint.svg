@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="440" viewBox="0 0 640 440">
+  <defs>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#17122e"/><stop offset="100%" stop-color="#0a0918"/>
+    </linearGradient>
+    <linearGradient id="counter" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a1030"/><stop offset="100%" stop-color="#180a1e"/>
+    </linearGradient>
+    <radialGradient id="tfglow" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#c04be0" stop-opacity="0.55"/><stop offset="100%" stop-color="#c04be0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="padc" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#3fd0d8" stop-opacity="0.5"/><stop offset="100%" stop-color="#3fd0d8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="640" height="440" fill="url(#floor)"/>
+  <g stroke="#3a2f6a" stroke-opacity="0.22" stroke-width="1">
+    <line x1="80" y1="56" x2="80" y2="418"/><line x1="160" y1="56" x2="160" y2="418"/>
+    <line x1="240" y1="56" x2="240" y2="418"/><line x1="320" y1="56" x2="320" y2="418"/>
+    <line x1="400" y1="56" x2="400" y2="418"/><line x1="480" y1="56" x2="480" y2="418"/>
+    <line x1="560" y1="56" x2="560" y2="418"/>
+    <line x1="16" y1="130" x2="624" y2="130"/><line x1="16" y1="250" x2="624" y2="250"/><line x1="16" y1="340" x2="624" y2="340"/>
+  </g>
+
+  <!-- WALLS (collider source). Exits: LEFT=Arcade Hub, RIGHT=Snack Alcove -->
+  <g>
+    <rect x="0" y="38" width="640" height="18" fill="#0b0918"/><rect x="0" y="54" width="640" height="2" fill="#c04be0" opacity="0.45"/>
+    <rect x="0" y="56" width="16" height="124" fill="#0b0918"/><rect x="0" y="240" width="16" height="178" fill="#0b0918"/>
+    <rect x="624" y="56" width="16" height="124" fill="#0b0918"/><rect x="624" y="240" width="16" height="178" fill="#0b0918"/>
+    <rect x="0" y="418" width="640" height="18" fill="#0b0918"/><rect x="0" y="418" width="640" height="2" fill="#3fd0d8" opacity="0.4"/>
+    <rect x="14" y="56" width="2" height="362" fill="#3fd0d8" opacity="0.35"/><rect x="624" y="56" width="2" height="362" fill="#3fd0d8" opacity="0.35"/>
+  </g>
+  <!-- EXITS -->
+  <g>
+    <rect x="0" y="180" width="16" height="60" fill="#241030"/>
+    <g stroke="#e0459e" stroke-width="3" fill="none"><polyline points="28,196 18,210 28,224"/><polyline points="38,196 28,210 38,224"/></g>
+    <rect x="624" y="180" width="16" height="60" fill="#0e2630"/>
+    <g stroke="#3fd0d8" stroke-width="3" fill="none"><polyline points="612,196 622,210 612,224"/><polyline points="602,196 612,210 602,224"/></g>
+  </g>
+
+  <!-- TOP CABINET ROW: 3 decorative + TRUTH FILTER (purple) + 2 decorative -->
+  <g fill="#141024" stroke="#3a2f6a" stroke-width="1.5">
+    <rect x="56" y="58" width="44" height="60" rx="3"/><rect x="110" y="58" width="44" height="60" rx="3"/><rect x="164" y="58" width="44" height="60" rx="3"/>
+    <rect x="430" y="58" width="44" height="60" rx="3"/><rect x="484" y="58" width="44" height="60" rx="3"/>
+  </g>
+  <g>
+    <rect x="64" y="66" width="28" height="22" rx="2" fill="#0a2030" stroke="#3fd0d8" stroke-width="1.5"/>
+    <rect x="118" y="66" width="28" height="22" rx="2" fill="#2a0a24" stroke="#e0459e" stroke-width="1.5"/>
+    <rect x="172" y="66" width="28" height="22" rx="2" fill="#0a2418" stroke="#52e0a0" stroke-width="1.5"/>
+    <rect x="438" y="66" width="28" height="22" rx="2" fill="#0a1830" stroke="#5aa0f0" stroke-width="1.5"/>
+    <rect x="492" y="66" width="28" height="22" rx="2" fill="#241a08" stroke="#f0c85a" stroke-width="1.5"/>
+  </g>
+  <!-- TRUTH FILTER (centerpiece) -->
+  <ellipse cx="316" cy="110" rx="80" ry="66" fill="url(#tfglow)"/>
+  <g>
+    <rect x="284" y="58" width="64" height="82" rx="5" fill="#1a0e2c" stroke="#c04be0" stroke-width="2.5"/>
+    <rect x="294" y="68" width="44" height="40" rx="3" fill="#2a0f38" stroke="#e07aff" stroke-width="2"/>
+    <rect x="302" y="114" width="28" height="6" rx="2" fill="#c04be0" opacity="0.8"/>
+  </g>
+
+  <!-- LEFT WALL: Staff Schedule board (top) + Staff Record terminal (bottom) -->
+  <rect x="18" y="70" width="46" height="40" rx="3" fill="#101a2c" stroke="#3fd0d8" stroke-width="2"/>
+  <rect x="24" y="76" width="34" height="20" rx="2" fill="#08202c" stroke="#3fd0d8" stroke-width="1"/>
+  <rect x="18" y="300" width="46" height="52" rx="3" fill="#141024" stroke="#5aa0f0" stroke-width="2"/>
+  <rect x="24" y="308" width="34" height="24" rx="2" fill="#0a1830" stroke="#5aa0f0" stroke-width="1"/>
+
+  <!-- RIGHT-UPPER: Broken High Score cabinet (glitchy) -->
+  <g>
+    <rect x="560" y="66" width="52" height="72" rx="3" fill="#12101c" stroke="#4a4a58" stroke-width="2"/>
+    <rect x="568" y="74" width="36" height="28" rx="2" fill="#1a0a12" stroke="#e0455e" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <path d="M576 78 l10 8 l-6 6 l12 4" stroke="#ff5a6a" stroke-width="1.5" fill="none" opacity="0.8"/>
+  </g>
+
+  <!-- RIGHT-LOWER: Cabinet Trace Run (optional adventure cabinet) -->
+  <g>
+    <rect x="556" y="300" width="52" height="72" rx="3" fill="#141024" stroke="#52e0a0" stroke-width="2"/>
+    <rect x="564" y="308" width="36" height="28" rx="2" fill="#0a2418" stroke="#52e0a0" stroke-width="1.5"/>
+  </g>
+
+  <!-- NPC pads (real sprites on top): Mr. Byte @ Truth Filter, Roxy @ Broken Score -->
+  <g>
+    <ellipse cx="316" cy="176" rx="26" ry="12" fill="url(#padc)"/><ellipse cx="316" cy="176" rx="17" ry="8" fill="none" stroke="#5aa0f0" stroke-width="1.5" opacity="0.7"/>
+    <ellipse cx="520" cy="176" rx="24" ry="11" fill="url(#padc)"/><ellipse cx="520" cy="176" rx="16" ry="7" fill="none" stroke="#e0459e" stroke-width="1.5" opacity="0.7"/>
+  </g>
+  <g opacity="0.92">
+    <g><ellipse cx="316" cy="166" rx="7" ry="10" fill="#3a6ab0"/><circle cx="316" cy="152" r="5" fill="#6a9ad0"/></g>
+    <g><ellipse cx="520" cy="166" rx="7" ry="10" fill="#c0407a"/><circle cx="520" cy="152" r="5" fill="#e07aa0"/></g>
+  </g>
+
+  <!-- HEADER BAR (UI: map name / signal / objective) -->
+  <rect x="0" y="0" width="640" height="36" fill="#07060f"/><rect x="0" y="35" width="640" height="1.5" fill="#c04be0" opacity="0.5"/>
+  <rect x="8" y="8" width="4" height="20" rx="2" fill="#c04be0"/><rect x="628" y="8" width="4" height="20" rx="2" fill="#3fd0d8"/>
+</svg>

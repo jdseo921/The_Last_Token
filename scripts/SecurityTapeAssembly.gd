@@ -1,6 +1,7 @@
 extends Control
 
 const ARCADE_JUICE := preload("res://scripts/ArcadeJuice.gd")
+const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
 
 const FRAGMENTS := [
 	"Counter lights shut off.",
@@ -16,6 +17,9 @@ const CORRECT_ORDER := [
 	"The Staff Door records two signals.",
 ]
 
+const ANOMALY_TEXT := "A second figure stands at the door. No timestamp."
+const STATIC_TEXT := "▓▓▓ STATIC ▓▓▓  (press to clear)"
+
 const BACKGROUND_ART_PATH := "res://assets/art/minigames/security_tape/security_tape_background.png"
 const FRAGMENT_PANEL_ART_PATH := "res://assets/art/minigames/security_tape/tape_fragment_panel.png"
 const STATIC_OVERLAY_ART_PATH := "res://assets/art/minigames/security_tape/tape_static_overlay.png"
@@ -26,6 +30,7 @@ const STATIC_OVERLAY_ART_PATH := "res://assets/art/minigames/security_tape/tape_
 @onready var submit_button: Button = $Panel/Controls/SubmitButton
 @onready var reset_button: Button = $Panel/Controls/ResetButton
 @onready var return_button: Button = $Panel/ReturnButton
+@onready var fragment_container: VBoxContainer = $Panel/Fragments
 @onready var fragment_a: Button = $Panel/Fragments/FragmentA
 @onready var fragment_b: Button = $Panel/Fragments/FragmentB
 @onready var fragment_c: Button = $Panel/Fragments/FragmentC
@@ -34,6 +39,8 @@ const STATIC_OVERLAY_ART_PATH := "res://assets/art/minigames/security_tape/tape_
 var selected_fragments: Array[String] = []
 var display_fragments: Array = []
 var fragment_buttons: Array[Button] = []
+var revealed_indices: Dictionary = {}
+var anomaly_acknowledged := false
 var feedback_flash: ColorRect = null
 
 func _ready() -> void:
@@ -42,29 +49,53 @@ func _ready() -> void:
 	GameState.start_security_tape_assembly()
 	_apply_optional_art_hooks()
 	_setup_feedback_flash()
-	fragment_buttons = [fragment_a, fragment_b, fragment_c, fragment_d]
+	var fragment_e := Button.new()
+	fragment_e.name = "FragmentE"
+	fragment_container.add_child(fragment_e)
+	fragment_buttons = [fragment_a, fragment_b, fragment_c, fragment_d, fragment_e]
 	display_fragments = FRAGMENTS.duplicate()
+	display_fragments.append(ANOMALY_TEXT)
 	randomize()
 	display_fragments.shuffle()
-	while display_fragments == FRAGMENTS:
+	while _looks_presolved():
 		display_fragments.shuffle()
 	for index in range(fragment_buttons.size()):
 		var button: Button = fragment_buttons[index]
-		button.text = display_fragments[index]
-		button.pressed.connect(_on_fragment_pressed.bind(index))
+		button.text = STATIC_TEXT
+		button.add_theme_font_size_override("font_size", 11)
+		if not button.pressed.is_connected(_on_fragment_pressed):
+			button.pressed.connect(_on_fragment_pressed.bind(index))
 	submit_button.pressed.connect(_on_submit_pressed)
 	reset_button.pressed.connect(_reset_selection)
 	return_button.pressed.connect(_return_to_staff_corridor)
 	return_button.visible = false
+	status_label.text = "COILY: Ooh, home movies! Clear the static, then\nput the night back in order. One frame will not fit.\nTrust the feeling when you find it."
 	_refresh_view()
+
+func _looks_presolved() -> bool:
+	for i in range(CORRECT_ORDER.size()):
+		if i >= display_fragments.size() or display_fragments[i] != CORRECT_ORDER[i]:
+			return false
+	return true
 
 func _on_fragment_pressed(index: int) -> void:
 	if index < 0 or index >= display_fragments.size():
 		return
+	if not revealed_indices.get(index, false):
+		revealed_indices[index] = true
+		fragment_buttons[index].text = display_fragments[index]
+		ARCADE_JUICE.pulse_control(self, fragment_buttons[index])
+		_play_audio("play_button_pulse")
+		_flash_feedback(ARCADE_JUICE.FLASH_CYAN, 0.1)
+		return
 	var fragment: String = display_fragments[index]
 	if selected_fragments.has(fragment):
 		_play_audio("play_error_buzz")
-		ARCADE_JUICE.flash_overlay(self, feedback_flash, ARCADE_JUICE.FLASH_RED, 0.28)
+		_flash_feedback(ARCADE_JUICE.FLASH_RED, 0.28)
+		return
+	if selected_fragments.size() >= CORRECT_ORDER.size():
+		_play_audio("play_error_buzz")
+		status_label.text = "The reel only has four slots.\nOne of the five frames does not belong."
 		return
 	ARCADE_JUICE.pulse_control(self, fragment_buttons[index])
 	_play_audio("play_button_pulse")
@@ -72,18 +103,31 @@ func _on_fragment_pressed(index: int) -> void:
 	_refresh_view()
 
 func _on_submit_pressed() -> void:
-	if selected_fragments.size() != FRAGMENTS.size():
+	if selected_fragments.size() != CORRECT_ORDER.size():
 		ARCADE_JUICE.pulse_control(self, submit_button, ARCADE_JUICE.PULSE_RED)
 		_play_audio("play_error_buzz")
-		ARCADE_JUICE.flash_overlay(self, feedback_flash, ARCADE_JUICE.FLASH_RED, 0.28)
-		status_label.text = "TAPE HEAD BUZZES.\nSelect all four fragments before submitting."
+		_flash_feedback(ARCADE_JUICE.FLASH_RED, 0.28)
+		status_label.text = "TAPE HEAD BUZZES.\nSeat four frames before playback."
+		return
+	if selected_fragments.has(ANOMALY_TEXT):
+		GameState.record_security_tape_wrong_order()
+		_play_audio("play_error_buzz")
+		_flash_feedback(ARCADE_JUICE.FLASH_RED, 0.4)
+		status_label.text = "FRAME REJECTED: NO TIMESTAMP.\nThat frame does not belong to any hour of that night.\nCOILY: ...I greeted everyone, pal. That one, I never greeted."
+		anomaly_acknowledged = true
+		_reset_selection(false)
 		return
 	if selected_fragments == CORRECT_ORDER:
 		ARCADE_JUICE.pulse_control(self, submit_button, ARCADE_JUICE.PULSE_GREEN)
 		_play_audio("play_success_jingle")
-		ARCADE_JUICE.flash_overlay(self, feedback_flash, ARCADE_JUICE.FLASH_CYAN, 0.32)
+		_flash_feedback(ARCADE_JUICE.FLASH_CYAN, 0.32)
 		GameState.complete_security_tape_assembly()
-		status_label.text = "TAPE ORDER RESTORED.\nFINAL NIGHT SEQUENCE PARTIAL.\nTHE STAFF DOOR DID NOT RECORD A CUSTOMER."
+		var closing := "TAPE ORDER RESTORED.\nTHE STAFF DOOR DID NOT RECORD A CUSTOMER."
+		if anomaly_acknowledged:
+			closing += "\nOne frame stays on the reel. It has no hour to return to."
+		else:
+			closing += "\nOne frame was never seated. It has no hour to return to."
+		status_label.text = closing
 		_set_fragment_buttons_disabled(true)
 		submit_button.disabled = true
 		reset_button.disabled = true
@@ -91,7 +135,7 @@ func _on_submit_pressed() -> void:
 		return
 	GameState.record_security_tape_wrong_order()
 	_play_audio("play_error_buzz")
-	ARCADE_JUICE.flash_overlay(self, feedback_flash, ARCADE_JUICE.FLASH_RED, 0.34)
+	_flash_feedback(ARCADE_JUICE.FLASH_RED, 0.34)
 	status_label.text = "TIMESTAMP CONFLICT.\nThe tape rewinds with an angry buzz."
 	_reset_selection(false)
 
@@ -104,7 +148,7 @@ func _reset_selection(play_sound: bool = true) -> void:
 
 func _refresh_view() -> void:
 	var lines := PackedStringArray()
-	for index in range(FRAGMENTS.size()):
+	for index in range(CORRECT_ORDER.size()):
 		var slot_text := "[empty]"
 		if index < selected_fragments.size():
 			slot_text = selected_fragments[index]
@@ -112,7 +156,8 @@ func _refresh_view() -> void:
 	selected_label.text = "\n".join(lines)
 	for index in range(fragment_buttons.size()):
 		var button: Button = fragment_buttons[index]
-		button.disabled = selected_fragments.has(display_fragments[index]) or GameState.security_tape_assembly_completed
+		var fragment: String = display_fragments[index]
+		button.disabled = (revealed_indices.get(index, false) and selected_fragments.has(fragment)) or GameState.security_tape_assembly_completed
 	hint_label.visible = GameState.security_tape_wrong_order_count >= 2 and not GameState.security_tape_assembly_completed
 	submit_button.disabled = GameState.security_tape_assembly_completed
 	reset_button.disabled = GameState.security_tape_assembly_completed
@@ -126,6 +171,9 @@ func _return_to_staff_corridor() -> void:
 	_play_audio("play_button_pulse")
 	GameState.set_pending_spawn_id("Spawn_FromSecurityTape")
 	SceneChanger.go_to_staff_corridor()
+
+func _flash_feedback(color: Color, peak_alpha: float) -> void:
+	ARCADE_JUICE.flash_overlay(self, feedback_flash, color, peak_alpha)
 
 func _setup_feedback_flash() -> void:
 	feedback_flash = ColorRect.new()
@@ -146,7 +194,7 @@ func _apply_optional_art_hooks() -> void:
 		button.icon = fragment_texture
 		button.expand_icon = true
 
-func _add_optional_full_rect_texture(path: String, z_index: int, node_name: String) -> void:
+func _add_optional_full_rect_texture(path: String, z_index_value: int, node_name: String) -> void:
 	var texture := _load_texture_or_null(path)
 	if texture == null:
 		return
@@ -157,7 +205,7 @@ func _add_optional_full_rect_texture(path: String, z_index: int, node_name: Stri
 	texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	texture_rect.texture = texture
 	texture_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	texture_rect.z_index = z_index
+	texture_rect.z_index = z_index_value
 	add_child(texture_rect)
 	move_child(texture_rect, 1)
 

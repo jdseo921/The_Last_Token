@@ -91,7 +91,7 @@ func _create_grid_buttons() -> void:
 		child.queue_free()
 	for index in range(GRID_SIZE * GRID_SIZE):
 		var button := Button.new()
-		button.custom_minimum_size = Vector2(96, 64)
+		button.custom_minimum_size = Vector2(88, 56)
 		button.focus_mode = Control.FOCUS_ALL
 		button.expand_icon = false
 		button.pressed.connect(_on_tile_pressed.bind(index))

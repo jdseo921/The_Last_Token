@@ -109,13 +109,6 @@ theme_override_font_sizes/font_size = 9
 text = "PARTY ROOM"
 horizontal_alignment = 2
 
-[node name="DoorsLabel" type="Label" parent="UILayer"]
-position = Vector2(240, 408)
-size = Vector2(160, 18)
-theme_override_font_sizes/font_size = 9
-text = "FRONT DOORS (LOCKED)"
-horizontal_alignment = 1
-
 [node name="InteractionPromptBackground" type="ColorRect" parent="UILayer"]
 visible = false
 position = Vector2(194, 372)

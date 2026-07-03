@@ -71,8 +71,8 @@
       [
         {"speaker": "Gus", "text": "The maintenance note is ugly."},
         {"speaker": "Gus", "text": "Door-report ugly.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"},
-        {"speaker": "Gus", "text": "I saw the Staff Door report two signals after closing."},
-        {"speaker": "Gus", "text": "One entered. One stayed."},
+        {"speaker": "Gus", "text": "I saw the Staff Door log the last night wrong. Read it three times."},
+        {"speaker": "Gus", "text": "Something in that reading I still cannot make sit right."},
         {"speaker": "Gus", "text": "I pretended that was routine work."},
         {"speaker": "Gus", "text": "Routine work is easier to carry than fear.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"}
       ]
@@ -83,6 +83,7 @@
         {"speaker": "Gus", "text": "You have got the face people get after reading their own name somewhere they did not expect."},
         {"speaker": "Player", "text": "I did not see a name."},
         {"speaker": "Gus", "text": "No. But you looked for one.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
+        {"speaker": "Gus", "text": "Lately you answer like your head is somewhere else. Like you say a thing, then wait to find out if you meant it."},
         {"speaker": "Gus", "text": "The old late-shift used to make sure I clocked out before they did. Never the other way."},
         {"speaker": "Gus", "text": "Anyway. Cheerier work.", "portrait": "res://assets/art/portraits/gus/gus_annoyed.png"},
         {"speaker": "Gus", "text": "The file gives me enough to work with."},
@@ -139,6 +140,8 @@
         {"speaker": "Gus", "text": "Still are, in the ways that matter.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
         {"speaker": "Gus", "text": "You always said routine was easier to carry than fear."},
         {"speaker": "Gus", "text": "Whole time you were the most scared one here, still sweeping up."},
+        {"speaker": "Gus", "text": "Some days you answered like the man I knew. Some days like there was a lot less of him in the room."},
+        {"speaker": "Gus", "text": "Never asked what had changed in you. Figured whatever it was, it was yours to carry, not mine to pry at."},
         {"speaker": "Gus", "text": "I do not want to clean around another absence.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"}
       ]
     ]

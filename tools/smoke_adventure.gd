@@ -31,19 +31,45 @@ func _process(_delta: float) -> bool:
 		_frame = 0
 		return false
 	_frame += 1
+	var key = _targets[_i][0]
 	if _frame == 2:
-		var key = _targets[_i][0]
-		_out.append("%s: [ready] screenbg=%s scan=%s crt=%s" % [key, _inst.has_node("ScreenBackground"), _inst.has_node("ArcadeScanlines"), _inst.has_node("ArcadeCRTOverlay")])
+		_out.append("%s: [ready] screenbg=%s scan=%s crt=%s hazards=%d" % [key, _inst.has_node("ScreenBackground"), _inst.has_node("ArcadeScanlines"), _inst.has_node("ArcadeCRTOverlay"), _hazard_count()])
+		if bool(_inst.get("breaker_reveal_enabled")):
+			_out.append("%s: [breaker] %s" % [key, _breaker_probe()])
+		return false
+	if _frame == 40:
+		_out.append("%s: [after 40f] hazards=%d (patrols stepped, no crash)" % [key, _hazard_count()])
 		if _inst.has_method("_rebuild_area_view"):
 			_inst.call("_rebuild_area_view", "smoke")
 		return false
-	if _frame >= 4:
-		var key2 = _targets[_i][0]
-		_out.append("%s: [post-rebuild] screenbg=%s scan=%s crt=%s (overlay must persist)" % [key2, _inst.has_node("ScreenBackground"), _inst.has_node("ArcadeScanlines"), _inst.has_node("ArcadeCRTOverlay")])
+	if _frame >= 42:
+		_out.append("%s: [post-rebuild] screenbg=%s crt=%s hazards=%d (overlay must persist)" % [key, _inst.has_node("ScreenBackground"), _inst.has_node("ArcadeCRTOverlay"), _hazard_count()])
 		_inst.free()
 		_inst = null
 		_i += 1
 	return false
+
+func _hazard_count() -> int:
+	if _inst == null:
+		return -1
+	var mh = _inst.get("active_moving_hazards")
+	if mh is Array:
+		return (mh as Array).size()
+	return -1
+
+func _breaker_probe() -> String:
+	var lit_before: int = (_inst.get("lit_cells") as Dictionary).size()
+	var cps: Array = _inst.get("collectible_positions")
+	var active := str(_inst.get("active_area_id"))
+	for ref in cps:
+		var parts := str(ref).split(":")
+		if parts.size() == 2 and parts[0] == active:
+			var xy := parts[1].split(",")
+			if xy.size() == 2:
+				_inst.call("_try_collect", Vector2i(int(xy[0]), int(xy[1])))
+				break
+	var lit_after: int = (_inst.get("lit_cells") as Dictionary).size()
+	return "lit_cells %d -> %d after collecting a fuse" % [lit_before, lit_after]
 
 func _dump(out: Array) -> void:
 	print("\n=== ADVENTURE SMOKE TEST ===")

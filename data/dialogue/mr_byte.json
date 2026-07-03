@@ -36,6 +36,8 @@
         {"speaker": "Mr. Byte", "text": "Lie density reduced."},
         {"speaker": "Mr. Byte", "text": "Note: a correct answer is not the same as a settled one."},
         {"speaker": "Mr. Byte", "text": "Identity conflict remains.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_error.png"},
+        {"speaker": "Mr. Byte", "text": "Diagnostic: your response timing will not resolve. The signal answers, then hesitates, then answers again."},
+        {"speaker": "Mr. Byte", "text": "Registered as one user. Reading as unstable. I cannot close this file."},
         {"speaker": "Mr. Byte", "text": "Emotion registered as heat with no source."},
         {"speaker": "Mr. Byte", "text": "Further stabilization required."}
       ]
@@ -95,6 +97,9 @@
       [
         {"speaker": "Mr. Byte", "text": "Employee 04.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_stable.png"},
         {"speaker": "Mr. Byte", "text": "Identity conflict resolved.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_stable.png"},
+        {"speaker": "Mr. Byte", "text": "For the record: your signal never once read as stable this whole session. It answered, then corrected itself, like part of it refused to hold still."},
+        {"speaker": "Mr. Byte", "text": "It reads quiet now. Whatever would not settle in you has stopped moving."},
+        {"speaker": "Mr. Byte", "text": "The part of it I could never parse was never mine to parse. It closed when you did."},
         {"speaker": "Mr. Byte", "text": "Resolution is not repair."},
         {"speaker": "Mr. Byte", "text": "Emotional cache remains unstable."},
         {"speaker": "Mr. Byte", "text": "You were recorded as staff."},

@@ -143,20 +143,6 @@ theme_override_font_sizes/font_size = 10
 text = "Gus owns Maintenance Sync. Stabilize both signals before the Staff Door opens."
 autowrap_mode = 3
 
-[node name="GusLabel" type="Label" parent="UILayer"]
-position = Vector2(112, 184)
-size = Vector2(108, 20)
-theme_override_font_sizes/font_size = 10
-text = "GUS"
-horizontal_alignment = 1
-
-[node name="SyncDoorLabel" type="Label" parent="UILayer"]
-position = Vector2(408, 190)
-size = Vector2(140, 20)
-theme_override_font_sizes/font_size = 10
-text = "MAINTENANCE SYNC"
-horizontal_alignment = 1
-
 [node name="InteractionPromptBackground" type="ColorRect" parent="UILayer"]
 visible = false
 position = Vector2(194, 400)

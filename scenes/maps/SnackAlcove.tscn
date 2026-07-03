@@ -141,27 +141,6 @@ theme_override_font_sizes/font_size = 10
 text = "Vendo owns Circuit Soda. Route the signal before staff systems listen."
 autowrap_mode = 3
 
-[node name="VendoLabel" type="Label" parent="UILayer"]
-position = Vector2(258, 192)
-size = Vector2(124, 20)
-theme_override_font_sizes/font_size = 10
-text = "VENDO"
-horizontal_alignment = 1
-
-[node name="SnackServiceLabel" type="Label" parent="UILayer"]
-position = Vector2(136, 182)
-size = Vector2(128, 20)
-theme_override_font_sizes/font_size = 10
-text = "SERVICE DASH"
-horizontal_alignment = 1
-
-[node name="CircuitSodaLabel" type="Label" parent="UILayer"]
-position = Vector2(384, 182)
-size = Vector2(136, 20)
-theme_override_font_sizes/font_size = 10
-text = "CIRCUIT SODA"
-horizontal_alignment = 1
-
 [node name="PrizeExitLabel" type="Label" parent="UILayer"]
 position = Vector2(516, 238)
 size = Vector2(98, 18)

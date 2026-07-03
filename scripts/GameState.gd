@@ -12,9 +12,9 @@ const ACTION_BINDINGS := {
 }
 
 const TOTAL_GAMES_COUNT := 4
-const TOTAL_REQUIRED_PROGRESS_COUNT := 10
-const TOTAL_OPTIONAL_GAMES_COUNT := 2
-const TOTAL_SECRETS_COUNT := 5
+const TOTAL_REQUIRED_PROGRESS_COUNT := 12
+const TOTAL_OPTIONAL_GAMES_COUNT := 0
+const TOTAL_SECRETS_COUNT := 7
 const MEMORY_SIGNAL_GROUNDED := 0
 const MEMORY_SIGNAL_UNEASY := 1
 const MEMORY_SIGNAL_FRACTURED := 2
@@ -98,6 +98,8 @@ var broken_high_score_completed := false
 var owner_portrait_secret_found := false
 var employee_04_file_found := false
 var vendo_memory_riddle_secret_found := false
+var ssr_secret_cache_found := false
+var fnw_secret_echo_found := false
 var post_reveal_witness_route_completed := false
 var staff_record_01_read := false
 var staff_record_02_read := false
@@ -127,6 +129,8 @@ var save_progress_stage := "New Game"
 var has_arcade_return_position := false
 var arcade_return_position := Vector2.ZERO
 var opening_intro_seen := false
+var opening_npc_talks := 0
+var opening_hint_monologue_seen := false
 var last_announced_quest_id := ""
 var npc_dialogue_counts: Dictionary = {}
 var pending_spawn_id := ""
@@ -169,9 +173,13 @@ func get_required_progress_count_from_data(data: Dictionary) -> int:
 	var completed := 0
 	if bool(data.get("rockbyte_duel_completed", false)):
 		completed += 1
+	if bool(data.get("broken_high_score_completed", false)):
+		completed += 1
 	if bool(data.get("lying_cabinets_completed", false)):
 		completed += 1
 	if bool(data.get("circuit_soda_completed", false)):
+		completed += 1
+	if bool(data.get("prize_sort_completed", false)):
 		completed += 1
 	if _is_lost_shift_file_complete_in_data(data):
 		completed += 1
@@ -202,13 +210,9 @@ func get_total_required_progress_count() -> int:
 func get_optional_games_completed_count() -> int:
 	return get_optional_games_completed_count_from_data(to_save_data())
 
-func get_optional_games_completed_count_from_data(data: Dictionary) -> int:
-	var completed := 0
-	if bool(data.get("broken_high_score_completed", false)):
-		completed += 1
-	if bool(data.get("prize_sort_completed", false)):
-		completed += 1
-	return completed
+func get_optional_games_completed_count_from_data(_data: Dictionary) -> int:
+	# Broken High Score and Prize Sort are now required beats, counted in required progress.
+	return 0
 
 func get_compatible_save_data_for_summary(data: Dictionary) -> Dictionary:
 	var compatible := data.duplicate(true)
@@ -261,6 +265,10 @@ func get_secrets_found_count_from_data(data: Dictionary) -> int:
 		found += 1
 	if bool(data.get("vendo_memory_riddle_secret_found", false)):
 		found += 1
+	if bool(data.get("ssr_secret_cache_found", false)):
+		found += 1
+	if bool(data.get("fnw_secret_echo_found", false)):
+		found += 1
 	if bool(data.get("witness_route_completed", false)) or bool(data.get("post_reveal_witness_route_completed", false)):
 		found += 1
 	return found
@@ -293,12 +301,16 @@ func get_story_phase_label_from_data(data: Dictionary) -> String:
 		return "Maintenance Sync"
 	if _is_lost_shift_file_complete_in_data(data):
 		return "Static Service Run"
+	if bool(data.get("circuit_soda_completed", false)) and not bool(data.get("prize_sort_completed", false)) and not _is_lost_shift_file_complete_in_data(data):
+		return "Prize Sort"
 	if bool(data.get("circuit_soda_completed", false)) and not _is_lost_shift_file_complete_in_data(data):
 		return "Lost Shift File"
 	if bool(data.get("circuit_soda_completed", false)):
 		return "Lost Shift File"
 	if bool(data.get("second_memory_fragment_collected", false)) or bool(data.get("lying_cabinets_completed", false)):
 		return "Truth Filter Cleared"
+	if bool(data.get("lost_token_quest_completed", false)) and not bool(data.get("broken_high_score_completed", false)) and not bool(data.get("lying_cabinets_completed", false)):
+		return "Broken High Score"
 	if bool(data.get("truth_filter_quest_started", false)) and not bool(data.get("lying_cabinets_completed", false)):
 		return "Truth Filter"
 	if bool(data.get("lost_token_quest_completed", false)):
@@ -411,6 +423,8 @@ func reset_for_new_game() -> void:
 	owner_portrait_secret_found = false
 	employee_04_file_found = false
 	vendo_memory_riddle_secret_found = false
+	ssr_secret_cache_found = false
+	fnw_secret_echo_found = false
 	post_reveal_witness_route_completed = false
 	staff_record_01_read = false
 	staff_record_02_read = false
@@ -437,6 +451,8 @@ func reset_for_new_game() -> void:
 	save_player_facing = "down"
 	save_progress_stage = "New Memory"
 	opening_intro_seen = false
+	opening_npc_talks = 0
+	opening_hint_monologue_seen = false
 	last_announced_quest_id = ""
 	npc_dialogue_counts.clear()
 	pending_spawn_id = ""
@@ -697,17 +713,32 @@ func unlock_post_reveal_roam() -> void:
 func mark_opening_intro_seen() -> void:
 	opening_intro_seen = true
 
+func register_opening_talk() -> void:
+	if story_started or opening_hint_monologue_seen:
+		return
+	opening_npc_talks += 1
+
+func opening_look_around_active() -> bool:
+	return not story_started and not opening_hint_monologue_seen
+
+func opening_monologue_due() -> bool:
+	return opening_look_around_active() and opening_npc_talks >= 3
+
 func get_current_quest_id() -> String:
 	if not story_started:
-		return "opening_talk_to_mira"
+		return "opening_talk_to_mira" if opening_hint_monologue_seen else "opening_look_around"
 	if lost_token_quest_started and not rockbyte_duel_completed:
 		return "recover_lost_token"
 	if rockbyte_duel_completed and not lost_token_quest_completed:
 		return "return_lost_token"
+	if lost_token_quest_completed and not lying_cabinets_completed and not broken_high_score_completed:
+		return "broken_high_score"
 	if lost_token_quest_completed and not lying_cabinets_completed:
 		return "truth_filter"
 	if lying_cabinets_completed and not circuit_soda_completed:
 		return "circuit_soda"
+	if circuit_soda_completed and not prize_sort_completed and not lost_shift_file_completed and not maintenance_sync_completed and not story_puzzle_completed:
+		return "prize_sort"
 	if circuit_soda_completed and not lost_shift_file_completed and not maintenance_sync_completed and not story_puzzle_completed:
 		return "lost_shift_file"
 	if lost_shift_file_completed and not static_service_run_completed and not maintenance_sync_completed and not story_puzzle_completed:
@@ -732,6 +763,27 @@ func get_current_quest_id() -> String:
 
 func get_current_quest_data() -> Dictionary:
 	match get_current_quest_id():
+		"broken_high_score":
+			return _with_registry_quest_data({
+				"id": "broken_high_score",
+				"title": "Broken High Score",
+				"summary": "Beat Roxy's Broken High Score cabinet in Cabinet Row.",
+				"details": "Roxy guards the Broken High Score cabinet in Cabinet Row. The board lies that the target is 9999. Restore the real record before the Truth Filter.",
+			}, "broken_high_score")
+		"prize_sort":
+			return _with_registry_quest_data({
+				"id": "prize_sort",
+				"title": "Prize Sort",
+				"summary": "Help Pip sort the prizes in Prize Corner.",
+				"details": "Pip in Prize Corner says the labels remember an order: Ticket Stub, Lost Token, then Blank Employee Badge. Sort them before the Lost Shift File.",
+			}, "prize_counter_secret")
+		"opening_look_around":
+			return _with_registry_quest_data({
+				"id": "opening_look_around",
+				"title": "Get Your Bearings",
+				"summary": "Look around the arcade. Talk to whoever is still here.",
+				"details": "Pixel Haven is closed, but it seems to know me. I should look around and talk to whoever is still here before I decide anything.",
+			}, "lost_token")
 		"opening_talk_to_mira":
 			return _with_registry_quest_data({
 				"id": "opening_talk_to_mira",
@@ -992,6 +1044,8 @@ func to_save_data() -> Dictionary:
 		"owner_portrait_secret_found": owner_portrait_secret_found,
 		"employee_04_file_found": employee_04_file_found,
 		"vendo_memory_riddle_secret_found": vendo_memory_riddle_secret_found,
+		"ssr_secret_cache_found": ssr_secret_cache_found,
+		"fnw_secret_echo_found": fnw_secret_echo_found,
 		"post_reveal_witness_route_completed": post_reveal_witness_route_completed,
 		"staff_record_01_read": staff_record_01_read,
 		"staff_record_02_read": staff_record_02_read,
@@ -1009,6 +1063,8 @@ func to_save_data() -> Dictionary:
 		"echo_cabinet07_seen": echo_cabinet07_seen,
 		"echo_owner_portrait_04_seen": echo_owner_portrait_04_seen,
 		"opening_intro_seen": opening_intro_seen,
+		"opening_npc_talks": opening_npc_talks,
+		"opening_hint_monologue_seen": opening_hint_monologue_seen,
 		"last_announced_quest_id": last_announced_quest_id,
 		"npc_dialogue_counts": npc_dialogue_counts.duplicate(true),
 	}
@@ -1166,6 +1222,8 @@ func apply_save_data(data: Dictionary) -> void:
 	owner_portrait_secret_found = data.get("owner_portrait_secret_found", owner_portrait_secret_found)
 	employee_04_file_found = data.get("employee_04_file_found", employee_04_file_found)
 	vendo_memory_riddle_secret_found = data.get("vendo_memory_riddle_secret_found", vendo_memory_riddle_secret_found)
+	ssr_secret_cache_found = bool(data.get("ssr_secret_cache_found", ssr_secret_cache_found))
+	fnw_secret_echo_found = bool(data.get("fnw_secret_echo_found", fnw_secret_echo_found))
 	post_reveal_witness_route_completed = bool(data.get("post_reveal_witness_route_completed", false))
 	staff_record_01_read = bool(data.get("staff_record_01_read", false))
 	staff_record_02_read = bool(data.get("staff_record_02_read", false))
@@ -1190,6 +1248,8 @@ func apply_save_data(data: Dictionary) -> void:
 	echo_cabinet07_seen = bool(data.get("echo_cabinet07_seen", echo_cabinet07_seen))
 	echo_owner_portrait_04_seen = bool(data.get("echo_owner_portrait_04_seen", echo_owner_portrait_04_seen))
 	opening_intro_seen = data.get("opening_intro_seen", opening_intro_seen)
+	opening_npc_talks = int(data.get("opening_npc_talks", opening_npc_talks))
+	opening_hint_monologue_seen = bool(data.get("opening_hint_monologue_seen", opening_hint_monologue_seen))
 	last_announced_quest_id = str(data.get("last_announced_quest_id", last_announced_quest_id))
 	var dialogue_counts_value: Variant = data.get("npc_dialogue_counts", npc_dialogue_counts)
 	if dialogue_counts_value is Dictionary:

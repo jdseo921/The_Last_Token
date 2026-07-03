@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="440" viewBox="0 0 640 440">
+  <defs>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#191233"/>
+      <stop offset="100%" stop-color="#0b0a1e"/>
+    </linearGradient>
+    <linearGradient id="counter" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a1030"/>
+      <stop offset="100%" stop-color="#180a1e"/>
+    </linearGradient>
+    <radialGradient id="tfglow" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#c04be0" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#c04be0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="padc" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#3fd0d8" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#3fd0d8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- floor -->
+  <rect width="640" height="440" fill="url(#floor)"/>
+  <!-- perspective floor grid -->
+  <g stroke="#3a2f6a" stroke-opacity="0.25" stroke-width="1">
+    <line x1="60" y1="60" x2="60" y2="418"/><line x1="140" y1="60" x2="140" y2="418"/>
+    <line x1="220" y1="60" x2="220" y2="418"/><line x1="300" y1="60" x2="300" y2="418"/>
+    <line x1="380" y1="60" x2="380" y2="418"/><line x1="460" y1="60" x2="460" y2="418"/>
+    <line x1="540" y1="60" x2="540" y2="418"/>
+    <line x1="16" y1="120" x2="624" y2="120"/><line x1="16" y1="190" x2="624" y2="190"/>
+    <line x1="16" y1="260" x2="624" y2="260"/><line x1="16" y1="330" x2="624" y2="330"/>
+  </g>
+
+  <!-- ===== WALLS (source of truth for colliders) ===== -->
+  <g>
+    <!-- top wall -->
+    <rect x="0" y="38" width="640" height="18" fill="#0b0918"/>
+    <rect x="0" y="54" width="640" height="2" fill="#3fd0d8" opacity="0.55"/>
+    <!-- left wall (gap y300-360 = Prize Corner) -->
+    <rect x="0" y="56" width="16" height="244" fill="#0b0918"/>
+    <rect x="0" y="360" width="16" height="58" fill="#0b0918"/>
+    <rect x="14" y="56" width="2" height="244" fill="#e0459e" opacity="0.4"/>
+    <rect x="14" y="360" width="2" height="58" fill="#e0459e" opacity="0.4"/>
+    <!-- right wall (gaps: y100-160 Cabinet Row, y215-275 Snack, y330-390 Maintenance) -->
+    <rect x="624" y="56" width="16" height="44" fill="#0b0918"/>
+    <rect x="624" y="160" width="16" height="55" fill="#0b0918"/>
+    <rect x="624" y="275" width="16" height="55" fill="#0b0918"/>
+    <rect x="624" y="390" width="16" height="28" fill="#0b0918"/>
+    <rect x="624" y="56" width="2" height="362" fill="#3fd0d8" opacity="0.4"/>
+    <!-- bottom wall (gaps: x300-380 Front Entrance, x460-520 Staff Door) -->
+    <rect x="0" y="418" width="300" height="18" fill="#0b0918"/>
+    <rect x="380" y="418" width="80" height="18" fill="#0b0918"/>
+    <rect x="520" y="418" width="120" height="18" fill="#0b0918"/>
+    <rect x="0" y="418" width="640" height="2" fill="#3fd0d8" opacity="0.4"/>
+  </g>
+
+  <!-- ===== EXITS: neon thresholds + chevrons ===== -->
+  <g>
+    <!-- Cabinet Row (right, upper) -->
+    <rect x="624" y="100" width="16" height="60" fill="#0e2630"/>
+    <g stroke="#3fd0d8" stroke-width="3" fill="none" opacity="0.9"><polyline points="612,116 622,130 612,144"/><polyline points="602,116 612,130 602,144"/></g>
+    <!-- Snack Alcove (right, mid) -->
+    <rect x="624" y="215" width="16" height="60" fill="#0e2630"/>
+    <g stroke="#3fd0d8" stroke-width="3" fill="none" opacity="0.9"><polyline points="612,231 622,245 612,259"/><polyline points="602,231 612,245 602,259"/></g>
+    <!-- Maintenance (right, lower) -->
+    <rect x="624" y="330" width="16" height="60" fill="#0e2630"/>
+    <g stroke="#f0b040" stroke-width="3" fill="none" opacity="0.9"><polyline points="612,346 622,360 612,374"/><polyline points="602,346 612,360 602,374"/></g>
+    <!-- Prize Corner (left) -->
+    <rect x="0" y="300" width="16" height="60" fill="#241030"/>
+    <g stroke="#e0459e" stroke-width="3" fill="none" opacity="0.9"><polyline points="28,316 18,330 28,344"/><polyline points="38,316 28,330 38,344"/></g>
+    <!-- Front Entrance (bottom center) -->
+    <rect x="300" y="418" width="80" height="18" fill="#101830"/>
+    <g stroke="#7fa0ff" stroke-width="3" fill="none" opacity="0.85"><polyline points="326,410 340,420 354,410"/><polyline points="326,400 340,410 354,400"/></g>
+  </g>
+
+  <!-- ===== TICKET COUNTER (Mira) top-left, L-shape ===== -->
+  <g>
+    <rect x="40" y="92" width="164" height="26" rx="3" fill="url(#counter)" stroke="#e0459e" stroke-width="2"/>
+    <rect x="178" y="92" width="26" height="86" rx="3" fill="url(#counter)" stroke="#e0459e" stroke-width="2"/>
+    <rect x="48" y="98" width="150" height="4" rx="2" fill="#ff8ac6" opacity="0.7"/>
+    <!-- register + checklist prop -->
+    <rect x="150" y="100" width="20" height="12" rx="2" fill="#3a1830" stroke="#ff8ac6" stroke-width="1"/>
+    <rect x="58" y="100" width="16" height="12" rx="1" fill="#2a2036" stroke="#f0d060" stroke-width="1"/>
+  </g>
+  <!-- Owner portrait on top wall -->
+  <rect x="98" y="40" width="40" height="14" rx="2" fill="#241a10" stroke="#f0b040" stroke-width="1.5"/>
+
+  <!-- ===== TOP CABINET ROW ===== -->
+  <g>
+    <!-- decorative cabinets -->
+    <g>
+      <rect x="238" y="58" width="46" height="58" rx="3" fill="#141024" stroke="#3a2f6a" stroke-width="1.5"/>
+      <rect x="246" y="66" width="30" height="24" rx="2" fill="#0a2030" stroke="#3fd0d8" stroke-width="1.5"/>
+    </g>
+    <g>
+      <rect x="292" y="58" width="46" height="58" rx="3" fill="#141024" stroke="#3a2f6a" stroke-width="1.5"/>
+      <rect x="300" y="66" width="30" height="24" rx="2" fill="#2a0a24" stroke="#e0459e" stroke-width="1.5"/>
+    </g>
+    <g>
+      <rect x="346" y="58" width="46" height="58" rx="3" fill="#141024" stroke="#3a2f6a" stroke-width="1.5"/>
+      <rect x="354" y="66" width="30" height="24" rx="2" fill="#0a2418" stroke="#52e0a0" stroke-width="1.5"/>
+    </g>
+    <!-- Cabinet 07 (interactive, highlighted gold) -->
+    <g>
+      <rect x="430" y="56" width="58" height="64" rx="4" fill="#161228" stroke="#f0c85a" stroke-width="2.5"/>
+      <rect x="440" y="66" width="38" height="30" rx="2" fill="#08222c" stroke="#3fd0d8" stroke-width="2"/>
+      <circle cx="459" cy="105" r="3" fill="#3fd0d8"/>
+    </g>
+  </g>
+
+  <!-- ===== TRUTH FILTER cabinet (center) ===== -->
+  <ellipse cx="320" cy="250" rx="90" ry="70" fill="url(#tfglow)"/>
+  <g>
+    <rect x="288" y="204" width="64" height="86" rx="5" fill="#1a0e2c" stroke="#c04be0" stroke-width="2.5"/>
+    <rect x="298" y="214" width="44" height="46" rx="3" fill="#2a0f38" stroke="#e07aff" stroke-width="2"/>
+    <rect x="306" y="266" width="28" height="6" rx="2" fill="#c04be0" opacity="0.8"/>
+  </g>
+
+  <!-- ===== VENDO (vending machine, lower-center-right) ===== -->
+  <g>
+    <rect x="430" y="300" width="52" height="86" rx="4" fill="#06342a" stroke="#52e0a0" stroke-width="2"/>
+    <rect x="438" y="310" width="36" height="40" rx="2" fill="#031f1a" stroke="#3fd0d8" stroke-width="1.5"/>
+    <rect x="438" y="356" width="36" height="8" rx="2" fill="#52e0a0" opacity="0.7"/>
+  </g>
+
+  <!-- ===== BROKEN CABINET (lower-left, damaged) ===== -->
+  <g>
+    <rect x="58" y="330" width="52" height="72" rx="3" fill="#12101c" stroke="#4a4a58" stroke-width="2"/>
+    <rect x="66" y="340" width="36" height="28" rx="2" fill="#1a0a12" stroke="#e0455e" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <path d="M74 344 l10 8 l-6 6 l12 4" stroke="#ff5a6a" stroke-width="1.5" fill="none" opacity="0.8"/>
+  </g>
+
+  <!-- ===== STAFF DOOR (bottom, red security door) ===== -->
+  <g>
+    <rect x="460" y="392" width="60" height="30" rx="2" fill="#2a0d12" stroke="#e0455e" stroke-width="2.5"/>
+    <line x1="490" y1="396" x2="490" y2="418" stroke="#ff5a6a" stroke-opacity="0.6" stroke-width="2"/>
+    <rect x="482" y="404" width="16" height="8" rx="2" fill="#3a1015" stroke="#f0b040" stroke-width="1"/>
+  </g>
+
+  <!-- ===== NPC / activity floor pads (characters are real sprites on top) ===== -->
+  <g>
+    <!-- Mira -->
+    <ellipse cx="118" cy="150" rx="26" ry="12" fill="url(#padc)"/>
+    <ellipse cx="118" cy="150" rx="18" ry="8" fill="none" stroke="#e0459e" stroke-width="1.5" opacity="0.7"/>
+    <!-- Gus -->
+    <ellipse cx="300" cy="160" rx="24" ry="11" fill="url(#padc)"/>
+    <ellipse cx="300" cy="160" rx="16" ry="7" fill="none" stroke="#52e0a0" stroke-width="1.5" opacity="0.7"/>
+    <!-- Mr. Byte -->
+    <ellipse cx="392" cy="250" rx="24" ry="11" fill="url(#padc)"/>
+    <ellipse cx="392" cy="250" rx="16" ry="7" fill="none" stroke="#5aa0f0" stroke-width="1.5" opacity="0.7"/>
+    <!-- Ticket Sweep floor spot -->
+    <ellipse cx="176" cy="322" rx="30" ry="14" fill="none" stroke="#f0c85a" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.6"/>
+    <circle cx="176" cy="322" r="3" fill="#f0c85a" opacity="0.7"/>
+  </g>
+
+  <!-- simple standing figures to show scale (real NPCs replace these) -->
+  <g opacity="0.92">
+    <g><ellipse cx="118" cy="140" rx="7" ry="10" fill="#c0407a"/><circle cx="118" cy="126" r="5" fill="#e07aa0"/></g>
+    <g><ellipse cx="300" cy="150" rx="7" ry="10" fill="#3a8a5a"/><circle cx="300" cy="136" r="5" fill="#6ac090"/></g>
+    <g><ellipse cx="392" cy="240" rx="7" ry="10" fill="#3a6ab0"/><circle cx="392" cy="226" r="5" fill="#6a9ad0"/></g>
+  </g>
+
+  <!-- ===== HEADER BAR (Godot draws map name / signal / objective here) ===== -->
+  <rect x="0" y="0" width="640" height="36" fill="#07060f"/>
+  <rect x="0" y="35" width="640" height="1.5" fill="#3fd0d8" opacity="0.5"/>
+  <rect x="8" y="8" width="4" height="20" rx="2" fill="#e0459e"/>
+  <rect x="628" y="8" width="4" height="20" rx="2" fill="#3fd0d8"/>
+</svg>
