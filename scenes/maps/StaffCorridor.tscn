@@ -90,7 +90,7 @@ use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="StaffRoomDoor" parent="InteractableLayer" instance=ExtResource("6")]
-position = Vector2(320, 108)
+position = Vector2(320, 124)
 interactable_kind = "staff_room_door"
 label_text = "STAFF ROOM"
 show_label = false

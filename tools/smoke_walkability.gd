@@ -7,7 +7,7 @@ extends SceneTree
 
 const CELL := 8.0
 const PLAYER_SIZE := Vector2(10.0, 12.0)
-const INTERACT_REACH := 40.0
+const INTERACT_REACH := 28.0
 
 var scenes := [
 	"res://scenes/arcade/ArcadeHub.tscn",
@@ -114,7 +114,9 @@ func _audit(scene: Node, label: String) -> void:
 		if not _rect_reachable(rect, reachable):
 			print("  FAIL %s: exit '%s' at %s unreachable" % [label, t.name, str(t.global_position)])
 			fails_here += 1
-	# 3b. every interactable reachable within interaction range
+	# 3b. every interactable reachable within the REAL interaction rule:
+	# player 8px circle must overlap the 64x64 hotspot area, with margin for
+	# move_and_slide safe margins -> a reachable cell within 28px per axis.
 	for n in _find_interactables(scene):
 		var rect := Rect2(n.global_position - Vector2(INTERACT_REACH, INTERACT_REACH), Vector2(INTERACT_REACH * 2, INTERACT_REACH * 2))
 		if not _rect_reachable(rect, reachable):

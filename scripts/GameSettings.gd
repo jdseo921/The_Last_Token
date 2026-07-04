@@ -5,8 +5,8 @@ signal settings_changed
 const CONFIG_PATH := "user://settings.cfg"
 
 var master_volume := 1.0
-var sfx_volume := 1.0
-var music_volume := 0.75
+var sfx_volume := 0.8
+var music_volume := 0.6
 var dialogue_opacity := 0.92
 var text_speed := 1.0
 
@@ -49,6 +49,10 @@ func load_settings() -> void:
 	master_volume = clampf(float(config.get_value("audio", "master_volume", master_volume)), 0.0, 1.0)
 	sfx_volume = clampf(float(config.get_value("audio", "sfx_volume", sfx_volume)), 0.0, 1.0)
 	music_volume = clampf(float(config.get_value("audio", "music_volume", music_volume)), 0.0, 1.0)
+	if not bool(config.get_value("audio", "volume_v2", false)):
+		# one-time migration: lower pre-existing configs by the new -20% default
+		sfx_volume = clampf(sfx_volume * 0.8, 0.0, 1.0)
+		music_volume = clampf(music_volume * 0.8, 0.0, 1.0)
 	dialogue_opacity = clampf(float(config.get_value("dialogue", "opacity", dialogue_opacity)), 0.45, 1.0)
 	text_speed = clampf(float(config.get_value("dialogue", "text_speed", text_speed)), 0.5, 2.0)
 
@@ -57,6 +61,7 @@ func _save_settings() -> void:
 	config.set_value("audio", "master_volume", master_volume)
 	config.set_value("audio", "sfx_volume", sfx_volume)
 	config.set_value("audio", "music_volume", music_volume)
+	config.set_value("audio", "volume_v2", true)
 	config.set_value("dialogue", "opacity", dialogue_opacity)
 	config.set_value("dialogue", "text_speed", text_speed)
 	config.save(CONFIG_PATH)

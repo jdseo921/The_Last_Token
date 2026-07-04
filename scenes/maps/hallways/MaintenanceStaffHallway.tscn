@@ -27,27 +27,27 @@ polygon = PackedVector2Array(0, 214, 640, 214, 640, 226, 0, 226)
 
 [node name="CollisionBounds" type="Node2D" parent="."]
 script = ExtResource("6")
-rectangles = Array[Vector4]([Vector4(0, 0, 640, 152), Vector4(0, 292, 640, 148)])
+rectangles = Array[Vector4]([Vector4(0, 0, 640, 196), Vector4(0, 376, 640, 64)])
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
-position = Vector2(92, 222)
+position = Vector2(92, 284)
 
 [node name="Spawn_FromMaintenanceHall" type="Marker2D" parent="."]
-position = Vector2(92, 222)
+position = Vector2(92, 284)
 
 [node name="Spawn_FromStaffCorridor" type="Marker2D" parent="."]
-position = Vector2(548, 222)
+position = Vector2(548, 284)
 
 [node name="Player" parent="." instance=ExtResource("2")]
-position = Vector2(92, 222)
+position = Vector2(92, 284)
 
 [node name="ToMaintenanceHall" parent="." instance=ExtResource("3")]
-position = Vector2(24, 222)
+position = Vector2(24, 284)
 target_scene_path = "res://scenes/maps/MaintenanceHall.tscn"
 target_spawn_id = "Spawn_FromStaffCorridor"
 
 [node name="ToStaffCorridor" parent="." instance=ExtResource("3")]
-position = Vector2(616, 222)
+position = Vector2(616, 284)
 target_scene_path = "res://scenes/maps/StaffCorridor.tscn"
 target_spawn_id = "Spawn_FromMaintenanceHall"
 

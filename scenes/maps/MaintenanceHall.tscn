@@ -66,7 +66,7 @@ visible_visual_node_paths = Array[NodePath]([NodePath("../GusPlaceholder"), Node
 position = Vector2(320, 318)
 
 [node name="Spawn_FromArcadeHub" type="Marker2D" parent="."]
-position = Vector2(320, 318)
+position = Vector2(320, 368)
 
 [node name="Spawn_FromStaffCorridor" type="Marker2D" parent="."]
 position = Vector2(542, 260)
@@ -83,7 +83,7 @@ position = Vector2(320, 318)
 [node name="InteractableLayer" type="Node2D" parent="."]
 
 [node name="Gus" parent="InteractableLayer" instance=ExtResource("6")]
-position = Vector2(166, 166)
+position = Vector2(166, 178)
 interactable_kind = "gus"
 label_text = "GUS"
 idle_sheet_path = "res://assets/art/characters/gus/gus_idle_sheet.png"
@@ -93,7 +93,7 @@ visual_scale = 1.1
 use_placeholder_visual = false
 
 [node name="MaintenanceNote" parent="InteractableLayer" instance=ExtResource("8")]
-position = Vector2(254, 166)
+position = Vector2(254, 178)
 interactable_kind = "maintenance_note"
 label_text = "NOTE"
 
@@ -103,7 +103,7 @@ interactable_kind = "staff_record_02"
 label_text = "RECORD 02"
 
 [node name="MaintenanceSync" parent="InteractableLayer" instance=ExtResource("6")]
-position = Vector2(478, 166)
+position = Vector2(478, 178)
 interactable_kind = "maintenance_sync"
 label_text = "MAINTENANCE SYNC"
 use_placeholder_visual = false

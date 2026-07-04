@@ -127,6 +127,7 @@ func _refresh_line() -> void:
 	current_antagonist_effect = str(line.get("effect", "normal"))
 	antagonist_elapsed = 0.0
 	_show_portrait(_get_portrait_path(line, speaker))
+	_apply_portrait_veil()
 	_reset_line_visuals()
 	current_reveal_mode = "antagonist" if current_line_is_antagonist else _get_reveal_mode(speaker)
 	if current_reveal_mode == "words":
@@ -162,6 +163,20 @@ func _complete_current_line() -> void:
 		dialogue_text_label.text = current_full_text
 		dialogue_text_label.visible_characters = -1
 	line_complete = true
+
+func _apply_portrait_veil() -> void:
+	# The antagonist's portrait darkens to near-black early and clears as the
+	# story approaches the reveal.
+	if not portrait_texture_rect.visible:
+		return
+	if current_line_is_antagonist and not _should_show_revealed_player_portrait():
+		var game_state := get_node_or_null("/root/GameState")
+		var k := 0.0
+		if game_state != null and game_state.has_method("get_conscience_reveal_factor"):
+			k = float(game_state.call("get_conscience_reveal_factor"))
+		portrait_texture_rect.modulate = Color(k, k, k, 1.0)
+	else:
+		portrait_texture_rect.modulate = Color.WHITE
 
 func _show_portrait(path: String) -> void:
 	portrait_texture_rect.visible = false

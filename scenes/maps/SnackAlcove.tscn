@@ -67,7 +67,7 @@ visual_node_paths = Array[NodePath]([])
 position = Vector2(320, 312)
 
 [node name="Spawn_FromArcadeHub" type="Marker2D" parent="."]
-position = Vector2(320, 312)
+position = Vector2(320, 368)
 
 [node name="Spawn_FromCabinetRow" type="Marker2D" parent="."]
 position = Vector2(70, 260)
@@ -96,14 +96,14 @@ use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="SnackServiceDash" parent="InteractableLayer" instance=ExtResource("6")]
-position = Vector2(198, 166)
+position = Vector2(198, 178)
 interactable_kind = "snack_service_adventure"
 label_text = "SERVICE DASH"
 use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="CircuitSoda" parent="InteractableLayer" instance=ExtResource("6")]
-position = Vector2(452, 166)
+position = Vector2(452, 178)
 interactable_kind = "circuit_soda"
 label_text = "CIRCUIT SODA"
 use_placeholder_visual = false

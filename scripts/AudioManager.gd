@@ -215,13 +215,13 @@ func _get_track_id_for_context(context_id: String) -> String:
 		"arcade_hub":
 			return _get_arcade_hub_music_id()
 		"cabinet_row":
-			return "cabinet_row_records"
+			return _room_track_for_story("cabinet_row_records")
 		"snack_alcove":
-			return "snack_alcove_vendo"
+			return _room_track_for_story("snack_alcove_vendo")
 		"prize_corner":
 			return _get_arcade_hub_music_id()
 		"maintenance_hall":
-			return "maintenance_hall_static"
+			return _room_track_for_story("maintenance_hall_static")
 		"staff_corridor":
 			return "staff_corridor_overloaded"
 		"staff_room":
@@ -253,6 +253,13 @@ func _get_volume_scale_for_context(context_id: String) -> float:
 		"staff_room", "ending":
 			return 0.58
 	return 1.0
+
+func _room_track_for_story(base_track: String) -> String:
+	# Reserved progression: each room keeps its signature track until the
+	# reveal, after which the whole arcade settles into the restored theme.
+	if has_node("/root/GameState") and (GameState.post_reveal_roam_unlocked or GameState.twist_reveal_seen):
+		return "post_reveal_roam"
+	return base_track
 
 func _get_arcade_hub_music_id() -> String:
 	if not has_node("/root/GameState"):

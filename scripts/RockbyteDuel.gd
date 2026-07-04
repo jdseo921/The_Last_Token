@@ -58,6 +58,7 @@ var action_queue: Node = null
 var left_pile_prop: Node = null
 var right_pile_prop: Node = null
 var visual_sequence_running := false
+var aggressive_this_game := false
 var minigame_config: Dictionary = {}
 var result_popup_tween: Tween = null
 var feedback_flash: ColorRect = null
@@ -193,9 +194,9 @@ func _random_valid_move() -> String:
 
 func _get_cabinet_move() -> String:
 	var strategic_move := _get_strategic_move()
-	var random_chance := HARD_RANDOM_MOVE_CHANCE_PERCENT
-	if GameState.rockbyte_duel_loss_count >= LEEWAY_LOSS_THRESHOLD:
-		random_chance = LEEWAY_RANDOM_MOVE_CHANCE_PERCENT
+	var random_chance := LEEWAY_RANDOM_MOVE_CHANCE_PERCENT
+	if aggressive_this_game:
+		random_chance = 0
 	if strategic_move == "" or randi() % 100 < random_chance:
 		return _random_valid_move()
 	return strategic_move
@@ -265,6 +266,11 @@ func _on_exit_pressed() -> void:
 	_reset_duel()
 
 func _reset_duel() -> void:
+	# Difficulty by attempt: game 1 the cabinet plays purely to win; game 2 it
+	# has a 50% chance to do the same; from game 3 it goes easy.
+	GameState.rockbyte_attempt_count += 1
+	var attempt: int = GameState.rockbyte_attempt_count
+	aggressive_this_game = attempt == 1 or (attempt == 2 and randi() % 2 == 0)
 	visual_sequence_running = false
 	left_pile = 5
 	right_pile = 5

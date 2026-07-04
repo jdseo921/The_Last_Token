@@ -57,6 +57,8 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 	if Input.is_action_just_pressed("interact") and Time.get_ticks_msec() >= interact_locked_until_msec:
+		if bool(GameState.get("ui_notice_blocking")):
+			return
 		_interact_with_nearest()
 
 func set_control_enabled(enabled: bool) -> void:

@@ -23,12 +23,78 @@ const NOTIFICATION_TIP_TEXT := "Tip: Press Esc, then choose Quest to read these 
 var hide_tween: Tween = null
 var notification_token := 0
 var announce_accum := 0.0
+var hud_root: Control = null
+var hud_title: Label = null
+var hud_action: Label = null
+var hud_tween: Tween = null
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	visible = false
 	close_button.pressed.connect(_on_close_pressed)
 	_apply_frame_art()
+	call_deferred("_maybe_build_objective_hud")
+
+func _maybe_build_objective_hud() -> void:
+	# One persistent top-right objective HUD per map (only the map-level
+	# QuestNotice builds it, not the copies living inside pause menus).
+	if get_parent() != get_tree().current_scene:
+		return
+	hud_root = Control.new()
+	hud_root.name = "ObjectiveHud"
+	hud_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(hud_root)
+	var backing := ColorRect.new()
+	backing.position = Vector2(392, 6)
+	backing.size = Vector2(242, 44)
+	backing.color = Color(0.012, 0.016, 0.026, 0.78)
+	hud_root.add_child(backing)
+	var edge := ColorRect.new()
+	edge.position = Vector2(392, 6)
+	edge.size = Vector2(2, 44)
+	edge.color = Color(0.3, 0.9, 1.0, 0.85)
+	hud_root.add_child(edge)
+	hud_title = Label.new()
+	hud_title.position = Vector2(400, 9)
+	hud_title.size = Vector2(230, 16)
+	hud_title.add_theme_font_size_override("font_size", 10)
+	hud_title.add_theme_color_override("font_color", Color(0.5, 0.95, 1.0, 1.0))
+	hud_root.add_child(hud_title)
+	hud_action = Label.new()
+	hud_action.position = Vector2(400, 26)
+	hud_action.size = Vector2(230, 22)
+	hud_action.add_theme_font_size_override("font_size", 9)
+	hud_action.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hud_root.add_child(hud_action)
+	_update_objective_hud(false)
+
+func _update_objective_hud(pulse: bool) -> void:
+	if hud_root == null:
+		return
+	var quest_id: String = GameState.get_current_quest_id()
+	if quest_id.is_empty():
+		hud_root.visible = false
+		return
+	var data: Dictionary = GameState.get_current_quest_data()
+	hud_root.visible = true
+	hud_title.text = str(data.get("title", "")).to_upper()
+	var location := str(data.get("location", ""))
+	var owner := str(data.get("owner", ""))
+	var action := ""
+	if not owner.is_empty() and not location.is_empty():
+		action = "%s - %s" % [owner, location]
+	elif not location.is_empty():
+		action = location
+	else:
+		action = str(data.get("summary", ""))
+	hud_action.text = action
+	if pulse:
+		if hud_tween and hud_tween.is_valid():
+			hud_tween.kill()
+		hud_root.modulate = Color(1.7, 1.7, 1.7, 1.0)
+		hud_tween = create_tween()
+		hud_tween.tween_property(hud_root, "modulate", Color.WHITE, 0.9)
+		_play_audio("play_quest_update")
 
 func _process(delta: float) -> void:
 	# Announce whenever the active quest changes so the player always sees the
@@ -50,7 +116,7 @@ func _process(delta: float) -> void:
 	if ConscienceEncounterDirector.is_encounter_active():
 		return
 	GameState.last_announced_quest_id = quest_id
-	show_notification(GameState.get_current_quest_data())
+	_update_objective_hud(true)
 
 func _input(event: InputEvent) -> void:
 	# Let the player dismiss an auto notification early. Details mode (close_button
@@ -66,9 +132,14 @@ func _dismiss_notification() -> void:
 		hide_tween.kill()
 	hide_tween = create_tween()
 	hide_tween.tween_property(panel, "modulate:a", 0.0, 0.18)
-	hide_tween.tween_callback(hide)
+	hide_tween.tween_callback(_finish_notification)
+
+func _finish_notification() -> void:
+	hide()
+	GameState.ui_notice_blocking = false
 
 func show_notification(quest_data: Dictionary) -> void:
+	GameState.ui_notice_blocking = true
 	notification_token += 1
 	_configure_window(
 		"NEW QUEST",
@@ -85,9 +156,10 @@ func show_notification(quest_data: Dictionary) -> void:
 	hide_tween.tween_property(panel, "modulate:a", 1.0, NOTIFICATION_FADE_IN_SECONDS)
 	hide_tween.tween_interval(NOTIFICATION_HOLD_SECONDS)
 	hide_tween.tween_property(panel, "modulate:a", 0.0, NOTIFICATION_FADE_OUT_SECONDS)
-	hide_tween.tween_callback(hide)
+	hide_tween.tween_callback(_finish_notification)
 
 func show_custom_notification(eyebrow: String, title: String, body: String) -> void:
+	GameState.ui_notice_blocking = true
 	notification_token += 1
 	_configure_window(eyebrow, title, body, false)
 	visible = true
@@ -99,7 +171,7 @@ func show_custom_notification(eyebrow: String, title: String, body: String) -> v
 	hide_tween.tween_property(panel, "modulate:a", 1.0, NOTIFICATION_FADE_IN_SECONDS)
 	hide_tween.tween_interval(NOTIFICATION_HOLD_SECONDS)
 	hide_tween.tween_property(panel, "modulate:a", 0.0, NOTIFICATION_FADE_OUT_SECONDS)
-	hide_tween.tween_callback(hide)
+	hide_tween.tween_callback(_finish_notification)
 
 func show_custom_details(eyebrow: String, title: String, body: String) -> void:
 	# Details-mode custom window (Close button, no auto-fade) - used for Controls.
@@ -128,6 +200,7 @@ func show_details(quest_data: Dictionary) -> void:
 	_play_audio("play_ui_confirm")
 
 func close_details() -> void:
+	GameState.ui_notice_blocking = false
 	hide()
 	quest_closed.emit()
 

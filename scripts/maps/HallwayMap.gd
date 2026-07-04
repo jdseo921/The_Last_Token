@@ -130,7 +130,7 @@ func _get_hallway_ambient_entries() -> Array[Dictionary]:
 	var entries: Array[Dictionary] = [
 		{
 			"name": "HallScanlineCenter",
-			"position": Vector2(320, 220),
+			"position": Vector2(320, 282),
 			"scale": Vector2(5.8, 1.25),
 			"effect_type": "scanline_pulse",
 			"speed": 0.58,
@@ -141,7 +141,7 @@ func _get_hallway_ambient_entries() -> Array[Dictionary]:
 		},
 		{
 			"name": "HallBlinkDotLeft",
-			"position": Vector2(224, 220),
+			"position": Vector2(224, 282),
 			"scale": Vector2(1.0, 1.0),
 			"effect_type": "glow_pulse",
 			"speed": 0.58,
@@ -151,7 +151,7 @@ func _get_hallway_ambient_entries() -> Array[Dictionary]:
 		},
 		{
 			"name": "HallBlinkDotRight",
-			"position": Vector2(416, 220),
+			"position": Vector2(416, 282),
 			"scale": Vector2(1.0, 1.0),
 			"effect_type": "glow_pulse",
 			"speed": 0.68,
@@ -161,7 +161,7 @@ func _get_hallway_ambient_entries() -> Array[Dictionary]:
 		},
 		{
 			"name": "HallStaticSpark",
-			"position": Vector2(320, 222),
+			"position": Vector2(320, 284),
 			"scale": Vector2(1.15, 1.15),
 			"effect_type": "random_screen_flash",
 			"speed": 0.82,
@@ -174,7 +174,7 @@ func _get_hallway_ambient_entries() -> Array[Dictionary]:
 	if hallway_id.find("snack") >= 0:
 		entries.append({
 			"name": "HallSodaBubble",
-			"position": Vector2(470, 210),
+			"position": Vector2(470, 272),
 			"scale": Vector2(1.2, 1.2),
 			"effect_type": "bob",
 			"speed": 0.56,
@@ -185,7 +185,7 @@ func _get_hallway_ambient_entries() -> Array[Dictionary]:
 	if hallway_id.find("prize") >= 0:
 		entries.append({
 			"name": "HallPrizeTwinkle",
-			"position": Vector2(170, 210),
+			"position": Vector2(170, 272),
 			"scale": Vector2(1.2, 1.2),
 			"effect_type": "random_screen_flash",
 			"speed": 0.52,
@@ -206,7 +206,7 @@ func _get_hallway_ambient_entries() -> Array[Dictionary]:
 	if hallway_id.find("staff") >= 0 or hallway_id == "back_hallway":
 		entries.append({
 			"name": "HallMemoryWisp",
-			"position": Vector2(318, 206),
+			"position": Vector2(318, 268),
 			"scale": Vector2(1.2, 1.2),
 			"effect_type": "dust_mote_drift",
 			"speed": 0.44,

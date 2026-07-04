@@ -253,8 +253,9 @@ func _refresh_objective_hint_visibility() -> void:
 	if objective_hint_label == null or objective_hint_background == null:
 		return
 	var should_show := _objective_hint_should_be_visible()
-	objective_hint_label.visible = should_show
-	objective_hint_background.visible = should_show
+	# objective text now lives in the shared top-right HUD (QuestNotice)
+	objective_hint_label.visible = false
+	objective_hint_background.visible = false
 	if memory_signal_label != null and memory_signal_background != null:
 		memory_signal_label.visible = should_show
 		memory_signal_background.visible = should_show
@@ -401,8 +402,6 @@ func handle_hub_interaction(interactable: Node, player_node: Node = null) -> voi
 	match kind:
 		"mira":
 			_handle_mira()
-		"ticket_sweep_adventure":
-			_handle_ticket_sweep_adventure()
 		"ticket_counter":
 			_handle_ticket_counter()
 		"closing_checklist":
@@ -429,17 +428,6 @@ func handle_hub_interaction(interactable: Node, player_node: Node = null) -> voi
 func _can_show_act2_echo() -> bool:
 	return GameState.lying_cabinets_completed and not GameState.twist_reveal_seen
 
-func _handle_ticket_sweep_adventure() -> void:
-	start_dialogue([
-		{"speaker": "Ticket Counter", "text": "TICKET SWEEP READY."},
-		{"speaker": "Ticket Counter", "text": "Collect loose tickets before the carpet keeps them."},
-		{"speaker": "Ticket Counter", "text": "Optional floor route. No prize payout."},
-	], Callable(self, "_go_to_hub_ticket_sweep"))
-
-func _go_to_hub_ticket_sweep() -> void:
-	GameState.set_pending_spawn_id("Spawn_FromHubAdventure")
-	SceneChanger.go_to_hub_ticket_sweep()
-
 func _get_ticket_counter_echo_lines() -> Array:
 	GameState.echo_ticket_counter_seen = true
 	return _get_environment_lines("ticket_counter_fractured", [
@@ -457,23 +445,21 @@ func _get_cabinet07_echo_lines() -> Array:
 	]
 
 func _on_first_meeting_finished() -> void:
-	GameState.start_lost_token_quest()
-	if GameState.memory_signal_explainer_seen:
-		return
-	call_deferred("_play_memory_signal_explainer")
-
-func _play_memory_signal_explainer() -> void:
 	GameState.memory_signal_explainer_seen = true
-	start_dialogue([
-		{"speaker": "Mira", "text": "Before you go - one more thing."},
+	GameState.start_lost_token_quest()
+
+func _get_memory_signal_explainer_lines() -> Array:
+	if GameState.memory_signal_explainer_seen:
+		return []
+	return [
+		{"speaker": "Mira", "text": "Before anything else - one thing you need to know."},
 		{"speaker": "Mira", "text": "The arcade keeps a reading on you. We call it the Memory Signal."},
 		{"speaker": "System", "text": "MEMORY SIGNAL: GROUNDED."},
 		{"speaker": "Mira", "text": "Grounded means the building still treats you like a stranger."},
 		{"speaker": "Mira", "text": "It will climb as more of you comes back. Uneasy. Fractured. Overloaded."},
 		{"speaker": "Mira", "text": "Rooms change with it. Machines speak differently. None of that is a malfunction."},
 		{"speaker": "Mira", "text": "You can read it at the top of the floor, and on your save slots."},
-		{"speaker": "Mira", "text": "When it gets loud, come back to me. I will still be here."},
-	])
+	]
 
 func _handle_mira() -> void:
 	if _is_post_reveal():
@@ -506,12 +492,9 @@ func _handle_mira() -> void:
 		])
 		return
 	if GameState.opening_look_around_active():
-		start_dialogue(_get_mira_lines("opening_deflect_look_around", [
-			{"speaker": "Mira", "text": "You just walked in. Take a breath.", "portrait": PORTRAIT_MIRA_WORRIED},
-			{"speaker": "Mira", "text": "Look around first. See what still knows you."},
-			{"speaker": "Mira", "text": "When you are ready, come find me at the counter."},
-		]))
-		return
+		# Going straight to Mira skips the look-around gate: the story starts now.
+		GameState.opening_intro_seen = true
+		GameState.opening_hint_monologue_seen = true
 	if not GameState.lost_token_quest_started:
 		GameState.mira_intro_seen = true
 		var opening_lines := _get_mira_lines("opening_first_meeting", [
@@ -524,7 +507,9 @@ func _handle_mira() -> void:
 			{"speaker": "Mira", "text": "Cabinet 07 has your Lost Token."},
 			{"speaker": "Mira", "text": "Please bring it back to me."},
 		])
-		start_dialogue(_combine_dialogue_lines(opening_lines, quest_instruction_lines), Callable(self, "_on_first_meeting_finished"))
+		var first_meeting_lines := _combine_dialogue_lines(opening_lines, _get_memory_signal_explainer_lines())
+		first_meeting_lines = _combine_dialogue_lines(first_meeting_lines, quest_instruction_lines)
+		start_dialogue(first_meeting_lines, Callable(self, "_on_first_meeting_finished"))
 		return
 	if GameState.lost_token_quest_started and not GameState.lost_token_collected:
 		start_dialogue(_get_mira_sequential_lines("lost_token_active_repeat", [

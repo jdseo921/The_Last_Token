@@ -224,13 +224,13 @@ centered = false
 [node name="CollisionBounds" type="Node2D" parent="."]
 script = ExtResource("11")
 rectangles = Array[Vector4]([Vector4(32, 40, 576, 18), Vector4(32, 40, 14, 176), Vector4(32, 278, 14, 122), Vector4(594, 40, 14, 176), Vector4(594, 278, 14, 122), Vector4(32, 384, 324, 16), Vector4(414, 384, 194, 16), Vector4(52, 84, 158, 30), Vector4(172, 84, 38, 96), Vector4(242, 56, 305, 76), Vector4(292, 196, 60, 88), Vector4(460, 296, 58, 84), Vector4(54, 300, 64, 86), Vector4(356, 355, 58, 45)])
-visible_visual_node_paths = Array[NodePath]([NodePath("../PropLayer/TicketCounterSprite"), NodePath("../PropLayer/OwnerPortraitSprite"), NodePath("../PropLayer/Cabinet07Sprite"), NodePath("../PropLayer/Cabinet07FlickerSprite"), NodePath("../PropLayer/BrokenCabinetSprite"), NodePath("../PropLayer/TruthFilterVisual"), NodePath("../PropLayer/StaffDoorSprite"), NodePath("../InteractableLayer/Mira/VisualRoot/Sprite"), NodePath("../InteractableLayer/Mira/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Mira/VisualRoot/PlaceholderVisual"), NodePath("../InteractableLayer/Gus/VisualRoot/Sprite"), NodePath("../InteractableLayer/Gus/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Gus/VisualRoot/PlaceholderVisual"), NodePath("../InteractableLayer/Vendo/VisualRoot/Sprite"), NodePath("../InteractableLayer/Vendo/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Vendo/VisualRoot/PlaceholderVisual"), NodePath("../InteractableLayer/MrByte/VisualRoot/Sprite"), NodePath("../InteractableLayer/MrByte/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/MrByte/VisualRoot/PlaceholderVisual")])
+visible_visual_node_paths = Array[NodePath]([NodePath("../PropLayer/TicketCounterSprite"), NodePath("../PropLayer/OwnerPortraitSprite"), NodePath("../PropLayer/Cabinet07Sprite"), NodePath("../PropLayer/Cabinet07FlickerSprite"), NodePath("../PropLayer/BrokenCabinetSprite"), NodePath("../PropLayer/TruthFilterVisual"), NodePath("../PropLayer/StaffDoorSprite"), NodePath("../InteractableLayer/Mira/VisualRoot/Sprite"), NodePath("../InteractableLayer/Mira/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Mira/VisualRoot/PlaceholderVisual"), NodePath("../InteractableLayer/Gus/VisualRoot/Sprite"), NodePath("../InteractableLayer/Gus/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Gus/VisualRoot/PlaceholderVisual"), NodePath("../InteractableLayer/Vendo/VisualRoot/Sprite"), NodePath("../InteractableLayer/Vendo/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Vendo/VisualRoot/PlaceholderVisual")])
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
 position = Vector2(178, 246)
 
 [node name="Spawn_FromCabinetRow" type="Marker2D" parent="."]
-position = Vector2(576, 122)
+position = Vector2(578, 245)
 
 [node name="Spawn_FromSnackAlcove" type="Marker2D" parent="."]
 position = Vector2(576, 208)
@@ -242,13 +242,13 @@ position = Vector2(70, 245)
 position = Vector2(430, 372)
 
 [node name="Spawn_FromStaffCorridor" type="Marker2D" parent="."]
-position = Vector2(560, 282)
+position = Vector2(410, 372)
 
 [node name="Spawn_FromHubAdventure" type="Marker2D" parent="."]
 position = Vector2(78, 252)
 
 [node name="Spawn_FromFrontEntrance" type="Marker2D" parent="."]
-position = Vector2(140, 360)
+position = Vector2(64, 245)
 
 [node name="Player" parent="." instance=ExtResource("2")]
 position = Vector2(178, 246)
@@ -338,13 +338,6 @@ label_text = "TICKET COUNTER"
 show_label = false
 use_placeholder_visual = false
 
-[node name="TicketSweep" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(150, 322)
-interactable_kind = "ticket_sweep_adventure"
-label_text = "TICKET SWEEP"
-visual_scale = 0.85
-use_placeholder_visual = false
-
 [node name="ClosingChecklist" parent="InteractableLayer" instance=ExtResource("10")]
 position = Vector2(172, 102)
 interactable_kind = "closing_checklist"
@@ -361,7 +354,7 @@ visual_scale = 1.1
 use_placeholder_visual = false
 
 [node name="Vendo" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(489, 348)
+position = Vector2(470, 338)
 interactable_kind = "vendo"
 label_text = "VENDO"
 idle_sheet_path = ""
@@ -370,7 +363,7 @@ use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="Cabinet07" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(558, 98)
+position = Vector2(494, 132)
 interactable_kind = "cabinet07"
 label_text = "CABINET 07"
 sprite_texture_path = ""
@@ -380,7 +373,7 @@ use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="MrByte" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(246, 184)
+position = Vector2(246, 196)
 interactable_kind = "mr_byte"
 label_text = "MR. BYTE"
 idle_sheet_path = "res://assets/art/characters/mr_byte/mr_byte_idle_sheet.png"
@@ -389,7 +382,7 @@ use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="BrokenCabinet" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(86, 344)
+position = Vector2(110, 344)
 interactable_kind = "broken_cabinet"
 label_text = "BROKEN CABINET"
 sprite_texture_path = ""
@@ -397,14 +390,14 @@ use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="TruthFilter" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(320, 242)
+position = Vector2(320, 272)
 interactable_kind = "truth_filter"
 label_text = "TRUTH FILTER"
 use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="StaffDoor" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(386, 376)
+position = Vector2(386, 366)
 interactable_kind = "staff_door"
 label_text = "STAFF DOOR"
 use_placeholder_visual = false

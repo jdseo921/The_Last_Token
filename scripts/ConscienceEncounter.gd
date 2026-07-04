@@ -43,7 +43,7 @@ func _ready() -> void:
 	panel_home_position = dialogue_panel.position
 	speaker_home_position = speaker_label.position
 	dialogue_home_position = dialogue_label.position
-	_hide_identity_art()
+	_apply_identity_reveal()
 
 func _process(delta: float) -> void:
 	if not active:
@@ -190,6 +190,21 @@ func _set_player_control(enabled: bool) -> void:
 		return
 	if had_controlled_player and controlled_player_was_enabled:
 		controlled_player.call("set_control_enabled", true)
+
+func _apply_identity_reveal() -> void:
+	# ??? emerges over the run: a pure black figure at first, a little more
+	# visible after every encounter, fully recognizable only in the Staff Room.
+	var k: float = GameState.get_conscience_reveal_factor()
+	var tex := load("res://assets/art/portraits/player/player_conscience_revealed.png")
+	if tex is Texture2D:
+		silhouette.texture = tex
+		silhouette.visible = true
+		silhouette.modulate = Color(k, k, k, 1.0)
+		silhouette_fallback.visible = false
+	else:
+		silhouette.visible = false
+		silhouette_fallback.visible = true
+		silhouette_fallback.modulate = Color(1.0 + k, 1.0 + k, 1.0 + k, 1.0)
 
 func _hide_identity_art() -> void:
 	silhouette.visible = false

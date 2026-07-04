@@ -27,6 +27,7 @@ var lost_token_collected := false
 var lost_token_quest_completed := false
 var rockbyte_duel_completed := false
 var rockbyte_duel_loss_count := 0
+var rockbyte_attempt_count := 0
 var truth_filter_quest_started := false
 var lying_cabinets_completed := false
 var second_memory_fragment_collected := false
@@ -137,6 +138,7 @@ var midpoint_told_mira := false
 var last_announced_quest_id := ""
 var npc_dialogue_counts: Dictionary = {}
 var pending_spawn_id := ""
+var ui_notice_blocking := false
 
 func _ready() -> void:
 	_ensure_input_actions()
@@ -357,6 +359,7 @@ func reset_for_new_game() -> void:
 	lost_token_quest_completed = false
 	rockbyte_duel_completed = false
 	rockbyte_duel_loss_count = 0
+	rockbyte_attempt_count = 0
 	truth_filter_quest_started = false
 	lying_cabinets_completed = false
 	second_memory_fragment_collected = false
@@ -626,6 +629,23 @@ func is_conscience_encounter_seen(encounter_id: String) -> bool:
 
 func unlock_player_glitched_form() -> void:
 	player_glitched_form_unlocked = true
+
+func get_conscience_reveal_factor() -> float:
+	# How recognizable ??? is: pure black at the first encounter, progressively
+	# lighter with each one, fully visible in the Staff Room.
+	if twist_reveal_seen or conscience_final_room_seen or post_reveal_roam_unlocked:
+		return 1.0
+	var seen := 0
+	if conscience_encounter_1_seen: seen += 1
+	if conscience_encounter_2_seen: seen += 1
+	if conscience_encounter_3_seen: seen += 1
+	if conscience_encounter_4_seen: seen += 1
+	match seen:
+		0: return 0.0
+		1: return 0.28
+		2: return 0.52
+		3: return 0.74
+		_: return 0.85
 
 func should_use_glitched_player_sprite() -> bool:
 	return player_glitched_form_unlocked or post_reveal_roam_unlocked or twist_reveal_seen
@@ -981,6 +1001,7 @@ func to_save_data() -> Dictionary:
 		"lost_token_quest_completed": lost_token_quest_completed,
 		"rockbyte_duel_completed": rockbyte_duel_completed,
 		"rockbyte_duel_loss_count": rockbyte_duel_loss_count,
+		"rockbyte_attempt_count": rockbyte_attempt_count,
 		"truth_filter_quest_started": truth_filter_quest_started,
 		"lying_cabinets_completed": lying_cabinets_completed,
 		"second_memory_fragment_collected": second_memory_fragment_collected,
@@ -1099,6 +1120,7 @@ func apply_save_data(data: Dictionary) -> void:
 	lost_token_quest_completed = data.get("lost_token_quest_completed", lost_token_quest_completed)
 	rockbyte_duel_completed = data.get("rockbyte_duel_completed", rockbyte_duel_completed)
 	rockbyte_duel_loss_count = int(data.get("rockbyte_duel_loss_count", rockbyte_duel_loss_count))
+	rockbyte_attempt_count = int(data.get("rockbyte_attempt_count", rockbyte_attempt_count))
 	truth_filter_quest_started = bool(data.get("truth_filter_quest_started", truth_filter_quest_started))
 	lying_cabinets_completed = bool(data.get("lying_cabinets_completed", lying_cabinets_completed))
 	second_memory_fragment_collected = bool(data.get("second_memory_fragment_collected", second_memory_fragment_collected))
