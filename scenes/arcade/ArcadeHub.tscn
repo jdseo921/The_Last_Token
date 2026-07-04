@@ -54,7 +54,7 @@ color = Color(0.8, 0.2, 1, 0.12)
 polygon = PackedVector2Array(340, 196, 430, 196, 448, 258, 420, 306, 336, 306, 312, 258)
 
 [node name="AmbientCabinet07Flicker" parent="EffectsLayer" instance=ExtResource("9")]
-position = Vector2(558, 72)
+position = Vector2(494, 78)
 effect_type = "flicker"
 intensity = 0.08
 speed = 0.75
@@ -81,7 +81,7 @@ prop_size = Vector2(82, 104)
 prop_color = Color(0.95, 0.24, 0.32, 0.09)
 
 [node name="AmbientVendoBlink" parent="EffectsLayer" instance=ExtResource("9")]
-position = Vector2(505, 318)
+position = Vector2(489, 314)
 effect_type = "blink"
 intensity = 0.05
 speed = 0.7
@@ -223,7 +223,7 @@ centered = false
 
 [node name="CollisionBounds" type="Node2D" parent="."]
 script = ExtResource("11")
-rectangles = Array[Vector4]([Vector4(32, 40, 576, 18), Vector4(32, 40, 14, 176), Vector4(32, 278, 14, 122), Vector4(594, 40, 14, 176), Vector4(594, 278, 14, 122), Vector4(32, 384, 324, 16), Vector4(414, 384, 194, 16), Vector4(52, 84, 158, 30), Vector4(172, 84, 38, 96), Vector4(242, 56, 305, 76), Vector4(292, 196, 60, 88), Vector4(474, 296, 68, 86), Vector4(54, 300, 64, 86), Vector4(356, 355, 58, 45)])
+rectangles = Array[Vector4]([Vector4(32, 40, 576, 18), Vector4(32, 40, 14, 176), Vector4(32, 278, 14, 122), Vector4(594, 40, 14, 176), Vector4(594, 278, 14, 122), Vector4(32, 384, 324, 16), Vector4(414, 384, 194, 16), Vector4(52, 84, 158, 30), Vector4(172, 84, 38, 96), Vector4(242, 56, 305, 76), Vector4(292, 196, 60, 88), Vector4(460, 296, 58, 84), Vector4(54, 300, 64, 86), Vector4(356, 355, 58, 45)])
 visible_visual_node_paths = Array[NodePath]([NodePath("../PropLayer/TicketCounterSprite"), NodePath("../PropLayer/OwnerPortraitSprite"), NodePath("../PropLayer/Cabinet07Sprite"), NodePath("../PropLayer/Cabinet07FlickerSprite"), NodePath("../PropLayer/BrokenCabinetSprite"), NodePath("../PropLayer/TruthFilterVisual"), NodePath("../PropLayer/StaffDoorSprite"), NodePath("../InteractableLayer/Mira/VisualRoot/Sprite"), NodePath("../InteractableLayer/Mira/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Mira/VisualRoot/PlaceholderVisual"), NodePath("../InteractableLayer/Gus/VisualRoot/Sprite"), NodePath("../InteractableLayer/Gus/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Gus/VisualRoot/PlaceholderVisual"), NodePath("../InteractableLayer/Vendo/VisualRoot/Sprite"), NodePath("../InteractableLayer/Vendo/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Vendo/VisualRoot/PlaceholderVisual"), NodePath("../InteractableLayer/MrByte/VisualRoot/Sprite"), NodePath("../InteractableLayer/MrByte/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/MrByte/VisualRoot/PlaceholderVisual")])
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
@@ -236,13 +236,13 @@ position = Vector2(576, 122)
 position = Vector2(576, 208)
 
 [node name="Spawn_FromPrizeCorner" type="Marker2D" parent="."]
-position = Vector2(78, 360)
+position = Vector2(70, 245)
 
 [node name="Spawn_FromMaintenanceHall" type="Marker2D" parent="."]
-position = Vector2(576, 358)
+position = Vector2(430, 372)
 
 [node name="Spawn_FromStaffCorridor" type="Marker2D" parent="."]
-position = Vector2(596, 282)
+position = Vector2(560, 282)
 
 [node name="Spawn_FromHubAdventure" type="Marker2D" parent="."]
 position = Vector2(78, 252)
@@ -339,7 +339,7 @@ show_label = false
 use_placeholder_visual = false
 
 [node name="TicketSweep" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(178, 300)
+position = Vector2(150, 322)
 interactable_kind = "ticket_sweep_adventure"
 label_text = "TICKET SWEEP"
 visual_scale = 0.85
@@ -361,7 +361,7 @@ visual_scale = 1.1
 use_placeholder_visual = false
 
 [node name="Vendo" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(505, 344)
+position = Vector2(489, 348)
 interactable_kind = "vendo"
 label_text = "VENDO"
 idle_sheet_path = ""
@@ -420,11 +420,13 @@ use_placeholder_visual = false
 position = Vector2(621, 245)
 target_scene_path = "res://scenes/maps/hallways/CabinetHallway.tscn"
 target_spawn_id = "Spawn_FromArcadeHub"
+destination_name = "CABINET ROW"
 
 [node name="ToMaintenanceHall" parent="InteractableLayer" instance=ExtResource("8")]
 position = Vector2(386, 406)
 target_scene_path = "res://scenes/maps/hallways/MaintenanceHallway.tscn"
 target_spawn_id = "Spawn_FromArcadeHub"
+destination_name = "MAINTENANCE HALL"
 required_flag = "circuit_soda_completed"
 locked_dialogue = Array[String](["MAINTENANCE HALL LOCKED.", "CIRCUIT SODA ROUTE REQUIRED."])
 
@@ -432,19 +434,7 @@ locked_dialogue = Array[String](["MAINTENANCE HALL LOCKED.", "CIRCUIT SODA ROUTE
 position = Vector2(19, 245)
 target_scene_path = "res://scenes/maps/FrontEntrance.tscn"
 target_spawn_id = "Spawn_FromArcadeHub"
-
-[node name="CabinetRowExitLabel" type="Label" parent="UILayer"]
-position = Vector2(524, 232)
-size = Vector2(98, 18)
-theme_override_font_sizes/font_size = 9
-text = "CABINET ROW"
-horizontal_alignment = 2
-
-[node name="FrontEntranceExitLabel" type="Label" parent="UILayer"]
-position = Vector2(20, 260)
-size = Vector2(130, 18)
-theme_override_font_sizes/font_size = 9
-text = "FRONT ENTRANCE"
+destination_name = "FRONT ENTRANCE"
 
 [node name="PauseMenu" parent="." instance=ExtResource("6")]
 

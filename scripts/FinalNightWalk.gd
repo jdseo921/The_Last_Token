@@ -22,7 +22,7 @@ static func get_stage_config() -> Dictionary:
 		"tile_size": 20,
 		"grid_origin": Vector2(32, 126),
 		"side_panel_x": 430,
-		"controls_hint": "Move: WASD / Arrow Keys",
+		"controls_hint": "Move: WASD / Arrows. R: restart.",
 		"goal_hint": "Frames 1-16 in order, then EXIT.",
 		"collectible_marker": "M",
 		"hazard_marker": "RW",
@@ -220,6 +220,9 @@ func _on_area_entered(area_id: String) -> void:
 		})
 		_build_moving_hazards()
 		_refresh_status("The second signal knew\nwhere you were going.\n\nIt got here first.\n\nIt walks the top hall now,\nfaster than the tape.")
+
+func _on_stage_reset() -> void:
+	ambush_done = false
 
 func _on_stage_completed() -> void:
 	GameState.complete_final_night_walk()

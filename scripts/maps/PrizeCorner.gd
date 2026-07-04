@@ -219,7 +219,15 @@ func _open_prize_sort_choice() -> void:
 		var reaction := _get_pip_item_reaction(last_item)
 		if not reaction.is_empty():
 			question = "%s\n\n%s" % [reaction, question]
-	choice_box.open_choice(question, prize_sort_remaining)
+	# Show every prize each round: placed ones stay visible, numbered by pick order.
+	var options: Array = []
+	for item in PRIZE_SORT_ORDER:
+		var pick_index := prize_sort_selected.find(item)
+		if pick_index >= 0:
+			options.append("%d. %s  [placed]" % [pick_index + 1, item])
+		else:
+			options.append(str(item))
+	choice_box.open_choice(question, options)
 
 func _get_pip_item_reaction(item: String) -> String:
 	match item:
@@ -235,12 +243,16 @@ func _on_prize_sort_choice_selected(index: int) -> void:
 	if choice_box and is_instance_valid(choice_box):
 		choice_box.queue_free()
 	choice_box = null
-	if index < 0 or index >= prize_sort_remaining.size():
+	if index < 0 or index >= PRIZE_SORT_ORDER.size():
 		_finish_failed_prize_sort()
 		return
-	var selected_item: String = str(prize_sort_remaining[index])
+	var selected_item: String = str(PRIZE_SORT_ORDER[index])
+	if prize_sort_selected.has(selected_item):
+		# Already placed; keep the board up and let the player pick again.
+		_open_prize_sort_choice()
+		return
 	prize_sort_selected.append(selected_item)
-	prize_sort_remaining.remove_at(index)
+	prize_sort_remaining.erase(selected_item)
 	if prize_sort_selected.size() < PRIZE_SORT_ORDER.size():
 		_open_prize_sort_choice()
 		return
@@ -359,16 +371,6 @@ func _setup_ambient_sprite_effects() -> void:
 			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
 			"sprite_alpha": 0.56,
 			"sprite_modulate": Color(1.0, 0.9, 0.52, 1.0),
-		},
-		{
-			"name": "SnackRouteArrow",
-			"position": Vector2(34, 260),
-			"rotation": PI,
-			"scale": Vector2(1.35, 1.35),
-			"effect_type": "blink",
-			"speed": 0.66,
-			"sprite_sheet_path": AMBIENT_EFFECTS.NEON_ARROW,
-			"sprite_alpha": 0.64,
 		},
 	])
 

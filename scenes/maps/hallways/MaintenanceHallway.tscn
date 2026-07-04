@@ -68,19 +68,6 @@ theme_override_font_sizes/font_size = 10
 text = "Breaker labels buzz behind scratched glass."
 autowrap_mode = 3
 
-[node name="LeftLabel" type="Label" parent="UILayer"]
-position = Vector2(18, 246)
-size = Vector2(140, 18)
-theme_override_font_sizes/font_size = 9
-text = "ARCADE HUB"
-
-[node name="RightLabel" type="Label" parent="UILayer"]
-position = Vector2(462, 246)
-size = Vector2(160, 18)
-theme_override_font_sizes/font_size = 9
-text = "MAINTENANCE"
-horizontal_alignment = 2
-
 [node name="InteractionPromptBackground" type="ColorRect" parent="UILayer"]
 visible = false
 position = Vector2(194, 400)

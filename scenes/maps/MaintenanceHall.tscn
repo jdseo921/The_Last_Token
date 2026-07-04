@@ -58,8 +58,8 @@ prop_color = Color(0.22, 0.95, 0.72, 0.08)
 
 [node name="CollisionBounds" type="Node2D" parent="."]
 script = ExtResource("10")
-rectangles = Array[Vector4]([Vector4(0, 0, 640, 28), Vector4(0, 424, 640, 16), Vector4(0, 0, 16, 220), Vector4(0, 300, 16, 140), Vector4(624, 0, 16, 220), Vector4(624, 300, 16, 140)])
-visual_node_paths = Array[NodePath]([NodePath("../SyncDoorPlaceholder")])
+rectangles = Array[Vector4]([Vector4(0, 0, 640, 190), Vector4(0, 190, 44, 50), Vector4(0, 292, 92, 112), Vector4(556, 190, 84, 50), Vector4(526, 282, 114, 142), Vector4(0, 424, 640, 16)])
+visual_node_paths = Array[NodePath]([])
 visible_visual_node_paths = Array[NodePath]([NodePath("../GusPlaceholder"), NodePath("../InteractableLayer/Gus/VisualRoot/Sprite"), NodePath("../InteractableLayer/Gus/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Gus/VisualRoot/PlaceholderVisual")])
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
@@ -113,11 +113,13 @@ flicker_enabled = true
 position = Vector2(320, 406)
 target_scene_path = "res://scenes/maps/hallways/MaintenanceHallway.tscn"
 target_spawn_id = "Spawn_FromMaintenanceHall"
+destination_name = "ARCADE HUB"
 
 [node name="ToStaffCorridor" parent="." instance=ExtResource("3")]
 position = Vector2(606, 260)
 target_scene_path = "res://scenes/maps/hallways/MaintenanceStaffHallway.tscn"
 target_spawn_id = "Spawn_FromMaintenanceHall"
+destination_name = "STAFF CORRIDOR"
 required_flag = "staff_corridor_unlocked"
 locked_dialogue = Array[String](["STAFF CORRIDOR LOCKED.", "MAINTENANCE SYNC REQUIRED."])
 
@@ -125,6 +127,7 @@ locked_dialogue = Array[String](["STAFF CORRIDOR LOCKED.", "MAINTENANCE SYNC REQ
 position = Vector2(34, 260)
 target_scene_path = "res://scenes/maps/Workshop.tscn"
 target_spawn_id = "Spawn_FromMaintenanceHall"
+destination_name = "WORKSHOP"
 
 [node name="UILayer" type="Node2D" parent="."]
 

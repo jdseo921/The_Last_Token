@@ -240,27 +240,6 @@ func _setup_ambient_sprite_effects() -> void:
 			"sprite_sheet_path": AMBIENT_EFFECTS.STATIC_SPARK,
 			"sprite_alpha": 0.68,
 		},
-		{
-			"name": "CabinetRouteArrow",
-			"position": Vector2(34, 260),
-			"rotation": PI,
-			"scale": Vector2(1.35, 1.35),
-			"effect_type": "blink",
-			"speed": 0.63,
-			"sprite_sheet_path": AMBIENT_EFFECTS.NEON_ARROW,
-			"sprite_alpha": 0.62,
-			"sprite_modulate": Color(0.82, 0.95, 1.0, 1.0),
-		},
-		{
-			"name": "PrizeRouteArrow",
-			"position": Vector2(606, 260),
-			"scale": Vector2(1.4, 1.4),
-			"effect_type": "blink",
-			"speed": 0.7,
-			"sprite_sheet_path": AMBIENT_EFFECTS.NEON_ARROW,
-			"sprite_alpha": 0.68,
-			"sprite_modulate": Color(1.0, 0.9, 0.54, 1.0),
-		},
 	])
 
 func _refresh_circuit_soda_state() -> void:

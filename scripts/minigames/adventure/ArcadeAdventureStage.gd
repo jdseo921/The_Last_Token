@@ -71,16 +71,20 @@ var next_collectible_index := 0
 var completed := false
 var return_in_progress := false
 
+var initial_config: Dictionary = {}
 var status_label: Label
 var counter_label: Label
 var player_marker: ColorRect
 var return_button: Button
+var reset_button: Button
 var tile_container: Control
 var feedback_flash: ColorRect
 var tile_rects: Dictionary = {}
 var tile_markers: Dictionary = {}
 
 func configure_stage(config: Dictionary) -> void:
+	if initial_config.is_empty():
+		initial_config = config.duplicate(true)
 	stage_title = str(config.get("title", stage_title))
 	objective_text = str(config.get("objective", objective_text))
 	collectible_label = str(config.get("collectible_label", collectible_label))
@@ -351,6 +355,15 @@ func _build_labels() -> void:
 	return_button.visible = false
 	return_button.pressed.connect(_on_return_pressed)
 	add_child(return_button)
+
+	reset_button = Button.new()
+	reset_button.position = Vector2(side_panel_x + 22, 368)
+	reset_button.size = Vector2(134, 34)
+	reset_button.add_theme_font_size_override("font_size", 11)
+	reset_button.text = "Restart (R)"
+	reset_button.focus_mode = Control.FOCUS_NONE
+	reset_button.pressed.connect(_reset_stage)
+	add_child(reset_button)
 
 	var area_label := Label.new()
 	area_label.position = Vector2(grid_origin.x, grid_origin.y - 20)
@@ -644,6 +657,8 @@ func _try_complete() -> void:
 	_retreat_moving_hazards()
 	_on_stage_completed()
 	_refresh_status(_format_lines(completion_lines))
+	if reset_button:
+		reset_button.visible = false
 	return_button.visible = true
 
 func _retreat_moving_hazards() -> void:
@@ -690,6 +705,24 @@ func trigger_blackout(message: String, speed_multiplier: float = 0.7) -> void:
 	_refresh_status(message)
 
 func _on_area_entered(_area_id: String) -> void:
+	pass
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo:
+		if (event as InputEventKey).keycode == KEY_R and not completed and not return_in_progress:
+			_reset_stage()
+
+func _reset_stage() -> void:
+	# Full restart: fresh layout, collectibles, patrols, fog, and set-piece state.
+	if completed or return_in_progress or initial_config.is_empty():
+		return
+	_play_audio("play_button_pulse")
+	# note: secret_found intentionally survives reset; the GameState flag is already set
+	_on_stage_reset()
+	configure_stage(initial_config.duplicate(true))
+	_refresh_status("STAGE RESTARTED.\nThe route resets. The dark does not mind.")
+
+func _on_stage_reset() -> void:
 	pass
 
 func _reset_player(message: String) -> void:

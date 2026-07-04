@@ -3,9 +3,11 @@ extends CanvasLayer
 signal quest_closed
 
 const ASSET_PATHS := preload("res://scripts/AssetPaths.gd")
-const NOTIFICATION_FADE_IN_SECONDS := 1.0
-const NOTIFICATION_HOLD_SECONDS := 3.0
-const NOTIFICATION_FADE_OUT_SECONDS := 1.5
+const NOTIFICATION_FADE_IN_SECONDS := 0.7
+const NOTIFICATION_HOLD_SECONDS := 2.0
+const NOTIFICATION_FADE_OUT_SECONDS := 1.0
+const ANNOUNCE_POLL_SECONDS := 0.5
+const OPENING_QUEST_IDS := ["opening_look_around", "opening_talk_to_mira"]
 const PANEL_SCREEN_RATIO := Vector2(0.8, 0.8)
 const DEFAULT_VIEWPORT_SIZE := Vector2(640.0, 440.0)
 const NOTIFICATION_TIP_TEXT := "Tip: Press Esc, then choose Quest to read these details again."
@@ -20,12 +22,35 @@ const NOTIFICATION_TIP_TEXT := "Tip: Press Esc, then choose Quest to read these 
 
 var hide_tween: Tween = null
 var notification_token := 0
+var announce_accum := 0.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	visible = false
 	close_button.pressed.connect(_on_close_pressed)
 	_apply_frame_art()
+
+func _process(delta: float) -> void:
+	# Announce whenever the active quest changes so the player always sees the
+	# next objective, no matter which room the change happened in.
+	announce_accum += delta
+	if announce_accum < ANNOUNCE_POLL_SECONDS:
+		return
+	announce_accum = 0.0
+	if visible or get_tree().paused:
+		return
+	var quest_id: String = GameState.get_current_quest_id()
+	if quest_id.is_empty() or quest_id == GameState.last_announced_quest_id:
+		return
+	if OPENING_QUEST_IDS.has(quest_id):
+		return
+	var scene := get_tree().current_scene
+	if scene != null and scene.has_method("_dialogue_is_active") and bool(scene.call("_dialogue_is_active")):
+		return
+	if ConscienceEncounterDirector.is_encounter_active():
+		return
+	GameState.last_announced_quest_id = quest_id
+	show_notification(GameState.get_current_quest_data())
 
 func _input(event: InputEvent) -> void:
 	# Let the player dismiss an auto notification early. Details mode (close_button
@@ -75,6 +100,17 @@ func show_custom_notification(eyebrow: String, title: String, body: String) -> v
 	hide_tween.tween_interval(NOTIFICATION_HOLD_SECONDS)
 	hide_tween.tween_property(panel, "modulate:a", 0.0, NOTIFICATION_FADE_OUT_SECONDS)
 	hide_tween.tween_callback(hide)
+
+func show_custom_details(eyebrow: String, title: String, body: String) -> void:
+	# Details-mode custom window (Close button, no auto-fade) - used for Controls.
+	notification_token += 1
+	if hide_tween and hide_tween.is_valid():
+		hide_tween.kill()
+	_configure_window(eyebrow, title, body, true)
+	visible = true
+	panel.modulate.a = 1.0
+	close_button.grab_focus()
+	_play_audio("play_ui_confirm")
 
 func show_details(quest_data: Dictionary) -> void:
 	notification_token += 1

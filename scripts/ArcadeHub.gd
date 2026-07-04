@@ -65,6 +65,31 @@ func _ready() -> void:
 		call_deferred("_play_opening_intro")
 	else:
 		call_deferred("_maybe_show_quest_notification")
+	_maybe_show_controls_hint()
+
+func _maybe_show_controls_hint() -> void:
+	if GameState.story_started:
+		return
+	var layer := CanvasLayer.new()
+	layer.name = "ControlsHintLayer"
+	layer.layer = 60
+	add_child(layer)
+	var backing := ColorRect.new()
+	backing.position = Vector2(10, 370)
+	backing.size = Vector2(324, 22)
+	backing.color = Color(0.01, 0.014, 0.02, 0.72)
+	layer.add_child(backing)
+	var hint := Label.new()
+	hint.position = Vector2(16, 373)
+	hint.size = Vector2(320, 16)
+	hint.add_theme_font_size_override("font_size", 10)
+	hint.text = "MOVE: WASD / Arrows    INTERACT: E    MENU: Esc"
+	layer.add_child(hint)
+	var tween := create_tween()
+	tween.tween_interval(9.0)
+	tween.tween_property(backing, "modulate:a", 0.0, 1.2)
+	tween.parallel().tween_property(hint, "modulate:a", 0.0, 1.2)
+	tween.tween_callback(layer.queue_free)
 
 func _process(_delta: float) -> void:
 	_refresh_objective_hint_visibility()
@@ -431,6 +456,25 @@ func _get_cabinet07_echo_lines() -> Array:
 		{"speaker": "Cabinet 07", "text": "RESTORE ATTEMPT: CONTINUING.", "portrait": PORTRAIT_CABINET_07_SCREEN},
 	]
 
+func _on_first_meeting_finished() -> void:
+	GameState.start_lost_token_quest()
+	if GameState.memory_signal_explainer_seen:
+		return
+	call_deferred("_play_memory_signal_explainer")
+
+func _play_memory_signal_explainer() -> void:
+	GameState.memory_signal_explainer_seen = true
+	start_dialogue([
+		{"speaker": "Mira", "text": "Before you go - one more thing."},
+		{"speaker": "Mira", "text": "The arcade keeps a reading on you. We call it the Memory Signal."},
+		{"speaker": "System", "text": "MEMORY SIGNAL: GROUNDED."},
+		{"speaker": "Mira", "text": "Grounded means the building still treats you like a stranger."},
+		{"speaker": "Mira", "text": "It will climb as more of you comes back. Uneasy. Fractured. Overloaded."},
+		{"speaker": "Mira", "text": "Rooms change with it. Machines speak differently. None of that is a malfunction."},
+		{"speaker": "Mira", "text": "You can read it at the top of the floor, and on your save slots."},
+		{"speaker": "Mira", "text": "When it gets loud, come back to me. I will still be here."},
+	])
+
 func _handle_mira() -> void:
 	if _is_post_reveal():
 		GameState.mira_post_reveal_seen = true
@@ -442,10 +486,24 @@ func _handle_mira() -> void:
 			{"speaker": "Mira", "text": "But you are still here.", "portrait": PORTRAIT_MIRA_WORRIED},
 			{"speaker": "Mira", "text": "That counts for something."},
 		])
+		if GameState.midpoint_told_mira:
+			post_reveal_lines.append({"speaker": "Mira", "text": "You told me about the hidden shift before the door showed you the rest. That mattered more than you know."})
+		else:
+			post_reveal_lines.append({"speaker": "Mira", "text": "You carried the shift file to the door alone. Let it be the last thing you ever carry that way."})
 		start_dialogue(post_reveal_lines, _get_witness_completion_callback(was_completed))
 		return
 	if _can_show_act2_echo() and not GameState.echo_ticket_counter_seen:
 		start_dialogue(_get_ticket_counter_echo_lines())
+		return
+	if GameState.midpoint_turn_seen and not GameState.midpoint_told_mira and GameState.lost_shift_file_completed and not GameState.staff_corridor_unlocked:
+		GameState.midpoint_told_mira = true
+		start_dialogue([
+			{"speaker": "Player", "text": "The schedule. The checklist. The maintenance note."},
+			{"speaker": "Player", "text": "There was a hidden shift on the last night. Whoever worked it never clocked out."},
+			{"speaker": "Mira", "text": "...I know. I have known without letting myself know.", "portrait": PORTRAIT_MIRA_WORRIED},
+			{"speaker": "Mira", "text": "Thank you for walking back here to say it out loud."},
+			{"speaker": "Mira", "text": "Whatever the back rooms show you next, you did not find it alone. Remember that."},
+		])
 		return
 	if GameState.opening_look_around_active():
 		start_dialogue(_get_mira_lines("opening_deflect_look_around", [
@@ -466,7 +524,7 @@ func _handle_mira() -> void:
 			{"speaker": "Mira", "text": "Cabinet 07 has your Lost Token."},
 			{"speaker": "Mira", "text": "Please bring it back to me."},
 		])
-		start_dialogue(_combine_dialogue_lines(opening_lines, quest_instruction_lines), Callable(GameState, "start_lost_token_quest"))
+		start_dialogue(_combine_dialogue_lines(opening_lines, quest_instruction_lines), Callable(self, "_on_first_meeting_finished"))
 		return
 	if GameState.lost_token_quest_started and not GameState.lost_token_collected:
 		start_dialogue(_get_mira_sequential_lines("lost_token_active_repeat", [
@@ -527,11 +585,16 @@ func _handle_mira() -> void:
 			],
 		]))
 		return
-	start_dialogue(_get_mira_lines("overloaded_pre_staff_room", [
+	var pre_staff_lines := _get_mira_lines("overloaded_pre_staff_room", [
 		{"speaker": "Mira", "text": "The Staff Door used to stick even when it liked you."},
 		{"speaker": "Mira", "text": "If it opens cleanly, that is probably a good sign."},
 		{"speaker": "Mira", "text": "Go check the Staff Door."},
-	]))
+	])
+	if GameState.midpoint_told_mira:
+		pre_staff_lines.append({"speaker": "Mira", "text": "And thank you for telling me what the records said. You are not walking in there carrying it alone.", "portrait": PORTRAIT_MIRA_WORRIED})
+	elif GameState.midpoint_turn_seen:
+		pre_staff_lines.append({"speaker": "Mira", "text": "You never did tell me what those records said. Carry it however you can. But come back.", "portrait": PORTRAIT_MIRA_WORRIED})
+	start_dialogue(pre_staff_lines)
 
 func _complete_lost_token_with_mira_anecdote() -> void:
 	GameState.mira_rockbyte_anecdote_seen = true
@@ -553,6 +616,20 @@ func _show_lost_shift_complete_notice() -> void:
 			"LOST SHIFT FILE COMPLETE",
 			"A redacted staff number was assigned to Cabinet shutdown."
 		)
+	call_deferred("_maybe_play_midpoint_turn")
+
+func _maybe_play_midpoint_turn() -> void:
+	if not GameState.lost_shift_file_completed or GameState.midpoint_turn_seen:
+		return
+	GameState.midpoint_turn_seen = true
+	start_dialogue([
+		{"speaker": "Player", "text": "Three records. One shift folded shut and never filed."},
+		{"speaker": "Player", "text": "I keep telling myself I am looking for the way out of here."},
+		{"speaker": "Player", "text": "But the front door was never the locked one."},
+		{"speaker": "Player", "text": "Whatever stayed behind on the last night is waiting past the Staff Door."},
+		{"speaker": "Player", "text": "I am done trying to leave. I want to look at it."},
+		{"speaker": "Player", "text": "Mira is still at her counter. She deserves to hear what I found... or I can carry it alone and keep working."},
+	])
 
 func _was_witness_route_completed() -> bool:
 	return GameState.witness_route_completed or GameState.post_reveal_witness_route_completed

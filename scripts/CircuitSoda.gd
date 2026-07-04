@@ -72,6 +72,8 @@ var completed := false
 var tiles: Array[Dictionary] = []
 var tile_buttons: Array[Button] = []
 var tile_sheet_texture: Texture2D = null
+var tile_sheet_image: Image = null
+var rotated_tile_cache: Dictionary = {}
 var feedback_flash: ColorRect = null
 
 func _ready() -> void:
@@ -251,15 +253,38 @@ func _get_tile_icon(tile: Dictionary, pos: Vector2i, input_pos: Vector2i, output
 		return _get_tile_atlas(4)
 	if pos == output_pos:
 		return _get_tile_atlas(5)
+	var rot := int(tile.get("rot", 0)) % 4
 	match str(tile.get("shape", "blocker")):
 		"straight":
-			return _get_tile_atlas(0)
+			return _get_rotated_tile(0, rot)
 		"corner":
-			return _get_tile_atlas(1)
+			return _get_rotated_tile(1, rot)
 		"junction":
-			return _get_tile_atlas(2)
+			return _get_rotated_tile(2, rot)
 		_:
 			return _get_tile_atlas(3)
+
+func _get_rotated_tile(frame_index: int, rot: int) -> Texture2D:
+	# Rotate the pipe sprite itself so a click visibly turns the pipe, matching
+	# the connection logic (rot = number of 90-degree clockwise turns).
+	if rot == 0:
+		return _get_tile_atlas(frame_index)
+	var key := frame_index * 10 + rot
+	if rotated_tile_cache.has(key):
+		return rotated_tile_cache[key]
+	if tile_sheet_image == null:
+		tile_sheet_image = tile_sheet_texture.get_image()
+		if tile_sheet_image == null:
+			return _get_tile_atlas(frame_index)
+		if tile_sheet_image.is_compressed():
+			tile_sheet_image.decompress()
+	var frame_width := maxi(int(tile_sheet_image.get_width() / 6), 1)
+	var region := tile_sheet_image.get_region(Rect2i(frame_index * frame_width, 0, frame_width, tile_sheet_image.get_height()))
+	for i in range(rot):
+		region.rotate_90(CLOCKWISE)
+	var texture := ImageTexture.create_from_image(region)
+	rotated_tile_cache[key] = texture
+	return texture
 
 func _get_tile_atlas(frame_index: int) -> AtlasTexture:
 	var frame_width := maxi(int(tile_sheet_texture.get_width() / 6), 1)

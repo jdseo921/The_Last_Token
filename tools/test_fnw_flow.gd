@@ -43,6 +43,13 @@ func _process(_delta: float) -> bool:
 	_check("ambush fired", bool(_inst.get("ambush_done")) == true)
 	_check("two patrols in staff_door", (_inst.get("active_moving_hazards") as Array).size() == 2)
 
+	# 3b. reset re-arms the ambush and restores a fresh ordered run
+	_inst.call("_reset_stage")
+	_check("reset cleared frames", (_inst.get("collected_positions") as Array).size() == 0)
+	_check("reset re-armed ambush", bool(_inst.get("ambush_done")) == false)
+	_check("reset restored start area", str(_inst.get("active_area_id")) == "counter")
+	_check("reset kept secret", bool(_inst.get("secret_found")) == true)
+
 	# 4. collect all frames in order across areas, then complete
 	for area_id in AREA_ORDER:
 		_inst.call("_change_area", {"target_area": area_id, "target_spawn": Vector2i(1, 1)})

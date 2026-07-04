@@ -289,6 +289,20 @@ func _show_lost_shift_complete_notice() -> void:
 
 func _after_lost_shift_file_completed() -> void:
 	_show_lost_shift_complete_notice()
+	call_deferred("_maybe_play_midpoint_turn")
+
+func _maybe_play_midpoint_turn() -> void:
+	if not GameState.lost_shift_file_completed or GameState.midpoint_turn_seen:
+		return
+	GameState.midpoint_turn_seen = true
+	start_dialogue([
+		{"speaker": "Player", "text": "Three records. One shift folded shut and never filed."},
+		{"speaker": "Player", "text": "I keep telling myself I am looking for the way out of here."},
+		{"speaker": "Player", "text": "But the front door was never the locked one."},
+		{"speaker": "Player", "text": "Whatever stayed behind on the last night is waiting past the Staff Door."},
+		{"speaker": "Player", "text": "I am done trying to leave. I want to look at it."},
+		{"speaker": "Player", "text": "Mira is still at her counter. She deserves to hear what I found... or I can carry it alone and keep working."},
+	])
 
 func _get_staff_records_completion_lines() -> Array:
 	if not GameState.staff_records_chain_completed:
@@ -381,17 +395,6 @@ func _setup_ambient_sprite_effects() -> void:
 			"speed": 0.82,
 			"sprite_sheet_path": AMBIENT_EFFECTS.STATIC_SPARK,
 			"sprite_alpha": 0.64,
-		},
-		{
-			"name": "StaffRouteArrow",
-			"position": Vector2(606, 260),
-			"scale": Vector2(1.4, 1.4),
-			"effect_type": "blink",
-			"speed": 0.72,
-			"active_flag_optional": "staff_corridor_unlocked",
-			"sprite_sheet_path": AMBIENT_EFFECTS.NEON_ARROW,
-			"sprite_alpha": 0.7,
-			"sprite_modulate": Color(0.9, 1.0, 0.82, 1.0),
 		},
 	])
 

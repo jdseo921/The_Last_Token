@@ -23,7 +23,7 @@ static func get_stage_config() -> Dictionary:
 		"tile_size": 20,
 		"grid_origin": Vector2(32, 126),
 		"side_panel_x": 430,
-		"controls_hint": "Move: WASD / Arrow Keys",
+		"controls_hint": "Move: WASD / Arrows. R: restart.",
 		"goal_hint": "All 16 fuses, then BRK.",
 		"collectible_marker": "F",
 		"hazard_marker": "ZAP",
@@ -211,6 +211,9 @@ func _on_area_entered(area_id: String) -> void:
 	if area_id == "breaker" and not blackout_done and not completed:
 		blackout_done = true
 		trigger_blackout("EVERY LIGHT GOES OUT AT ONCE.\n\nThe hum sharpens:\n\"I buried it dark\nfor a reason.\"\n\nThe static is faster now.\nReach the main breaker.", 0.62)
+
+func _on_stage_reset() -> void:
+	blackout_done = false
 
 func _on_stage_completed() -> void:
 	GameState.complete_static_service_run()

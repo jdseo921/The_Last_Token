@@ -44,6 +44,15 @@ func _process(_delta: float) -> bool:
 	var gs = root.get_node("GameState")
 	_check("secret flag set", bool(gs.get("ssr_secret_cache_found")) == true)
 
+	# 3b. reset: fresh run, set-piece re-armed, secret kept
+	_inst.call("_reset_stage")
+	_check("reset cleared collected", (_inst.get("collected_positions") as Array).size() == 0)
+	_check("reset cleared lit cells", (_inst.get("lit_cells") as Dictionary).size() == 0)
+	_check("reset re-armed blackout", bool(_inst.get("blackout_done")) == false)
+	_check("reset kept secret", bool(_inst.get("secret_found")) == true)
+	_check("reset restored start area", str(_inst.get("active_area_id")) == "entry")
+	_check("reset restored patrols", (_inst.get("active_moving_hazards") as Array).size() == 1)
+
 	# 4. completion: collect every fuse through the real path, then stand on goal
 	for area_id in ["entry", "crawl", "relay", "storage", "breaker"]:
 		_inst.call("_change_area", {"target_area": area_id, "target_spawn": Vector2i(1, 1)})

@@ -174,6 +174,15 @@ func play_music(track_id: String, fade_seconds: float = 0.75) -> void:
 		music_fade_tween.finished.connect(_on_music_fade_finished)
 	print("AudioManager: playing music '%s'." % track_id)
 
+func fade_in_active_music(seconds: float) -> void:
+	# Game-open polish: bring the current track up from silence.
+	if active_music_player == null or not active_music_player.playing:
+		return
+	_stop_music_fade_tween()
+	active_music_player.volume_db = _silent_volume_db()
+	music_fade_tween = create_tween()
+	music_fade_tween.tween_property(active_music_player, "volume_db", _get_music_volume_db(), maxf(seconds, 0.05))
+
 func stop_music(fade_seconds: float = 0.5) -> void:
 	_stop_music_fade_tween()
 	current_music_id = ""

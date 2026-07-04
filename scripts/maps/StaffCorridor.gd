@@ -152,11 +152,16 @@ func _handle_memory_echo() -> void:
 	if not GameState.memory_echo_completed:
 		if not GameState.memory_echo_started:
 			GameState.start_memory_echo()
-			start_dialogue(_get_environment_lines("memory_echo_object_overloaded", [
+			var echo_intro: Array = []
+			if GameState.get_npc_dialogue_count("reel_first_meeting") == 0:
+				GameState.increment_npc_dialogue_count("reel_first_meeting")
+				echo_intro = DIALOGUE_POOL.get_lines("reel", "first_meeting", [])
+			echo_intro.append_array(_get_environment_lines("memory_echo_object_overloaded", [
 				{"speaker": "Memory System", "text": "FINAL NIGHT ROUTE STABLE."},
 				{"speaker": "Memory System", "text": "MEMORY ECHO AVAILABLE."},
 				{"speaker": "Memory System", "text": "IDENTITY CONFLICT APPROACHING READABLE RANGE."},
-			]), Callable(self, "_go_to_memory_echo"))
+			]))
+			start_dialogue(echo_intro, Callable(self, "_go_to_memory_echo"))
 			return
 		_go_to_memory_echo()
 		return
@@ -168,10 +173,14 @@ func _handle_memory_echo() -> void:
 			{"speaker": "Memory Echo", "text": "That might be worse."},
 		]))
 		return
-	start_dialogue(_get_environment_state_lines("memory_echo_object", [
+	var echo_lines := _get_environment_state_lines("memory_echo_object", [
 		{"speaker": "Memory Echo", "text": "Echo stable."},
 		{"speaker": "Memory Echo", "text": "Quiet is not always better."},
-	]))
+	])
+	if _is_post_reveal() and GameState.get_npc_dialogue_count("reel_witness") == 0:
+		GameState.increment_npc_dialogue_count("reel_witness")
+		echo_lines.append_array(DIALOGUE_POOL.get_lines("reel", "post_reveal_witness", []))
+	start_dialogue(echo_lines)
 
 func _handle_security_tape() -> void:
 	if not GameState.maintenance_sync_completed:
@@ -194,14 +203,24 @@ func _handle_security_tape() -> void:
 		completed_lines.append_array(_get_staff_door_lines("final_night_walk_required", [
 			{"speaker": "Staff Door", "text": "FINAL NIGHT WALK REQUIRED."},
 		]))
+		if GameState.get_npc_dialogue_count("coily_tape_completion") == 0:
+			GameState.increment_npc_dialogue_count("coily_tape_completion")
+			completed_lines.append_array(DIALOGUE_POOL.get_lines("coily", "security_tape_completion", []))
+		if _is_post_reveal() and GameState.get_npc_dialogue_count("coily_witness") == 0:
+			GameState.increment_npc_dialogue_count("coily_witness")
+			completed_lines.append_array(DIALOGUE_POOL.get_lines("coily", "post_reveal_witness", []))
 		start_dialogue(completed_lines)
 		return
 	if not GameState.security_tape_assembly_started:
 		GameState.start_security_tape_assembly()
-		var start_lines := _get_environment_lines("security_tape_terminal_overloaded", [
+		var start_lines: Array = []
+		if GameState.get_npc_dialogue_count("coily_first_meeting") == 0:
+			GameState.increment_npc_dialogue_count("coily_first_meeting")
+			start_lines = DIALOGUE_POOL.get_lines("coily", "first_meeting", [])
+		start_lines.append_array(_get_environment_lines("security_tape_terminal_overloaded", [
 			{"speaker": "Security Tape", "text": "SECURITY TAPE DAMAGED."},
 			{"speaker": "Security Tape", "text": "RESTORE SEQUENCE."},
-		])
+		]))
 		start_lines.append_array(_get_mr_byte_lines("security_tape_support", [
 			{"speaker": "Mr. Byte", "text": "Security tape fragments detected."},
 			{"speaker": "Mr. Byte", "text": "Recommended action: restore order before restoring identity."},
@@ -234,11 +253,15 @@ func _handle_final_night_walk() -> void:
 		return
 	if not GameState.final_night_walk_started:
 		GameState.start_final_night_walk()
-		start_dialogue(_get_environment_lines("final_night_walk_terminal_overloaded", [
+		var fnw_lines := _get_environment_lines("final_night_walk_terminal_overloaded", [
 			{"speaker": "Staff Door", "text": "TAPE ORDER RESTORED."},
 			{"speaker": "Staff Door", "text": "ROUTE MEMORY UNSTABLE."},
 			{"speaker": "Staff Door", "text": "WALK THE FINAL NIGHT."},
-		]), Callable(self, "_go_to_final_night_walk"))
+		])
+		if GameState.get_npc_dialogue_count("coily_fnw_accent") == 0:
+			GameState.increment_npc_dialogue_count("coily_fnw_accent")
+			fnw_lines.append_array(DIALOGUE_POOL.get_lines("coily", "final_night_walk_accent", []))
+		start_dialogue(fnw_lines, Callable(self, "_go_to_final_night_walk"))
 		return
 	_go_to_final_night_walk()
 
@@ -323,6 +346,17 @@ func _setup_ambient_sprite_effects() -> void:
 			"sprite_alpha": 0.8,
 		},
 		{
+			"name": "MemoryEchoBeacon",
+			"position": Vector2(320, 228),
+			"scale": Vector2(1.9, 1.9),
+			"effect_type": "glow_pulse",
+			"speed": 0.5,
+			"sprite_sheet_path": AMBIENT_EFFECTS.MEMORY_WISP,
+			"sprite_frame_size": Vector2i(24, 16),
+			"sprite_alpha": 0.85,
+			"sprite_modulate": Color(0.6, 0.98, 1.0, 1.0),
+		},
+		{
 			"name": "MemoryEchoWispA",
 			"position": Vector2(292, 190),
 			"scale": Vector2(1.55, 1.55),
@@ -357,17 +391,6 @@ func _setup_ambient_sprite_effects() -> void:
 			"sprite_alpha": 0.72,
 		},
 		{
-			"name": "FinalNightArrow",
-			"position": Vector2(444, 310),
-			"scale": Vector2(1.35, 1.35),
-			"effect_type": "blink",
-			"speed": 0.68,
-			"active_flag_optional": "security_tape_assembly_completed",
-			"sprite_sheet_path": AMBIENT_EFFECTS.NEON_ARROW,
-			"sprite_alpha": 0.7,
-			"sprite_modulate": Color(0.98, 0.78, 1.0, 1.0),
-		},
-		{
 			"name": "MemoryEchoReadyDot",
 			"position": Vector2(320, 260),
 			"scale": Vector2(1.25, 1.25),
@@ -376,16 +399,6 @@ func _setup_ambient_sprite_effects() -> void:
 			"active_flag_optional": "final_night_walk_completed",
 			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
 			"sprite_alpha": 0.72,
-		},
-		{
-			"name": "HubReturnArrow",
-			"position": Vector2(34, 360),
-			"rotation": PI,
-			"scale": Vector2(1.35, 1.35),
-			"effect_type": "blink",
-			"speed": 0.62,
-			"sprite_sheet_path": AMBIENT_EFFECTS.NEON_ARROW,
-			"sprite_alpha": 0.62,
 		},
 	])
 

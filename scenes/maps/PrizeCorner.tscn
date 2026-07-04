@@ -51,8 +51,8 @@ prop_color = Color(1, 0.72, 0.24, 0.07)
 
 [node name="CollisionBounds" type="Node2D" parent="."]
 script = ExtResource("9")
-rectangles = Array[Vector4]([Vector4(0, 0, 640, 28), Vector4(0, 424, 640, 16), Vector4(0, 0, 16, 220), Vector4(0, 300, 16, 140), Vector4(624, 0, 16, 440)])
-visual_node_paths = Array[NodePath]([NodePath("../PrizeCounterPlaceholder"), NodePath("../PrizeShelfAdventurePlaceholder")])
+rectangles = Array[Vector4]([Vector4(0, 0, 640, 196), Vector4(0, 280, 18, 144), Vector4(612, 274, 28, 80), Vector4(0, 340, 122, 100), Vector4(0, 424, 640, 16), Vector4(624, 196, 16, 228)])
+visual_node_paths = Array[NodePath]([])
 visible_visual_node_paths = Array[NodePath]([NodePath("../PipPlaceholder"), NodePath("../InteractableLayer/Pip/VisualRoot/Sprite"), NodePath("../InteractableLayer/Pip/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Pip/VisualRoot/PlaceholderVisual")])
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
@@ -73,7 +73,7 @@ position = Vector2(320, 318)
 [node name="InteractableLayer" type="Node2D" parent="."]
 
 [node name="PrizeCounter" parent="InteractableLayer" instance=ExtResource("6")]
-position = Vector2(320, 154)
+position = Vector2(320, 170)
 interactable_kind = "prize_counter"
 label_text = "PRIZE COUNTER"
 show_label = false
@@ -98,11 +98,13 @@ idle_bob_enabled = true
 position = Vector2(320, 406)
 target_scene_path = "res://scenes/maps/hallways/PrizeHallway.tscn"
 target_spawn_id = "Spawn_FromPrizeCorner"
+destination_name = "ARCADE HUB"
 
 [node name="ToSnackAlcove" parent="." instance=ExtResource("3")]
 position = Vector2(34, 260)
 target_scene_path = "res://scenes/maps/hallways/SnackPrizeHallway.tscn"
 target_spawn_id = "Spawn_FromPrizeCorner"
+destination_name = "SNACK ALCOVE"
 
 [node name="UILayer" type="Node2D" parent="."]
 

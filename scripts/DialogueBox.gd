@@ -5,7 +5,7 @@ signal dialogue_finished
 const ADVANCE_COOLDOWN_MSEC := 180
 const LETTERS_PER_SECOND := 42.0
 const WORDS_PER_SECOND := 7.0
-const ANTAGONIST_LETTERS_PER_SECOND := 34.0
+const ANTAGONIST_LETTERS_PER_SECOND := 22.0
 const TEXT_LEFT_WITHOUT_PORTRAIT := 16.0
 const TEXT_LEFT_WITH_PORTRAIT := 120.0
 const PORTRAIT_REGISTRY := preload("res://scripts/DialoguePortraitRegistry.gd")

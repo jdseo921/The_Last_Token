@@ -201,7 +201,7 @@ func _show_ending_prompt() -> void:
 	add_child(ending_prompt)
 
 func _get_final_self_conflict_lines() -> Array:
-	return [
+	var lines := [
 		{"speaker": "Player", "text": "Employee 04."},
 		{"speaker": "Player", "text": "That was not a clue."},
 		{"speaker": "Player", "text": "It was my name tag."},
@@ -294,9 +294,25 @@ func _get_final_self_conflict_lines() -> Array:
 		{"speaker": "\"Player\"", "text": "Then I have nothing left to protect you from."},
 		{"speaker": "\"Player\"", "text": "No more endings to force on your behalf."},
 		{"speaker": "\"Player\"", "text": "From here, we take our turns together."},
-		{"speaker": "\"Player\"", "text": "..."},
-		{"speaker": "\"Player\"", "text": "Go on, then."},
 	]
+	lines.append_array(_get_run_reprise_lines())
+	lines.append({"speaker": "\"Player\"", "text": "..."})
+	lines.append({"speaker": "\"Player\"", "text": "Go on, then."})
+	return lines
+
+func _get_run_reprise_lines() -> Array:
+	# Additive, run-specific memory beats gathered from this player's route.
+	var reprise: Array = []
+	if GameState.midpoint_told_mira:
+		reprise.append({"speaker": "Player", "text": "Mira knew what I found before this door did. I did not walk in here alone."})
+		reprise.append({"speaker": "\"Player\"", "text": "You told her. That was new. You used to file every weight as yours only."})
+	else:
+		reprise.append({"speaker": "\"Player\"", "text": "You carried the shift file here alone. Some habits survive even forgetting."})
+	if GameState.ssr_secret_cache_found:
+		reprise.append({"speaker": "\"Player\"", "text": "You found the spares you once labeled for the night shift. 'Take what you need.' You finally did."})
+	if GameState.fnw_secret_echo_found:
+		reprise.append({"speaker": "\"Player\"", "text": "And the frame no camera was meant to keep. The bow tie. You always fixed it before lights out."})
+	return reprise
 
 func _restore_player_control() -> void:
 	if player and player.has_method("set_control_enabled"):

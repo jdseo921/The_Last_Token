@@ -18,8 +18,17 @@ const TITLE_FADE_SECONDS := 0.28
 @onready var settings_menu: CanvasLayer = $SettingsMenu
 @onready var quest_notice: CanvasLayer = $QuestNotice
 
+const CONTROLS_TEXT := """Move - WASD or Arrow Keys
+Interact / Advance dialogue - E, Space, or Enter
+Menu / Back - Esc
+Adventure stages - R restarts the run
+
+Walk close to a glowing arrow to see where a doorway leads.
+Walk up to people and machines and press E to talk."""
+
 var save_slot_menu: Control = null
 var transition_in_progress := false
+var controls_button: Button = null
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -31,6 +40,13 @@ func _ready() -> void:
 	settings_button.pressed.connect(_on_settings_pressed)
 	exit_minigame_button.pressed.connect(_on_exit_minigame_pressed)
 	title_button.pressed.connect(_on_title_pressed)
+	controls_button = Button.new()
+	controls_button.name = "ControlsButton"
+	controls_button.text = "Controls"
+	controls_button.pressed.connect(_on_controls_pressed)
+	var vbox := settings_button.get_parent()
+	vbox.add_child(controls_button)
+	vbox.move_child(controls_button, settings_button.get_index() + 1)
 	if settings_menu.has_signal("settings_closed"):
 		settings_menu.settings_closed.connect(_on_settings_closed)
 	if quest_notice.has_signal("quest_closed"):
@@ -60,6 +76,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func open_menu() -> void:
 	if visible:
+		return
+	if SceneChanger.has_method("is_transitioning") and SceneChanger.is_transitioning():
 		return
 	var host := get_parent()
 	if host != null and host.has_method("can_open_pause_menu") and not bool(host.call("can_open_pause_menu")):
@@ -115,6 +133,12 @@ func _on_settings_pressed() -> void:
 	panel.visible = false
 	if settings_menu.has_method("open_menu"):
 		settings_menu.open_menu()
+
+func _on_controls_pressed() -> void:
+	_play_audio("play_ui_confirm")
+	panel.visible = false
+	if quest_notice.has_method("show_custom_details"):
+		quest_notice.call("show_custom_details", "CONTROLS", "HOW TO PLAY", CONTROLS_TEXT)
 
 func _on_settings_closed() -> void:
 	if not visible:

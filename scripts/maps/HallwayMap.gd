@@ -129,27 +129,6 @@ func _get_hallway_ambient_entries() -> Array[Dictionary]:
 			secondary = Color(1.0, 0.72, 1.0, 1.0)
 	var entries: Array[Dictionary] = [
 		{
-			"name": "LeftExitArrow",
-			"position": Vector2(34, 222),
-			"rotation": PI,
-			"scale": Vector2(1.35, 1.35),
-			"effect_type": "blink",
-			"speed": 0.62,
-			"sprite_sheet_path": AMBIENT_EFFECTS.NEON_ARROW,
-			"sprite_alpha": 0.62,
-			"sprite_modulate": accent,
-		},
-		{
-			"name": "RightExitArrow",
-			"position": Vector2(606, 222),
-			"scale": Vector2(1.35, 1.35),
-			"effect_type": "blink",
-			"speed": 0.72,
-			"sprite_sheet_path": AMBIENT_EFFECTS.NEON_ARROW,
-			"sprite_alpha": 0.66,
-			"sprite_modulate": secondary,
-		},
-		{
 			"name": "HallScanlineCenter",
 			"position": Vector2(320, 220),
 			"scale": Vector2(5.8, 1.25),

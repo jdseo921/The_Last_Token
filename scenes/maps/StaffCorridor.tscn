@@ -90,7 +90,7 @@ use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="StaffRoomDoor" parent="InteractableLayer" instance=ExtResource("6")]
-position = Vector2(320, 92)
+position = Vector2(320, 108)
 interactable_kind = "staff_room_door"
 label_text = "STAFF ROOM"
 show_label = false
@@ -105,16 +105,19 @@ label_text = "RECORD 03"
 position = Vector2(320, 412)
 target_scene_path = "res://scenes/maps/hallways/MaintenanceStaffHallway.tscn"
 target_spawn_id = "Spawn_FromStaffCorridor"
+destination_name = "MAINTENANCE HALL"
 
 [node name="ReturnToArcadeHub" parent="." instance=ExtResource("3")]
 position = Vector2(34, 360)
 target_scene_path = "res://scenes/maps/hallways/BackHallway.tscn"
 target_spawn_id = "Spawn_FromStaffCorridor"
+destination_name = "ARCADE HUB"
 
 [node name="ToMemoryCore" parent="." instance=ExtResource("3")]
 position = Vector2(596, 240)
 target_scene_path = "res://scenes/maps/MemoryCore.tscn"
 target_spawn_id = "Spawn_FromStaffCorridor"
+destination_name = "MEMORY CORE"
 
 [node name="UILayer" type="Node2D" parent="."]
 
@@ -132,12 +135,6 @@ size = Vector2(430, 42)
 theme_override_font_sizes/font_size = 10
 text = "Follow the Overloaded signal. Restore the Security Tape, then walk the Final Night route before Memory Echo."
 autowrap_mode = 3
-
-[node name="HubReturnLabel" type="Label" parent="UILayer"]
-position = Vector2(46, 338)
-size = Vector2(120, 20)
-theme_override_font_sizes/font_size = 10
-text = "ARCADE HUB"
 
 [node name="InteractionPromptBackground" type="ColorRect" parent="UILayer"]
 visible = false

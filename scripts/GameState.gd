@@ -131,6 +131,9 @@ var arcade_return_position := Vector2.ZERO
 var opening_intro_seen := false
 var opening_npc_talks := 0
 var opening_hint_monologue_seen := false
+var memory_signal_explainer_seen := false
+var midpoint_turn_seen := false
+var midpoint_told_mira := false
 var last_announced_quest_id := ""
 var npc_dialogue_counts: Dictionary = {}
 var pending_spawn_id := ""
@@ -453,6 +456,9 @@ func reset_for_new_game() -> void:
 	opening_intro_seen = false
 	opening_npc_talks = 0
 	opening_hint_monologue_seen = false
+	memory_signal_explainer_seen = false
+	midpoint_turn_seen = false
+	midpoint_told_mira = false
 	last_announced_quest_id = ""
 	npc_dialogue_counts.clear()
 	pending_spawn_id = ""
@@ -1065,6 +1071,9 @@ func to_save_data() -> Dictionary:
 		"opening_intro_seen": opening_intro_seen,
 		"opening_npc_talks": opening_npc_talks,
 		"opening_hint_monologue_seen": opening_hint_monologue_seen,
+		"memory_signal_explainer_seen": memory_signal_explainer_seen,
+		"midpoint_turn_seen": midpoint_turn_seen,
+		"midpoint_told_mira": midpoint_told_mira,
 		"last_announced_quest_id": last_announced_quest_id,
 		"npc_dialogue_counts": npc_dialogue_counts.duplicate(true),
 	}
@@ -1250,6 +1259,9 @@ func apply_save_data(data: Dictionary) -> void:
 	opening_intro_seen = data.get("opening_intro_seen", opening_intro_seen)
 	opening_npc_talks = int(data.get("opening_npc_talks", opening_npc_talks))
 	opening_hint_monologue_seen = bool(data.get("opening_hint_monologue_seen", opening_hint_monologue_seen))
+	memory_signal_explainer_seen = bool(data.get("memory_signal_explainer_seen", memory_signal_explainer_seen))
+	midpoint_turn_seen = bool(data.get("midpoint_turn_seen", midpoint_turn_seen))
+	midpoint_told_mira = bool(data.get("midpoint_told_mira", midpoint_told_mira))
 	last_announced_quest_id = str(data.get("last_announced_quest_id", last_announced_quest_id))
 	var dialogue_counts_value: Variant = data.get("npc_dialogue_counts", npc_dialogue_counts)
 	if dialogue_counts_value is Dictionary:

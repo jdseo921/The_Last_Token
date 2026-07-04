@@ -60,8 +60,8 @@ prop_color = Color(0.26, 0.82, 1, 0.09)
 
 [node name="CollisionBounds" type="Node2D" parent="."]
 script = ExtResource("9")
-rectangles = Array[Vector4]([Vector4(0, 0, 640, 28), Vector4(0, 424, 640, 16), Vector4(0, 0, 16, 220), Vector4(0, 300, 16, 140), Vector4(624, 0, 16, 220), Vector4(624, 300, 16, 140)])
-visual_node_paths = Array[NodePath]([NodePath("../ServiceSlotPlaceholder"), NodePath("../VendoPlaceholder"), NodePath("../CircuitSodaPlaceholder")])
+rectangles = Array[Vector4]([Vector4(0, 0, 640, 130), Vector4(0, 130, 56, 66), Vector4(0, 196, 56, 134), Vector4(128, 130, 192, 62), Vector4(410, 130, 106, 60), Vector4(516, 130, 124, 76), Vector4(516, 246, 124, 120), Vector4(12, 362, 202, 62), Vector4(0, 424, 640, 16), Vector4(624, 366, 16, 58)])
+visual_node_paths = Array[NodePath]([])
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
 position = Vector2(320, 312)
@@ -73,7 +73,7 @@ position = Vector2(320, 312)
 position = Vector2(70, 260)
 
 [node name="Spawn_FromPrizeCorner" type="Marker2D" parent="."]
-position = Vector2(570, 260)
+position = Vector2(560, 222)
 
 [node name="Spawn_FromCircuitSoda" type="Marker2D" parent="."]
 position = Vector2(452, 258)
@@ -113,16 +113,19 @@ flicker_enabled = true
 position = Vector2(320, 406)
 target_scene_path = "res://scenes/maps/hallways/SnackHallway.tscn"
 target_spawn_id = "Spawn_FromSnackAlcove"
+destination_name = "ARCADE HUB"
 
 [node name="ToCabinetRow" parent="." instance=ExtResource("3")]
-position = Vector2(34, 260)
+position = Vector2(74, 222)
 target_scene_path = "res://scenes/maps/hallways/CabinetSnackHallway.tscn"
 target_spawn_id = "Spawn_FromSnackAlcove"
+destination_name = "CABINET ROW"
 
 [node name="ToPrizeCorner" parent="." instance=ExtResource("3")]
-position = Vector2(606, 260)
+position = Vector2(612, 222)
 target_scene_path = "res://scenes/maps/hallways/SnackPrizeHallway.tscn"
 target_spawn_id = "Spawn_FromSnackAlcove"
+destination_name = "PRIZE CORNER"
 
 [node name="UILayer" type="Node2D" parent="."]
 
@@ -140,13 +143,6 @@ size = Vector2(390, 42)
 theme_override_font_sizes/font_size = 10
 text = "Vendo owns Circuit Soda. Route the signal before staff systems listen."
 autowrap_mode = 3
-
-[node name="PrizeExitLabel" type="Label" parent="UILayer"]
-position = Vector2(516, 238)
-size = Vector2(98, 18)
-theme_override_font_sizes/font_size = 10
-text = "PRIZES"
-horizontal_alignment = 2
 
 [node name="InteractionPromptBackground" type="ColorRect" parent="UILayer"]
 visible = false
