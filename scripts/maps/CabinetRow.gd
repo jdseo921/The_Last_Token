@@ -34,7 +34,25 @@ func can_open_pause_menu() -> bool:
 	return not _dialogue_is_active() and not ConscienceEncounterDirector.is_encounter_active()
 
 func _maybe_start_conscience_encounter() -> void:
-	ConscienceEncounterDirector.maybe_start_encounter(self, "after_truth_filter")
+	if not ConscienceEncounterDirector.maybe_start_encounter(self, "after_truth_filter", Callable(self, "_maybe_play_completion_anecdote")):
+		_maybe_play_completion_anecdote()
+
+func _maybe_play_completion_anecdote() -> void:
+	if _dialogue_is_active() or ConscienceEncounterDirector.is_encounter_active():
+		return
+	if GameState.lying_cabinets_completed and not GameState.mr_byte_truth_filter_anecdote_seen:
+		GameState.mr_byte_truth_filter_anecdote_seen = true
+		start_dialogue(_get_mr_byte_lines("truth_filter_completion_anecdote", [
+			{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
+			{"speaker": "Mr. Byte", "text": "Record conflict reduced. Identity conflict remains."},
+		]))
+		return
+	if GameState.broken_high_score_completed and not GameState.roxy_high_score_anecdote_seen:
+		GameState.roxy_high_score_anecdote_seen = true
+		start_dialogue(_get_roxy_lines("broken_high_score_completion", [
+			{"speaker": "Roxy", "text": "Huh. Your score came back."},
+			{"speaker": "Roxy", "text": "The points restored clean. The name stayed blank."},
+		]))
 
 func _apply_spawn_position() -> void:
 	var spawn_id := GameState.consume_pending_spawn_id()
@@ -268,12 +286,9 @@ func _handle_roxy() -> void:
 		{"speaker": "Roxy", "text": "The screen lies, but badly."},
 	]))
 
-func _announce_optional_quest(quest_id: String) -> void:
-	if quest_notice == null or not quest_notice.has_method("show_notification"):
-		return
-	var data := QUEST_REGISTRY.get_quest(quest_id)
-	if not data.is_empty():
-		quest_notice.call("show_notification", data)
+func _announce_optional_quest(_quest_id: String) -> void:
+	# Retired: the persistent top-right HUD announces quest changes now.
+	pass
 
 func _handle_broken_high_score() -> void:
 	if not _broken_high_score_unlocked():

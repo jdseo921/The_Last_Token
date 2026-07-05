@@ -386,14 +386,9 @@ func _hide_intro_fade_overlay() -> void:
 	intro_fade_overlay.visible = false
 
 func _maybe_show_quest_notification() -> void:
-	if intro_active or _dialogue_is_active() or _choice_box_is_open() or _save_slot_menu_is_open():
-		return
-	var quest_id := GameState.get_current_quest_id()
-	if quest_id.is_empty() or quest_id == GameState.last_announced_quest_id:
-		return
-	if quest_notice and quest_notice.has_method("show_notification"):
-		quest_notice.call("show_notification", GameState.get_current_quest_data())
-	GameState.mark_current_quest_announced()
+	# Quest guidance now lives in the persistent top-right HUD (QuestNotice
+	# announces changes there); the center popup is retired for quest changes.
+	pass
 
 func handle_hub_interaction(interactable: Node, player_node: Node = null) -> void:
 	var kind := str(interactable.interactable_kind)
@@ -431,9 +426,9 @@ func _can_show_act2_echo() -> bool:
 func _get_ticket_counter_echo_lines() -> Array:
 	GameState.echo_ticket_counter_seen = true
 	return _get_environment_lines("ticket_counter_fractured", [
-		{"speaker": "Narrator", "text": "The ticket counter glass reflects someone standing beside you."},
-		{"speaker": "Narrator", "text": "For a moment, the reflection wears your shape."},
-		{"speaker": "Narrator", "text": "It mouths: 'not the first.'"},
+		{"speaker": "Narrator", "text": "The ticket counter glass catches your reflection half a beat late."},
+		{"speaker": "Narrator", "text": "For a moment it does not move when you move."},
+		{"speaker": "Narrator", "text": "Then it catches up, like nothing happened."},
 	])
 
 func _get_cabinet07_echo_lines() -> Array:
@@ -452,13 +447,13 @@ func _get_memory_signal_explainer_lines() -> Array:
 	if GameState.memory_signal_explainer_seen:
 		return []
 	return [
-		{"speaker": "Mira", "text": "Before anything else - one thing you need to know."},
-		{"speaker": "Mira", "text": "The arcade keeps a reading on you. We call it the Memory Signal."},
-		{"speaker": "System", "text": "MEMORY SIGNAL: GROUNDED."},
-		{"speaker": "Mira", "text": "Grounded means the building still treats you like a stranger."},
-		{"speaker": "Mira", "text": "It will climb as more of you comes back. Uneasy. Fractured. Overloaded."},
-		{"speaker": "Mira", "text": "Rooms change with it. Machines speak differently. None of that is a malfunction."},
-		{"speaker": "Mira", "text": "You can read it at the top of the floor, and on your save slots."},
+		{"speaker": "Mira", "text": "Before you go - you deserve to know what this place is asking of you."},
+		{"speaker": "Mira", "text": "The machines still hold pieces of the last night. Locked scores. Jammed reels. Dead circuits."},
+		{"speaker": "Mira", "text": "Every game you win back and every thing you fix, the arcade remembers a little more."},
+		{"speaker": "Mira", "text": "Remember enough, and the Staff Room at the back will finally open."},
+		{"speaker": "Mira", "text": "That is where the last of it is waiting."},
+		{"speaker": "Mira", "text": "The reading at the top of the floor - the Memory Signal - just shows how much it remembers so far."},
+		{"speaker": "Mira", "text": "Start with Cabinet 07 and your token. I will point you onward from there."},
 	]
 
 func _handle_mira() -> void:
@@ -1237,27 +1232,6 @@ func _setup_ambient_sprite_effects() -> void:
 			"intensity": 0.04,
 			"sprite_sheet_path": AMBIENT_EFFECTS.PRIZE_TWINKLE,
 			"sprite_alpha": 0.56,
-		},
-		{
-			"name": "CabinetRowExitArrow",
-			"position": Vector2(608, 122),
-			"scale": Vector2(1.45, 1.45),
-			"effect_type": "blink",
-			"speed": 0.78,
-			"intensity": 0.06,
-			"sprite_sheet_path": AMBIENT_EFFECTS.NEON_ARROW,
-			"sprite_alpha": 0.72,
-		},
-		{
-			"name": "PrizeExitArrow",
-			"position": Vector2(32, 360),
-			"rotation": PI,
-			"scale": Vector2(1.45, 1.45),
-			"effect_type": "blink",
-			"speed": 0.66,
-			"intensity": 0.05,
-			"sprite_sheet_path": AMBIENT_EFFECTS.NEON_ARROW,
-			"sprite_alpha": 0.66,
 		},
 	])
 

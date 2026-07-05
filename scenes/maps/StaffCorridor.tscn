@@ -75,6 +75,7 @@ flicker_enabled = true
 
 [node name="SecurityTape" parent="InteractableLayer" instance=ExtResource("6")]
 position = Vector2(200, 322)
+interact_extents = Vector2(104, 116)
 interactable_kind = "security_tape"
 label_text = "SECURITY TAPE"
 show_label = false
@@ -83,6 +84,7 @@ flicker_enabled = true
 
 [node name="FinalNightWalk" parent="InteractableLayer" instance=ExtResource("6")]
 position = Vector2(492, 322)
+interact_extents = Vector2(104, 116)
 interactable_kind = "final_night_walk"
 label_text = "FINAL NIGHT"
 show_label = false
@@ -90,7 +92,8 @@ use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="StaffRoomDoor" parent="InteractableLayer" instance=ExtResource("6")]
-position = Vector2(320, 124)
+position = Vector2(320, 84)
+interact_extents = Vector2(120, 140)
 interactable_kind = "staff_room_door"
 label_text = "STAFF ROOM"
 show_label = false

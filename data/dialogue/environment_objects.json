@@ -21,9 +21,9 @@
     ],
     "ticket_counter_fractured": [
       [
-        {"speaker": "Narrator", "text": "The ticket counter glass reflects someone standing beside you."},
-        {"speaker": "Narrator", "text": "For a moment, the reflection wears your shape."},
-        {"speaker": "Narrator", "text": "It mouths: not the first."}
+        {"speaker": "Narrator", "text": "The ticket counter glass catches your reflection half a beat late."},
+        {"speaker": "Narrator", "text": "For a moment it does not move when you move."},
+        {"speaker": "Narrator", "text": "Then it catches up, like nothing happened."}
       ]
     ],
     "ticket_counter_overloaded": [

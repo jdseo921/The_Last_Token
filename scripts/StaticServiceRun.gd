@@ -1,11 +1,15 @@
 extends "res://scripts/minigames/adventure/ArcadeAdventureStage.gd"
 
+const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
+
 var blackout_done := false
 
 func _ready() -> void:
 	AudioManager.play_music_for_context("static_service_run")
 	GameState.start_static_service_run()
-	configure_stage(get_stage_config())
+	var stage_config := get_stage_config()
+	_weave_reel_score_lines(stage_config)
+	configure_stage(stage_config)
 	_refresh_status("GUS (radio): Grid's dead. Flip breakers as you go.\n\nSomething hums back when you move.")
 
 static func get_stage_config() -> Dictionary:
@@ -206,6 +210,21 @@ static func get_stage_config() -> Dictionary:
 			{"from_area": "breaker", "marker": "5", "label": "RLY", "target_area": "relay", "target_spawn": Vector2i(16, 1)},
 		],
 	}
+
+func _weave_reel_score_lines(stage_config: Dictionary) -> void:
+	# Reel is the house sound system: he scores the run over the speakers at
+	# every fourth breaker (the spec's "Reel scores Static Service Run").
+	var reel_lines: Array = DIALOGUE_POOL.get_lines("reel", "static_service_run_score", [])
+	if reel_lines.size() < 4:
+		return
+	var texts: Variant = stage_config.get("collectible_texts", [])
+	if not texts is Array or (texts as Array).size() < 16:
+		return
+	var slots := [3, 7, 11, 14]
+	for i in range(4):
+		var line: Variant = reel_lines[i]
+		if line is Dictionary:
+			(texts as Array)[slots[i]] = "REEL (speakers): %s" % str((line as Dictionary).get("text", ""))
 
 func _on_area_entered(area_id: String) -> void:
 	if area_id == "breaker" and not blackout_done and not completed:

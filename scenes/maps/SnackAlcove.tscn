@@ -88,6 +88,7 @@ position = Vector2(320, 312)
 
 [node name="Vendo" parent="InteractableLayer" instance=ExtResource("6")]
 position = Vector2(320, 166)
+interact_extents = Vector2(76, 104)
 interactable_kind = "vendo"
 label_text = "VENDO"
 idle_sheet_path = "res://assets/art/characters/vendo/vendo_idle_sheet.png"
@@ -96,14 +97,16 @@ use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="SnackServiceDash" parent="InteractableLayer" instance=ExtResource("6")]
-position = Vector2(198, 178)
+position = Vector2(198, 164)
+interact_extents = Vector2(110, 120)
 interactable_kind = "snack_service_adventure"
 label_text = "SERVICE DASH"
 use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="CircuitSoda" parent="InteractableLayer" instance=ExtResource("6")]
-position = Vector2(452, 178)
+position = Vector2(463, 168)
+interact_extents = Vector2(158, 128)
 interactable_kind = "circuit_soda"
 label_text = "CIRCUIT SODA"
 use_placeholder_visual = false

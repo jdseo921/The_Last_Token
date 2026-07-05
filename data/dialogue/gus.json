@@ -108,8 +108,8 @@
       [
         {"speaker": "Gus", "text": "Power's back. Door's listening.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"},
         {"speaker": "Gus", "text": "I still hate that sentence."},
-        {"speaker": "Gus", "text": "Two signals are fighting in the door."},
-        {"speaker": "Gus", "text": "Help me line them up."},
+        {"speaker": "Gus", "text": "The door is arguing with its own lock."},
+        {"speaker": "Gus", "text": "Help me line up what it thinks it heard."},
         {"speaker": "Gus", "text": "Then maybe it opens instead of judging us."}
       ]
     ],
@@ -120,9 +120,9 @@
         {"speaker": "Gus", "text": "But it answered."},
         {"speaker": "Gus", "text": "Not with words."},
         {"speaker": "Gus", "text": "Worse. With agreement."},
-        {"speaker": "Gus", "text": "Part of you matched something it lost.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"},
-        {"speaker": "Gus", "text": "Door heard both knocks."},
-        {"speaker": "Gus", "text": "Yours, and the one you forgot making."},
+        {"speaker": "Gus", "text": "It matched you against something in its log.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"},
+        {"speaker": "Gus", "text": "I did not read the log. On purpose."},
+        {"speaker": "Gus", "text": "Some doors grieve. This one files it under access control."},
         {"speaker": "Gus", "text": "Whoever ran this place carried it on a back that was already tired.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
         {"speaker": "Gus", "text": "I am calling that fixed because I want lunch.", "portrait": "res://assets/art/portraits/gus/gus_annoyed.png"}
       ]

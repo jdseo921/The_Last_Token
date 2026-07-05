@@ -14,6 +14,7 @@ extends Area2D
 @export var use_placeholder_visual := true
 @export var idle_bob_enabled := false
 @export var flicker_enabled := false
+@export var interact_extents := Vector2(64, 64)
 
 var broken_interaction_count := 0
 var base_visual_position := Vector2.ZERO
@@ -26,6 +27,12 @@ var idle_time := 0.0
 @onready var label: Label = $Label
 
 func _ready() -> void:
+	if interact_extents != Vector2(64, 64):
+		# Fit the interaction area to the machine footprint so the player can
+		# interact from any adjacent side instead of a single edge hotspot.
+		var fitted := RectangleShape2D.new()
+		fitted.size = interact_extents
+		$CollisionShape2D.shape = fitted
 	visual_root.scale = Vector2(visual_scale, visual_scale)
 	base_visual_position = visual_root.position
 	label.text = label_text

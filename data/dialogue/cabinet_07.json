@@ -63,8 +63,8 @@
       [
         {"speaker": "Cabinet 07", "text": "MEMORY SIGNAL: OVERLOADED.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_alert.png"},
         {"speaker": "Cabinet 07", "text": "LOCK RESPONSE: LISTENING."},
-        {"speaker": "Cabinet 07", "text": "TWO INPUTS NEAR DOOR."},
-        {"speaker": "Cabinet 07", "text": "ONE INPUT DENIES SOURCE."},
+        {"speaker": "Cabinet 07", "text": "DOOR RESPONSE: UNSTABLE."},
+        {"speaker": "Cabinet 07", "text": "SOURCE DENIAL DETECTED."},
         {"speaker": "Cabinet 07", "text": "THIS MACHINE LEARNED TO SAVE PLAYERS BEFORE PROFIT."},
         {"speaker": "Cabinet 07", "text": "IT LEARNED THAT FROM SOMEONE."}
       ],

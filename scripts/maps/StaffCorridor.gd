@@ -156,6 +156,7 @@ func _handle_memory_echo() -> void:
 			if GameState.get_npc_dialogue_count("reel_first_meeting") == 0:
 				GameState.increment_npc_dialogue_count("reel_first_meeting")
 				echo_intro = DIALOGUE_POOL.get_lines("reel", "first_meeting", [])
+			echo_intro.append_array(DIALOGUE_POOL.get_lines("reel", "memory_echo_intro", []))
 			echo_intro.append_array(_get_environment_lines("memory_echo_object_overloaded", [
 				{"speaker": "Memory System", "text": "FINAL NIGHT ROUTE STABLE."},
 				{"speaker": "Memory System", "text": "MEMORY ECHO AVAILABLE."},
@@ -217,6 +218,7 @@ func _handle_security_tape() -> void:
 		if GameState.get_npc_dialogue_count("coily_first_meeting") == 0:
 			GameState.increment_npc_dialogue_count("coily_first_meeting")
 			start_lines = DIALOGUE_POOL.get_lines("coily", "first_meeting", [])
+		start_lines.append_array(DIALOGUE_POOL.get_lines("coily", "security_tape_intro", []))
 		start_lines.append_array(_get_environment_lines("security_tape_terminal_overloaded", [
 			{"speaker": "Security Tape", "text": "SECURITY TAPE DAMAGED."},
 			{"speaker": "Security Tape", "text": "RESTORE SEQUENCE."},
@@ -282,6 +284,18 @@ func _handle_staff_room_door() -> void:
 		start_dialogue(_get_staff_door_lines("post_reveal_stable", [
 			{"speaker": "Staff Room Door", "text": "RESTORE PLAYBACK COMPLETE."},
 			{"speaker": "Staff Room Door", "text": "RETURN NOT REQUIRED."},
+		]))
+		return
+	if not GameState.security_tape_assembly_completed:
+		start_dialogue(_get_staff_door_sequential_lines("security_tape_required", [
+			{"speaker": "Staff Room Door", "text": "STAFF ACCESS LOCKED."},
+			{"speaker": "Staff Room Door", "text": "REQUIRED: SECURITY TAPE ASSEMBLY."},
+		]))
+		return
+	if not GameState.final_night_walk_completed:
+		start_dialogue(_get_staff_door_sequential_lines("final_night_walk_required", [
+			{"speaker": "Staff Room Door", "text": "RESTORE PLAYBACK LOCKED."},
+			{"speaker": "Staff Room Door", "text": "REQUIRED: FINAL NIGHT WALK."},
 		]))
 		return
 	if not GameState.memory_echo_completed:
@@ -406,4 +420,22 @@ func _is_post_reveal() -> bool:
 	return GameState.post_reveal_roam_unlocked or GameState.twist_reveal_seen
 
 func _maybe_start_conscience_encounter() -> void:
-	ConscienceEncounterDirector.maybe_start_encounter(self, "after_final_night_walk")
+	if not ConscienceEncounterDirector.maybe_start_encounter(self, "after_final_night_walk", Callable(self, "_maybe_play_completion_anecdote")):
+		_maybe_play_completion_anecdote()
+
+func _maybe_play_completion_anecdote() -> void:
+	if _dialogue_is_active() or ConscienceEncounterDirector.is_encounter_active():
+		return
+	if GameState.memory_echo_completed and not GameState.twist_reveal_seen and GameState.get_npc_dialogue_count("reel_echo_completion") == 0:
+		GameState.increment_npc_dialogue_count("reel_echo_completion")
+		start_dialogue(DIALOGUE_POOL.get_lines("reel", "memory_echo_completion", [
+			{"speaker": "Reel", "text": "That is your setlist. Rough, honest, yours."},
+			{"speaker": "Reel", "text": "The next room is going to try to make you forget the tune."},
+		]))
+		return
+	if GameState.security_tape_assembly_completed and not GameState.final_night_walk_completed and GameState.get_npc_dialogue_count("coily_tape_completion") == 0:
+		GameState.increment_npc_dialogue_count("coily_tape_completion")
+		start_dialogue(DIALOGUE_POOL.get_lines("coily", "security_tape_completion", [
+			{"speaker": "Coily", "text": "You put the night back in order, pal."},
+			{"speaker": "Coily", "text": "One frame still does not belong. Keep noticing it."},
+		]))

@@ -40,10 +40,16 @@ func _maybe_build_objective_hud() -> void:
 	# QuestNotice builds it, not the copies living inside pause menus).
 	if get_parent() != get_tree().current_scene:
 		return
+	# Own CanvasLayer: this QuestNotice layer is hidden except during popups,
+	# but the objective HUD must ALWAYS be visible.
+	var hud_layer := CanvasLayer.new()
+	hud_layer.name = "ObjectiveHudLayer"
+	hud_layer.layer = 55
+	get_parent().add_child(hud_layer)
 	hud_root = Control.new()
 	hud_root.name = "ObjectiveHud"
 	hud_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(hud_root)
+	hud_layer.add_child(hud_root)
 	var backing := ColorRect.new()
 	backing.position = Vector2(392, 6)
 	backing.size = Vector2(242, 44)
@@ -78,15 +84,9 @@ func _update_objective_hud(pulse: bool) -> void:
 	var data: Dictionary = GameState.get_current_quest_data()
 	hud_root.visible = true
 	hud_title.text = str(data.get("title", "")).to_upper()
-	var location := str(data.get("location", ""))
-	var owner := str(data.get("owner", ""))
-	var action := ""
-	if not owner.is_empty() and not location.is_empty():
-		action = "%s - %s" % [owner, location]
-	elif not location.is_empty():
-		action = location
-	else:
-		action = str(data.get("summary", ""))
+	var action := str(data.get("summary", ""))
+	if action.is_empty():
+		action = str(data.get("location", ""))
 	hud_action.text = action
 	if pulse:
 		if hud_tween and hud_tween.is_valid():

@@ -34,7 +34,7 @@ offset_top = 38.0
 offset_right = 574.0
 offset_bottom = 128.0
 theme_override_font_sizes/font_size = 12
-text = "Dialogue goes here."
+text = ""
 autowrap_mode = 3
 
 [node name="ContinuePrompt" type="Label" parent="Panel"]

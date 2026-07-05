@@ -33,7 +33,18 @@ func can_open_pause_menu() -> bool:
 	return not _dialogue_is_active() and not ConscienceEncounterDirector.is_encounter_active()
 
 func _maybe_start_conscience_encounter() -> void:
-	ConscienceEncounterDirector.maybe_start_encounter(self, "after_circuit_soda")
+	if not ConscienceEncounterDirector.maybe_start_encounter(self, "after_circuit_soda", Callable(self, "_maybe_play_completion_anecdote")):
+		_maybe_play_completion_anecdote()
+
+func _maybe_play_completion_anecdote() -> void:
+	if _dialogue_is_active() or ConscienceEncounterDirector.is_encounter_active():
+		return
+	if GameState.circuit_soda_completed and not GameState.vendo_circuit_anecdote_seen:
+		GameState.vendo_circuit_anecdote_seen = true
+		start_dialogue(_get_vendo_lines("circuit_soda_completion_anecdote", [
+			{"speaker": "Vendo", "text": "Signal routed."},
+			{"speaker": "Vendo", "text": "Most machines reject unlabeled product. This one did not."},
+		]))
 
 func _apply_spawn_position() -> void:
 	var spawn_id := GameState.consume_pending_spawn_id()

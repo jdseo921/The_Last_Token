@@ -49,7 +49,7 @@ offset_top = 152.0
 offset_right = 440.0
 offset_bottom = 246.0
 theme_override_font_sizes/font_size = 11
-text = "Quest specifics."
+text = ""
 horizontal_alignment = 1
 autowrap_mode = 3
 

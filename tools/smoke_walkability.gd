@@ -118,7 +118,11 @@ func _audit(scene: Node, label: String) -> void:
 	# player 8px circle must overlap the 64x64 hotspot area, with margin for
 	# move_and_slide safe margins -> a reachable cell within 28px per axis.
 	for n in _find_interactables(scene):
-		var rect := Rect2(n.global_position - Vector2(INTERACT_REACH, INTERACT_REACH), Vector2(INTERACT_REACH * 2, INTERACT_REACH * 2))
+		var half := Vector2(INTERACT_REACH, INTERACT_REACH)
+		var extents_value: Variant = n.get("interact_extents")
+		if extents_value is Vector2:
+			half = Vector2(maxf((extents_value as Vector2).x * 0.5 - 4.0, 8.0), maxf((extents_value as Vector2).y * 0.5 - 4.0, 8.0))
+		var rect := Rect2(n.global_position - half, half * 2.0)
 		if not _rect_reachable(rect, reachable):
 			print("  FAIL %s: interactable '%s' at %s out of reach" % [label, n.name, str(n.global_position)])
 			fails_here += 1

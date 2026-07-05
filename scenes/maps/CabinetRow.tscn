@@ -90,6 +90,7 @@ position = Vector2(320, 314)
 
 [node name="MrByte" parent="InteractableLayer" instance=ExtResource("6")]
 position = Vector2(150, 158)
+interact_extents = Vector2(110, 124)
 interactable_kind = "mr_byte"
 label_text = "MR. BYTE"
 idle_sheet_path = "res://assets/art/characters/mr_byte/mr_byte_idle_sheet.png"
@@ -109,6 +110,7 @@ label_text = "RECORD 01"
 
 [node name="TruthFilter" parent="InteractableLayer" instance=ExtResource("6")]
 position = Vector2(320, 158)
+interact_extents = Vector2(112, 136)
 interactable_kind = "truth_filter"
 label_text = "TRUTH FILTER"
 use_placeholder_visual = false
@@ -116,6 +118,7 @@ flicker_enabled = true
 
 [node name="CabinetTraceRun" parent="InteractableLayer" instance=ExtResource("6")]
 position = Vector2(420, 158)
+interact_extents = Vector2(104, 136)
 interactable_kind = "cabinet_trace_adventure"
 label_text = "TRACE RUN"
 use_placeholder_visual = false
@@ -132,6 +135,7 @@ flicker_enabled = true
 
 [node name="BrokenHighScore" parent="InteractableLayer" instance=ExtResource("6")]
 position = Vector2(500, 158)
+interact_extents = Vector2(120, 136)
 interactable_kind = "broken_high_score"
 label_text = "BROKEN SCORE"
 use_placeholder_visual = false

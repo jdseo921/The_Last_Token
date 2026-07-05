@@ -74,6 +74,7 @@ position = Vector2(320, 318)
 
 [node name="PrizeCounter" parent="InteractableLayer" instance=ExtResource("6")]
 position = Vector2(320, 182)
+interact_extents = Vector2(250, 88)
 interactable_kind = "prize_counter"
 label_text = "PRIZE COUNTER"
 show_label = false
@@ -89,6 +90,7 @@ idle_bob_enabled = true
 
 [node name="PrizeShelfRun" parent="InteractableLayer" instance=ExtResource("6")]
 position = Vector2(466, 232)
+interact_extents = Vector2(100, 90)
 interactable_kind = "prize_shelf_adventure"
 label_text = "SHELF RUN"
 use_placeholder_visual = false

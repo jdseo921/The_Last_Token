@@ -266,7 +266,7 @@ func _get_arcade_hub_music_id() -> String:
 		return "arcade_hub_grounded"
 	if GameState.post_reveal_roam_unlocked or GameState.twist_reveal_seen:
 		return "post_reveal_roam"
-	if GameState.memory_signal_level == GameState.MEMORY_SIGNAL_GROUNDED:
+	if GameState.memory_signal_level <= GameState.MEMORY_SIGNAL_UNEASY:
 		return "arcade_hub_grounded"
 	return "arcade_hub_uneasy_fractured"
 

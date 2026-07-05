@@ -223,7 +223,7 @@ centered = false
 
 [node name="CollisionBounds" type="Node2D" parent="."]
 script = ExtResource("11")
-rectangles = Array[Vector4]([Vector4(32, 40, 576, 18), Vector4(32, 40, 14, 176), Vector4(32, 278, 14, 122), Vector4(594, 40, 14, 176), Vector4(594, 278, 14, 122), Vector4(32, 384, 324, 16), Vector4(414, 384, 194, 16), Vector4(52, 84, 158, 30), Vector4(172, 84, 38, 96), Vector4(242, 56, 305, 76), Vector4(292, 196, 60, 88), Vector4(460, 296, 58, 84), Vector4(54, 300, 64, 86), Vector4(356, 355, 58, 45)])
+rectangles = Array[Vector4]([Vector4(32, 40, 576, 18), Vector4(32, 40, 14, 176), Vector4(32, 278, 14, 122), Vector4(594, 40, 14, 176), Vector4(594, 278, 14, 122), Vector4(32, 384, 324, 16), Vector4(414, 384, 194, 16), Vector4(52, 84, 158, 30), Vector4(172, 84, 38, 96), Vector4(242, 56, 305, 76), Vector4(292, 196, 60, 88), Vector4(460, 296, 58, 84), Vector4(54, 300, 64, 86), Vector4(356, 355, 58, 45), Vector4(228, 170, 38, 44)])
 visible_visual_node_paths = Array[NodePath]([NodePath("../PropLayer/TicketCounterSprite"), NodePath("../PropLayer/OwnerPortraitSprite"), NodePath("../PropLayer/Cabinet07Sprite"), NodePath("../PropLayer/Cabinet07FlickerSprite"), NodePath("../PropLayer/BrokenCabinetSprite"), NodePath("../PropLayer/TruthFilterVisual"), NodePath("../PropLayer/StaffDoorSprite"), NodePath("../InteractableLayer/Mira/VisualRoot/Sprite"), NodePath("../InteractableLayer/Mira/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Mira/VisualRoot/PlaceholderVisual"), NodePath("../InteractableLayer/Gus/VisualRoot/Sprite"), NodePath("../InteractableLayer/Gus/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Gus/VisualRoot/PlaceholderVisual"), NodePath("../InteractableLayer/Vendo/VisualRoot/Sprite"), NodePath("../InteractableLayer/Vendo/VisualRoot/AnimatedSprite"), NodePath("../InteractableLayer/Vendo/VisualRoot/PlaceholderVisual")])
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
@@ -332,7 +332,8 @@ visual_scale = 1.1
 use_placeholder_visual = false
 
 [node name="TicketCounter" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(130, 102)
+position = Vector2(131, 99)
+interact_extents = Vector2(170, 84)
 interactable_kind = "ticket_counter"
 label_text = "TICKET COUNTER"
 show_label = false
@@ -354,7 +355,8 @@ visual_scale = 1.1
 use_placeholder_visual = false
 
 [node name="Vendo" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(470, 338)
+position = Vector2(489, 338)
+interact_extents = Vector2(112, 136)
 interactable_kind = "vendo"
 label_text = "VENDO"
 idle_sheet_path = ""
@@ -363,7 +365,8 @@ use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="Cabinet07" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(494, 132)
+position = Vector2(494, 102)
+interact_extents = Vector2(108, 142)
 interactable_kind = "cabinet07"
 label_text = "CABINET 07"
 sprite_texture_path = ""
@@ -374,6 +377,7 @@ flicker_enabled = true
 
 [node name="MrByte" parent="InteractableLayer" instance=ExtResource("5")]
 position = Vector2(246, 196)
+interact_extents = Vector2(92, 96)
 interactable_kind = "mr_byte"
 label_text = "MR. BYTE"
 idle_sheet_path = "res://assets/art/characters/mr_byte/mr_byte_idle_sheet.png"
@@ -382,7 +386,8 @@ use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="BrokenCabinet" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(110, 344)
+position = Vector2(86, 343)
+interact_extents = Vector2(118, 138)
 interactable_kind = "broken_cabinet"
 label_text = "BROKEN CABINET"
 sprite_texture_path = ""
@@ -390,14 +395,16 @@ use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="TruthFilter" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(320, 272)
+position = Vector2(322, 240)
+interact_extents = Vector2(114, 140)
 interactable_kind = "truth_filter"
 label_text = "TRUTH FILTER"
 use_placeholder_visual = false
 flicker_enabled = true
 
 [node name="StaffDoor" parent="InteractableLayer" instance=ExtResource("5")]
-position = Vector2(386, 366)
+position = Vector2(385, 377)
+interact_extents = Vector2(112, 100)
 interactable_kind = "staff_door"
 label_text = "STAFF DOOR"
 use_placeholder_visual = false

@@ -93,8 +93,18 @@ func close_dialogue() -> void:
 func _interact_with_nearest() -> void:
 	if nearby_interactables.is_empty():
 		return
-	var target = nearby_interactables[0]
-	if is_instance_valid(target) and target.has_method("interact"):
+	# Pick the closest overlapping interactable, not the first registered one -
+	# with footprint-sized areas several can overlap at once.
+	var target: Node = null
+	var best_distance := INF
+	for candidate in nearby_interactables:
+		if not is_instance_valid(candidate):
+			continue
+		var d: float = candidate.global_position.distance_squared_to(global_position)
+		if d < best_distance:
+			best_distance = d
+			target = candidate
+	if target != null and target.has_method("interact"):
 		_play_audio("play_interact")
 		target.interact(self)
 

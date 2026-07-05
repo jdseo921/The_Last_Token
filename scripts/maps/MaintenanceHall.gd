@@ -28,6 +28,7 @@ func _ready() -> void:
 	_on_prompt_changed("")
 	_refresh_sync_state()
 	call_deferred("_maybe_start_conscience_encounter")
+	call_deferred("_maybe_play_completion_anecdote")
 
 func can_open_pause_menu() -> bool:
 	return not _dialogue_is_active() and not ConscienceEncounterDirector.is_encounter_active()
@@ -148,7 +149,7 @@ func _handle_gus() -> void:
 		GameState.gus_lost_shift_comment_seen = true
 		var lost_shift_lines := _get_gus_lines("lost_shift_file_phase", [
 			{"speaker": "Gus", "text": "The maintenance note is ugly."},
-			{"speaker": "Gus", "text": "I saw the Staff Door report two signals after closing."},
+			{"speaker": "Gus", "text": "I saw the Staff Door log the last night wrong. Read it three times."},
 			{"speaker": "Gus", "text": "I pretended that was routine work."},
 		])
 		var static_intro_lines := _get_gus_lines("static_service_run_intro", [
@@ -170,7 +171,7 @@ func _handle_gus() -> void:
 		start_dialogue(_get_gus_lines("maintenance_sync_intro", [
 			{"speaker": "Gus", "text": "Power's back. Door's listening."},
 			{"speaker": "Gus", "text": "I still hate that sentence."},
-			{"speaker": "Gus", "text": "Two signals are fighting in the door."},
+			{"speaker": "Gus", "text": "The door is arguing with its own lock."},
 		]), Callable(self, "_go_to_maintenance_sync"))
 		return
 	if not GameState.gus_sync_anecdote_seen:
@@ -178,8 +179,8 @@ func _handle_gus() -> void:
 		start_dialogue(_get_gus_lines("maintenance_sync_completion_anecdote", [
 			{"speaker": "Gus", "text": "Door's listening now."},
 			{"speaker": "Gus", "text": "I do not like doors that listen."},
-			{"speaker": "Gus", "text": "But if it opens, part of you matched something it lost."},
-			{"speaker": "Gus", "text": "Door heard both knocks. Yours, and the one you forgot making."},
+			{"speaker": "Gus", "text": "But if it opens, it matched you against something in its log."},
+			{"speaker": "Gus", "text": "I did not read the log. On purpose."},
 		]))
 		return
 	if GameState.memory_echo_completed and not GameState.twist_reveal_seen:
@@ -416,3 +417,20 @@ func _apply_sprite_texture(sprite_node: Sprite2D, path: String) -> bool:
 	sprite_node.texture = resource
 	sprite_node.visible = true
 	return true
+
+func _maybe_play_completion_anecdote() -> void:
+	if _dialogue_is_active() or ConscienceEncounterDirector.is_encounter_active():
+		return
+	if GameState.maintenance_sync_completed and not GameState.gus_sync_anecdote_seen:
+		GameState.gus_sync_anecdote_seen = true
+		start_dialogue(_get_gus_lines("maintenance_sync_completion_anecdote", [
+			{"speaker": "Gus", "text": "Door's listening now."},
+			{"speaker": "Gus", "text": "It matched you against something in its log. I did not read it. On purpose."},
+		]))
+		return
+	if GameState.static_service_run_completed and not GameState.gus_static_run_anecdote_seen:
+		GameState.gus_static_run_anecdote_seen = true
+		start_dialogue(_get_gus_lines("static_service_run_anecdote", [
+			{"speaker": "Gus", "text": "Power's back. Door's awake."},
+			{"speaker": "Gus", "text": "Still, you did good. The hum is cleaner now."},
+		]))
