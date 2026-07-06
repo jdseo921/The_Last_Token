@@ -306,7 +306,8 @@ func _build_labels() -> void:
 	var title_label := Label.new()
 	title_label.position = Vector2(44, 30)
 	title_label.size = Vector2(552, 28)
-	title_label.add_theme_font_size_override("font_size", 20)
+	title_label.add_theme_font_override("font", preload("res://assets/fonts/PressStart2P-Regular.ttf"))
+	title_label.add_theme_font_size_override("font_size", 16)
 	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title_label.text = stage_title
 	add_child(title_label)
@@ -314,7 +315,7 @@ func _build_labels() -> void:
 	var objective_label := Label.new()
 	objective_label.position = Vector2(48, 62)
 	objective_label.size = Vector2(544, 38)
-	objective_label.add_theme_font_size_override("font_size", 11)
+	objective_label.add_theme_font_size_override("font_size", 16)
 	objective_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	objective_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	objective_label.text = objective_text
@@ -323,20 +324,20 @@ func _build_labels() -> void:
 	counter_label = Label.new()
 	counter_label.position = Vector2(side_panel_x, 112)
 	counter_label.size = Vector2(596 - side_panel_x, 26)
-	counter_label.add_theme_font_size_override("font_size", 12)
+	counter_label.add_theme_font_size_override("font_size", 16)
 	add_child(counter_label)
 
 	status_label = Label.new()
 	status_label.position = Vector2(side_panel_x, 148)
 	status_label.size = Vector2(596 - side_panel_x, 130)
-	status_label.add_theme_font_size_override("font_size", 12)
+	status_label.add_theme_font_size_override("font_size", 16)
 	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(status_label)
 
 	var controls_label := Label.new()
 	controls_label.position = Vector2(side_panel_x, 278)
 	controls_label.size = Vector2(596 - side_panel_x, 56)
-	controls_label.add_theme_font_size_override("font_size", 10)
+	controls_label.add_theme_font_size_override("font_size", 16)
 	controls_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	controls_label.text = "%s\n%s" % [controls_hint, goal_hint]
 	add_child(controls_label)
@@ -344,7 +345,8 @@ func _build_labels() -> void:
 	var legend_label := Label.new()
 	legend_label.position = Vector2(side_panel_x, 338)
 	legend_label.size = Vector2(596 - side_panel_x, 22)
-	legend_label.add_theme_font_size_override("font_size", 8)
+	legend_label.add_theme_font_override("font", preload("res://assets/fonts/m3x6.ttf"))
+	legend_label.add_theme_font_size_override("font_size", 16)
 	legend_label.text = _get_legend_text()
 	add_child(legend_label)
 
@@ -359,7 +361,7 @@ func _build_labels() -> void:
 	reset_button = Button.new()
 	reset_button.position = Vector2(side_panel_x + 22, 368)
 	reset_button.size = Vector2(134, 34)
-	reset_button.add_theme_font_size_override("font_size", 11)
+	reset_button.add_theme_font_size_override("font_size", 16)
 	reset_button.text = "Restart (R)"
 	reset_button.focus_mode = Control.FOCUS_NONE
 	reset_button.pressed.connect(_reset_stage)
@@ -368,7 +370,7 @@ func _build_labels() -> void:
 	var area_label := Label.new()
 	area_label.position = Vector2(grid_origin.x, grid_origin.y - 20)
 	area_label.size = Vector2(side_panel_x - grid_origin.x - 12, 18)
-	area_label.add_theme_font_size_override("font_size", 10)
+	area_label.add_theme_font_size_override("font_size", 16)
 	area_label.text = _get_active_area_name()
 	add_child(area_label)
 
@@ -395,7 +397,7 @@ func _build_grid() -> void:
 				marker.size = tile_rect.size
 				marker.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 				marker.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-				marker.add_theme_font_size_override("font_size", 12)
+				marker.add_theme_font_size_override("font_size", 16)
 				marker.text = marker_text
 				tile_container.add_child(marker)
 				tile_markers[Vector2i(x, y)] = marker
@@ -895,7 +897,8 @@ func _build_moving_hazards() -> void:
 			lbl.size = rect.size
 			lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-			lbl.add_theme_font_size_override("font_size", 9)
+			lbl.add_theme_font_override("font", preload("res://assets/fonts/m3x6.ttf"))
+			lbl.add_theme_font_size_override("font_size", 16)
 			lbl.text = label_text
 			rect.add_child(lbl)
 		var interval := float(def.get("interval", 0.5))

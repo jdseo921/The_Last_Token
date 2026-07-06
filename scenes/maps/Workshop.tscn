@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/Workshop.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
@@ -8,6 +8,8 @@
 [ext_resource type="PackedScene" path="res://scenes/arcade/HubInteractable.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://scenes/ui/QuestNotice.tscn" id="7"]
 [ext_resource type="Script" path="res://scripts/MapCollisionBounds.gd" id="8"]
+[ext_resource type="FontFile" path="res://assets/fonts/PressStart2P-Regular.ttf" id="fpx_title"]
+[ext_resource type="FontFile" path="res://assets/fonts/m3x6.ttf" id="fpx_micro"]
 
 [node name="Workshop" type="Node2D"]
 script = ExtResource("1")
@@ -72,20 +74,23 @@ target_spawn_id = "Spawn_FromWorkshop"
 [node name="TitleLabel" type="Label" parent="UILayer"]
 position = Vector2(24, 20)
 size = Vector2(300, 28)
-theme_override_font_sizes/font_size = 18
+theme_override_fonts/font = ExtResource("fpx_title")
+theme_override_font_sizes/font_size = 16
 text = "WORKSHOP"
 
 [node name="HintLabel" type="Label" parent="UILayer"]
 position = Vector2(24, 48)
 size = Vector2(430, 42)
-theme_override_font_sizes/font_size = 10
+theme_override_fonts/font = ExtResource("fpx_micro")
+theme_override_font_sizes/font_size = 16
 text = "The back room where the games were made by hand."
 autowrap_mode = 3
 
 [node name="ToMaintLabel" type="Label" parent="UILayer"]
 position = Vector2(506, 246)
 size = Vector2(114, 18)
-theme_override_font_sizes/font_size = 9
+theme_override_fonts/font = ExtResource("fpx_micro")
+theme_override_font_sizes/font_size = 16
 text = "MAINTENANCE"
 horizontal_alignment = 2
 

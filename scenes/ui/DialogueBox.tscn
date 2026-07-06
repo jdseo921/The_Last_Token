@@ -1,6 +1,7 @@
-[gd_scene format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/DialogueBox.gd" id="1"]
+[ext_resource type="FontFile" path="res://assets/fonts/m3x6.ttf" id="fpx_micro"]
 
 [node name="DialogueBox" type="CanvasLayer"]
 script = ExtResource("1")
@@ -33,7 +34,7 @@ offset_left = 16.0
 offset_top = 38.0
 offset_right = 574.0
 offset_bottom = 128.0
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 16
 text = ""
 autowrap_mode = 3
 
@@ -42,6 +43,7 @@ offset_left = 16.0
 offset_top = 132.0
 offset_right = 574.0
 offset_bottom = 154.0
-theme_override_font_sizes/font_size = 11
+theme_override_fonts/font = ExtResource("fpx_micro")
+theme_override_font_sizes/font_size = 16
 text = "PRESS E / SPACE"
 horizontal_alignment = 2

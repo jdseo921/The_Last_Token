@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/SecurityTapeAssembly.gd" id="1"]
+[ext_resource type="FontFile" path="res://assets/fonts/PressStart2P-Regular.ttf" id="fpx_title"]
 
 [node name="SecurityTapeAssembly" type="Control"]
 layout_mode = 3
@@ -33,7 +34,8 @@ offset_left = 24.0
 offset_top = 18.0
 offset_right = 520.0
 offset_bottom = 44.0
-theme_override_font_sizes/font_size = 20
+theme_override_fonts/font = ExtResource("fpx_title")
+theme_override_font_sizes/font_size = 16
 text = "SECURITY TAPE ASSEMBLY"
 horizontal_alignment = 1
 
@@ -43,7 +45,7 @@ offset_left = 42.0
 offset_top = 50.0
 offset_right = 502.0
 offset_bottom = 94.0
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 16
 text = "Arrange the fragments in the order they happened.
 The tape is damaged, but not silent."
 horizontal_alignment = 1
@@ -79,7 +81,7 @@ offset_left = 372.0
 offset_top = 104.0
 offset_right = 532.0
 offset_bottom = 124.0
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 16
 text = "RESTORED ORDER"
 horizontal_alignment = 1
 
@@ -89,7 +91,7 @@ offset_left = 372.0
 offset_top = 130.0
 offset_right = 532.0
 offset_bottom = 250.0
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 16
 text = "1. [empty]"
 autowrap_mode = 3
 
@@ -100,7 +102,7 @@ offset_left = 372.0
 offset_top = 254.0
 offset_right = 532.0
 offset_bottom = 306.0
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 16
 text = "Hint: The counter went dark before Cabinet 07 stayed awake."
 autowrap_mode = 3
 
@@ -127,7 +129,7 @@ offset_left = 48.0
 offset_top = 354.0
 offset_right = 496.0
 offset_bottom = 394.0
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 16
 text = ""
 horizontal_alignment = 1
 autowrap_mode = 3

@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/MinigameScreenTemplate.gd" id="1"]
+[ext_resource type="FontFile" path="res://assets/fonts/PressStart2P-Regular.ttf" id="fpx_title"]
 
 [node name="MinigameScreenTemplate" type="Control"]
 layout_mode = 3
@@ -60,7 +61,8 @@ offset_left = 56.0
 offset_top = 42.0
 offset_right = 584.0
 offset_bottom = 76.0
-theme_override_font_sizes/font_size = 24
+theme_override_fonts/font = ExtResource("fpx_title")
+theme_override_font_sizes/font_size = 16
 text = "MINIGAME TITLE"
 horizontal_alignment = 1
 

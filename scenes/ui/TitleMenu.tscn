@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/TitleMenu.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/ui/SettingsMenu.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/common/AnimatedAmbientProp.tscn" id="3"]
+[ext_resource type="FontFile" path="res://assets/fonts/PressStart2P-Regular.ttf" id="fpx_title"]
 
 [node name="TitleMenu" type="Control"]
 layout_mode = 3
@@ -121,7 +122,8 @@ offset_left = 112.0
 offset_top = 46.0
 offset_right = 528.0
 offset_bottom = 106.0
-theme_override_font_sizes/font_size = 28
+theme_override_fonts/font = ExtResource("fpx_title")
+theme_override_font_sizes/font_size = 24
 text = "THE LAST TOKEN"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -153,22 +155,22 @@ theme_override_constants/separation = 14
 
 [node name="NewMemoryButton" type="Button" parent="UILayer/Panel/VBox"]
 custom_minimum_size = Vector2(0, 32)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 16
 text = "New Memory"
 
 [node name="RestoreMemoryButton" type="Button" parent="UILayer/Panel/VBox"]
 custom_minimum_size = Vector2(0, 32)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 16
 text = "Restore Memory"
 
 [node name="SettingsButton" type="Button" parent="UILayer/Panel/VBox"]
 custom_minimum_size = Vector2(0, 32)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 16
 text = "Settings"
 
 [node name="QuitButton" type="Button" parent="UILayer/Panel/VBox"]
 custom_minimum_size = Vector2(0, 32)
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 16
 text = "Quit"
 
 [node name="SettingsMenu" parent="." instance=ExtResource("2")]

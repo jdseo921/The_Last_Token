@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/HallwayMap.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="5"]
 [ext_resource type="Script" path="res://scripts/MapCollisionBounds.gd" id="6"]
+[ext_resource type="FontFile" path="res://assets/fonts/PressStart2P-Regular.ttf" id="fpx_title"]
+[ext_resource type="FontFile" path="res://assets/fonts/m3x6.ttf" id="fpx_micro"]
 
 [node name="CabinetSnackHallway" type="Node2D"]
 script = ExtResource("1")
@@ -58,13 +60,15 @@ target_spawn_id = "Spawn_FromCabinetRow"
 [node name="TitleLabel" type="Label" parent="UILayer"]
 position = Vector2(24, 20)
 size = Vector2(260, 28)
-theme_override_font_sizes/font_size = 18
+theme_override_fonts/font = ExtResource("fpx_title")
+theme_override_font_sizes/font_size = 16
 text = "SERVICE HALLWAY"
 
 [node name="HintLabel" type="Label" parent="UILayer"]
 position = Vector2(24, 48)
 size = Vector2(392, 34)
-theme_override_font_sizes/font_size = 10
+theme_override_fonts/font = ExtResource("fpx_micro")
+theme_override_font_sizes/font_size = 16
 text = "Cabinet static fades into vending-machine buzz."
 autowrap_mode = 3
 

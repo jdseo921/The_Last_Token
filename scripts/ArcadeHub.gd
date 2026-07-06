@@ -66,6 +66,23 @@ func _ready() -> void:
 	else:
 		call_deferred("_maybe_show_quest_notification")
 	_maybe_show_controls_hint()
+	call_deferred("_maybe_play_rockbyte_anecdote")
+
+func _maybe_play_rockbyte_anecdote() -> void:
+	# Auto cast reaction on returning from a won Rockbyte Duel (same pattern as
+	# the other rooms' completion anecdotes). One-shot; the walk-up interaction
+	# then serves the second sequential set.
+	if intro_active or _dialogue_is_active() or ConscienceEncounterDirector.is_encounter_active():
+		return
+	if not GameState.rockbyte_duel_completed or GameState.lost_token_quest_completed:
+		return
+	if GameState.get_npc_dialogue_count("cabinet07_rockbyte_auto") > 0:
+		return
+	GameState.increment_npc_dialogue_count("cabinet07_rockbyte_auto")
+	start_dialogue(_get_cabinet07_sequential_lines("rockbyte_completion", [
+		{"speaker": "Cabinet 07", "text": "TOKEN RECOVERED."},
+		{"speaker": "Cabinet 07", "text": "RETURN TO MIRA."},
+	]))
 
 func _maybe_show_controls_hint() -> void:
 	if GameState.story_started:
@@ -82,7 +99,8 @@ func _maybe_show_controls_hint() -> void:
 	var hint := Label.new()
 	hint.position = Vector2(16, 373)
 	hint.size = Vector2(320, 16)
-	hint.add_theme_font_size_override("font_size", 10)
+	hint.add_theme_font_override("font", preload("res://assets/fonts/m3x6.ttf"))
+	hint.add_theme_font_size_override("font_size", 16)
 	hint.text = "MOVE: WASD / Arrows    INTERACT: E    MENU: Esc"
 	layer.add_child(hint)
 	var tween := create_tween()
@@ -420,6 +438,39 @@ func handle_hub_interaction(interactable: Node, player_node: Node = null) -> voi
 		_:
 			start_dialogue([{"speaker": "System", "text": "Nothing happens."}])
 
+func try_block_exit(transition: Node) -> bool:
+	# During the Lost Token errand the player has decided to stay put: every hub
+	# exit is refused with a reason, and the player is turned and nudged back so
+	# the trigger does not immediately re-fire.
+	if not GameState.lost_token_quest_started or GameState.lost_token_quest_completed:
+		return false
+	if _dialogue_is_active():
+		return true
+	_push_player_back_from(transition)
+	if not GameState.rockbyte_duel_completed:
+		start_dialogue([
+			{"speaker": "Player", "text": "The exit can wait."},
+			{"speaker": "Player", "text": "This place recognized me before I recognized it. I want to know why."},
+			{"speaker": "Player", "text": "First: win my token back from Cabinet 07."},
+		])
+	else:
+		start_dialogue([
+			{"speaker": "Player", "text": "Not yet. Mira is waiting for this token."},
+			{"speaker": "Player", "text": "If I walk out now, I will never learn what this place remembers."},
+		])
+	return true
+
+func _push_player_back_from(transition: Node) -> void:
+	if player == null or not (transition is Node2D):
+		return
+	var away: Vector2 = player.global_position - (transition as Node2D).global_position
+	if away.length() < 0.01:
+		away = Vector2(0, -1)
+	away = away.normalized()
+	player.global_position += away * 26.0
+	if player.has_method("_get_direction_name"):
+		player.set("facing_direction", str(player.call("_get_direction_name", away)))
+
 func _can_show_act2_echo() -> bool:
 	return GameState.lying_cabinets_completed and not GameState.twist_reveal_seen
 
@@ -666,6 +717,20 @@ func _handle_gus() -> void:
 			{"speaker": "Gus", "text": "You came back anyway. Good."},
 		])
 		start_dialogue(post_reveal_lines, _get_witness_completion_callback(was_completed))
+		return
+	if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed and not GameState.gus_hub_checkin_truth_filter_done:
+		GameState.gus_hub_checkin_truth_filter_done = true
+		start_dialogue(_get_gus_lines("hub_checkin_truth_filter", [
+			{"speaker": "Gus", "text": "Heard the Truth Filter howl. It only does that when it loses.", "portrait": PORTRAIT_GUS_ANNOYED},
+			{"speaker": "Gus", "text": "Vendo is next. Snack Alcove. Do not tip the machine."},
+		]))
+		return
+	if GameState.circuit_soda_completed and GameState.prize_sort_completed and not GameState.lost_shift_file_completed and not GameState.gus_hub_checkin_prize_sort_done:
+		GameState.gus_hub_checkin_prize_sort_done = true
+		start_dialogue(_get_gus_lines("hub_checkin_prize_sort", [
+			{"speaker": "Gus", "text": "Pip talked. Now we do this my way: paperwork.", "portrait": PORTRAIT_GUS_ANNOYED},
+			{"speaker": "Gus", "text": "Checklist by the counter. Schedule in Cabinet Row. My note in the hall."},
+		]))
 		return
 	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
 		start_dialogue(_get_gus_sequential_lines("truth_filter_active", [

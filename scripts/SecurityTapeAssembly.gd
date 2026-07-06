@@ -62,7 +62,7 @@ func _ready() -> void:
 	for index in range(fragment_buttons.size()):
 		var button: Button = fragment_buttons[index]
 		button.text = STATIC_TEXT
-		button.add_theme_font_size_override("font_size", 11)
+		button.add_theme_font_size_override("font_size", 16)
 		if not button.pressed.is_connected(_on_fragment_pressed):
 			button.pressed.connect(_on_fragment_pressed.bind(index))
 	submit_button.pressed.connect(_on_submit_pressed)

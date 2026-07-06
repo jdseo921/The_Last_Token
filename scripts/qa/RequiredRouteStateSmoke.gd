@@ -24,13 +24,19 @@ func _init() -> void:
 	_check_state("03b Broken High Score complete", "truth_filter", "Truth Filter", "Uneasy", 2)
 
 	game_state.complete_truth_filter()
-	_check_state("04 Truth Filter complete", "circuit_soda", "Truth Filter Cleared", "Fractured", 3)
+	_check_state("04 Truth Filter complete", "gus_checkin_truth_filter", "Truth Filter Cleared", "Fractured", 3)
+
+	game_state.gus_hub_checkin_truth_filter_done = true
+	_check_state("04b Gus check-in heard", "circuit_soda", "Truth Filter Cleared", "Fractured", 3)
 
 	game_state.complete_circuit_soda()
 	_check_state("05 Circuit Soda complete", "prize_sort", "Prize Sort", "Fractured", 4)
 
 	game_state.complete_pip_secret()
-	_check_state("05b Prize Sort complete", "lost_shift_file", "Lost Shift File", "Fractured", 5)
+	_check_state("05b Prize Sort complete", "gus_checkin_prize_sort", "Lost Shift File", "Fractured", 5)
+
+	game_state.gus_hub_checkin_prize_sort_done = true
+	_check_state("05c Gus lead heard", "lost_shift_file", "Lost Shift File", "Fractured", 5)
 
 	game_state.read_closing_checklist()
 	game_state.read_maintenance_note()

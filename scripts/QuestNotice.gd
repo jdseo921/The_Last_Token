@@ -51,25 +51,27 @@ func _maybe_build_objective_hud() -> void:
 	hud_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hud_layer.add_child(hud_root)
 	var backing := ColorRect.new()
-	backing.position = Vector2(392, 6)
-	backing.size = Vector2(242, 44)
+	backing.position = Vector2(340, 6)
+	backing.size = Vector2(294, 60)
 	backing.color = Color(0.012, 0.016, 0.026, 0.78)
 	hud_root.add_child(backing)
 	var edge := ColorRect.new()
-	edge.position = Vector2(392, 6)
-	edge.size = Vector2(2, 44)
+	edge.position = Vector2(340, 6)
+	edge.size = Vector2(2, 60)
 	edge.color = Color(0.3, 0.9, 1.0, 0.85)
 	hud_root.add_child(edge)
 	hud_title = Label.new()
-	hud_title.position = Vector2(400, 9)
-	hud_title.size = Vector2(230, 16)
-	hud_title.add_theme_font_size_override("font_size", 10)
+	hud_title.position = Vector2(348, 10)
+	hud_title.size = Vector2(282, 18)
+	hud_title.add_theme_font_override("font", preload("res://assets/fonts/m3x6.ttf"))
+	hud_title.add_theme_font_size_override("font_size", 16)
 	hud_title.add_theme_color_override("font_color", Color(0.5, 0.95, 1.0, 1.0))
 	hud_root.add_child(hud_title)
 	hud_action = Label.new()
-	hud_action.position = Vector2(400, 26)
-	hud_action.size = Vector2(230, 22)
-	hud_action.add_theme_font_size_override("font_size", 9)
+	hud_action.position = Vector2(348, 28)
+	hud_action.size = Vector2(282, 36)
+	hud_action.add_theme_font_override("font", preload("res://assets/fonts/m3x6.ttf"))
+	hud_action.add_theme_font_size_override("font_size", 16)
 	hud_action.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	hud_root.add_child(hud_action)
 	_update_objective_hud(false)
@@ -79,6 +81,10 @@ func _update_objective_hud(pulse: bool) -> void:
 		return
 	var quest_id: String = GameState.get_current_quest_id()
 	if quest_id.is_empty():
+		hud_root.visible = false
+		return
+	# The opening tip waits until the protagonist's first monologue has finished.
+	if OPENING_QUEST_IDS.has(quest_id) and not GameState.opening_intro_seen:
 		hud_root.visible = false
 		return
 	var data: Dictionary = GameState.get_current_quest_data()
@@ -103,8 +109,17 @@ func _process(delta: float) -> void:
 	if announce_accum < ANNOUNCE_POLL_SECONDS:
 		return
 	announce_accum = 0.0
+	# Only the map-level notice that owns the objective HUD may announce quest
+	# changes - the copies embedded in pause menus have no HUD and would consume
+	# the change marker without ever updating the visible tip.
+	if hud_root == null:
+		return
 	if visible or get_tree().paused:
 		return
+	if hud_root != null and not hud_root.visible:
+		# Re-check gates each poll so the tip appears the moment its gate opens
+		# (right after the opening monologue) - pulse only for the opening tip.
+		_update_objective_hud(OPENING_QUEST_IDS.has(GameState.get_current_quest_id()))
 	var quest_id: String = GameState.get_current_quest_id()
 	if quest_id.is_empty() or quest_id == GameState.last_announced_quest_id:
 		return

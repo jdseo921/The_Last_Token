@@ -45,8 +45,10 @@ func _run() -> void:
 	_beat("token returned", func(): gs.complete_lost_token_quest())
 	_beat("broken high score", func(): gs.complete_broken_high_score())
 	_beat("truth filter", func(): gs.complete_truth_filter())
+	_beat("gus check-in: post-filter", func(): gs.gus_hub_checkin_truth_filter_done = true)
 	_beat("circuit soda", func(): gs.complete_circuit_soda())
 	_beat("prize sort", func(): gs.complete_pip_secret())
+	_beat("gus check-in: post-prizes", func(): gs.gus_hub_checkin_prize_sort_done = true)
 	_beat("lost shift file", func():
 		gs.read_closing_checklist()
 		gs.read_maintenance_note()

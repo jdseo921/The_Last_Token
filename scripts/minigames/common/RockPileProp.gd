@@ -10,6 +10,7 @@ const REMOVAL_SHAKE := "shake"
 const ACTIVE_ROCK_COLOR := Color(0.68, 0.72, 0.78, 1.0)
 const EMPTY_ROCK_COLOR := Color(0.13, 0.13, 0.16, 0.45)
 const ACTION_SPEED_MULTIPLIER := 1.5
+const ROCK_SPACING := 4.0
 
 @export var pile_id: String = "rock_pile"
 @export var max_rocks: int = 5
@@ -68,9 +69,24 @@ func rebuild_visuals() -> void:
 	max_rocks = maxi(max_rocks, 1)
 	current_rocks = clampi(current_rocks, 0, max_rocks)
 	title_label.text = pile_id.replace("_", " ").to_upper()
+	rocks_container.visible = false
 	for index in range(max_rocks):
 		rock_nodes.append(_create_rock_node(index))
+	_layout_rocks()
 	_refresh_visual_count()
+
+func _layout_rocks() -> void:
+	# Rocks are placed by hand, symmetric around the prop origin, so the row
+	# always shares a centerline with the title and count labels regardless of
+	# theme container spacing.
+	var rock_size := 20.0 if max_rocks <= 5 else 16.0
+	var row_width := max_rocks * rock_size + (max_rocks - 1) * ROCK_SPACING
+	for index in range(rock_nodes.size()):
+		var rock := rock_nodes[index]
+		rock.size = Vector2(rock_size, rock_size)
+		var base_position := Vector2(-row_width * 0.5 + index * (rock_size + ROCK_SPACING), 6.0 - rock_size * 0.5)
+		rock.position = base_position
+		rock.set_meta("base_position", base_position)
 
 func _create_rock_node(index: int) -> Control:
 	var rock: Control
@@ -85,8 +101,7 @@ func _create_rock_node(index: int) -> Control:
 		color_rect.color = ACTIVE_ROCK_COLOR
 		rock = color_rect
 	rock.name = "Rock%d" % [index + 1]
-	rock.custom_minimum_size = Vector2(20, 20)
-	rocks_container.add_child(rock)
+	add_child(rock)
 	return rock
 
 func _refresh_visual_count() -> void:
@@ -128,7 +143,7 @@ func _on_removal_animation_finished(removed_indices: Array[int]) -> void:
 	for index in removed_indices:
 		if index >= 0 and index < rock_nodes.size():
 			var rock := rock_nodes[index]
-			rock.position = Vector2.ZERO
+			rock.position = rock.get_meta("base_position", rock.position)
 			rock.scale = Vector2.ONE
 			rock.modulate = Color.WHITE
 	_refresh_visual_count()

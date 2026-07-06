@@ -9,7 +9,7 @@ const CONFIG_LOADER := preload("res://scripts/minigames/common/MinigameConfigLoa
 const CONFIG_PATH := "res://data/minigames/rockbyte_duel_config.json"
 const ROCK_PILE_PROP_SCENE := preload("res://scenes/minigames/common/RockPileProp.tscn")
 const CABINET_TURN_DELAY_SECONDS := 0.23
-const HARD_RANDOM_MOVE_CHANCE_PERCENT := 12
+const START_ROCKS_PER_PILE := 6
 const LEEWAY_RANDOM_MOVE_CHANCE_PERCENT := 58
 const LEEWAY_LOSS_THRESHOLD := 3
 const RESULT_POPUP_HOLD_SECONDS := 2.0
@@ -38,6 +38,7 @@ const RESULT_POPUP_HOLD_SECONDS := 2.0
 	$GameArea/PilesHBox/LeftPilePanel/LeftRockGrid/Rock3,
 	$GameArea/PilesHBox/LeftPilePanel/LeftRockGrid/Rock4,
 	$GameArea/PilesHBox/LeftPilePanel/LeftRockGrid/Rock5,
+	$GameArea/PilesHBox/LeftPilePanel/LeftRockGrid/Rock6,
 ]
 @onready var right_rocks: Array[ColorRect] = [
 	$GameArea/PilesHBox/RightPilePanel/RightRockGrid/Rock1,
@@ -45,10 +46,11 @@ const RESULT_POPUP_HOLD_SECONDS := 2.0
 	$GameArea/PilesHBox/RightPilePanel/RightRockGrid/Rock3,
 	$GameArea/PilesHBox/RightPilePanel/RightRockGrid/Rock4,
 	$GameArea/PilesHBox/RightPilePanel/RightRockGrid/Rock5,
+	$GameArea/PilesHBox/RightPilePanel/RightRockGrid/Rock6,
 ]
 
-var left_pile := 5
-var right_pile := 5
+var left_pile := START_ROCKS_PER_PILE
+var right_pile := START_ROCKS_PER_PILE
 var duel_finished := false
 var last_message := ""
 var player_won_last_round := false
@@ -193,24 +195,75 @@ func _random_valid_move() -> String:
 	return options[randi() % options.size()]
 
 func _get_cabinet_move() -> String:
-	var strategic_move := _get_strategic_move()
-	var random_chance := LEEWAY_RANDOM_MOVE_CHANCE_PERCENT
 	if aggressive_this_game:
-		random_chance = 0
-	if strategic_move == "" or randi() % 100 < random_chance:
+		return _get_strategic_move()
+	# Easy games: mostly random, and the deliberate moves are generous - the
+	# cabinet avoids the parity-punishing reply and will not snatch the win
+	# unless it has no other legal move.
+	if randi() % 100 < LEEWAY_RANDOM_MOVE_CHANCE_PERCENT:
 		return _random_valid_move()
-	return strategic_move
+	return _get_generous_move()
+
+func _get_generous_move() -> String:
+	var soft_moves: Array[String] = []
+	var non_winning_moves: Array[String] = []
+	for move in _get_legal_moves():
+		var preview := _preview_move(move)
+		var next_left := int(preview.get("left", 0))
+		var next_right := int(preview.get("right", 0))
+		if next_left == 0 and next_right == 0:
+			continue
+		non_winning_moves.append(move)
+		if next_left % 2 == 0 and next_right % 2 == 0:
+			continue
+		soft_moves.append(move)
+	if not soft_moves.is_empty():
+		return soft_moves[randi() % soft_moves.size()]
+	if not non_winning_moves.is_empty():
+		return non_winning_moves[randi() % non_winning_moves.size()]
+	return _random_valid_move()
+
+func _get_legal_moves() -> Array[String]:
+	var moves: Array[String] = []
+	if left_pile > 0:
+		moves.append("left")
+	if right_pile > 0:
+		moves.append("right")
+	if left_pile > 0 or right_pile > 0:
+		moves.append("both")
+	return moves
+
+func _preview_move(choice: String) -> Dictionary:
+	var next_left := left_pile
+	var next_right := right_pile
+	match choice:
+		"left":
+			next_left = maxi(next_left - 1, 0)
+		"right":
+			next_right = maxi(next_right - 1, 0)
+		"both":
+			next_left = maxi(next_left - 1, 0)
+			next_right = maxi(next_right - 1, 0)
+	return {"left": next_left, "right": next_right}
 
 func _get_strategic_move() -> String:
-	var winning_move := _get_winning_move()
-	if not winning_move.is_empty():
-		return winning_move
-	if left_pile > right_pile:
-		return "left"
-	if right_pile > left_pile:
-		return "right"
-	if left_pile > 0 and right_pile > 0:
+	# Perfect play for this move set (take 1 left / 1 right / 1 each): whoever
+	# hands back a board with BOTH piles even wins with correct follow-up. The
+	# loss-screen hint ("try keeping both piles even") teaches the same rule.
+	var left_odd := left_pile % 2 == 1
+	var right_odd := right_pile % 2 == 1
+	if left_odd and right_odd:
 		return "both"
+	if left_odd:
+		return "left"
+	if right_odd:
+		return "right"
+	# Both piles already even: no forced win from here - prolong the duel and
+	# wait for the player to slip.
+	if left_pile >= right_pile and left_pile > 0:
+		return "left"
+	if right_pile > 0:
+		return "right"
 	return _random_valid_move()
 
 func _apply_cabinet_move(choice: String) -> void:
@@ -272,8 +325,13 @@ func _reset_duel() -> void:
 	var attempt: int = GameState.rockbyte_attempt_count
 	aggressive_this_game = attempt == 1 or (attempt == 2 and randi() % 2 == 0)
 	visual_sequence_running = false
-	left_pile = 5
-	right_pile = 5
+	# Every duel starts from the same even 4/4 board so the setup never betrays
+	# the difficulty. Whoever RECEIVES an even/even board loses it to perfect
+	# parity play, so aggressive games (never blunder) stay unwinnable while
+	# easy games are won by punishing the cabinet's random moves - "keep both
+	# piles even" is the win condition at every difficulty.
+	left_pile = START_ROCKS_PER_PILE
+	right_pile = START_ROCKS_PER_PILE
 	duel_finished = false
 	player_won_last_round = false
 	round_finished_msec = 0
@@ -302,6 +360,7 @@ func _refresh_rock_visuals() -> void:
 
 func _set_rock_group_count(rocks: Array[ColorRect], count: int) -> void:
 	for index in range(rocks.size()):
+		rocks[index].visible = index < START_ROCKS_PER_PILE
 		rocks[index].color = ACTIVE_ROCK_COLOR if index < count else EMPTY_ROCK_COLOR
 		rocks[index].modulate.a = 1.0 if index < count else 0.45
 
@@ -364,14 +423,14 @@ func _setup_staged_visuals() -> void:
 		left_pile_prop = stage.call("add_prop", ROCK_PILE_PROP_SCENE, {
 			"prop_id": "left_pile",
 			"pile_id": "left_pile",
-			"max_rocks": 5,
+			"max_rocks": START_ROCKS_PER_PILE,
 			"current_rocks": left_pile,
 			"position": Vector2(250, 230),
 		}) as Node
 		right_pile_prop = stage.call("add_prop", ROCK_PILE_PROP_SCENE, {
 			"prop_id": "right_pile",
 			"pile_id": "right_pile",
-			"max_rocks": 5,
+			"max_rocks": START_ROCKS_PER_PILE,
 			"current_rocks": right_pile,
 			"position": Vector2(390, 230),
 		}) as Node

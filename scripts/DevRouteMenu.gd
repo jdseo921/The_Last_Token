@@ -76,14 +76,14 @@ func _build_menu() -> void:
 	var title := Label.new()
 	title.position = Vector2(16, 14)
 	title.size = Vector2(300, 24)
-	title.add_theme_font_size_override("font_size", 14)
+	title.add_theme_font_size_override("font_size", 16)
 	title.text = "DEV ROUTE CHECKPOINTS"
 	panel.add_child(title)
 
 	var hint := Label.new()
 	hint.position = Vector2(16, 38)
 	hint.size = Vector2(300, 34)
-	hint.add_theme_font_size_override("font_size", 9)
+	hint.add_theme_font_size_override("font_size", 16)
 	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	hint.text = "Debug only. Launch with --dev-route-menu or THE_LAST_TOKEN_DEV_ROUTE_MENU=1. Toggle: F10."
 	panel.add_child(hint)
@@ -101,7 +101,7 @@ func _build_menu() -> void:
 	status_label = Label.new()
 	status_label.position = Vector2(18, 336)
 	status_label.size = Vector2(220, 24)
-	status_label.add_theme_font_size_override("font_size", 9)
+	status_label.add_theme_font_size_override("font_size", 16)
 	status_label.text = "Ready."
 	panel.add_child(status_label)
 

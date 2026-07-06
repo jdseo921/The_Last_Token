@@ -128,7 +128,7 @@ func _spawn_fragment(text: String, index: int) -> void:
 	frag.custom_minimum_size = FRAGMENT_SIZE
 	frag.size = FRAGMENT_SIZE
 	frag.clip_text = true
-	frag.add_theme_font_size_override("font_size", 11)
+	frag.add_theme_font_size_override("font_size", 16)
 	frag.position = Vector2(randf_range(PLAY_MIN.x, PLAY_MAX.x), randf_range(PLAY_MIN.y, PLAY_MAX.y))
 	frag.pressed.connect(_on_fragment_clicked.bind(index))
 	add_child(frag)

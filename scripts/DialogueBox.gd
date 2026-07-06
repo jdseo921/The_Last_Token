@@ -13,16 +13,31 @@ const ANTAGONIST_SPEAKERS := ["???", "\"Player\""]
 const MACHINE_SPEAKERS := [
 	"Cabinet 07",
 	"Staff Door",
+	"Staff Room Door",
 	"Vendo",
 	"Mr. Byte",
 	"Broken Cabinet",
 	"Truth Filter",
 	"Terminal",
 	"Memory Terminal",
+	"Memory System",
+	"Memory Echo",
+	"Security Tape",
+	"Maintenance Sync",
+	"Maintenance Note",
+	"Closing Checklist",
+	"Staff Schedule",
+	"Staff Record",
+	"Staff Records",
+	"System",
 ]
 
 @onready var panel: Panel = $Panel
 @onready var portrait_texture_rect: TextureRect = $Panel/Portrait
+const FONT_MACHINE := preload("res://assets/fonts/VT323-Regular.ttf")
+# Machine/terminal voices render in the CRT font. Humans - and ???, which must
+# share the player's font by design - use the theme default (m5x7).
+
 @onready var speaker_name_label: Label = $Panel/SpeakerName
 @onready var dialogue_text_label: Label = $Panel/DialogueText
 @onready var continue_prompt_label: Label = $Panel/ContinuePrompt
@@ -123,6 +138,7 @@ func _refresh_line() -> void:
 	var speaker := str(line.get("speaker", ""))
 	var text := str(line.get("text", ""))
 	speaker_name_label.text = speaker
+	_apply_speaker_font(speaker)
 	current_line_is_antagonist = _is_antagonist_speaker(speaker)
 	current_antagonist_effect = str(line.get("effect", "normal"))
 	antagonist_elapsed = 0.0
@@ -276,3 +292,11 @@ func _get_text_speed() -> float:
 	if settings == null:
 		return 1.0
 	return maxf(float(settings.get("text_speed")), 0.5)
+
+func _apply_speaker_font(speaker: String) -> void:
+	if MACHINE_SPEAKERS.has(speaker):
+		speaker_name_label.add_theme_font_override("font", FONT_MACHINE)
+		dialogue_text_label.add_theme_font_override("font", FONT_MACHINE)
+	else:
+		speaker_name_label.remove_theme_font_override("font")
+		dialogue_text_label.remove_theme_font_override("font")

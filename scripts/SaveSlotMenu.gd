@@ -73,7 +73,7 @@ func _build_slots() -> void:
 		var button := Button.new()
 		button.text = "MEMORY SLOT %d" % slot_id
 		button.custom_minimum_size = Vector2(0, 96)
-		button.add_theme_font_size_override("font_size", 10)
+		button.add_theme_font_size_override("font_size", 16)
 		button.pressed.connect(_on_slot_pressed.bind(slot_id))
 		slots_vbox.add_child(button)
 		slot_buttons.append(button)

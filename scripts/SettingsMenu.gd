@@ -156,7 +156,7 @@ func _style_slider(slider: HSlider) -> void:
 
 func _style_back_button() -> void:
 	back_button.text = back_button.text.to_upper()
-	back_button.add_theme_font_size_override("font_size", 14)
+	back_button.add_theme_font_size_override("font_size", 16)
 	back_button.add_theme_color_override("font_color", Color(0.9, 0.95, 0.98, 1.0))
 	var normal := StyleBoxFlat.new()
 	normal.bg_color = Color(0.02, 0.03, 0.04, 0.78)

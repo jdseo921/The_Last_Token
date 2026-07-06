@@ -73,8 +73,12 @@ static func get_current_hint(current_location_id: String) -> String:
 			return _local_or_route(current_location_id, "prize_corner", "LOCAL: Help Pip with the Prize Sort.")
 		"truth_filter":
 			return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Talk to Mr. Byte, then use Truth Filter.")
+		"gus_checkin_truth_filter":
+			return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Talk to Gus on the arcade floor.")
 		"circuit_soda":
 			return _local_or_route(current_location_id, "snack_alcove", "LOCAL: Talk to Vendo, then use Circuit Soda.")
+		"gus_checkin_prize_sort":
+			return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Talk to Gus on the arcade floor.")
 		"lost_shift_file":
 			return _get_lost_shift_hint(current_location_id, state)
 		"static_service_run":
@@ -106,7 +110,7 @@ func _build_nodes() -> void:
 	route_label = Label.new()
 	route_label.name = "RouteCueLabel"
 	route_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	route_label.add_theme_font_size_override("font_size", 10)
+	route_label.add_theme_font_size_override("font_size", 16)
 	route_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	route_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	route_label.text = ""

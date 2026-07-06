@@ -135,6 +135,9 @@ var opening_hint_monologue_seen := false
 var memory_signal_explainer_seen := false
 var midpoint_turn_seen := false
 var midpoint_told_mira := false
+# Hub check-ins with Gus between beats (story stops that justify the walk back).
+var gus_hub_checkin_truth_filter_done := false
+var gus_hub_checkin_prize_sort_done := false
 var last_announced_quest_id := ""
 var npc_dialogue_counts: Dictionary = {}
 var pending_spawn_id := ""
@@ -462,6 +465,8 @@ func reset_for_new_game() -> void:
 	memory_signal_explainer_seen = false
 	midpoint_turn_seen = false
 	midpoint_told_mira = false
+	gus_hub_checkin_truth_filter_done = false
+	gus_hub_checkin_prize_sort_done = false
 	last_announced_quest_id = ""
 	npc_dialogue_counts.clear()
 	pending_spawn_id = ""
@@ -761,10 +766,14 @@ func get_current_quest_id() -> String:
 		return "broken_high_score"
 	if lost_token_quest_completed and not lying_cabinets_completed:
 		return "truth_filter"
+	if lying_cabinets_completed and not gus_hub_checkin_truth_filter_done and not circuit_soda_completed:
+		return "gus_checkin_truth_filter"
 	if lying_cabinets_completed and not circuit_soda_completed:
 		return "circuit_soda"
 	if circuit_soda_completed and not prize_sort_completed and not lost_shift_file_completed and not maintenance_sync_completed and not story_puzzle_completed:
 		return "prize_sort"
+	if circuit_soda_completed and not gus_hub_checkin_prize_sort_done and not lost_shift_file_completed and not maintenance_sync_completed and not story_puzzle_completed:
+		return "gus_checkin_prize_sort"
 	if circuit_soda_completed and not lost_shift_file_completed and not maintenance_sync_completed and not story_puzzle_completed:
 		return "lost_shift_file"
 	if lost_shift_file_completed and not static_service_run_completed and not maintenance_sync_completed and not story_puzzle_completed:
@@ -803,6 +812,26 @@ func get_current_quest_data() -> Dictionary:
 				"summary": "Help Pip sort the prizes in Prize Corner.",
 				"details": "Pip in Prize Corner says the labels remember an order: Ticket Stub, Lost Token, then Blank Employee Badge. Sort them before the Lost Shift File.",
 			}, "prize_counter_secret")
+		"gus_checkin_truth_filter":
+			return {
+				"id": "gus_checkin_truth_filter",
+				"title": "Catch Up With Gus",
+				"summary": "Gus flagged you down - find him on the Arcade Hub floor.",
+				"details": "Gus heard the Truth Filter lose its argument and wants a word before the next machine. Find him on the Arcade Hub floor.",
+				"owner": "Gus",
+				"location": "ArcadeHub",
+				"required": true,
+			}
+		"gus_checkin_prize_sort":
+			return {
+				"id": "gus_checkin_prize_sort",
+				"title": "Gus Has a Lead",
+				"summary": "Talk to Gus in the Arcade Hub about the prize wall and the missing shift.",
+				"details": "Pip's prize wall stirred something loose. Gus wants to chase it his way: paperwork. Find him on the Arcade Hub floor before digging into the records.",
+				"owner": "Gus",
+				"location": "ArcadeHub",
+				"required": true,
+			}
 		"opening_look_around":
 			return _with_registry_quest_data({
 				"id": "opening_look_around",
@@ -1095,6 +1124,8 @@ func to_save_data() -> Dictionary:
 		"memory_signal_explainer_seen": memory_signal_explainer_seen,
 		"midpoint_turn_seen": midpoint_turn_seen,
 		"midpoint_told_mira": midpoint_told_mira,
+		"gus_hub_checkin_truth_filter_done": gus_hub_checkin_truth_filter_done,
+		"gus_hub_checkin_prize_sort_done": gus_hub_checkin_prize_sort_done,
 		"last_announced_quest_id": last_announced_quest_id,
 		"npc_dialogue_counts": npc_dialogue_counts.duplicate(true),
 	}
@@ -1284,6 +1315,8 @@ func apply_save_data(data: Dictionary) -> void:
 	memory_signal_explainer_seen = bool(data.get("memory_signal_explainer_seen", memory_signal_explainer_seen))
 	midpoint_turn_seen = bool(data.get("midpoint_turn_seen", midpoint_turn_seen))
 	midpoint_told_mira = bool(data.get("midpoint_told_mira", midpoint_told_mira))
+	gus_hub_checkin_truth_filter_done = bool(data.get("gus_hub_checkin_truth_filter_done", gus_hub_checkin_truth_filter_done))
+	gus_hub_checkin_prize_sort_done = bool(data.get("gus_hub_checkin_prize_sort_done", gus_hub_checkin_prize_sort_done))
 	last_announced_quest_id = str(data.get("last_announced_quest_id", last_announced_quest_id))
 	var dialogue_counts_value: Variant = data.get("npc_dialogue_counts", npc_dialogue_counts)
 	if dialogue_counts_value is Dictionary:

@@ -25,6 +25,8 @@ func _init() -> void:
 	_expect_first_text("gus sync anecdote", DIALOGUE_POOL.get_lines("gus", "maintenance_sync_completion_anecdote"), "Door's listening now.")
 	_expect_contains_text("gus sync anecdote", DIALOGUE_POOL.get_lines("gus", "maintenance_sync_completion_anecdote"), "It matched you against something in its log.")
 	_expect_contains_text("gus sync anecdote", DIALOGUE_POOL.get_lines("gus", "maintenance_sync_completion_anecdote"), "Some doors grieve. This one files it under access control.")
+	_expect_first_text("gus hub checkin 1", DIALOGUE_POOL.get_lines("gus", "hub_checkin_truth_filter"), "There you are. Heard the Truth Filter howl from two rooms away.")
+	_expect_first_text("gus hub checkin 2", DIALOGUE_POOL.get_lines("gus", "hub_checkin_prize_sort"), "Word travels. Pip let you touch the prize wall and it kept all its buttons.")
 	_expect_first_text("gus post reveal", DIALOGUE_POOL.get_lines("gus", "post_reveal_witness"), "Employee 04.")
 	_expect_contains_text("gus post reveal", DIALOGUE_POOL.get_lines("gus", "post_reveal_witness"), "I recognized pieces of the old you.")
 	_expect_first_text("vendo early flavor", DIALOGUE_POOL.get_lines("vendo", "early_flavor"), "Welcome, valued almost-customer.")

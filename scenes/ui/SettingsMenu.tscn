@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/SettingsMenu.gd" id="1"]
+[ext_resource type="FontFile" path="res://assets/fonts/PressStart2P-Regular.ttf" id="fpx_title"]
 
 [node name="SettingsMenu" type="CanvasLayer"]
 layer = 95
@@ -34,7 +35,8 @@ offset_left = 84.0
 offset_top = 42.0
 offset_right = 372.0
 offset_bottom = 68.0
-theme_override_font_sizes/font_size = 18
+theme_override_fonts/font = ExtResource("fpx_title")
+theme_override_font_sizes/font_size = 16
 text = "SETTINGS"
 horizontal_alignment = 1
 
@@ -61,7 +63,7 @@ theme_override_constants/separation = 8
 
 [node name="MasterVolumeLabel" type="Label" parent="Panel/ScrollContainer/VBox/MasterVolumeRow"]
 custom_minimum_size = Vector2(108, 30)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 16
 text = "Master Volume"
 vertical_alignment = 1
 
@@ -74,7 +76,7 @@ value = 100.0
 
 [node name="MasterVolumeValue" type="Label" parent="Panel/ScrollContainer/VBox/MasterVolumeRow"]
 custom_minimum_size = Vector2(44, 30)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 16
 text = "100%"
 horizontal_alignment = 2
 vertical_alignment = 1
@@ -85,7 +87,7 @@ theme_override_constants/separation = 8
 
 [node name="SfxVolumeLabel" type="Label" parent="Panel/ScrollContainer/VBox/SfxVolumeRow"]
 custom_minimum_size = Vector2(108, 30)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 16
 text = "SFX Volume"
 vertical_alignment = 1
 
@@ -98,7 +100,7 @@ value = 100.0
 
 [node name="SfxVolumeValue" type="Label" parent="Panel/ScrollContainer/VBox/SfxVolumeRow"]
 custom_minimum_size = Vector2(44, 30)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 16
 text = "100%"
 horizontal_alignment = 2
 vertical_alignment = 1
@@ -109,7 +111,7 @@ theme_override_constants/separation = 8
 
 [node name="MusicVolumeLabel" type="Label" parent="Panel/ScrollContainer/VBox/MusicVolumeRow"]
 custom_minimum_size = Vector2(108, 30)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 16
 text = "Music Volume"
 vertical_alignment = 1
 
@@ -122,7 +124,7 @@ value = 75.0
 
 [node name="MusicVolumeValue" type="Label" parent="Panel/ScrollContainer/VBox/MusicVolumeRow"]
 custom_minimum_size = Vector2(44, 30)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 16
 text = "75%"
 horizontal_alignment = 2
 vertical_alignment = 1
@@ -139,7 +141,7 @@ theme_override_constants/separation = 8
 
 [node name="DialogueOpacityLabel" type="Label" parent="Panel/ScrollContainer/VBox/DialogueOpacityRow"]
 custom_minimum_size = Vector2(108, 30)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 16
 text = "Box Opacity"
 vertical_alignment = 1
 
@@ -152,7 +154,7 @@ value = 92.0
 
 [node name="DialogueOpacityValue" type="Label" parent="Panel/ScrollContainer/VBox/DialogueOpacityRow"]
 custom_minimum_size = Vector2(44, 30)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 16
 text = "92%"
 horizontal_alignment = 2
 vertical_alignment = 1
@@ -163,7 +165,7 @@ theme_override_constants/separation = 8
 
 [node name="TextSpeedLabel" type="Label" parent="Panel/ScrollContainer/VBox/TextSpeedRow"]
 custom_minimum_size = Vector2(108, 30)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 16
 text = "Text Speed"
 vertical_alignment = 1
 
@@ -176,7 +178,7 @@ value = 100.0
 
 [node name="TextSpeedValue" type="Label" parent="Panel/ScrollContainer/VBox/TextSpeedRow"]
 custom_minimum_size = Vector2(44, 30)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 16
 text = "1.0x"
 horizontal_alignment = 2
 vertical_alignment = 1
@@ -193,7 +195,7 @@ theme_override_constants/separation = 8
 
 [node name="WindowSizeLabel" type="Label" parent="Panel/ScrollContainer/VBox/WindowSizeRow"]
 custom_minimum_size = Vector2(108, 30)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 16
 text = "Window Size"
 vertical_alignment = 1
 

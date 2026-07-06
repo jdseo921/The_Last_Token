@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/PauseMenu.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/ui/SettingsMenu.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/ui/QuestNotice.tscn" id="3"]
+[ext_resource type="FontFile" path="res://assets/fonts/PressStart2P-Regular.ttf" id="fpx_title"]
 
 [node name="PauseMenu" type="CanvasLayer"]
 layer = 90
@@ -32,7 +33,8 @@ theme_override_constants/separation = 8
 
 [node name="TitleLabel" type="Label" parent="Panel/VBox"]
 custom_minimum_size = Vector2(0, 30)
-theme_override_font_sizes/font_size = 18
+theme_override_fonts/font = ExtResource("fpx_title")
+theme_override_font_sizes/font_size = 16
 text = "PAUSED"
 horizontal_alignment = 1
 
@@ -66,7 +68,7 @@ text = "Return to Main Menu"
 
 [node name="StatusLabel" type="Label" parent="Panel/VBox"]
 custom_minimum_size = Vector2(0, 36)
-theme_override_font_sizes/font_size = 11
+theme_override_font_sizes/font_size = 16
 text = ""
 horizontal_alignment = 1
 autowrap_mode = 3

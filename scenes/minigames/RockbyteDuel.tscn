@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/RockbyteDuel.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/minigames/common/MinigameStage.tscn" id="2_stage"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="3_pause"]
+[ext_resource type="FontFile" path="res://assets/fonts/PressStart2P-Regular.ttf" id="fpx_title"]
 
 [node name="RockbyteDuel" type="Control"]
 layout_mode = 3
@@ -61,7 +62,8 @@ offset_left = 56.0
 offset_top = 40.0
 offset_right = 584.0
 offset_bottom = 74.0
-theme_override_font_sizes/font_size = 24
+theme_override_fonts/font = ExtResource("fpx_title")
+theme_override_font_sizes/font_size = 16
 text = "ROCKBYTE DUEL"
 horizontal_alignment = 1
 
@@ -98,8 +100,8 @@ offset_left = 16.0
 offset_top = 8.0
 offset_right = 508.0
 offset_bottom = 34.0
-theme_override_font_sizes/font_size = 18
-text = "LEFT PILE: 5        RIGHT PILE: 5"
+theme_override_font_sizes/font_size = 16
+text = "LEFT PILE: 6        RIGHT PILE: 6"
 horizontal_alignment = 1
 
 [node name="PilesHBox" type="HBoxContainer" parent="GameArea"]
@@ -151,6 +153,10 @@ color = Color(0.68, 0.72, 0.78, 1)
 custom_minimum_size = Vector2(18, 18)
 color = Color(0.68, 0.72, 0.78, 1)
 
+[node name="Rock6" type="ColorRect" parent="GameArea/PilesHBox/LeftPilePanel/LeftRockGrid"]
+custom_minimum_size = Vector2(18, 18)
+color = Color(0.68, 0.72, 0.78, 1)
+
 [node name="RightPilePanel" type="Panel" parent="GameArea/PilesHBox"]
 custom_minimum_size = Vector2(190, 68)
 
@@ -191,6 +197,10 @@ color = Color(0.68, 0.72, 0.78, 1)
 custom_minimum_size = Vector2(18, 18)
 color = Color(0.68, 0.72, 0.78, 1)
 
+[node name="Rock6" type="ColorRect" parent="GameArea/PilesHBox/RightPilePanel/RightRockGrid"]
+custom_minimum_size = Vector2(18, 18)
+color = Color(0.68, 0.72, 0.78, 1)
+
 [node name="Stage" parent="." instance=ExtResource("2_stage")]
 layout_mode = 1
 anchors_preset = 15
@@ -214,11 +224,13 @@ offset_right = 512.0
 offset_bottom = 58.0
 
 [node name="TurnLabel" type="Label" parent="StatusPanel/StatusVBox"]
+theme_override_font_sizes/font_size = 16
 custom_minimum_size = Vector2(0, 20)
 text = "Your turn"
 horizontal_alignment = 1
 
 [node name="StatusLabel" type="Label" parent="StatusPanel/StatusVBox"]
+theme_override_font_sizes/font_size = 16
 custom_minimum_size = Vector2(0, 32)
 text = "Choose your move."
 horizontal_alignment = 1

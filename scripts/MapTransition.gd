@@ -53,9 +53,10 @@ func _build_marker_visuals() -> void:
 		add_child(name_label)
 	name_label.text = _get_destination_name()
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_label.add_theme_font_size_override("font_size", 9)
+	name_label.add_theme_font_override("font", preload("res://assets/fonts/m3x6.ttf"))
+	name_label.add_theme_font_size_override("font_size", 16)
 	name_label.add_theme_color_override("font_outline_color", Color(0.01, 0.02, 0.03, 1.0))
-	name_label.add_theme_constant_override("outline_size", 4)
+	name_label.add_theme_constant_override("outline_size", 2)
 	var label_offset := _label_offset(dir)
 	name_label.position = label_offset
 	name_label.size = Vector2(150, 16)
@@ -155,6 +156,9 @@ func _on_body_entered(body: Node) -> void:
 
 func _try_transition() -> void:
 	if transition_started:
+		return
+	var scene := get_tree().current_scene
+	if scene != null and scene.has_method("try_block_exit") and bool(scene.call("try_block_exit", self)):
 		return
 	if not _required_flag_is_met():
 		_show_locked_dialogue()

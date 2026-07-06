@@ -57,7 +57,7 @@ func _style_menu_button(button: Button) -> void:
 	button.add_theme_color_override("font_color", Color(0.88, 0.93, 0.96, 1.0))
 	button.add_theme_color_override("font_hover_color", Color(0.98, 1.0, 1.0, 1.0))
 	button.add_theme_color_override("font_focus_color", Color(0.98, 1.0, 1.0, 1.0))
-	button.add_theme_font_size_override("font_size", 14)
+	button.add_theme_font_size_override("font_size", 16)
 	button.add_theme_stylebox_override("normal", _make_button_style(Color(0.015, 0.022, 0.032, 0.78), Color(0.18, 0.8, 0.92, 0.42), 1))
 	button.add_theme_stylebox_override("hover", _make_button_style(Color(0.035, 0.052, 0.07, 0.9), Color(0.25, 0.95, 1.0, 0.72), 1))
 	button.add_theme_stylebox_override("pressed", _make_button_style(Color(0.02, 0.015, 0.028, 0.94), Color(0.95, 0.18, 0.9, 0.85), 1))

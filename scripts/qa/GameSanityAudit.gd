@@ -27,8 +27,8 @@ const MUSIC_CONTEXTS := [
 ]
 const DIALOGUE_TEXT_WIDTH_PORTRAIT := 454.0
 const DIALOGUE_TEXT_WIDTH_PLAIN := 558.0
-const DIALOGUE_TEXT_HEIGHT := 90.0
-const DIALOGUE_FONT_SIZE := 12
+const DIALOGUE_TEXT_HEIGHT := 84.0
+const DIALOGUE_FONT_SIZE := 16
 const TEST_SLOT := 3
 
 var fails := 0
@@ -90,7 +90,12 @@ func _check_transitions() -> void:
 	print("  B transitions: %d exits checked across %d maps" % [checked, MAPS.size()])
 
 func _check_dialogue_overflow() -> void:
-	var font: Font = ThemeDB.fallback_font
+	var font: Font = load("res://assets/fonts/m5x7.ttf")
+	machine_font = load("res://assets/fonts/VT323-Regular.ttf")
+	if font == null:
+		font = ThemeDB.fallback_font
+	if machine_font == null:
+		machine_font = font
 	measured = 0
 	var dir := DirAccess.open("res://data/dialogue")
 	if dir == null:
@@ -128,7 +133,12 @@ func _walk_dialogue(node: Variant, source: String, font: Font) -> void:
 		for v in node:
 			_walk_dialogue(v, source, font)
 
+var machine_font: Font = null
+const DIALOGUE_BOX_SCRIPT := preload("res://scripts/DialogueBox.gd")
+
 func _measure_line(line: Dictionary, source: String, font: Font) -> void:
+	if machine_font != null and DIALOGUE_BOX_SCRIPT.MACHINE_SPEAKERS.has(str(line.get("speaker", ""))):
+		font = machine_font
 	var text := str(line.get("text", ""))
 	var width := DIALOGUE_TEXT_WIDTH_PORTRAIT if line.has("portrait") else DIALOGUE_TEXT_WIDTH_PLAIN
 	var size := font.get_multiline_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, width, DIALOGUE_FONT_SIZE)
