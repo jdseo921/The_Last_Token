@@ -164,11 +164,23 @@ func _get_optional_first_meeting_lines(was_pip_met: bool) -> Array:
 	return _get_first_meeting_lines()
 
 func _handle_prize_counter() -> void:
+	if GameState.post_reveal_roam_unlocked and _is_prize_sort_completed():
+		start_dialogue(_get_pip_lines("prize_sort_replay_offer", [
+			{"speaker": "Pip", "text": "The prizes remember their order now. They like being remembered."},
+			{"speaker": "Pip", "text": "Want to shuffle them and put them right again?"},
+		]), Callable(self, "_offer_prize_sort_replay"))
+		return
 	if _is_prize_sort_completed():
 		start_dialogue(_get_environment_lines("prize_counter_restored", [
 			{"speaker": "Prize Counter", "text": "The prize labels are neatly sorted."},
 			{"speaker": "Prize Counter", "text": "Ticket Stub. Lost Token. Blank Employee Badge."},
 		]))
+		return
+	if _prize_sort_unlocked() and not GameState.pip_met:
+		start_dialogue([
+			{"speaker": "Player", "text": "Three loose labels under glass, and one very alert plush."},
+			{"speaker": "Player", "text": "I should ask Pip before touching anything."},
+		])
 		return
 	if _prize_sort_unlocked():
 		var lines := _get_environment_state_lines("prize_counter", [
@@ -263,6 +275,12 @@ func _on_prize_sort_choice_selected(index: int) -> void:
 	_finish_failed_prize_sort()
 
 func _show_pip_prize_completion_dialogue() -> void:
+	if GameState.consume_postgame_replay_return("prize_sort"):
+		start_dialogue(_get_pip_lines("prize_sort_replay_return", [
+			{"speaker": "Pip", "text": "All sorted. Again. You did not have to."},
+			{"speaker": "Pip", "text": "Which is exactly why it counts."},
+		]))
+		return
 	if not GameState.pip_prize_anecdote_seen:
 		GameState.pip_prize_anecdote_seen = true
 		start_dialogue(_get_pip_lines("prize_sort_completion", [
@@ -387,3 +405,6 @@ func _apply_sprite_texture(sprite_node: Sprite2D, path: String) -> bool:
 	sprite_node.texture = resource
 	sprite_node.visible = true
 	return true
+
+func _offer_prize_sort_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Sort the prizes again?", "prize_sort", Callable(self, "_start_prize_sort"))

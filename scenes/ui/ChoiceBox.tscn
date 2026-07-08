@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/ChoiceBox.gd" id="1"]
+[ext_resource type="FontFile" path="res://assets/fonts/m6x11.ttf" id="fpx_body"]
 
 [node name="ChoiceBox" type="CanvasLayer"]
 script = ExtResource("1")
@@ -21,6 +22,7 @@ offset_left = 24.0
 offset_top = 16.0
 offset_right = 472.0
 offset_bottom = 100.0
+theme_override_fonts/font = ExtResource("fpx_body")
 theme_override_font_sizes/font_size = 16
 text = "Question"
 horizontal_alignment = 1

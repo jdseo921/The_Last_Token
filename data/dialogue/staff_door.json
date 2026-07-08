@@ -88,6 +88,20 @@
         {"speaker": "Staff Door", "text": "ENTER STAFF ROOM?"}
       ]
     ],
+    "final_night_walk_replay_offer": [
+      [
+        {"speaker": "Staff Door", "text": "FINAL NIGHT ROUTE: ARCHIVED."},
+        {"speaker": "Staff Door", "text": "WALK AVAILABLE AS MEMORIAL."},
+        {"speaker": "Staff Door", "text": "NOTHING DEPENDS ON IT. EMPLOYEE 04 MAY PROCEED ANYWAY."}
+      ]
+    ],
+    "final_night_walk_replay_return": [
+      [
+        {"speaker": "Staff Door", "text": "WALK COMPLETE. ROUTE UNCHANGED."},
+        {"speaker": "Staff Door", "text": "SOME DOORS STAY OPEN."},
+        {"speaker": "Staff Door", "text": "THIS IS ONE."}
+      ]
+    ],
     "post_reveal_stable": [
       [
         {"speaker": "Staff Door", "text": "RESTORE PLAYBACK COMPLETE."},

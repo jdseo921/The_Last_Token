@@ -138,6 +138,10 @@ var midpoint_told_mira := false
 # Hub check-ins with Gus between beats (story stops that justify the walk back).
 var gus_hub_checkin_truth_filter_done := false
 var gus_hub_checkin_prize_sort_done := false
+# Post-game replay tracking (runtime only, never saved): which stage was
+# relaunched from a machine's replay offer, and whether it was won.
+var postgame_replay_pending := ""
+var postgame_replay_won := false
 var last_announced_quest_id := ""
 var npc_dialogue_counts: Dictionary = {}
 var pending_spawn_id := ""
@@ -467,6 +471,8 @@ func reset_for_new_game() -> void:
 	midpoint_told_mira = false
 	gus_hub_checkin_truth_filter_done = false
 	gus_hub_checkin_prize_sort_done = false
+	postgame_replay_pending = ""
+	postgame_replay_won = false
 	last_announced_quest_id = ""
 	npc_dialogue_counts.clear()
 	pending_spawn_id = ""
@@ -495,6 +501,7 @@ func start_lost_token_quest() -> void:
 	lost_token_quest_started = true
 
 func collect_lost_token() -> void:
+	flag_postgame_replay_win()
 	lost_token_collected = true
 
 func complete_lost_token_quest() -> void:
@@ -505,6 +512,7 @@ func complete_lost_token_quest() -> void:
 	update_memory_signal_from_progress()
 
 func complete_truth_filter() -> void:
+	flag_postgame_replay_win()
 	truth_filter_quest_started = true
 	lying_cabinets_completed = true
 	second_memory_fragment_collected = true
@@ -515,6 +523,7 @@ func start_circuit_soda() -> void:
 	update_memory_signal_from_progress()
 
 func complete_circuit_soda() -> void:
+	flag_postgame_replay_win()
 	circuit_soda_started = true
 	circuit_soda_completed = true
 	lost_shift_file_started = true
@@ -547,6 +556,7 @@ func start_static_service_run() -> void:
 	update_memory_signal_from_progress()
 
 func complete_static_service_run() -> void:
+	flag_postgame_replay_win()
 	static_service_run_started = true
 	static_service_run_completed = true
 	update_memory_signal_from_progress()
@@ -556,6 +566,7 @@ func start_maintenance_sync() -> void:
 	update_memory_signal_from_progress()
 
 func complete_maintenance_sync() -> void:
+	flag_postgame_replay_win()
 	maintenance_sync_started = true
 	maintenance_sync_completed = true
 	story_puzzle_completed = true
@@ -571,6 +582,7 @@ func record_security_tape_wrong_order() -> void:
 	security_tape_wrong_order_count += 1
 
 func complete_security_tape_assembly() -> void:
+	flag_postgame_replay_win()
 	security_tape_assembly_started = true
 	security_tape_assembly_completed = true
 	update_memory_signal_from_progress()
@@ -580,6 +592,7 @@ func start_final_night_walk() -> void:
 	update_memory_signal_from_progress()
 
 func complete_final_night_walk() -> void:
+	flag_postgame_replay_win()
 	final_night_walk_started = true
 	final_night_walk_completed = true
 	update_memory_signal_from_progress()
@@ -589,6 +602,7 @@ func start_memory_echo() -> void:
 	update_memory_signal_from_progress()
 
 func complete_memory_echo() -> void:
+	flag_postgame_replay_win()
 	memory_echo_started = true
 	memory_echo_completed = true
 	staff_room_unlocked = true
@@ -632,6 +646,22 @@ func is_conscience_encounter_seen(encounter_id: String) -> bool:
 		_:
 			return false
 
+func begin_postgame_replay(stage_id: String) -> void:
+	postgame_replay_pending = stage_id
+	postgame_replay_won = false
+
+func flag_postgame_replay_win() -> void:
+	if not postgame_replay_pending.is_empty():
+		postgame_replay_won = true
+
+func consume_postgame_replay_return(stage_id: String) -> bool:
+	if postgame_replay_pending != stage_id:
+		return false
+	var won := postgame_replay_won
+	postgame_replay_pending = ""
+	postgame_replay_won = false
+	return won
+
 func unlock_player_glitched_form() -> void:
 	player_glitched_form_unlocked = true
 
@@ -656,9 +686,11 @@ func should_use_glitched_player_sprite() -> bool:
 	return player_glitched_form_unlocked or post_reveal_roam_unlocked or twist_reveal_seen
 
 func complete_broken_high_score() -> void:
+	flag_postgame_replay_win()
 	broken_high_score_completed = true
 
 func complete_pip_secret() -> void:
+	flag_postgame_replay_win()
 	pip_secret_started = true
 	pip_secret_completed = true
 	prize_sort_completed = true
@@ -826,7 +858,7 @@ func get_current_quest_data() -> Dictionary:
 			return {
 				"id": "gus_checkin_prize_sort",
 				"title": "Gus Has a Lead",
-				"summary": "Talk to Gus in the Arcade Hub about the prize wall and the missing shift.",
+				"summary": "Talk to Gus in the Arcade Hub about the prize wall.",
 				"details": "Pip's prize wall stirred something loose. Gus wants to chase it his way: paperwork. Find him on the Arcade Hub floor before digging into the records.",
 				"owner": "Gus",
 				"location": "ArcadeHub",

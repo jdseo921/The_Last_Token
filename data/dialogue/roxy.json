@@ -47,7 +47,9 @@
         {"speaker": "Roxy", "text": "Blank names are bad scoreboard manners."},
         {"speaker": "Roxy", "text": "Corrupted rankings do that when they remember a player and refuse the label.", "portrait": "res://assets/art/portraits/roxy/roxy_respectful.png"},
         {"speaker": "Roxy", "text": "Do not let it go to your head."},
-        {"speaker": "Roxy", "text": "You still walk like a tutorial."}
+        {"speaker": "Roxy", "text": "You still walk like a tutorial."},
+        {"speaker": "Roxy", "text": "Now go see Mr. Byte before his Truth Filter starts grading on a curve."},
+        {"speaker": "Roxy", "text": "He has been itching to sort somebody's contradictions all night."}
       ]
     ],
     "repeat_after_completion": [
@@ -64,6 +66,20 @@
         {"speaker": "Roxy", "text": "I checked the board again."},
         {"speaker": "Roxy", "text": "Still blank."},
         {"speaker": "Roxy", "text": "Still weirdly yours.", "portrait": "res://assets/art/portraits/roxy/roxy_respectful.png"}
+      ]
+    ],
+    "broken_high_score_replay_offer": [
+      [
+        {"speaker": "Roxy", "text": "Back at my cabinet, 04? The board tells the truth now because of you."},
+        {"speaker": "Roxy", "text": "Does not mean I will let you pad your score in peace."},
+        {"speaker": "Roxy", "text": "Well? Coin up or step aside."}
+      ]
+    ],
+    "broken_high_score_replay_return": [
+      [
+        {"speaker": "Roxy", "text": "Look at that. A fixed board, zero stakes, and you still played like rent was due."},
+        {"speaker": "Roxy", "text": "The number does not matter anymore."},
+        {"speaker": "Roxy", "text": "That is exactly why it looks good on you."}
       ]
     ],
     "post_reveal": [

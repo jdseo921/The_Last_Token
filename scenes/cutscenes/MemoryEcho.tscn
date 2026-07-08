@@ -27,6 +27,7 @@ color = Color(0.22, 0.9, 0.95, 0.12)
 polygon = PackedVector2Array(-134, -92, 124, -96, 166, 0, 120, 92, -126, 96, -168, 0)
 
 [node name="GlitchBarA" type="ColorRect" parent="."]
+mouse_filter = 2
 modulate = Color(1, 1, 1, 0.05)
 layout_mode = 0
 offset_left = 88.0
@@ -36,6 +37,7 @@ offset_bottom = 138.0
 color = Color(0.18, 0.95, 0.9, 1)
 
 [node name="GlitchBarB" type="ColorRect" parent="."]
+mouse_filter = 2
 modulate = Color(1, 1, 1, 0.04)
 layout_mode = 0
 offset_left = 124.0

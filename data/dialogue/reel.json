@@ -197,6 +197,18 @@
         }
       ]
     ],
+    "memory_echo_replay_offer": [
+      [
+        {"speaker": "Reel", "text": "The last set plays clean now, pal. Every track filed under its real name."},
+        {"speaker": "Reel", "text": "Want to hear it again? Encores are the only reruns worth keeping."}
+      ]
+    ],
+    "memory_echo_replay_return": [
+      [
+        {"speaker": "Reel", "text": "Same songs. Lighter key."},
+        {"speaker": "Reel", "text": "That is what healing sounds like on tape."}
+      ]
+    ],
     "post_reveal_witness": [
       [
         {

@@ -265,11 +265,13 @@ func _build_background() -> void:
 		add_child(screen)
 	else:
 		var background := ColorRect.new()
+		background.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		background.name = "Background"
 		background.set_anchors_preset(Control.PRESET_FULL_RECT)
 		background.color = Color(0.018, 0.02, 0.028, 1.0)
 		add_child(background)
 	var panel := ColorRect.new()
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel.name = "Panel"
 	if screen_tex != null:
 		var cols := 0
@@ -287,6 +289,7 @@ func _build_background() -> void:
 	add_child(panel)
 	if screen_tex != null:
 		var side := ColorRect.new()
+		side.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		side.name = "SidePanelBacking"
 		side.position = Vector2(side_panel_x - 12, grid_origin.y - 26)
 		side.size = Vector2(632 - side_panel_x, 322)

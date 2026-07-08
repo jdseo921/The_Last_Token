@@ -149,6 +149,12 @@ func _handle_memory_echo() -> void:
 			{"speaker": "Memory Echo", "text": "FINAL NIGHT WALK REQUIRED."},
 		]))
 		return
+	if GameState.post_reveal_roam_unlocked and GameState.memory_echo_completed and GameState.get_npc_dialogue_count("reel_witness") > 0:
+		start_dialogue(DIALOGUE_POOL.get_lines("reel", "memory_echo_replay_offer", [
+			{"speaker": "Reel", "text": "The last set plays clean now, pal."},
+			{"speaker": "Reel", "text": "Want to hear it again? Encores are the only reruns worth keeping."},
+		]), Callable(self, "_offer_memory_echo_replay"))
+		return
 	if not GameState.memory_echo_completed:
 		if not GameState.memory_echo_started:
 			GameState.start_memory_echo()
@@ -189,6 +195,12 @@ func _handle_security_tape() -> void:
 			{"speaker": "Staff Door", "text": "SECURITY TAPE LOCKED."},
 			{"speaker": "Staff Door", "text": "MAINTENANCE SYNC REQUIRED."},
 		]))
+		return
+	if GameState.post_reveal_roam_unlocked and GameState.security_tape_assembly_completed and GameState.get_npc_dialogue_count("coily_witness") > 0:
+		start_dialogue(DIALOGUE_POOL.get_lines("coily", "security_tape_replay_offer", [
+			{"speaker": "Coily", "text": "Movie night, pal? Every frame belongs now."},
+			{"speaker": "Coily", "text": "I like this cut better. Everybody walks out of it."},
+		]), Callable(self, "_offer_security_tape_replay"))
 		return
 	if GameState.security_tape_assembly_completed:
 		var completed_lines := _get_environment_lines("security_tape_terminal_restored", [
@@ -237,6 +249,12 @@ func _handle_final_night_walk() -> void:
 			{"speaker": "Memory System", "text": "FINAL NIGHT WALK LOCKED."},
 			{"speaker": "Memory System", "text": "SECURITY TAPE REQUIRED."},
 		]))
+		return
+	if GameState.post_reveal_roam_unlocked and GameState.final_night_walk_completed:
+		start_dialogue(_get_staff_door_lines("final_night_walk_replay_offer", [
+			{"speaker": "Staff Door", "text": "FINAL NIGHT ROUTE: ARCHIVED."},
+			{"speaker": "Staff Door", "text": "WALK AVAILABLE AS MEMORIAL."},
+		]), Callable(self, "_offer_final_night_walk_replay"))
 		return
 	if GameState.final_night_walk_completed:
 		if not GameState.staff_door_final_walk_anecdote_seen:
@@ -426,6 +444,24 @@ func _maybe_start_conscience_encounter() -> void:
 func _maybe_play_completion_anecdote() -> void:
 	if _dialogue_is_active() or ConscienceEncounterDirector.is_encounter_active():
 		return
+	if GameState.consume_postgame_replay_return("security_tape"):
+		start_dialogue(DIALOGUE_POOL.get_lines("coily", "security_tape_replay_return", [
+			{"speaker": "Coily", "text": "And it still ends okay! I checked every frame twice."},
+			{"speaker": "Coily", "text": "Come back any time. I will keep the reel warm for you, 04."},
+		]))
+		return
+	if GameState.consume_postgame_replay_return("final_night_walk"):
+		start_dialogue(_get_staff_door_lines("final_night_walk_replay_return", [
+			{"speaker": "Staff Door", "text": "WALK COMPLETE. ROUTE UNCHANGED."},
+			{"speaker": "Staff Door", "text": "SOME DOORS STAY OPEN. THIS IS ONE."},
+		]))
+		return
+	if GameState.consume_postgame_replay_return("memory_echo"):
+		start_dialogue(DIALOGUE_POOL.get_lines("reel", "memory_echo_replay_return", [
+			{"speaker": "Reel", "text": "Same songs. Lighter key."},
+			{"speaker": "Reel", "text": "That is what healing sounds like on tape."},
+		]))
+		return
 	if GameState.memory_echo_completed and not GameState.twist_reveal_seen and GameState.get_npc_dialogue_count("reel_echo_completion") == 0:
 		GameState.increment_npc_dialogue_count("reel_echo_completion")
 		start_dialogue(DIALOGUE_POOL.get_lines("reel", "memory_echo_completion", [
@@ -439,3 +475,12 @@ func _maybe_play_completion_anecdote() -> void:
 			{"speaker": "Coily", "text": "You put the night back in order, pal."},
 			{"speaker": "Coily", "text": "One frame still does not belong. Keep noticing it."},
 		]))
+
+func _offer_security_tape_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Restore the tape again?", "security_tape", Callable(self, "_go_to_security_tape_assembly"))
+
+func _offer_final_night_walk_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Walk the final night again?", "final_night_walk", Callable(self, "_go_to_final_night_walk"))
+
+func _offer_memory_echo_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Play the last set again?", "memory_echo", Callable(self, "_go_to_memory_echo"))

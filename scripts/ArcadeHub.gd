@@ -32,8 +32,6 @@ const PORTRAIT_CABINET_07_SCREEN := "res://assets/art/portraits/mr_byte/cabinet_
 @onready var post_reveal_hint_label: Label = $UILayer/PostRevealHintLabel
 @onready var objective_hint_background: ColorRect = $UILayer/ObjectiveHintBackground
 @onready var objective_hint_label: Label = $UILayer/ObjectiveHintLabel
-@onready var memory_signal_background: ColorRect = $UILayer/MemorySignalBackground
-@onready var memory_signal_label: Label = $UILayer/MemorySignalLabel
 @onready var quest_notice: CanvasLayer = $QuestNotice
 @onready var intro_fade_overlay: ColorRect = $IntroFadeLayer/IntroFadeOverlay
 @onready var pause_menu: CanvasLayer = $PauseMenu
@@ -47,7 +45,6 @@ var cabinet_glow_tween: Tween = null
 var intro_active := false
 var intro_fade_tween: Tween = null
 var last_dialogue_repeat_count := 0
-var memory_signal_tween: Tween = null
 var aftermath_pulse_tween: Tween = null
 
 func _ready() -> void:
@@ -74,6 +71,12 @@ func _maybe_play_rockbyte_anecdote() -> void:
 	# then serves the second sequential set.
 	if intro_active or _dialogue_is_active() or ConscienceEncounterDirector.is_encounter_active():
 		return
+	if GameState.consume_postgame_replay_return("rockbyte"):
+		start_dialogue(_get_cabinet07_lines("post_game_replay_return", [
+			{"speaker": "Cabinet 07", "text": "SESSION COMPLETE. NO TOKEN DISPENSED.", "portrait": PORTRAIT_CABINET_07_SCREEN},
+			{"speaker": "Cabinet 07", "text": "YOU PLAYED FOR NO REASON. LOG ENTRY: HEALTHY.", "portrait": PORTRAIT_CABINET_07_SCREEN},
+		]))
+		return
 	if not GameState.rockbyte_duel_completed or GameState.lost_token_quest_completed:
 		return
 	if GameState.get_npc_dialogue_count("cabinet07_rockbyte_auto") > 0:
@@ -92,6 +95,7 @@ func _maybe_show_controls_hint() -> void:
 	layer.layer = 60
 	add_child(layer)
 	var backing := ColorRect.new()
+	backing.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	backing.position = Vector2(10, 370)
 	backing.size = Vector2(324, 22)
 	backing.color = Color(0.01, 0.014, 0.02, 0.72)
@@ -263,20 +267,15 @@ func _refresh_hint() -> void:
 
 func _refresh_objective_hint() -> void:
 	objective_hint_label.text = _get_objective_hint_text()
-	_refresh_memory_signal_label()
 	_refresh_objective_hint_visibility()
 	_refresh_hub_art_states()
 
 func _refresh_objective_hint_visibility() -> void:
 	if objective_hint_label == null or objective_hint_background == null:
 		return
-	var should_show := _objective_hint_should_be_visible()
 	# objective text now lives in the shared top-right HUD (QuestNotice)
 	objective_hint_label.visible = false
 	objective_hint_background.visible = false
-	if memory_signal_label != null and memory_signal_background != null:
-		memory_signal_label.visible = should_show
-		memory_signal_background.visible = should_show
 
 func _objective_hint_should_be_visible() -> bool:
 	if _get_objective_hint_text().is_empty():
@@ -332,20 +331,6 @@ func _get_objective_hint_text() -> String:
 		"talk_to_witnesses":
 			return "Objective: Talk to witnesses. Start with Mira and Cabinet 07."
 	return ""
-
-func _refresh_memory_signal_label() -> void:
-	GameState.update_memory_signal_from_progress()
-	if memory_signal_label == null:
-		return
-	memory_signal_label.text = "Memory Signal: %s" % GameState.get_memory_signal_label()
-	match GameState.memory_signal_level:
-		GameState.MEMORY_SIGNAL_FRACTURED:
-			memory_signal_label.modulate = Color(1.0, 0.78, 1.0, 1.0)
-		GameState.MEMORY_SIGNAL_UNEASY:
-			memory_signal_label.modulate = Color(0.82, 0.95, 1.0, 1.0)
-		_:
-			memory_signal_label.modulate = Color.WHITE
-	AudioManager.play_music_for_context("arcade_hub")
 
 func _dialogue_is_active() -> bool:
 	if dialogue_box == null:
@@ -503,7 +488,7 @@ func _get_memory_signal_explainer_lines() -> Array:
 		{"speaker": "Mira", "text": "Every game you win back and every thing you fix, the arcade remembers a little more."},
 		{"speaker": "Mira", "text": "Remember enough, and the Staff Room at the back will finally open."},
 		{"speaker": "Mira", "text": "That is where the last of it is waiting."},
-		{"speaker": "Mira", "text": "The reading at the top of the floor - the Memory Signal - just shows how much it remembers so far."},
+		{"speaker": "Mira", "text": "The machines call that remembering the Memory Signal. If one mutters about it, now you know what it means."},
 		{"speaker": "Mira", "text": "Start with Cabinet 07 and your token. I will point you onward from there."},
 	]
 
@@ -572,9 +557,15 @@ func _handle_mira() -> void:
 			{"speaker": "Mira", "text": "That token used to be just a prize."},
 			{"speaker": "Mira", "text": "Then it became proof that part of you could still return."},
 			{"speaker": "Mira", "text": "The token woke something."},
-			{"speaker": "Mira", "text": "Now the arcade has to decide which memories are true."},
-			{"speaker": "Mira", "text": "Mr. Byte can open the Truth Filter."},
+			{"speaker": "Mira", "text": "Start in Cabinet Row. Roxy guards a score cabinet that is still lying about a record."},
+			{"speaker": "Mira", "text": "Help her set it straight."},
 		]), Callable(self, "_complete_lost_token_with_mira_anecdote"))
+		return
+	if GameState.lost_token_quest_completed and not GameState.broken_high_score_completed and not GameState.lying_cabinets_completed:
+		start_dialogue(_get_mira_lines("broken_high_score_transition", [
+			{"speaker": "Mira", "text": "Cabinet Row first. Roxy's score cabinet is still lying about a record."},
+			{"speaker": "Mira", "text": "Set the board straight with her. Then Mr. Byte will want a word about truth."},
+		]))
 		return
 	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
 		start_dialogue(_get_mira_lines("truth_filter_transition", [
@@ -972,6 +963,7 @@ func _handle_mr_byte() -> void:
 		return
 	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
 		GameState.mr_byte_intro_seen = true
+		GameState.truth_filter_quest_started = true
 		start_dialogue(_get_mr_byte_sequential_lines("truth_filter_intro", [
 			{"speaker": "Mr. Byte", "text": "Memory Signal: Uneasy."},
 			{"speaker": "Mr. Byte", "text": "Recommended action: proceed to Cabinet Row."},
@@ -1017,6 +1009,12 @@ func _handle_mr_byte() -> void:
 	]))
 
 func _handle_cabinet_07() -> void:
+	if _is_post_reveal() and GameState.witness_cabinet07_heard:
+		start_dialogue(_get_cabinet07_lines("post_game_replay_offer", [
+			{"speaker": "Cabinet 07", "text": "EMPLOYEE 04 DETECTED AT CABINET.", "portrait": PORTRAIT_CABINET_07_SCREEN},
+			{"speaker": "Cabinet 07", "text": "REMATCH AVAILABLE. STAKES: NONE.", "portrait": PORTRAIT_CABINET_07_SCREEN},
+		]), Callable(self, "_offer_rockbyte_replay"))
+		return
 	if _is_post_reveal():
 		var was_completed := _was_witness_route_completed()
 		GameState.mark_witness_cabinet07_heard()
@@ -1035,11 +1033,13 @@ func _handle_cabinet_07() -> void:
 		return
 	if not GameState.lost_token_quest_started:
 		GameState.cabinet07_employee_hint_seen = true
-		start_dialogue(_get_cabinet07_sequential_lines("pre_rockbyte", [
+		var cabinet_lines := _get_cabinet07_sequential_lines("pre_rockbyte", [
 			{"speaker": "Cabinet 07", "text": "CUSTOMER SIGNAL: UNKNOWN."},
 			{"speaker": "Cabinet 07", "text": "EMPLOYEE SIGNAL: PARTIAL."},
 			{"speaker": "Cabinet 07", "text": "LOST TOKEN REQUIRED."},
-		]))
+		])
+		cabinet_lines.append({"speaker": "Player", "text": "It wants a token I do not have. The attendant at the counter keeps glancing over. She might know why."})
+		start_dialogue(cabinet_lines)
 		return
 	if not GameState.rockbyte_duel_completed:
 		_store_arcade_return_position()
@@ -1081,7 +1081,6 @@ func _handle_truth_filter() -> void:
 			{"speaker": "Truth Filter", "text": "MEMORY SIGNAL: FRACTURED."},
 		]))
 		return
-	GameState.truth_filter_quest_started = true
 	GameState.update_memory_signal_from_progress()
 	GameState.set_pending_spawn_id("Spawn_FromArcadeHub")
 	start_dialogue(_get_environment_lines("truth_filter_machine_uneasy", [
@@ -1347,22 +1346,7 @@ func _refresh_hub_art_states() -> void:
 		truth_filter_glow.visible = false
 		var glow_alpha := 0.2 if GameState.memory_signal_level >= GameState.MEMORY_SIGNAL_FRACTURED else 0.12
 		truth_filter_glow.color = Color(0.8, 0.2, 1.0, glow_alpha)
-	_update_memory_signal_pulse()
 	_update_act2_aftermath_pulse()
-
-func _update_memory_signal_pulse() -> void:
-	if memory_signal_tween and memory_signal_tween.is_valid():
-		memory_signal_tween.kill()
-	if memory_signal_background == null:
-		return
-	memory_signal_background.modulate.a = 1.0
-	if GameState.memory_signal_level <= GameState.MEMORY_SIGNAL_GROUNDED:
-		return
-	var low_alpha := 0.72 if GameState.memory_signal_level == GameState.MEMORY_SIGNAL_UNEASY else 0.58
-	memory_signal_tween = create_tween()
-	memory_signal_tween.set_loops()
-	memory_signal_tween.tween_property(memory_signal_background, "modulate:a", low_alpha, 0.9)
-	memory_signal_tween.tween_property(memory_signal_background, "modulate:a", 1.0, 0.9)
 
 func _update_act2_aftermath_pulse() -> void:
 	if aftermath_pulse_tween and aftermath_pulse_tween.is_valid():
@@ -1441,3 +1425,10 @@ func _start_cabinet_glow_pulse() -> void:
 	cabinet_glow_tween.tween_property(glow_target, "modulate:a", 1.0, 0.42)
 	cabinet_glow_tween.tween_property(glow_target, "modulate:a", 0.45, 0.28)
 	cabinet_glow_tween.tween_property(glow_target, "modulate:a", 0.8, 0.55)
+
+func _offer_rockbyte_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Play the duel again?", "rockbyte", Callable(self, "_launch_rockbyte_replay"))
+
+func _launch_rockbyte_replay() -> void:
+	_store_arcade_return_position()
+	SceneChanger.go_to_rockbyte_duel()

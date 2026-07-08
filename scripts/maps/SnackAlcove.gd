@@ -39,6 +39,12 @@ func _maybe_start_conscience_encounter() -> void:
 func _maybe_play_completion_anecdote() -> void:
 	if _dialogue_is_active() or ConscienceEncounterDirector.is_encounter_active():
 		return
+	if GameState.consume_postgame_replay_return("circuit_soda"):
+		start_dialogue(_get_vendo_lines("circuit_soda_replay_return", [
+			{"speaker": "Vendo", "text": "Route stable. No identity was spilled today."},
+			{"speaker": "Vendo", "text": "This machine counts that as a five-star review."},
+		]))
+		return
 	if GameState.circuit_soda_completed and not GameState.vendo_circuit_anecdote_seen:
 		GameState.vendo_circuit_anecdote_seen = true
 		start_dialogue(_get_vendo_lines("circuit_soda_completion_anecdote", [
@@ -150,6 +156,7 @@ func _handle_vendo() -> void:
 				{"speaker": "Vendo", "text": "Think of it as pouring yourself back into the right can."},
 			]))
 			return
+		GameState.increment_npc_dialogue_count("vendo_circuit_explained")
 		start_dialogue(_get_vendo_lines("circuit_soda_intro", [
 			{"speaker": "Vendo", "text": "Memory Signal: Fractured."},
 			{"speaker": "Vendo", "text": "Your signal is going everywhere except where it should."},
@@ -176,11 +183,23 @@ func _handle_circuit_soda() -> void:
 			{"speaker": "Circuit Soda", "text": "TRUTH FILTER REQUIRED."},
 		]))
 		return
+	if GameState.post_reveal_roam_unlocked and GameState.circuit_soda_completed:
+		start_dialogue(_get_vendo_lines("circuit_soda_replay_offer", [
+			{"speaker": "Vendo", "text": "Circuit Soda: post-crisis edition. Zero stakes."},
+			{"speaker": "Vendo", "text": "One replay, on the house."},
+		]), Callable(self, "_offer_circuit_soda_replay"))
+		return
 	if GameState.circuit_soda_completed:
 		start_dialogue(_get_environment_lines("circuit_soda_machine_restored", [
 			{"speaker": "Circuit Soda", "text": "MEMORY FLOW RESTORED."},
 			{"speaker": "Circuit Soda", "text": "FRACTURED SIGNAL STABILIZED."},
 		]))
+		return
+	if GameState.get_npc_dialogue_count("vendo_circuit_explained") == 0:
+		start_dialogue([
+			{"speaker": "Player", "text": "This machine has too many hoses to guess at."},
+			{"speaker": "Player", "text": "Vendo loves explaining. I should let him."},
+		])
 		return
 	GameState.start_circuit_soda()
 	start_dialogue(_get_environment_lines("circuit_soda_machine_fractured", [
@@ -291,3 +310,6 @@ func _apply_sprite_texture(sprite_node: Sprite2D, path: String) -> bool:
 	sprite_node.texture = resource
 	sprite_node.visible = true
 	return true
+
+func _offer_circuit_soda_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Route the circuit again?", "circuit_soda", Callable(self, "_go_to_circuit_soda"))

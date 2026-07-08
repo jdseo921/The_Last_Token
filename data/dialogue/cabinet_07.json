@@ -75,6 +75,22 @@
         {"speaker": "Cabinet 07", "text": "DO NOT POWER OFF."}
       ]
     ],
+    "post_game_replay_offer": [
+      [
+        {"speaker": "Cabinet 07", "text": "EMPLOYEE 04 DETECTED AT CABINET."},
+        {"speaker": "Cabinet 07", "text": "SESSION HISTORY: ONE LOSS. ONE RECOVERY. BOTH KEPT."},
+        {"speaker": "Cabinet 07", "text": "THIS MACHINE STILL BELIEVES A REMATCH FIXES NOTHING."},
+        {"speaker": "Cabinet 07", "text": "IT IS FUN ANYWAY."}
+      ]
+    ],
+    "post_game_replay_return": [
+      [
+        {"speaker": "Cabinet 07", "text": "SESSION COMPLETE."},
+        {"speaker": "Cabinet 07", "text": "NO TOKEN DISPENSED. NOTHING LEFT TO RETURN."},
+        {"speaker": "Cabinet 07", "text": "YOU PLAYED FOR NO REASON."},
+        {"speaker": "Cabinet 07", "text": "LOG ENTRY: HEALTHY."}
+      ]
+    ],
     "post_reveal_status": [
       [
         {"speaker": "Cabinet 07", "text": "EMPLOYEE 04 RESTORE STATUS: STABLE.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_stable.png"},

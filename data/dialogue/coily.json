@@ -166,6 +166,18 @@
         }
       ]
     ],
+    "security_tape_replay_offer": [
+      [
+        {"speaker": "Coily", "text": "Movie night, pal? The tape is all clean now. Every frame belongs."},
+        {"speaker": "Coily", "text": "I like this cut better. Everybody walks out of it."}
+      ]
+    ],
+    "security_tape_replay_return": [
+      [
+        {"speaker": "Coily", "text": "And it still ends okay! I checked every frame twice."},
+        {"speaker": "Coily", "text": "Come back any time. I will keep the reel warm for you, 04."}
+      ]
+    ],
     "post_reveal_witness": [
       [
         {

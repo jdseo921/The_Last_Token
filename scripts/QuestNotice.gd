@@ -51,13 +51,15 @@ func _maybe_build_objective_hud() -> void:
 	hud_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hud_layer.add_child(hud_root)
 	var backing := ColorRect.new()
+	backing.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	backing.position = Vector2(340, 6)
-	backing.size = Vector2(294, 60)
+	backing.size = Vector2(294, 44)
 	backing.color = Color(0.012, 0.016, 0.026, 0.78)
 	hud_root.add_child(backing)
 	var edge := ColorRect.new()
+	edge.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	edge.position = Vector2(340, 6)
-	edge.size = Vector2(2, 60)
+	edge.size = Vector2(2, 44)
 	edge.color = Color(0.3, 0.9, 1.0, 0.85)
 	hud_root.add_child(edge)
 	hud_title = Label.new()
@@ -69,7 +71,7 @@ func _maybe_build_objective_hud() -> void:
 	hud_root.add_child(hud_title)
 	hud_action = Label.new()
 	hud_action.position = Vector2(348, 28)
-	hud_action.size = Vector2(282, 36)
+	hud_action.size = Vector2(282, 16)
 	hud_action.add_theme_font_override("font", preload("res://assets/fonts/m3x6.ttf"))
 	hud_action.add_theme_font_size_override("font_size", 16)
 	hud_action.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

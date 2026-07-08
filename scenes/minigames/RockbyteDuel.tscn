@@ -21,6 +21,7 @@ is_minigame_context = true
 layer = -2
 
 [node name="BackgroundPlaceholder" type="ColorRect" parent="BackgroundLayer"]
+mouse_filter = 2
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -42,6 +43,7 @@ stretch_mode = 5
 layer = -1
 
 [node name="FramePlaceholder" type="Panel" parent="CabinetFrameLayer"]
+mouse_filter = 2
 offset_left = 28.0
 offset_top = 22.0
 offset_right = 612.0
@@ -296,6 +298,7 @@ autowrap_mode = 3
 layer = 5
 
 [node name="CRTGlitchOverlayPlaceholder" type="ColorRect" parent="EffectsLayer"]
+mouse_filter = 2
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

@@ -8,6 +8,10 @@ extends SceneTree
 const GAME_STATE_SCRIPT := preload("res://scripts/GameState.gd")
 const ROUTE_CUE := preload("res://scripts/RouteCue.gd")
 
+const HUD_TIP_FONT_PATH := "res://assets/fonts/m3x6.ttf"
+const HUD_TIP_WIDTH := 282.0
+const HUD_TIP_FONT_SIZE := 16
+
 const LOCATIONS := [
 	"arcade_hub", "cabinet_row", "snack_alcove", "prize_corner",
 	"maintenance_hall", "staff_corridor", "cabinet_hallway", "back_hallway",
@@ -79,6 +83,13 @@ func _beat(label: String, advance: Callable) -> void:
 	for field in ["title", "summary"]:
 		if str(data.get(field, "")).is_empty():
 			print("  FAIL [%s] quest '%s' missing %s" % [label, quest_id, field])
+			fails += 1
+	# summary must fit the top-right HUD tip on ONE line (m3x6 @16, 282px)
+	var tip_font: Font = load(HUD_TIP_FONT_PATH)
+	if tip_font != null:
+		var tip_width: float = tip_font.get_string_size(str(data.get("summary", "")), HORIZONTAL_ALIGNMENT_LEFT, -1, HUD_TIP_FONT_SIZE).x
+		if tip_width > HUD_TIP_WIDTH:
+			print("  FAIL [%s] quest '%s' summary too wide for HUD tip: %.0fpx > %.0fpx" % [label, quest_id, tip_width, HUD_TIP_WIDTH])
 			fails += 1
 	# 2. routing guidance from every room
 	for loc in LOCATIONS:

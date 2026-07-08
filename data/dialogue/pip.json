@@ -61,6 +61,20 @@
         {"speaker": "Pip", "text": "Cotton keeps secrets until the seams are ready."}
       ]
     ],
+    "prize_sort_replay_offer": [
+      [
+        {"speaker": "Pip", "text": "Hi, 04. The prizes remember their order now. They like being remembered."},
+        {"speaker": "Pip", "text": "Want to shuffle them and put them right again?"},
+        {"speaker": "Pip", "text": "They think it is a game. It is. That is the nice part."}
+      ]
+    ],
+    "prize_sort_replay_return": [
+      [
+        {"speaker": "Pip", "text": "All sorted. Again. You did not have to."},
+        {"speaker": "Pip", "text": "Which is exactly why it counts."},
+        {"speaker": "Pip", "text": "The badge stays on the shelf this time. It earned the rest."}
+      ]
+    ],
     "post_reveal": [
       [
         {"speaker": "Pip", "text": "There you are.", "portrait": "res://assets/art/portraits/pip/pip_warm.png"},

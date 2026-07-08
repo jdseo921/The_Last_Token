@@ -90,7 +90,7 @@ func _check_transitions() -> void:
 	print("  B transitions: %d exits checked across %d maps" % [checked, MAPS.size()])
 
 func _check_dialogue_overflow() -> void:
-	var font: Font = load("res://assets/fonts/m5x7.ttf")
+	var font: Font = load("res://assets/fonts/m6x11.ttf")
 	machine_font = load("res://assets/fonts/VT323-Regular.ttf")
 	if font == null:
 		font = ThemeDB.fallback_font

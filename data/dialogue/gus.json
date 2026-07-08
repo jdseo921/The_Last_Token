@@ -145,6 +145,20 @@
         {"speaker": "Gus", "text": "Read all three, then find me in Maintenance Hall. I will be pretending it is a normal shift.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"}
       ]
     ],
+    "static_run_replay_offer": [
+      [
+        {"speaker": "Gus", "text": "The service route is alive and humming, thanks to you.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
+        {"speaker": "Gus", "text": "Want to run it again anyway? For fun."},
+        {"speaker": "Gus", "text": "Fun. A word I am relearning. Do not rush me.", "portrait": "res://assets/art/portraits/gus/gus_annoyed.png"}
+      ]
+    ],
+    "static_run_replay_return": [
+      [
+        {"speaker": "Gus", "text": "Power held the whole way down.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
+        {"speaker": "Gus", "text": "You ran a live route for the joy of it. You used to do that, back when."},
+        {"speaker": "Gus", "text": "That is not forgetting. That is the good version of remembering.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"}
+      ]
+    ],
     "post_reveal_witness": [
       [
         {"speaker": "Gus", "text": "Employee 04.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},

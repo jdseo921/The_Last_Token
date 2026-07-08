@@ -35,6 +35,7 @@ const MACHINE_SPEAKERS := [
 @onready var panel: Panel = $Panel
 @onready var portrait_texture_rect: TextureRect = $Panel/Portrait
 const FONT_MACHINE := preload("res://assets/fonts/VT323-Regular.ttf")
+const FONT_BODY := preload("res://assets/fonts/m6x11.ttf")
 # Machine/terminal voices render in the CRT font. Humans - and ???, which must
 # share the player's font by design - use the theme default (m5x7).
 
@@ -298,5 +299,5 @@ func _apply_speaker_font(speaker: String) -> void:
 		speaker_name_label.add_theme_font_override("font", FONT_MACHINE)
 		dialogue_text_label.add_theme_font_override("font", FONT_MACHINE)
 	else:
-		speaker_name_label.remove_theme_font_override("font")
-		dialogue_text_label.remove_theme_font_override("font")
+		speaker_name_label.add_theme_font_override("font", FONT_BODY)
+		dialogue_text_label.add_theme_font_override("font", FONT_BODY)

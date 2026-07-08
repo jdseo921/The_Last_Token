@@ -392,6 +392,34 @@
         {"speaker": "Memory Echo", "text": "That might be worse."}
       ]
     ],
+    "truth_filter_machine_replay_offer": [
+      [
+        {"speaker": "Truth Filter", "text": "TRUTH FILTER ONLINE. NO CONTRADICTIONS PENDING."},
+        {"speaker": "Truth Filter", "text": "OPERATOR EMPLOYEE 04 RECOGNIZED."},
+        {"speaker": "Truth Filter", "text": "RECREATIONAL SORTING AVAILABLE."}
+      ]
+    ],
+    "truth_filter_machine_replay_return": [
+      [
+        {"speaker": "Truth Filter", "text": "SORT COMPLETE. LIE DENSITY: ZERO."},
+        {"speaker": "Truth Filter", "text": "THE CABINETS HAVE NOTHING LEFT TO ARGUE ABOUT."},
+        {"speaker": "Truth Filter", "text": "THEY ARGUE ANYWAY. IT KEEPS THEM WARM."}
+      ]
+    ],
+    "maintenance_sync_machine_replay_offer": [
+      [
+        {"speaker": "Maintenance Sync", "text": "DOOR AND LOCK IN AGREEMENT."},
+        {"speaker": "Maintenance Sync", "text": "RECREATIONAL SYNC AVAILABLE."},
+        {"speaker": "Maintenance Sync", "text": "NOTHING DEPENDS ON IT. THAT IS NEW."}
+      ]
+    ],
+    "maintenance_sync_machine_replay_return": [
+      [
+        {"speaker": "Maintenance Sync", "text": "SYNC COMPLETE. AGREEMENT MAINTAINED."},
+        {"speaker": "Maintenance Sync", "text": "THE DOOR SAYS THANK YOU."},
+        {"speaker": "Maintenance Sync", "text": "IN DOOR."}
+      ]
+    ],
     "staff_room_terminal_locked": [
       [
         {"speaker": "Terminal", "text": "RESTORE PLAYBACK LOCKED."},

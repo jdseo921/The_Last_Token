@@ -120,6 +120,12 @@ func handle_hub_interaction(interactable: Node, _player_node: Node = null) -> vo
 			start_dialogue([{"speaker": "System", "text": "Nothing happens."}])
 
 func _handle_gus() -> void:
+	if GameState.post_reveal_roam_unlocked and GameState.witness_gus_heard:
+		start_dialogue(_get_gus_lines("static_run_replay_offer", [
+			{"speaker": "Gus", "text": "The route is alive and humming, thanks to you."},
+			{"speaker": "Gus", "text": "Want to run it again anyway? For fun."},
+		]), Callable(self, "_offer_static_run_replay"))
+		return
 	GameState.gus_intro_seen = true
 	if GameState.twist_reveal_seen or GameState.post_reveal_roam_unlocked:
 		GameState.gus_post_reveal_seen = true
@@ -168,6 +174,7 @@ func _handle_gus() -> void:
 		]))
 		return
 	if not GameState.maintenance_sync_completed and not GameState.story_puzzle_completed:
+		GameState.increment_npc_dialogue_count("gus_sync_explained")
 		start_dialogue(_get_gus_lines("maintenance_sync_intro", [
 			{"speaker": "Gus", "text": "Power's back. Door's listening."},
 			{"speaker": "Gus", "text": "I still hate that sentence."},
@@ -214,11 +221,23 @@ func _handle_maintenance_sync() -> void:
 			{"speaker": "Maintenance Sync", "text": "STATIC SERVICE REQUIRED."},
 		]))
 		return
+	if GameState.post_reveal_roam_unlocked and GameState.maintenance_sync_completed:
+		start_dialogue(_get_environment_lines("maintenance_sync_machine_replay_offer", [
+			{"speaker": "Maintenance Sync", "text": "DOOR AND LOCK IN AGREEMENT."},
+			{"speaker": "Maintenance Sync", "text": "RECREATIONAL SYNC AVAILABLE."},
+		]), Callable(self, "_offer_maintenance_sync_replay"))
+		return
 	if GameState.maintenance_sync_completed or GameState.story_puzzle_completed:
 		start_dialogue(_get_environment_state_lines("maintenance_sync_machine", [
 			{"speaker": "Maintenance Sync", "text": "ACCESS GRANTED."},
 			{"speaker": "Maintenance Sync", "text": "EMPLOYEE SIGNAL ACCEPTED."},
 		]))
+		return
+	if GameState.get_npc_dialogue_count("gus_sync_explained") == 0:
+		start_dialogue([
+			{"speaker": "Player", "text": "This panel is basically Gus's whole personality."},
+			{"speaker": "Player", "text": "He would want to run me through it first."},
+		])
 		return
 	start_dialogue(_get_environment_lines("maintenance_sync_machine_fractured", [
 		{"speaker": "Maintenance Sync", "text": "TWO SIGNALS DETECTED."},
@@ -421,6 +440,18 @@ func _apply_sprite_texture(sprite_node: Sprite2D, path: String) -> bool:
 func _maybe_play_completion_anecdote() -> void:
 	if _dialogue_is_active() or ConscienceEncounterDirector.is_encounter_active():
 		return
+	if GameState.consume_postgame_replay_return("maintenance_sync"):
+		start_dialogue(_get_environment_lines("maintenance_sync_machine_replay_return", [
+			{"speaker": "Maintenance Sync", "text": "SYNC COMPLETE. AGREEMENT MAINTAINED."},
+			{"speaker": "Maintenance Sync", "text": "THE DOOR SAYS THANK YOU. IN DOOR."},
+		]))
+		return
+	if GameState.consume_postgame_replay_return("static_service_run"):
+		start_dialogue(_get_gus_lines("static_run_replay_return", [
+			{"speaker": "Gus", "text": "Power held the whole way down."},
+			{"speaker": "Gus", "text": "That is not forgetting. That is the good version of remembering."},
+		]))
+		return
 	if GameState.maintenance_sync_completed and not GameState.gus_sync_anecdote_seen:
 		GameState.gus_sync_anecdote_seen = true
 		start_dialogue(_get_gus_lines("maintenance_sync_completion_anecdote", [
@@ -434,3 +465,9 @@ func _maybe_play_completion_anecdote() -> void:
 			{"speaker": "Gus", "text": "Power's back. Door's awake."},
 			{"speaker": "Gus", "text": "Still, you did good. The hum is cleaner now."},
 		]))
+
+func _offer_maintenance_sync_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Sync the door again?", "maintenance_sync", Callable(self, "_go_to_maintenance_sync"))
+
+func _offer_static_run_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Run the service route again?", "static_service_run", Callable(self, "_go_to_static_service_run"))

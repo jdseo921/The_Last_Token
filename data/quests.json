@@ -5,7 +5,7 @@
 			"title": "Recover the Lost Token",
 			"owner": "Mira",
 			"location": "ArcadeHub",
-			"summary": "Play Cabinet 07 on the ArcadeHub main floor and bring the Lost Token back to Mira.",
+			"summary": "Play Cabinet 07, then bring the Lost Token back to Mira.",
 			"details": "Mira says Cabinet 07 has the Lost Token. Recover it from Cabinet 07 on the ArcadeHub main floor, then return to Mira at the ticket counter.",
 			"minigame": "Rockbyte Duel",
 			"required": true,

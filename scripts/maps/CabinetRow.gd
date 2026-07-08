@@ -40,6 +40,18 @@ func _maybe_start_conscience_encounter() -> void:
 func _maybe_play_completion_anecdote() -> void:
 	if _dialogue_is_active() or ConscienceEncounterDirector.is_encounter_active():
 		return
+	if GameState.consume_postgame_replay_return("truth_filter"):
+		start_dialogue(_get_environment_lines("truth_filter_machine_replay_return", [
+			{"speaker": "Truth Filter", "text": "SORT COMPLETE. LIE DENSITY: ZERO."},
+			{"speaker": "Truth Filter", "text": "THEY ARGUE ANYWAY. IT KEEPS THEM WARM."},
+		]))
+		return
+	if GameState.consume_postgame_replay_return("broken_high_score"):
+		start_dialogue(_get_roxy_lines("broken_high_score_replay_return", [
+			{"speaker": "Roxy", "text": "Zero stakes and you still played like rent was due."},
+			{"speaker": "Roxy", "text": "That is exactly why it looks good on you."},
+		]))
+		return
 	if GameState.lying_cabinets_completed and not GameState.mr_byte_truth_filter_anecdote_seen:
 		GameState.mr_byte_truth_filter_anecdote_seen = true
 		start_dialogue(_get_mr_byte_lines("truth_filter_completion_anecdote", [
@@ -214,13 +226,24 @@ func _handle_truth_filter() -> void:
 			{"speaker": "Truth Filter", "text": "MR. BYTE AUTHORIZATION REQUIRED."},
 		]))
 		return
+	if GameState.post_reveal_roam_unlocked and GameState.lying_cabinets_completed:
+		start_dialogue(_get_environment_lines("truth_filter_machine_replay_offer", [
+			{"speaker": "Truth Filter", "text": "TRUTH FILTER ONLINE. NO CONTRADICTIONS PENDING."},
+			{"speaker": "Truth Filter", "text": "RECREATIONAL SORTING AVAILABLE."},
+		]), Callable(self, "_offer_truth_filter_replay"))
+		return
 	if GameState.lying_cabinets_completed:
 		start_dialogue(_get_environment_state_lines("truth_filter_machine", [
 			{"speaker": "Truth Filter", "text": "TRUTH FILTER PASSED."},
 			{"speaker": "Truth Filter", "text": "MEMORY SIGNAL: FRACTURED."},
 		]))
 		return
-	GameState.truth_filter_quest_started = true
+	if not GameState.truth_filter_quest_started:
+		start_dialogue([
+			{"speaker": "Player", "text": "The Truth Filter hums like it is waiting for a proctor."},
+			{"speaker": "Player", "text": "Mr. Byte runs this row. He should walk me in."},
+		])
+		return
 	GameState.update_memory_signal_from_progress()
 	GameState.set_pending_spawn_id("Spawn_FromTruthFilter")
 	start_dialogue(_get_environment_lines("truth_filter_machine_uneasy", [
@@ -297,13 +320,24 @@ func _handle_broken_high_score() -> void:
 			{"speaker": "Roxy", "text": "Come back after you beat something louder."},
 		]))
 		return
+	if GameState.post_reveal_roam_unlocked and GameState.broken_high_score_completed:
+		start_dialogue(_get_roxy_lines("broken_high_score_replay_offer", [
+			{"speaker": "Roxy", "text": "Back at my cabinet, 04?"},
+			{"speaker": "Roxy", "text": "Coin up or step aside."},
+		]), Callable(self, "_offer_high_score_replay"))
+		return
 	if GameState.broken_high_score_completed:
 		start_dialogue([
 			{"speaker": "Broken High Score", "text": "PREVIOUS SCORE FOUND."},
 			{"speaker": "Broken High Score", "text": "RECORD RESTORED."},
 		])
 		return
-	GameState.roxy_met = true
+	if not GameState.roxy_met:
+		start_dialogue([
+			{"speaker": "Player", "text": "That score cabinet is Roxy's turf."},
+			{"speaker": "Player", "text": "If I touch it before we talk, I will never hear the end of it."},
+		])
+		return
 	GameState.set_pending_spawn_id("Spawn_FromBrokenHighScore")
 	SceneChanger.go_to_broken_high_score()
 
@@ -506,3 +540,17 @@ func _apply_sprite_texture(sprite_node: Sprite2D, path: String) -> bool:
 	sprite_node.texture = resource
 	sprite_node.visible = true
 	return true
+
+func _offer_truth_filter_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Run the Truth Filter again?", "truth_filter", Callable(self, "_launch_truth_filter_replay"))
+
+func _launch_truth_filter_replay() -> void:
+	GameState.set_pending_spawn_id("Spawn_FromTruthFilter")
+	SceneChanger.go_to_truth_filter()
+
+func _offer_high_score_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Chase the high score again?", "broken_high_score", Callable(self, "_launch_high_score_replay"))
+
+func _launch_high_score_replay() -> void:
+	GameState.set_pending_spawn_id("Spawn_FromBrokenHighScore")
+	SceneChanger.go_to_broken_high_score()
