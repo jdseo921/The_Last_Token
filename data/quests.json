@@ -18,7 +18,7 @@
 			"owner": "Mr. Byte",
 			"location": "Cabinet Row",
 			"summary": "Find Mr. Byte in Cabinet Row and open the Truth Filter.",
-			"details": "The Lost Token woke something. Go to Cabinet Row, talk to Mr. Byte, and use the Truth Filter to sort the false records.",
+			"details": "The Lost Token woke something. Go to Cabinet Row, talk to Mr. Byte, and use the Truth Filter to sort the false records. Roxy says the staff record terminal across the row holds the shift log the filter quizzes you on.",
 			"minigame": "Truth Filter",
 			"required": true,
 			"starts_after": "lost_token_quest_completed",

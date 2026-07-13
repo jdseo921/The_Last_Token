@@ -175,6 +175,13 @@ func _handle_mr_byte() -> void:
 			{"speaker": "Mr. Byte", "text": "MEMORY SIGNAL TOO QUIET."},
 		]))
 		return
+	if not GameState.broken_high_score_completed and not GameState.lying_cabinets_completed:
+		start_dialogue(_get_mr_byte_lines("pre_roxy_redirect", [
+			{"speaker": "Mr. Byte", "text": "Sequencing error detected."},
+			{"speaker": "Mr. Byte", "text": "The score cabinet is broadcasting a louder falsehood than my queue."},
+			{"speaker": "Mr. Byte", "text": "Resolve Roxy's board first. Then report back for Truth Filter orientation."},
+		]))
+		return
 	if not GameState.lying_cabinets_completed:
 		GameState.truth_filter_quest_started = true
 		GameState.update_memory_signal_from_progress()
@@ -363,9 +370,23 @@ func _handle_staff_schedule() -> void:
 	start_dialogue(lines, after_dialogue)
 
 func _handle_staff_record_01() -> void:
-	if not GameState.lying_cabinets_completed:
+	if not GameState.broken_high_score_completed:
 		start_dialogue(_get_environment_lines("staff_records_locked", [
 			{"speaker": "Staff Record", "text": "The record terminal is still filtering contradictions."},
+		]))
+		return
+	if not GameState.lying_cabinets_completed:
+		# Pre-Truth-Filter: the recovered shift log doubles as the filter's answer
+		# key (Roxy points players here).
+		GameState.read_staff_record_01()
+		start_dialogue(_get_environment_lines("staff_record_01_shift_log", [
+			{"speaker": "Staff Record", "text": "SHIFT LOG - FINAL NIGHT (RECOVERED EXCERPT)"},
+			{"speaker": "Staff Record", "text": "23:41 - Mira signed the register and left. Last name on the page."},
+			{"speaker": "Staff Record", "text": "23:50 - Gus clocked out. Mop returned wet."},
+			{"speaker": "Staff Record", "text": "00:05 - One staff member stayed to run the closing checklist alone."},
+			{"speaker": "Staff Record", "text": "00:19 - Cabinet 07 kept one token in the return tray. Flagged: do not empty."},
+			{"speaker": "Staff Record", "text": "00:33 - Backup started. Backup did not finish."},
+			{"speaker": "Staff Record", "text": "Entry ends. No sign-out recorded for the last shift."},
 		]))
 		return
 	var was_completed := GameState.staff_records_chain_completed

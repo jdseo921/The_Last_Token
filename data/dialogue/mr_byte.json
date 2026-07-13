@@ -95,6 +95,13 @@
         {"speaker": "Mr. Byte", "text": "Emotion: not useful. Preserved anyway."}
       ]
     ],
+    "pre_roxy_redirect": [
+      [
+        {"speaker": "Mr. Byte", "text": "Sequencing error detected."},
+        {"speaker": "Mr. Byte", "text": "The score cabinet is broadcasting a louder falsehood than my queue."},
+        {"speaker": "Mr. Byte", "text": "Resolve Roxy's board first. Then report back for Truth Filter orientation."}
+      ]
+    ],
     "post_reveal_witness": [
       [
         {"speaker": "Mr. Byte", "text": "Employee 04.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_stable.png"},

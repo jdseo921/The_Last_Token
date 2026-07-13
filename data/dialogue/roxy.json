@@ -49,7 +49,9 @@
         {"speaker": "Roxy", "text": "Do not let it go to your head."},
         {"speaker": "Roxy", "text": "You still walk like a tutorial."},
         {"speaker": "Roxy", "text": "Now go see Mr. Byte before his Truth Filter starts grading on a curve."},
-        {"speaker": "Roxy", "text": "He has been itching to sort somebody's contradictions all night."}
+        {"speaker": "Roxy", "text": "He has been itching to sort somebody's contradictions all night."},
+        {"speaker": "Roxy", "text": "Free tip, since you earned it: his filter quizzes you on the last night."},
+        {"speaker": "Roxy", "text": "The staff record terminal across the row just unlocked the shift log. Read it first."}
       ]
     ],
     "repeat_after_completion": [

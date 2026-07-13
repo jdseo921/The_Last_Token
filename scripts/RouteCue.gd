@@ -68,6 +68,8 @@ static func get_current_hint(current_location_id: String) -> String:
 		"return_lost_token":
 			return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Return the Lost Token to Mira.")
 		"broken_high_score":
+			if not bool(state.get("roxy_met")):
+				return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Talk to Roxy by the score cabinet.")
 			return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Beat Roxy's Broken High Score cabinet.")
 		"prize_sort":
 			return _local_or_route(current_location_id, "prize_corner", "LOCAL: Help Pip with the Prize Sort.")

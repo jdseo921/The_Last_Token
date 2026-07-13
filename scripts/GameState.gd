@@ -831,6 +831,13 @@ func get_current_quest_id() -> String:
 func get_current_quest_data() -> Dictionary:
 	match get_current_quest_id():
 		"broken_high_score":
+			if not roxy_met:
+				return _with_registry_quest_data({
+					"id": "broken_high_score",
+					"title": "Broken High Score",
+					"summary": "Talk to Roxy by the score cabinet in Cabinet Row.",
+					"details": "Mira says a regular named Roxy guards a score cabinet that is still lying about a record. Hear her out before touching the board.",
+				}, "broken_high_score")
 			return _with_registry_quest_data({
 				"id": "broken_high_score",
 				"title": "Broken High Score",

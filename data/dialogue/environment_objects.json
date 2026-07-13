@@ -192,6 +192,17 @@
         {"speaker": "Staff Schedule", "text": "Including you."}
       ]
     ],
+    "staff_record_01_shift_log": [
+      [
+        {"speaker": "Staff Record", "text": "SHIFT LOG - FINAL NIGHT (RECOVERED EXCERPT)"},
+        {"speaker": "Staff Record", "text": "23:41 - Mira signed the register and left. Last name on the page."},
+        {"speaker": "Staff Record", "text": "23:50 - Gus clocked out. Mop returned wet."},
+        {"speaker": "Staff Record", "text": "00:05 - One staff member stayed to run the closing checklist alone."},
+        {"speaker": "Staff Record", "text": "00:19 - Cabinet 07 kept one token in the return tray. Flagged: do not empty."},
+        {"speaker": "Staff Record", "text": "00:33 - Backup started. Backup did not finish."},
+        {"speaker": "Staff Record", "text": "Entry ends. No sign-out recorded for the last shift."}
+      ]
+    ],
     "staff_records_locked": [
       [
         {"speaker": "Staff Record", "text": "The record terminal is sealed."},

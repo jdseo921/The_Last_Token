@@ -961,6 +961,13 @@ func _handle_mr_byte() -> void:
 			])
 		start_dialogue(post_reveal_lines, _get_witness_completion_callback(was_completed))
 		return
+	if GameState.lost_token_quest_completed and not GameState.broken_high_score_completed and not GameState.lying_cabinets_completed:
+		GameState.mr_byte_intro_seen = true
+		start_dialogue(_get_mr_byte_lines("pre_roxy_redirect", [
+			{"speaker": "Mr. Byte", "text": "Sequencing error detected."},
+			{"speaker": "Mr. Byte", "text": "Resolve Roxy's score cabinet in Cabinet Row first."},
+		]))
+		return
 	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
 		GameState.mr_byte_intro_seen = true
 		GameState.truth_filter_quest_started = true
