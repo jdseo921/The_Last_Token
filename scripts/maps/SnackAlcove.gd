@@ -54,6 +54,11 @@ func _maybe_play_completion_anecdote() -> void:
 
 func _apply_spawn_position() -> void:
 	var spawn_id := GameState.consume_pending_spawn_id()
+	# Coming back from a minigame in this room: stand exactly where we left.
+	var back: Variant = GameState.consume_return_point(scene_file_path)
+	if back != null:
+		player.global_position = back
+		return
 	var marker := get_node_or_null(spawn_id)
 	if marker is Marker2D:
 		player.global_position = marker.global_position
@@ -146,6 +151,12 @@ func _handle_vendo() -> void:
 			{"speaker": "Vendo", "text": "TRUTH FILTER REQUIRED."},
 		])
 		return
+	if not GameState.mr_byte_truth_filter_debriefed and not GameState.circuit_soda_completed:
+		start_dialogue([
+			{"speaker": "Vendo", "text": "One moment. The row next door says your Truth Filter report is still open."},
+			{"speaker": "Vendo", "text": "Mr. Byte flags my power draw when paperwork goes missing. Go get debriefed."},
+		])
+		return
 	if not GameState.circuit_soda_completed:
 		var circuit_soda_started := GameState.circuit_soda_started
 		GameState.start_circuit_soda()
@@ -158,7 +169,7 @@ func _handle_vendo() -> void:
 			return
 		GameState.increment_npc_dialogue_count("vendo_circuit_explained")
 		start_dialogue(_get_vendo_lines("circuit_soda_intro", [
-			{"speaker": "Vendo", "text": "Memory Signal: Fractured."},
+			{"speaker": "Vendo", "text": "Scanner mood: fractured."},
 			{"speaker": "Vendo", "text": "Your signal is going everywhere except where it should."},
 			{"speaker": "Vendo", "text": "Luckily, I am a licensed beverage-adjacent routing system."},
 		]))
@@ -177,6 +188,12 @@ func _handle_vendo() -> void:
 	]))
 
 func _handle_circuit_soda() -> void:
+	if GameState.lying_cabinets_completed and not GameState.mr_byte_truth_filter_debriefed and not GameState.circuit_soda_completed:
+		start_dialogue([
+			{"speaker": "Player", "text": "Mr. Byte wanted the Filter report first."},
+			{"speaker": "Player", "text": "Loose ends hum in this place. I should not leave one behind me."},
+		])
+		return
 	if not GameState.lying_cabinets_completed:
 		start_dialogue(_get_environment_lines("circuit_soda_machine_locked", [
 			{"speaker": "Circuit Soda", "text": "SNACK ALCOVE LOCKED."},

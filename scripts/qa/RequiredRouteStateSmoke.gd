@@ -24,7 +24,10 @@ func _init() -> void:
 	_check_state("03b Broken High Score complete", "truth_filter", "Truth Filter", "Uneasy", 2)
 
 	game_state.complete_truth_filter()
-	_check_state("04 Truth Filter complete", "gus_checkin_truth_filter", "Truth Filter Cleared", "Fractured", 3)
+	_check_state("04 Truth Filter complete", "mr_byte_debrief", "Truth Filter Cleared", "Fractured", 3)
+
+	game_state.mr_byte_truth_filter_debriefed = true
+	_check_state("04a Mr. Byte debrief heard", "gus_checkin_truth_filter", "Truth Filter Cleared", "Fractured", 3)
 
 	game_state.gus_hub_checkin_truth_filter_done = true
 	_check_state("04b Gus check-in heard", "circuit_soda", "Truth Filter Cleared", "Fractured", 3)

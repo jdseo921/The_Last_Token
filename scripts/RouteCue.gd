@@ -70,15 +70,23 @@ static func get_current_hint(current_location_id: String) -> String:
 		"broken_high_score":
 			if not bool(state.get("roxy_met")):
 				return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Talk to Roxy by the score cabinet.")
-			return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Beat Roxy's Broken High Score cabinet.")
+			return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Use the BROKEN SCORE cabinet.")
 		"prize_sort":
-			return _local_or_route(current_location_id, "prize_corner", "LOCAL: Help Pip with the Prize Sort.")
+			if not bool(state.get("pip_met")):
+				return _local_or_route(current_location_id, "prize_corner", "LOCAL: Talk to Pip by the prize counter.")
+			return _local_or_route(current_location_id, "prize_corner", "LOCAL: Use the PRIZE COUNTER.")
 		"truth_filter":
-			return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Talk to Mr. Byte, then use Truth Filter.")
+			if int(state.call("get_npc_dialogue_count", "mr_byte_tf_explained")) == 0:
+				return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Talk to Mr. Byte about the Truth Filter.")
+			return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Use the Truth Filter cabinet.")
+		"mr_byte_debrief":
+			return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Tell Mr. Byte what the Filter found.")
 		"gus_checkin_truth_filter":
 			return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Talk to Gus on the arcade floor.")
 		"circuit_soda":
-			return _local_or_route(current_location_id, "snack_alcove", "LOCAL: Talk to Vendo, then use Circuit Soda.")
+			if int(state.call("get_npc_dialogue_count", "vendo_circuit_explained")) == 0:
+				return _local_or_route(current_location_id, "snack_alcove", "LOCAL: Talk to Vendo about Circuit Soda.")
+			return _local_or_route(current_location_id, "snack_alcove", "LOCAL: Use the Circuit Soda machine.")
 		"gus_checkin_prize_sort":
 			return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Talk to Gus on the arcade floor.")
 		"lost_shift_file":
@@ -179,42 +187,58 @@ static func _local_or_route(current_location_id: String, target_location_id: Str
 static func _get_next_step(current_location_id: String, target_location_id: String) -> String:
 	match current_location_id:
 		"arcade_hub":
+			# The hub has exactly three doors: CABINET ROW (right),
+			# MAINTENANCE (bottom) and FRONT ENTRANCE (left). Everything else
+			# is reached through one of those, so name the door and its side.
+			match target_location_id:
+				"cabinet_row":
+					return "Take the CABINET HALLWAY exit on the right."
+				"snack_alcove":
+					return "Right to CABINET ROW, then the SERVICE HALLWAY."
+				"prize_corner":
+					return "Right to CABINET ROW, SNACK ALCOVE, then the PRIZE SERVICE HALL."
+				"maintenance_hall":
+					return "Take the MAINTENANCE HALLWAY exit at the bottom."
+				"staff_corridor", "staff_room":
+					return "Bottom to MAINTENANCE, then STAFF ACCESS HALL."
+				"front_entrance":
+					return "Take the FRONT ENTRANCE exit on the left."
 			return "Use %s exit." % _get_target_label(target_location_id)
 		"cabinet_row":
 			if target_location_id == "snack_alcove":
-				return "Use SERVICE HALLWAY -> SNACK ALCOVE."
+				return "Use the SERVICE HALLWAY on the right."
 			if target_location_id == "arcade_hub":
-				return "Use CABINET HALLWAY -> ARCADE HUB."
+				return "Take the CABINET HALLWAY at the bottom."
 			return "Back to ARCADE HUB, then %s." % _get_target_label(target_location_id)
 		"snack_alcove":
 			if target_location_id == "cabinet_row":
-				return "Use SERVICE HALLWAY -> CABINET ROW."
+				return "Take the SERVICE HALLWAY at the left end."
 			if target_location_id == "prize_corner":
-				return "Use PRIZES exit."
+				return "Take the PRIZE SERVICE HALL at the right end."
 			if target_location_id == "arcade_hub":
-				return "Use SNACK HALLWAY -> ARCADE HUB."
+				return "Take the SNACK HALLWAY at the bottom."
 			return "Back to ARCADE HUB, then %s." % _get_target_label(target_location_id)
 		"prize_corner":
 			if target_location_id == "snack_alcove":
-				return "Use PRIZE SERVICE HALL -> SNACK ALCOVE."
+				return "Take the PRIZE SERVICE HALL on the left."
 			if target_location_id == "arcade_hub":
-				return "Use PRIZE HALLWAY -> ARCADE HUB."
+				return "Take the PRIZE HALLWAY at the bottom."
 			return "Back to ARCADE HUB, then %s." % _get_target_label(target_location_id)
 		"maintenance_hall":
 			if target_location_id == "staff_corridor":
-				return "Use STAFF ACCESS HALL -> STAFF CORRIDOR."
+				return "Take the STAFF ACCESS HALL on the right."
 			if target_location_id == "staff_room":
-				return "Use STAFF ACCESS HALL -> STAFF CORRIDOR."
+				return "Take the STAFF ACCESS HALL on the right."
 			if target_location_id == "arcade_hub":
-				return "Use MAINTENANCE HALLWAY -> ARCADE HUB."
+				return "Take the MAINTENANCE HALLWAY at the bottom."
 			return "Back to ARCADE HUB, then %s." % _get_target_label(target_location_id)
 		"staff_corridor":
 			if target_location_id == "staff_room":
 				return "Use STAFF ROOM door."
 			if target_location_id == "maintenance_hall":
-				return "Use STAFF ACCESS HALL -> MAINTENANCE."
+				return "Take the STAFF ACCESS HALL at the bottom."
 			if target_location_id == "arcade_hub":
-				return "Use ARCADE HUB exit."
+				return "Take the BACK HALLWAY on the left."
 			return "Back to ARCADE HUB, then %s." % _get_target_label(target_location_id)
 		"cabinet_hallway":
 			return "Take CABINET ROW exit." if target_location_id == "cabinet_row" else "Take ARCADE HUB exit."

@@ -230,7 +230,9 @@ func _maybe_show_hallway_message() -> void:
 	var lines := _get_hallway_message_lines()
 	if lines.is_empty():
 		return
-	var counter_key := "hallway_message:%s:%s" % [hallway_id, _get_hallway_message_phase()]
+	# One whisper per hallway for the whole run - the phase only picks WHICH
+	# lines play on that first visit, it must never re-arm the location.
+	var counter_key := "hallway_message:%s" % hallway_id
 	if GameState.get_npc_dialogue_count(counter_key) > 0:
 		return
 	GameState.increment_npc_dialogue_count(counter_key)

@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/ConscienceEncounter.gd" id="1"]
+[ext_resource type="FontFile" path="res://assets/fonts/m6x11.ttf" id="fpx_body"]
+[ext_resource type="FontFile" path="res://assets/fonts/m3x6.ttf" id="fpx_micro"]
 
 [node name="ConscienceEncounter" type="CanvasLayer"]
 layer = 20
@@ -73,33 +75,38 @@ stretch_mode = 5
 [node name="DialoguePanel" type="Panel" parent="OverlayRoot"]
 layout_mode = 0
 offset_left = 24.0
-offset_top = 214.0
+offset_top = 198.0
 offset_right = 616.0
-offset_bottom = 410.0
+offset_bottom = 360.0
 
 [node name="SpeakerLabel" type="Label" parent="OverlayRoot/DialoguePanel"]
 layout_mode = 0
-offset_left = 18.0
-offset_top = 12.0
-offset_right = 560.0
-offset_bottom = 38.0
+offset_left = 16.0
+offset_top = 8.0
+offset_right = 574.0
+offset_bottom = 32.0
+theme_override_fonts/font = ExtResource("fpx_body")
 theme_override_font_sizes/font_size = 16
 text = "???"
 
 [node name="DialogueLabel" type="Label" parent="OverlayRoot/DialoguePanel"]
 layout_mode = 0
-offset_left = 18.0
-offset_top = 48.0
-offset_right = 560.0
-offset_bottom = 146.0
+offset_left = 16.0
+offset_top = 38.0
+offset_right = 574.0
+offset_bottom = 128.0
+theme_override_fonts/font = ExtResource("fpx_body")
+theme_override_font_sizes/font_size = 16
 text = "You should not have returned."
 autowrap_mode = 3
 
 [node name="ContinueLabel" type="Label" parent="OverlayRoot/DialoguePanel"]
 layout_mode = 0
-offset_left = 18.0
-offset_top = 154.0
-offset_right = 560.0
-offset_bottom = 182.0
+offset_left = 16.0
+offset_top = 132.0
+offset_right = 574.0
+offset_bottom = 154.0
+theme_override_fonts/font = ExtResource("fpx_micro")
+theme_override_font_sizes/font_size = 16
 text = "PRESS E / SPACE"
 horizontal_alignment = 2

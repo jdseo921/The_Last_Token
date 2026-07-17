@@ -26,7 +26,7 @@
         {"speaker": "Mr. Byte", "text": "It is the one that has started humming."}
       ],
       [
-        {"speaker": "Mr. Byte", "text": "Memory Signal: Uneasy.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_diagnostic.png"},
+        {"speaker": "Mr. Byte", "text": "Ambient reading: uneasy.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_diagnostic.png"},
         {"speaker": "Mr. Byte", "text": "False records are active."},
         {"speaker": "Mr. Byte", "text": "Proceed to Truth Filter."},
         {"speaker": "Mr. Byte", "text": "Cabinet Row contains the primary interface."}
@@ -42,6 +42,17 @@
         {"speaker": "Mr. Byte", "text": "Registered as one user. Reading as unstable. I cannot close this file."},
         {"speaker": "Mr. Byte", "text": "Emotion registered as heat with no source."},
         {"speaker": "Mr. Byte", "text": "Further stabilization required."}
+      ]
+    ],
+    "truth_filter_voice_debrief": [
+      [
+        {"speaker": "Mr. Byte", "text": "Unrelated administrative matter.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_diagnostic.png"},
+        {"speaker": "Mr. Byte", "text": "Earlier tonight, the hallway audio channel carried a broadcast."},
+        {"speaker": "Mr. Byte", "text": "Source field: empty. No machine on this floor requested that channel."},
+        {"speaker": "Mr. Byte", "text": "I asked all of them. They were offended."},
+        {"speaker": "Mr. Byte", "text": "There is no form for audio without a speaker. I checked twice. Then I built one."},
+        {"speaker": "Mr. Byte", "text": "Field one: WHAT SPOKE. Field two: PLEASE."},
+        {"speaker": "Mr. Byte", "text": "I have filed it under ambient noise and I would like to stop thinking about it."}
       ]
     ],
     "lost_shift_file_support": [

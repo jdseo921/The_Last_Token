@@ -34,8 +34,9 @@ func can_open_pause_menu() -> bool:
 	return not _dialogue_is_active() and not ConscienceEncounterDirector.is_encounter_active()
 
 func _maybe_start_conscience_encounter() -> void:
-	if not ConscienceEncounterDirector.maybe_start_encounter(self, "after_truth_filter", Callable(self, "_maybe_play_completion_anecdote")):
-		_maybe_play_completion_anecdote()
+	# The ??? encounter no longer ambushes the doorway: it lands inside the
+	# Mr. Byte debrief, right before the protagonist decides to ask about it.
+	_maybe_play_completion_anecdote()
 
 func _maybe_play_completion_anecdote() -> void:
 	if _dialogue_is_active() or ConscienceEncounterDirector.is_encounter_active():
@@ -52,11 +53,12 @@ func _maybe_play_completion_anecdote() -> void:
 			{"speaker": "Roxy", "text": "That is exactly why it looks good on you."},
 		]))
 		return
-	if GameState.lying_cabinets_completed and not GameState.mr_byte_truth_filter_anecdote_seen:
-		GameState.mr_byte_truth_filter_anecdote_seen = true
-		start_dialogue(_get_mr_byte_lines("truth_filter_completion_anecdote", [
-			{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
-			{"speaker": "Mr. Byte", "text": "Record conflict reduced. Identity conflict remains."},
+	if GameState.lying_cabinets_completed and not GameState.roxy_truth_filter_nudge_seen:
+		GameState.roxy_truth_filter_nudge_seen = true
+		start_dialogue(_get_roxy_lines("truth_filter_completion_nudge", [
+			{"speaker": "Roxy", "text": "Huh. The Filter actually shut up for once."},
+			{"speaker": "Roxy", "text": "Whatever it just coughed up, Mr. Byte is the one who files it."},
+			{"speaker": "Roxy", "text": "Go make him explain it. He lives for that."},
 		]))
 		return
 	if GameState.broken_high_score_completed and not GameState.roxy_high_score_anecdote_seen:
@@ -68,6 +70,11 @@ func _maybe_play_completion_anecdote() -> void:
 
 func _apply_spawn_position() -> void:
 	var spawn_id := GameState.consume_pending_spawn_id()
+	# Coming back from a minigame in this room: stand exactly where we left.
+	var back: Variant = GameState.consume_return_point(scene_file_path)
+	if back != null:
+		player.global_position = back
+		return
 	var marker := get_node_or_null(spawn_id)
 	if marker is Marker2D:
 		player.global_position = marker.global_position
@@ -172,7 +179,7 @@ func _handle_mr_byte() -> void:
 	if not GameState.lost_token_quest_completed:
 		start_dialogue(_get_mr_byte_sequential_lines("pre_truth_filter_locked", [
 			{"speaker": "Mr. Byte", "text": "TRUTH FILTER LOCKED."},
-			{"speaker": "Mr. Byte", "text": "MEMORY SIGNAL TOO QUIET."},
+			{"speaker": "Mr. Byte", "text": "SIGNAL TOO QUIET."},
 		]))
 		return
 	if not GameState.broken_high_score_completed and not GameState.lying_cabinets_completed:
@@ -184,6 +191,7 @@ func _handle_mr_byte() -> void:
 		return
 	if not GameState.lying_cabinets_completed:
 		GameState.truth_filter_quest_started = true
+		GameState.increment_npc_dialogue_count("mr_byte_tf_explained")
 		GameState.update_memory_signal_from_progress()
 		start_dialogue(_get_mr_byte_sequential_lines("truth_filter_intro", [
 			{"speaker": "Mr. Byte", "text": "Contradiction threshold reached."},
@@ -193,12 +201,17 @@ func _handle_mr_byte() -> void:
 		return
 	if not GameState.mr_byte_truth_filter_anecdote_seen:
 		GameState.mr_byte_truth_filter_anecdote_seen = true
-		start_dialogue(_get_mr_byte_lines("truth_filter_completion_anecdote", [
+		GameState.mr_byte_truth_filter_debriefed = true
+		var debrief_lines := _get_mr_byte_lines("truth_filter_completion_anecdote", [
 			{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
-			{"speaker": "Mr. Byte", "text": "Contradictions remain."},
-			{"speaker": "Mr. Byte", "text": "That means the memory is alive enough to argue."},
 			{"speaker": "Mr. Byte", "text": "Record conflict reduced. Identity conflict remains."},
+		])
+		debrief_lines.append_array(_get_mr_byte_lines("truth_filter_voice_debrief", [
+			{"speaker": "Mr. Byte", "text": "Unrelated administrative matter."},
+			{"speaker": "Mr. Byte", "text": "Earlier tonight the hallway audio channel carried a broadcast. Source field: empty."},
+			{"speaker": "Mr. Byte", "text": "I have filed it under ambient noise."},
 		]))
+		start_dialogue(debrief_lines, Callable(self, "_after_byte_debrief"))
 		return
 	if GameState.circuit_soda_completed and not GameState.lost_shift_file_completed and not GameState.story_puzzle_completed:
 		GameState.start_lost_shift_file()
@@ -242,10 +255,10 @@ func _handle_truth_filter() -> void:
 	if GameState.lying_cabinets_completed:
 		start_dialogue(_get_environment_state_lines("truth_filter_machine", [
 			{"speaker": "Truth Filter", "text": "TRUTH FILTER PASSED."},
-			{"speaker": "Truth Filter", "text": "MEMORY SIGNAL: FRACTURED."},
+			{"speaker": "Truth Filter", "text": "RECORDS RECONCILED."},
 		]))
 		return
-	if not GameState.truth_filter_quest_started:
+	if GameState.get_npc_dialogue_count("mr_byte_tf_explained") == 0:
 		start_dialogue([
 			{"speaker": "Player", "text": "The Truth Filter hums like it is waiting for a proctor."},
 			{"speaker": "Player", "text": "Mr. Byte runs this row. He should walk me in."},
@@ -575,3 +588,19 @@ func _offer_high_score_replay() -> void:
 func _launch_high_score_replay() -> void:
 	GameState.set_pending_spawn_id("Spawn_FromBrokenHighScore")
 	SceneChanger.go_to_broken_high_score()
+
+func _after_byte_debrief() -> void:
+	# ??? answers Mr. Byte's "there is no form for this" - then the protagonist
+	# reacts to having heard it.
+	if not ConscienceEncounterDirector.maybe_start_encounter(self, "after_truth_filter", Callable(self, "_play_byte_debrief_monologue")):
+		_play_byte_debrief_monologue()
+
+func _play_byte_debrief_monologue() -> void:
+	start_dialogue([
+		{"speaker": "Player", "text": "Ambient noise."},
+		{"speaker": "Player", "text": "That was not noise. It was talking to me. It knew what I was going to do."},
+		{"speaker": "Player", "text": "A sound with no speaker, and the machine that files everything cannot file it."},
+		{"speaker": "Player", "text": "That man out on the arcade floor carries a mop around like it owes him money."},
+		{"speaker": "Player", "text": "A janitor, maybe. If anything has been speaking in these halls, he might have heard it."},
+		{"speaker": "Player", "text": "Worth asking. I have nothing better to go on."},
+	])

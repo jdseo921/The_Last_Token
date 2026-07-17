@@ -116,13 +116,13 @@ flicker_enabled = true
 position = Vector2(320, 406)
 target_scene_path = "res://scenes/maps/hallways/MaintenanceHallway.tscn"
 target_spawn_id = "Spawn_FromMaintenanceHall"
-destination_name = "ARCADE HUB"
+destination_name = "MAINTENANCE HALLWAY"
 
 [node name="ToStaffCorridor" parent="." instance=ExtResource("3")]
 position = Vector2(606, 260)
 target_scene_path = "res://scenes/maps/hallways/MaintenanceStaffHallway.tscn"
 target_spawn_id = "Spawn_FromMaintenanceHall"
-destination_name = "STAFF CORRIDOR"
+destination_name = "STAFF ACCESS HALL"
 required_flag = "staff_corridor_unlocked"
 locked_dialogue = Array[String](["STAFF CORRIDOR LOCKED.", "MAINTENANCE SYNC REQUIRED."])
 

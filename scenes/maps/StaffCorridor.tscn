@@ -110,13 +110,13 @@ label_text = "RECORD 03"
 position = Vector2(320, 412)
 target_scene_path = "res://scenes/maps/hallways/MaintenanceStaffHallway.tscn"
 target_spawn_id = "Spawn_FromStaffCorridor"
-destination_name = "MAINTENANCE HALL"
+destination_name = "STAFF ACCESS HALL"
 
 [node name="ReturnToArcadeHub" parent="." instance=ExtResource("3")]
 position = Vector2(34, 360)
 target_scene_path = "res://scenes/maps/hallways/BackHallway.tscn"
 target_spawn_id = "Spawn_FromStaffCorridor"
-destination_name = "ARCADE HUB"
+destination_name = "BACK HALLWAY"
 
 [node name="ToMemoryCore" parent="." instance=ExtResource("3")]
 position = Vector2(596, 240)

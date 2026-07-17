@@ -27,6 +27,7 @@ var hud_root: Control = null
 var hud_title: Label = null
 var hud_action: Label = null
 var hud_tween: Tween = null
+var last_announced_signature := ""
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -65,14 +66,14 @@ func _maybe_build_objective_hud() -> void:
 	hud_title = Label.new()
 	hud_title.position = Vector2(348, 10)
 	hud_title.size = Vector2(282, 18)
-	hud_title.add_theme_font_override("font", preload("res://assets/fonts/m3x6.ttf"))
+	hud_title.add_theme_font_override("font", preload("res://assets/fonts/m5x7.ttf"))
 	hud_title.add_theme_font_size_override("font_size", 16)
 	hud_title.add_theme_color_override("font_color", Color(0.5, 0.95, 1.0, 1.0))
 	hud_root.add_child(hud_title)
 	hud_action = Label.new()
 	hud_action.position = Vector2(348, 28)
 	hud_action.size = Vector2(282, 16)
-	hud_action.add_theme_font_override("font", preload("res://assets/fonts/m3x6.ttf"))
+	hud_action.add_theme_font_override("font", preload("res://assets/fonts/m5x7.ttf"))
 	hud_action.add_theme_font_size_override("font_size", 16)
 	hud_action.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	hud_root.add_child(hud_action)
@@ -123,7 +124,13 @@ func _process(delta: float) -> void:
 		# (right after the opening monologue) - pulse only for the opening tip.
 		_update_objective_hud(OPENING_QUEST_IDS.has(GameState.get_current_quest_id()))
 	var quest_id: String = GameState.get_current_quest_id()
-	if quest_id.is_empty() or quest_id == GameState.last_announced_quest_id:
+	if quest_id.is_empty():
+		return
+	# Track the summary too: a beat can advance WITHIN one quest (talk to Roxy
+	# -> beat her cabinet), and only the summary changes. Watching the id alone
+	# left the tip stuck on the first phase forever.
+	var signature: String = "%s|%s" % [quest_id, str(GameState.get_current_quest_data().get("summary", ""))]
+	if signature == last_announced_signature:
 		return
 	if OPENING_QUEST_IDS.has(quest_id):
 		return
@@ -133,6 +140,7 @@ func _process(delta: float) -> void:
 	if ConscienceEncounterDirector.is_encounter_active():
 		return
 	GameState.last_announced_quest_id = quest_id
+	last_announced_signature = signature
 	_update_objective_hud(true)
 
 func _input(event: InputEvent) -> void:

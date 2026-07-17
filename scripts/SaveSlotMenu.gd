@@ -90,7 +90,7 @@ func _refresh_slots() -> void:
 			var empty_action := "CHOOSE TO BEGIN" if current_mode == MODE_NEW_GAME else "CANNOT LOAD"
 			button.text = "MEMORY SLOT %d\nEMPTY SAVE\n%s" % [slot_id, empty_action]
 		else:
-			button.text = "MEMORY SLOT %d\nSTATUS: %s\nMAIN: %d / %d\nOPTIONAL: %d / %d\nSECRETS: %d / %d\nSIGNAL: %s\nLAST SAVED: %s" % [
+			button.text = "MEMORY SLOT %d\nSTATUS: %s\nMAIN: %d / %d\nOPTIONAL: %d / %d\nSECRETS: %d / %d\nLAST SAVED: %s" % [
 				slot_id,
 				summary.get("story_phase", "Unknown"),
 				int(summary.get("required_progress_count", 0)),
@@ -99,7 +99,6 @@ func _refresh_slots() -> void:
 				int(summary.get("total_optional_games_count", 0)),
 				int(summary.get("secrets_found_count", 0)),
 				int(summary.get("total_secrets_count", 0)),
-				summary.get("memory_signal_label", "Grounded"),
 				summary.get("last_saved_at", "Unknown"),
 			]
 

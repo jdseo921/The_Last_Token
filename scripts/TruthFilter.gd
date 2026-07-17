@@ -148,7 +148,7 @@ func _start_puzzle() -> void:
 	completed = false
 	round_transition_running = false
 	exit_button.visible = false
-	memory_signal_label.text = "Memory Signal: %s" % GameState.get_memory_signal_label()
+	memory_signal_label.text = "Source: Staff Shift Log"
 	_set_signal_integrity("Stable")
 	for button in choose_buttons:
 		button.visible = true
@@ -232,7 +232,7 @@ func _complete_puzzle() -> void:
 	round_active = false
 	round_transition_running = false
 	GameState.complete_truth_filter()
-	memory_signal_label.text = "Memory Signal: %s" % GameState.get_memory_signal_label()
+	memory_signal_label.text = "Source: Staff Shift Log - VERIFIED"
 	_set_signal_integrity("Recovered")
 	rule_label.text = "TRUTH FILTER COMPLETE"
 	status_label.text = "TRUTH FILTER PASSED.\nSECOND MEMORY FRAGMENT RECOVERED.\nYOUR MEMORY IS NO LONGER THE ONLY WITNESS."

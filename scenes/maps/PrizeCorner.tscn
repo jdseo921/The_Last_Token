@@ -102,13 +102,13 @@ idle_bob_enabled = true
 position = Vector2(320, 406)
 target_scene_path = "res://scenes/maps/hallways/PrizeHallway.tscn"
 target_spawn_id = "Spawn_FromPrizeCorner"
-destination_name = "ARCADE HUB"
+destination_name = "PRIZE HALLWAY"
 
 [node name="ToSnackAlcove" parent="." instance=ExtResource("3")]
 position = Vector2(34, 260)
 target_scene_path = "res://scenes/maps/hallways/SnackPrizeHallway.tscn"
 target_spawn_id = "Spawn_FromPrizeCorner"
-destination_name = "SNACK ALCOVE"
+destination_name = "PRIZE SERVICE HALL"
 
 [node name="UILayer" type="Node2D" parent="."]
 

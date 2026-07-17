@@ -26,7 +26,7 @@ func _play_open_fade_in() -> void:
 	fade_tween.tween_callback(_hide_fade_overlay)
 	var audio_manager := get_node_or_null("/root/AudioManager")
 	if audio_manager and audio_manager.has_method("fade_in_active_music"):
-		audio_manager.call("fade_in_active_music", OPEN_FADE_SECONDS + 2.0)
+		audio_manager.call("fade_in_active_music", 0.5)
 
 func _on_new_memory_requested() -> void:
 	_open_save_slot_menu("new_game")

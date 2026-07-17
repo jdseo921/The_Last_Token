@@ -6,12 +6,16 @@ extends Control
 
 const SCREEN_ART_PATH := "res://assets/art/minigames/broken_high_score/broken_high_score_screen.png"
 
-const TARGET_REPAIRS := 5
+const TARGET_REPAIRS := 3
 const GHOST_TARGET := 30.0
 const GHOST_RATE := 3.2          # ghost points gained per second
 const MISS_PENALTY := 3.0
 const LOCK_REWARD := 1.5         # locking a digit nudges the ghost back
 const FLICKER_INTERVAL := 0.08
+# Reaction window the player must hit (~20% more generous than the first pass).
+const STABLE_WINDOW_BASE := 0.55
+const STABLE_WINDOW_MIN := 0.29
+const STABLE_WINDOW_PER_REPAIR := 0.048
 const GLYPHS := ["9", "?", "4", "#", "0", "8", "%", "6"]
 
 @onready var background: ColorRect = $Background
@@ -32,7 +36,7 @@ var running := false
 var flicker_accum := 0.0
 var cycle_accum := 0.0
 var cycle_len := 1.3
-var stable_window := 0.45
+var stable_window := 0.55
 var stable := false
 
 func _ready() -> void:
@@ -51,7 +55,7 @@ func _start_game() -> void:
 	running = true
 	cycle_accum = 0.0
 	cycle_len = 1.3
-	stable_window = 0.45
+	stable_window = STABLE_WINDOW_BASE
 	stable = false
 	instruction_label.text = "BROKEN HIGH SCORE\nThe board screams 9999. It is lying.\nLOCK the record only when the digits hold still.\nBeat Roxy's ghost to the real score."
 	score_button.text = "LOCK"
@@ -73,7 +77,7 @@ func _process(delta: float) -> void:
 	if cycle_accum >= cycle_len:
 		cycle_accum = 0.0
 		cycle_len = max(randf_range(1.0, 1.5) - 0.05 * repairs, 0.7)
-		stable_window = clamp(0.46 - 0.04 * repairs, 0.24, 0.46)
+		stable_window = clamp(STABLE_WINDOW_BASE - STABLE_WINDOW_PER_REPAIR * repairs, STABLE_WINDOW_MIN, STABLE_WINDOW_BASE)
 	stable = cycle_accum >= (cycle_len - stable_window)
 	flicker_accum += delta
 	if stable:

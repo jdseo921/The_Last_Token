@@ -1,6 +1,7 @@
 extends Node2D
 
 const ASSET_PATHS := preload("res://scripts/AssetPaths.gd")
+const ROUTE_CUE_SCRIPT := preload("res://scripts/RouteCue.gd")
 const AMBIENT_EFFECTS := preload("res://scripts/AmbientSpriteEffects.gd")
 const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
 const MIRA_IDLE_SHEET_PATH := "res://assets/art/characters/mira/mira_idle_sheet.png"
@@ -25,6 +26,8 @@ const PORTRAIT_CABINET_07_SCREEN := "res://assets/art/portraits/mr_byte/cabinet_
 @onready var broken_cabinet_sprite: Sprite2D = $PropLayer/BrokenCabinetSprite
 @onready var staff_door_sprite: Sprite2D = $PropLayer/StaffDoorSprite
 @onready var ui_layer: Node2D = $UILayer
+
+var route_cue: Control = null
 @onready var dialogue_box: CanvasLayer = $UILayer/DialogueBox
 @onready var prompt_label: Label = $UILayer/InteractionPrompt
 @onready var prompt_background: ColorRect = $UILayer/InteractionPromptBackground
@@ -55,6 +58,7 @@ func _ready() -> void:
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
 	_apply_spawn_position()
 	_on_prompt_changed("")
+	_setup_route_cue()
 	_refresh_hint()
 	_refresh_objective_hint()
 	_refresh_hub_art_states()
@@ -118,14 +122,19 @@ func _process(_delta: float) -> void:
 
 func _apply_spawn_position() -> void:
 	var spawn_id := GameState.consume_pending_spawn_id("")
+	# A stored spot from a minigame in this room wins over the door marker.
+	var back_first: Variant = GameState.consume_return_point(scene_file_path)
+	if back_first != null:
+		player.global_position = back_first
+		return
 	if not spawn_id.is_empty():
 		var marker := get_node_or_null(spawn_id)
 		if marker is Marker2D:
 			player.global_position = marker.global_position
 			return
-	if GameState.has_arcade_return_position:
-		player.global_position = GameState.arcade_return_position
-		GameState.clear_arcade_return_position()
+	var back: Variant = GameState.consume_return_point(scene_file_path)
+	if back != null:
+		player.global_position = back
 		return
 	if GameState.post_reveal_roam_unlocked:
 		player.global_position = Vector2(178, 246)
@@ -265,9 +274,25 @@ func _refresh_hint() -> void:
 	hint_label.visible = false
 	post_reveal_hint_label.visible = GameState.post_reveal_roam_unlocked and not _dialogue_is_active() and not _choice_box_is_open() and not _save_slot_menu_is_open()
 
+func _setup_route_cue() -> void:
+	if route_cue != null and is_instance_valid(route_cue):
+		return
+	route_cue = ROUTE_CUE_SCRIPT.new()
+	ui_layer.add_child(route_cue)
+	route_cue.call("setup", "arcade_hub", Vector2(24, 86), 430.0)
+
+func _refresh_route_cue() -> void:
+	if route_cue == null or not is_instance_valid(route_cue) or not route_cue.has_method("refresh"):
+		return
+	route_cue.call("refresh")
+	# The cold open owns the screen: no routing bar over the intro monologue.
+	if intro_active or _should_play_opening_intro():
+		route_cue.visible = false
+
 func _refresh_objective_hint() -> void:
 	objective_hint_label.text = _get_objective_hint_text()
 	_refresh_objective_hint_visibility()
+	_refresh_route_cue()
 	_refresh_hub_art_states()
 
 func _refresh_objective_hint_visibility() -> void:
@@ -395,7 +420,7 @@ func _maybe_show_quest_notification() -> void:
 
 func handle_hub_interaction(interactable: Node, player_node: Node = null) -> void:
 	var kind := str(interactable.interactable_kind)
-	if GameState.opening_look_around_active() and kind in ["mira", "gus", "vendo", "mr_byte", "cabinet07", "owner_portrait", "broken_cabinet", "closing_checklist", "staff_door"]:
+	if GameState.opening_look_around_active() and kind in ["mira", "gus", "vendo", "hub_directory", "test_cabinet", "cabinet07", "owner_portrait", "broken_cabinet", "closing_checklist", "staff_door"]:
 		GameState.register_opening_talk()
 	match kind:
 		"mira":
@@ -408,12 +433,12 @@ func handle_hub_interaction(interactable: Node, player_node: Node = null) -> voi
 			_handle_gus()
 		"vendo":
 			_handle_vendo()
-		"mr_byte":
-			_handle_mr_byte()
+		"hub_directory":
+			_handle_hub_directory()
 		"cabinet07":
 			_handle_cabinet_07()
-		"truth_filter":
-			_handle_truth_filter()
+		"test_cabinet":
+			_handle_test_cabinet()
 		"staff_door":
 			_handle_staff_door()
 		"owner_portrait":
@@ -488,7 +513,6 @@ func _get_memory_signal_explainer_lines() -> Array:
 		{"speaker": "Mira", "text": "Every game you win back and every thing you fix, the arcade remembers a little more."},
 		{"speaker": "Mira", "text": "Remember enough, and the Staff Room at the back will finally open."},
 		{"speaker": "Mira", "text": "That is where the last of it is waiting."},
-		{"speaker": "Mira", "text": "The machines call that remembering the Memory Signal. If one mutters about it, now you know what it means."},
 		{"speaker": "Mira", "text": "Start with Cabinet 07 and your token. I will point you onward from there."},
 	]
 
@@ -576,7 +600,7 @@ func _handle_mira() -> void:
 		return
 	if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
 		start_dialogue(_get_mira_lines("circuit_soda_transition", [
-			{"speaker": "Mira", "text": "Your Memory Signal is Fractured now."},
+			{"speaker": "Mira", "text": "The arcade is remembering louder now."},
 			{"speaker": "Mira", "text": "Vendo says fractured things still need somewhere to flow.", "portrait": PORTRAIT_MIRA_WORRIED},
 			{"speaker": "Mira", "text": "Snack Alcove is the next stop."},
 		]))
@@ -597,7 +621,7 @@ func _handle_mira() -> void:
 				{"speaker": "Mira", "text": "That is also worrying."},
 			],
 			[
-				{"speaker": "Mira", "text": "Your Memory Signal is Fractured now."},
+				{"speaker": "Mira", "text": "The arcade is remembering louder now."},
 				{"speaker": "Mira", "text": "That means the Staff Door may finally listen."},
 			],
 		], [
@@ -709,7 +733,7 @@ func _handle_gus() -> void:
 		])
 		start_dialogue(post_reveal_lines, _get_witness_completion_callback(was_completed))
 		return
-	if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed and not GameState.gus_hub_checkin_truth_filter_done:
+	if GameState.lying_cabinets_completed and GameState.mr_byte_truth_filter_debriefed and not GameState.circuit_soda_completed and not GameState.gus_hub_checkin_truth_filter_done:
 		GameState.gus_hub_checkin_truth_filter_done = true
 		start_dialogue(_get_gus_lines("hub_checkin_truth_filter", [
 			{"speaker": "Gus", "text": "Heard the Truth Filter howl. It only does that when it loses.", "portrait": PORTRAIT_GUS_ANNOYED},
@@ -780,116 +804,18 @@ func _handle_gus() -> void:
 	]))
 
 func _handle_vendo() -> void:
-	if _is_post_reveal():
-		GameState.vendo_post_reveal_seen = true
-		var was_completed := _was_witness_route_completed()
-		GameState.mark_witness_vendo_heard()
-		var post_reveal_lines := _get_vendo_lines("post_reveal_witness", [
-			{"speaker": "Vendo", "text": "Employee 04."},
-			{"speaker": "Vendo", "text": "Congratulations, valued stored file."},
-			{"speaker": "Vendo", "text": "Your memory has been partially restored."},
-			{"speaker": "Vendo", "text": "Refunds remain impossible."},
-		])
-		if GameState.conscience_final_room_seen:
-			post_reveal_lines.append_array([
-				{"speaker": "Vendo", "text": "Internal conflict resolved."},
-				{"speaker": "Vendo", "text": "External refund policy unchanged."},
-			])
-		start_dialogue(post_reveal_lines, _get_witness_completion_callback(was_completed))
+	# Second Vendo unit: the hub soda machine. Flavor and the Memory Cola
+	# riddle only - guidance and the witness beat belong to the Snack Alcove unit.
+	if not GameState.vendo_memory_riddle_secret_found and GameState.lost_token_quest_completed and not _is_post_reveal():
+		start_dialogue(_get_vendo_lines("memory_cola_riddle_setup", [
+			{"speaker": "Vendo", "text": "Limited offer: one Memory Cola. Payment accepted in answers."},
+			{"speaker": "Vendo", "text": "Answer the house riddle and the can is yours."},
+		]), Callable(self, "_open_vendo_memory_riddle"))
 		return
-	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
-		GameState.vendo_intro_seen = true
-		start_dialogue(_get_vendo_sequential_lines("truth_filter_active", [
-			{"speaker": "Vendo", "text": "Memory Signal: Uneasy."},
-			{"speaker": "Vendo", "text": "Please proceed to Cabinet Row."},
-			{"speaker": "Vendo", "text": "Mr. Byte handles truth with fewer bubbles."},
-		]))
-		return
-	if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
-		GameState.vendo_intro_seen = true
-		start_dialogue(_get_vendo_sequential_lines("circuit_soda_repeat_hint", [
-			{"speaker": "Vendo", "text": "Circuit Soda remains available."},
-			{"speaker": "Vendo", "text": "Please report to Snack Alcove."},
-			{"speaker": "Vendo", "text": "Try not to spill identity on the carpet."},
-		]))
-		return
-	if GameState.lying_cabinets_completed and not GameState.story_puzzle_completed:
-		GameState.vendo_intro_seen = true
-		start_dialogue(_get_vendo_lines("overloaded_phase", [
-			{"speaker": "Vendo", "text": "Next recommendation: Staff Door."},
-			{"speaker": "Vendo", "text": "Hydration status: emotionally irrelevant."},
-		]))
-		return
-	if GameState.vendo_memory_riddle_secret_found:
-		GameState.vendo_intro_seen = true
-		start_dialogue(_select_repeat_dialogue("vendo", [
-			[
-				{"speaker": "Vendo", "text": "Memory Cola is sold out."},
-				{"speaker": "Vendo", "text": "Mostly because you keep losing it."},
-			],
-			[
-				{"speaker": "Vendo", "text": "Mira smiles like someone reading the last page first."},
-				{"speaker": "Vendo", "text": "Terrible habit. Excellent customer retention."},
-			],
-		], [
-			[
-				{"speaker": "Vendo", "text": "Please proceed to the glowing machine with boundary issues."},
-			],
-		]))
-		return
-	if GameState.lost_token_quest_started:
-		GameState.vendo_intro_seen = true
-		var quest_lines: Array = _select_repeat_dialogue("vendo", [
-			[
-				{"speaker": "Vendo", "text": "Cabinet 07 does not recognize customers."},
-				{"speaker": "Vendo", "text": "Only employees."},
-				{"speaker": "Vendo", "text": "Care for a beverage-based psychological evaluation?"},
-			],
-			[
-				{"speaker": "Vendo", "text": "The missing staff member used to stand near that cabinet."},
-				{"speaker": "Vendo", "text": "Or maybe I made that up for atmosphere."},
-				{"speaker": "Vendo", "text": "Care for a beverage-based psychological evaluation?"},
-			],
-		], [
-			[
-				{"speaker": "Vendo", "text": "You have selected: delay."},
-				{"speaker": "Vendo", "text": "Suggested pairing: go play Cabinet 07."},
-			],
-			[
-				{"speaker": "Vendo", "text": "Cabinet 07 is still waiting."},
-				{"speaker": "Vendo", "text": "Its patience is artificial. Mine is not."},
-			],
-		])
-		var after_vendo: Callable = Callable(self, "_open_vendo_memory_riddle") if last_dialogue_repeat_count <= 2 else Callable()
-		if after_vendo.is_valid():
-			quest_lines = _combine_dialogue_lines(quest_lines, _get_vendo_lines("memory_cola_riddle_setup", [
-				{"speaker": "Vendo", "text": "Initiating beverage-based psychological evaluation."},
-				{"speaker": "Vendo", "text": "Recommended product: MEMORY COLA."},
-				{"speaker": "Vendo", "text": "Riddle prompt loading."},
-			]))
-		start_dialogue(quest_lines, after_vendo)
-		return
-	GameState.vendo_intro_seen = true
-	last_dialogue_repeat_count = GameState.increment_npc_dialogue_count("vendo:%s" % _get_npc_dialogue_phase())
-	var opening_lines: Array
-	if last_dialogue_repeat_count <= 4:
-		opening_lines = _get_vendo_sequential_lines("early_flavor", [
-			{"speaker": "Vendo", "text": "Welcome, valued almost-customer."},
-			{"speaker": "Vendo", "text": "Please select a beverage or a coping mechanism."},
-			{"speaker": "Vendo", "text": "Flavor profile: unresolved."},
-		])
-	else:
-		opening_lines = [
-			{"speaker": "Vendo", "text": "Talk to Mira before staring into vending enlightenment again."},
-		]
-	var after_opening_vendo: Callable = Callable(self, "_open_vendo_memory_riddle") if last_dialogue_repeat_count <= 2 else Callable()
-	if after_opening_vendo.is_valid():
-		opening_lines = _combine_dialogue_lines(opening_lines, _get_vendo_lines("memory_cola_riddle_setup", [
-			{"speaker": "Vendo", "text": "Initiating beverage-based psychological evaluation."},
-			{"speaker": "Vendo", "text": "Recommended product: MEMORY COLA."},
-			{"speaker": "Vendo", "text": "Riddle prompt loading."},
-		]))
-	start_dialogue(opening_lines, after_opening_vendo)
+	start_dialogue(DIALOGUE_POOL.get_random_set("vendo", "early_flavor", [
+		{"speaker": "Vendo", "text": "Second unit status: humming."},
+		{"speaker": "Vendo", "text": "The alcove unit gets the customers. I get the acoustics."},
+	]))
 
 func _open_vendo_memory_riddle() -> void:
 	if GameState.vendo_memory_riddle_secret_found:
@@ -942,77 +868,12 @@ func _on_vendo_riddle_choice_cancelled() -> void:
 	_refresh_hint()
 	_refresh_objective_hint()
 
-func _handle_mr_byte() -> void:
-	if _is_post_reveal():
-		GameState.mr_byte_post_reveal_seen = true
-		GameState.employee_04_file_found = true
-		var was_completed := _was_witness_route_completed()
-		GameState.mark_witness_mr_byte_heard()
-		var post_reveal_lines := _get_mr_byte_lines("post_reveal_witness", [
-			{"speaker": "Mr. Byte", "text": "Employee 04."},
-			{"speaker": "Mr. Byte", "text": "Identity conflict resolved."},
-			{"speaker": "Mr. Byte", "text": "Emotional cache remains unstable."},
-			{"speaker": "Mr. Byte", "text": "Recommended action: talk to those who remembered you."},
-		])
-		if GameState.conscience_final_room_seen:
-			post_reveal_lines.append_array([
-				{"speaker": "Mr. Byte", "text": "Conscience echo archived."},
-				{"speaker": "Mr. Byte", "text": "Identity conflict no longer denying itself."},
-			])
-		start_dialogue(post_reveal_lines, _get_witness_completion_callback(was_completed))
-		return
-	if GameState.lost_token_quest_completed and not GameState.broken_high_score_completed and not GameState.lying_cabinets_completed:
-		GameState.mr_byte_intro_seen = true
-		start_dialogue(_get_mr_byte_lines("pre_roxy_redirect", [
-			{"speaker": "Mr. Byte", "text": "Sequencing error detected."},
-			{"speaker": "Mr. Byte", "text": "Resolve Roxy's score cabinet in Cabinet Row first."},
-		]))
-		return
-	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
-		GameState.mr_byte_intro_seen = true
-		GameState.truth_filter_quest_started = true
-		start_dialogue(_get_mr_byte_sequential_lines("truth_filter_intro", [
-			{"speaker": "Mr. Byte", "text": "Memory Signal: Uneasy."},
-			{"speaker": "Mr. Byte", "text": "Recommended action: proceed to Cabinet Row."},
-			{"speaker": "Mr. Byte", "text": "Truth Filter interface required."},
-		]))
-		return
-	if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
-		GameState.mr_byte_intro_seen = true
-		start_dialogue(_get_mr_byte_lines("truth_filter_completion_anecdote", [
-			{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
-			{"speaker": "Mr. Byte", "text": "Fractured signal requires route stabilization."},
-			{"speaker": "Mr. Byte", "text": "Proceed to Snack Alcove."},
-		]))
-		return
-	if GameState.circuit_soda_completed and not GameState.lost_shift_file_completed and not GameState.story_puzzle_completed:
-		GameState.mr_byte_intro_seen = true
-		start_dialogue(_get_mr_byte_sequential_lines("lost_shift_file_support", [
-			{"speaker": "Mr. Byte", "text": "Lost Shift File access opened."},
-			{"speaker": "Mr. Byte", "text": "Read available staff records."},
-			{"speaker": "Mr. Byte", "text": "Name field remains protected."},
-		]))
-		return
-	if GameState.maintenance_sync_completed and not GameState.security_tape_assembly_completed and not GameState.story_puzzle_completed:
-		GameState.mr_byte_intro_seen = true
-		start_dialogue(_get_mr_byte_sequential_lines("security_tape_support", [
-			{"speaker": "Mr. Byte", "text": "Security tape fragments detected."},
-			{"speaker": "Mr. Byte", "text": "Recommended action: Security Tape Assembly."},
-		]))
-		return
-	if GameState.lying_cabinets_completed and not GameState.story_puzzle_completed:
-		GameState.mr_byte_intro_seen = true
-		start_dialogue(_get_mr_byte_lines("staff_records_chain", [
-			{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
-			{"speaker": "Mr. Byte", "text": "Warning: restored subjects may now notice missing pieces."},
-			{"speaker": "Mr. Byte", "text": "Check Staff Door."},
-		]))
-		return
-	GameState.mr_byte_intro_seen = true
-	start_dialogue(_get_mr_byte_sequential_lines("pre_truth_filter_locked", [
-		{"speaker": "Mr. Byte", "text": "TRUTH FILTER LOCKED."},
-		{"speaker": "Mr. Byte", "text": "Memory signal below readable threshold."},
-		{"speaker": "Mr. Byte", "text": "Recovered token required."},
+func _handle_hub_directory() -> void:
+	# Floor directory kiosk. Random bulletins, pure flavor - Mr. Byte proper
+	# lives in Cabinet Row and owns everything quest-critical.
+	start_dialogue(DIALOGUE_POOL.get_random_set("environment_objects", "hub_directory_notes", [
+		{"speaker": "Directory", "text": "PIXEL HAVEN FLOOR GUIDE."},
+		{"speaker": "Directory", "text": "CABINET ROW: games. SNACK ALCOVE: sugar. PRIZE CORNER: negotiation."},
 	]))
 
 func _handle_cabinet_07() -> void:
@@ -1067,7 +928,7 @@ func _handle_cabinet_07() -> void:
 		return
 	var cabinet_key := "overloaded_echo" if GameState.maintenance_sync_completed or GameState.security_tape_assembly_completed or GameState.final_night_walk_completed or GameState.memory_echo_completed or GameState.story_puzzle_completed else "fractured_echo"
 	var cabinet_lines := _get_cabinet07_sequential_lines(cabinet_key, [
-		{"speaker": "Cabinet 07", "text": "MEMORY SIGNAL: FRACTURED."},
+		{"speaker": "Cabinet 07", "text": "CABINET STATUS: RESTLESS."},
 		{"speaker": "Cabinet 07", "text": "STAFF DOOR TARGET READY."},
 		{"speaker": "Cabinet 07", "text": "CHECK STAFF DOOR."},
 	])
@@ -1075,25 +936,13 @@ func _handle_cabinet_07() -> void:
 		cabinet_lines.append_array(_get_cabinet07_echo_lines())
 	start_dialogue(cabinet_lines)
 
-func _handle_truth_filter() -> void:
-	if not GameState.lost_token_quest_completed:
-		start_dialogue(_get_environment_lines("truth_filter_machine_grounded", [
-			{"speaker": "Truth Filter", "text": "SIGNAL TOO QUIET."},
-			{"speaker": "Truth Filter", "text": "LOST TOKEN REQUIRED."},
-		]))
-		return
-	if GameState.lying_cabinets_completed:
-		start_dialogue(_get_environment_state_lines("truth_filter_machine", [
-			{"speaker": "Truth Filter", "text": "TRUTH FILTER PASSED."},
-			{"speaker": "Truth Filter", "text": "MEMORY SIGNAL: FRACTURED."},
-		]))
-		return
-	GameState.update_memory_signal_from_progress()
-	GameState.set_pending_spawn_id("Spawn_FromArcadeHub")
-	start_dialogue(_get_environment_lines("truth_filter_machine_uneasy", [
-		{"speaker": "Truth Filter", "text": "CONTRADICTION THRESHOLD REACHED."},
-		{"speaker": "Truth Filter", "text": "SORT FALSE RECORDS."},
-	]), Callable(SceneChanger, "go_to_cabinet_row"))
+func _handle_test_cabinet() -> void:
+	# The old tuning cabinet. Random archive fragments about the staffer who
+	# calibrated every game in the building - the past Mira only gestures at.
+	start_dialogue(DIALOGUE_POOL.get_random_set("environment_objects", "test_cabinet_memories", [
+		{"speaker": "Test Cabinet", "text": "TEST LOG 114: difficulty lowered again."},
+		{"speaker": "Test Cabinet", "text": "Note attached: 'kids should win on allowance money.'"},
+	]))
 
 func _on_save_slot_menu_closed() -> void:
 	if player and player.has_method("set_control_enabled"):
@@ -1127,7 +976,7 @@ func _handle_staff_door() -> void:
 		start_dialogue(_get_staff_door_sequential_lines("truth_filter_required", [
 			{"speaker": "Staff Door", "text": "STAFF ACCESS LOCKED."},
 			{"speaker": "Staff Door", "text": "TRUTH FILTER REQUIRED."},
-			{"speaker": "Staff Door", "text": "MEMORY SIGNAL UNSTABLE."},
+			{"speaker": "Staff Door", "text": "EMPLOYEE SIGNAL UNSTABLE."},
 		]))
 		return
 	if GameState.lost_token_quest_completed and GameState.rockbyte_duel_completed and GameState.lying_cabinets_completed and GameState.circuit_soda_completed:
@@ -1191,8 +1040,9 @@ func _is_post_reveal() -> bool:
 	return GameState.post_reveal_roam_unlocked or GameState.twist_reveal_seen
 
 func _store_arcade_return_position() -> void:
+	# SceneChanger captures this centrally now; kept for explicit call sites.
 	if player:
-		GameState.set_arcade_return_position(player.global_position)
+		GameState.set_return_point(scene_file_path, player.global_position)
 
 func _setup_ambient_sprite_effects() -> void:
 	AMBIENT_EFFECTS.add(effects_layer, [

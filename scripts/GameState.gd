@@ -129,6 +129,9 @@ var save_player_facing := "down"
 var save_progress_stage := "New Game"
 var has_arcade_return_position := false
 var arcade_return_position := Vector2.ZERO
+# Which map the return position belongs to, so a stored spot can never be
+# applied to a different room.
+var return_scene_path := ""
 var opening_intro_seen := false
 var opening_npc_talks := 0
 var opening_hint_monologue_seen := false
@@ -138,6 +141,10 @@ var midpoint_told_mira := false
 # Hub check-ins with Gus between beats (story stops that justify the walk back).
 var gus_hub_checkin_truth_filter_done := false
 var gus_hub_checkin_prize_sort_done := false
+# Cabinet Row debrief beat: Roxy points at Mr. Byte, he files the hallway voice
+# as clerical noise, the protagonist decides to ask Gus.
+var roxy_truth_filter_nudge_seen := false
+var mr_byte_truth_filter_debriefed := false
 # Post-game replay tracking (runtime only, never saved): which stage was
 # relaunched from a machine's replay offer, and whether it was won.
 var postgame_replay_pending := ""
@@ -471,6 +478,8 @@ func reset_for_new_game() -> void:
 	midpoint_told_mira = false
 	gus_hub_checkin_truth_filter_done = false
 	gus_hub_checkin_prize_sort_done = false
+	roxy_truth_filter_nudge_seen = false
+	mr_byte_truth_filter_debriefed = false
 	postgame_replay_pending = ""
 	postgame_replay_won = false
 	last_announced_quest_id = ""
@@ -495,6 +504,7 @@ func set_arcade_return_position(position: Vector2) -> void:
 func clear_arcade_return_position() -> void:
 	arcade_return_position = Vector2.ZERO
 	has_arcade_return_position = false
+	return_scene_path = ""
 
 func start_lost_token_quest() -> void:
 	story_started = true
@@ -662,6 +672,28 @@ func consume_postgame_replay_return(stage_id: String) -> bool:
 	postgame_replay_won = false
 	return won
 
+func set_return_point(scene_path: String, position: Vector2) -> void:
+	# Remember exactly where the player stood before a minigame took over.
+	return_scene_path = scene_path
+	arcade_return_position = position
+	has_arcade_return_position = true
+
+func has_return_point() -> bool:
+	return has_arcade_return_position and not return_scene_path.is_empty()
+
+func get_return_scene_path() -> String:
+	return return_scene_path
+
+func consume_return_point(scene_path: String) -> Variant:
+	# Hand the spot back only to the room it was taken from; arriving anywhere
+	# else means the stored spot is stale, so drop it.
+	if not has_arcade_return_position:
+		return null
+	var matched := return_scene_path == scene_path
+	var position := arcade_return_position
+	clear_arcade_return_position()
+	return position if matched else null
+
 func unlock_player_glitched_form() -> void:
 	player_glitched_form_unlocked = true
 
@@ -798,6 +830,8 @@ func get_current_quest_id() -> String:
 		return "broken_high_score"
 	if lost_token_quest_completed and not lying_cabinets_completed:
 		return "truth_filter"
+	if lying_cabinets_completed and not mr_byte_truth_filter_debriefed and not circuit_soda_completed:
+		return "mr_byte_debrief"
 	if lying_cabinets_completed and not gus_hub_checkin_truth_filter_done and not circuit_soda_completed:
 		return "gus_checkin_truth_filter"
 	if lying_cabinets_completed and not circuit_soda_completed:
@@ -835,27 +869,34 @@ func get_current_quest_data() -> Dictionary:
 				return _with_registry_quest_data({
 					"id": "broken_high_score",
 					"title": "Broken High Score",
-					"summary": "Talk to Roxy by the score cabinet in Cabinet Row.",
+					"summary": "Talk to Roxy in Cabinet Row.",
 					"details": "Mira says a regular named Roxy guards a score cabinet that is still lying about a record. Hear her out before touching the board.",
 				}, "broken_high_score")
 			return _with_registry_quest_data({
 				"id": "broken_high_score",
 				"title": "Broken High Score",
-				"summary": "Beat Roxy's Broken High Score cabinet in Cabinet Row.",
+				"summary": "Use the BROKEN SCORE cabinet in Cabinet Row.",
 				"details": "Roxy guards the Broken High Score cabinet in Cabinet Row. The board lies that the target is 9999. Restore the real record before the Truth Filter.",
 			}, "broken_high_score")
 		"prize_sort":
+			if not pip_met:
+				return _with_registry_quest_data({
+					"id": "prize_sort",
+					"title": "Prize Sort",
+					"summary": "Talk to Pip in Prize Corner.",
+					"details": "Vendo says the plush in Prize Corner has been staring at three loose labels all night. Hear Pip out before touching the counter.",
+				}, "prize_counter_secret")
 			return _with_registry_quest_data({
 				"id": "prize_sort",
 				"title": "Prize Sort",
-				"summary": "Help Pip sort the prizes in Prize Corner.",
+				"summary": "Use the PRIZE COUNTER in Prize Corner.",
 				"details": "Pip in Prize Corner says the labels remember an order: Ticket Stub, Lost Token, then Blank Employee Badge. Sort them before the Lost Shift File.",
 			}, "prize_counter_secret")
 		"gus_checkin_truth_filter":
 			return {
 				"id": "gus_checkin_truth_filter",
 				"title": "Catch Up With Gus",
-				"summary": "Gus flagged you down - find him on the Arcade Hub floor.",
+				"summary": "Find Gus on the Arcade Hub floor.",
 				"details": "Gus heard the Truth Filter lose its argument and wants a word before the next machine. Find him on the Arcade Hub floor.",
 				"owner": "Gus",
 				"location": "ArcadeHub",
@@ -865,7 +906,7 @@ func get_current_quest_data() -> Dictionary:
 			return {
 				"id": "gus_checkin_prize_sort",
 				"title": "Gus Has a Lead",
-				"summary": "Talk to Gus in the Arcade Hub about the prize wall.",
+				"summary": "Talk to Gus in the Arcade Hub.",
 				"details": "Pip's prize wall stirred something loose. Gus wants to chase it his way: paperwork. Find him on the Arcade Hub floor before digging into the records.",
 				"owner": "Gus",
 				"location": "ArcadeHub",
@@ -875,7 +916,7 @@ func get_current_quest_data() -> Dictionary:
 			return _with_registry_quest_data({
 				"id": "opening_look_around",
 				"title": "Get Your Bearings",
-				"summary": "Look around the arcade. Talk to whoever is still here.",
+				"summary": "Look around. Talk to whoever is here.",
 				"details": "Pixel Haven is closed, but it seems to know me. I should look around and talk to whoever is still here before I decide anything.",
 			}, "lost_token")
 		"opening_talk_to_mira":
@@ -889,28 +930,28 @@ func get_current_quest_data() -> Dictionary:
 			return _with_registry_quest_data({
 				"id": "recover_lost_token",
 				"title": "Recover the Lost Token",
-				"summary": "Play Cabinet 07 on the ArcadeHub main floor.",
+				"summary": "Win your token back from Cabinet 07.",
 				"details": "Mira says Cabinet 07 has my Lost Token. I need to play Cabinet 07 on the ArcadeHub main floor, then bring the token back to Mira at the ticket counter.",
 			}, "lost_token")
 		"return_lost_token":
 			return _with_registry_quest_data({
 				"id": "return_lost_token",
 				"title": "Return the Lost Token",
-				"summary": "Bring the token back to Mira at the ArcadeHub counter.",
+				"summary": "Bring the Lost Token back to Mira.",
 				"details": "Cabinet 07 released the Lost Token. Mira is waiting for it by the ticket counter.",
 			}, "lost_token")
 		"maintenance_sync":
 			return _with_registry_quest_data({
 				"id": "maintenance_sync",
 				"title": "Maintenance Sync",
-				"summary": "Help Gus use Maintenance Sync in Maintenance Hall.",
+				"summary": "Run Maintenance Sync with Gus in Maintenance.",
 				"details": "Service power is restored. Talk to Gus in Maintenance Hall, then use Maintenance Sync to line up the Staff Door signals.",
 			}, "maintenance_sync")
 		"static_service_run":
 			return _with_registry_quest_data({
 				"id": "static_service_run",
 				"title": "Static Service Run",
-				"summary": "Talk to Gus in Maintenance Hall and restore service power.",
+				"summary": "See Gus in Maintenance Hall about the power.",
 				"details": "The Lost Shift File gave Gus enough context to work with the Staff Door, but Maintenance Hall still needs service power. Talk to Gus, then run Static Service Run.",
 			}, "static_service_run")
 		"lost_shift_file":
@@ -919,7 +960,7 @@ func get_current_quest_data() -> Dictionary:
 				"title": "Lost Shift File",
 				"owner": "Mira / Gus / Mr. Byte",
 				"location": "ArcadeHub, Maintenance Hall, Cabinet Row",
-				"summary": "Read the Closing Checklist, Staff Schedule, and Maintenance Note.",
+				"summary": "Read the checklist, schedule, and note.",
 				"details": "The signal is routed, but the Staff Door still refuses to open. Read the Closing Checklist in ArcadeHub, the Staff Schedule in Cabinet Row, and Gus's Maintenance Note in Maintenance Hall.",
 				"required": true,
 				"starts_after": "circuit_soda_completed",
@@ -930,7 +971,7 @@ func get_current_quest_data() -> Dictionary:
 			return _with_registry_quest_data({
 				"id": "staff_corridor",
 				"title": "Enter the Staff Corridor",
-				"summary": "Use the Staff Corridor exit past Maintenance Hall.",
+				"summary": "Follow the Staff Access Hall onward.",
 				"details": "Gus stabilized the Staff Door. Use the Staff Corridor exit so the overloaded signal can lead toward Security Tape, Final Night Walk, and Memory Echo.",
 			}, "staff_corridor")
 		"security_tape_assembly":
@@ -939,7 +980,7 @@ func get_current_quest_data() -> Dictionary:
 				"title": "Assemble the Security Tape",
 				"owner": "Staff Door / Mr. Byte",
 				"location": "Staff Corridor",
-				"summary": "Use the Security Tape terminal in Staff Corridor.",
+				"summary": "Restore the Security Tape in Staff Corridor.",
 				"details": "The Staff Door recorded two signals, but the tape is damaged. Assemble the Security Tape in Staff Corridor before Final Night Walk and Memory Echo.",
 				"required": true,
 				"starts_after": "maintenance_sync_completed",
@@ -950,7 +991,7 @@ func get_current_quest_data() -> Dictionary:
 			return _with_registry_quest_data({
 				"id": "final_night_walk",
 				"title": "Final Night Walk",
-				"summary": "Use Final Night Walk in Staff Corridor.",
+				"summary": "Use the FINAL NIGHT terminal in Staff Corridor.",
 				"details": "The security tape is assembled, but the memory is still too unstable to play back. Use Final Night Walk in Staff Corridor before confronting the Memory Echo.",
 			}, "final_night_walk")
 		"stabilize_memory_echo":
@@ -961,19 +1002,43 @@ func get_current_quest_data() -> Dictionary:
 				"details": "The Final Night route is stable. Use Memory Echo in Staff Corridor to stabilize the signal before the Staff Room reveals what happened.",
 			}, "memory_echo")
 		"circuit_soda":
+			if get_npc_dialogue_count("vendo_circuit_explained") == 0:
+				return _with_registry_quest_data({
+					"id": "circuit_soda",
+					"title": "Route the Signal",
+					"summary": "Talk to Vendo in Snack Alcove.",
+					"details": "Gus says Vendo has been rerouting power to itself again. Hear the machine out before touching Circuit Soda.",
+				}, "circuit_soda")
 			return _with_registry_quest_data({
 				"id": "circuit_soda",
 				"title": "Route the Signal",
-				"summary": "Talk to Vendo in Snack Alcove and use Circuit Soda.",
-				"details": "The Truth Filter recovered a second fragment, but the signal is still misrouted. Talk to Vendo in Snack Alcove, then use Circuit Soda.",
+				"summary": "Route Circuit Soda in Snack Alcove.",
+				"details": "Vendo walked you through it. Rotate the pipes until the memory input reaches the restore output.",
 			}, "circuit_soda")
 		"truth_filter":
+			if get_npc_dialogue_count("mr_byte_tf_explained") == 0:
+				return _with_registry_quest_data({
+					"id": "truth_filter",
+					"title": "Open the Truth Filter",
+					"summary": "Talk to Mr. Byte in Cabinet Row.",
+					"details": "Roxy says Mr. Byte runs the Truth Filter and will not let anyone near it without an orientation. Find him in Cabinet Row first.",
+				}, "truth_filter")
 			return _with_registry_quest_data({
 				"id": "truth_filter",
 				"title": "Open the Truth Filter",
-				"summary": "Find Mr. Byte in Cabinet Row and use Truth Filter.",
-				"details": "The Lost Token woke a memory, but Mira says the arcade is still filtering the truth. Talk to Mr. Byte in Cabinet Row, then use the Truth Filter.",
+				"summary": "Run the Truth Filter in Cabinet Row.",
+				"details": "Mr. Byte opened the Truth Filter. Sort the lying cabinets. Roxy says the staff record terminal across the row holds the shift log the filter quizzes you on.",
 			}, "truth_filter")
+		"mr_byte_debrief":
+			return {
+				"id": "mr_byte_debrief",
+				"title": "Report to Mr. Byte",
+				"summary": "Tell Mr. Byte what the Filter found.",
+				"details": "Roxy says Mr. Byte files everything the Truth Filter turns up. He is still in Cabinet Row, and he will have opinions.",
+				"owner": "Mr. Byte",
+				"location": "Cabinet Row",
+				"required": true,
+			}
 		"enter_staff_room":
 			return _with_registry_quest_data({
 				"id": "enter_staff_room",
@@ -1165,6 +1230,8 @@ func to_save_data() -> Dictionary:
 		"midpoint_told_mira": midpoint_told_mira,
 		"gus_hub_checkin_truth_filter_done": gus_hub_checkin_truth_filter_done,
 		"gus_hub_checkin_prize_sort_done": gus_hub_checkin_prize_sort_done,
+		"roxy_truth_filter_nudge_seen": roxy_truth_filter_nudge_seen,
+		"mr_byte_truth_filter_debriefed": mr_byte_truth_filter_debriefed,
 		"last_announced_quest_id": last_announced_quest_id,
 		"npc_dialogue_counts": npc_dialogue_counts.duplicate(true),
 	}
@@ -1356,6 +1423,8 @@ func apply_save_data(data: Dictionary) -> void:
 	midpoint_told_mira = bool(data.get("midpoint_told_mira", midpoint_told_mira))
 	gus_hub_checkin_truth_filter_done = bool(data.get("gus_hub_checkin_truth_filter_done", gus_hub_checkin_truth_filter_done))
 	gus_hub_checkin_prize_sort_done = bool(data.get("gus_hub_checkin_prize_sort_done", gus_hub_checkin_prize_sort_done))
+	roxy_truth_filter_nudge_seen = bool(data.get("roxy_truth_filter_nudge_seen", roxy_truth_filter_nudge_seen))
+	mr_byte_truth_filter_debriefed = bool(data.get("mr_byte_truth_filter_debriefed", mr_byte_truth_filter_debriefed))
 	last_announced_quest_id = str(data.get("last_announced_quest_id", last_announced_quest_id))
 	var dialogue_counts_value: Variant = data.get("npc_dialogue_counts", npc_dialogue_counts)
 	if dialogue_counts_value is Dictionary:

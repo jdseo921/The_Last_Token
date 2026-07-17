@@ -62,7 +62,7 @@ prop_color = Color(0.26, 0.82, 1, 0.09)
 
 [node name="CollisionBounds" type="Node2D" parent="."]
 script = ExtResource("9")
-rectangles = Array[Vector4]([Vector4(0, 0, 640, 130), Vector4(0, 130, 56, 66), Vector4(0, 196, 56, 134), Vector4(128, 130, 192, 62), Vector4(410, 130, 106, 60), Vector4(516, 130, 124, 76), Vector4(516, 246, 124, 120), Vector4(12, 362, 202, 62), Vector4(0, 424, 640, 16), Vector4(624, 366, 16, 58)])
+rectangles = Array[Vector4]([Vector4(0, 0, 640, 192), Vector4(0, 130, 56, 66), Vector4(0, 196, 56, 134), Vector4(128, 130, 192, 62), Vector4(410, 130, 106, 60), Vector4(516, 130, 124, 76), Vector4(516, 246, 124, 120), Vector4(12, 362, 202, 62), Vector4(0, 424, 640, 16), Vector4(624, 366, 16, 58)])
 visual_node_paths = Array[NodePath]([])
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
@@ -118,19 +118,19 @@ flicker_enabled = true
 position = Vector2(320, 406)
 target_scene_path = "res://scenes/maps/hallways/SnackHallway.tscn"
 target_spawn_id = "Spawn_FromSnackAlcove"
-destination_name = "ARCADE HUB"
+destination_name = "SNACK HALLWAY"
 
 [node name="ToCabinetRow" parent="." instance=ExtResource("3")]
 position = Vector2(74, 222)
 target_scene_path = "res://scenes/maps/hallways/CabinetSnackHallway.tscn"
 target_spawn_id = "Spawn_FromSnackAlcove"
-destination_name = "CABINET ROW"
+destination_name = "SERVICE HALLWAY"
 
 [node name="ToPrizeCorner" parent="." instance=ExtResource("3")]
 position = Vector2(612, 222)
 target_scene_path = "res://scenes/maps/hallways/SnackPrizeHallway.tscn"
 target_spawn_id = "Spawn_FromSnackAlcove"
-destination_name = "PRIZE CORNER"
+destination_name = "PRIZE SERVICE HALL"
 
 [node name="UILayer" type="Node2D" parent="."]
 

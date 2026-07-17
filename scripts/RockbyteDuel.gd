@@ -10,6 +10,8 @@ const CONFIG_PATH := "res://data/minigames/rockbyte_duel_config.json"
 const ROCK_PILE_PROP_SCENE := preload("res://scenes/minigames/common/RockPileProp.tscn")
 const CABINET_TURN_DELAY_SECONDS := 0.23
 const START_ROCKS_PER_PILE := 6
+const HARD_CHANCE_FIRST_GAME_PERCENT := 60
+const HARD_CHANCE_SECOND_GAME_PERCENT := 30
 const LEEWAY_RANDOM_MOVE_CHANCE_PERCENT := 58
 const LEEWAY_LOSS_THRESHOLD := 3
 const RESULT_POPUP_HOLD_SECONDS := 2.0
@@ -61,6 +63,7 @@ var left_pile_prop: Node = null
 var right_pile_prop: Node = null
 var visual_sequence_running := false
 var aggressive_this_game := false
+var move_buttons_enabled := false
 var minigame_config: Dictionary = {}
 var result_popup_tween: Tween = null
 var feedback_flash: ColorRect = null
@@ -129,16 +132,14 @@ func _take_player_turn(choice: String) -> void:
 			removed_right = 1
 			player_message = "You took 1 from the right pile."
 		"both":
-			if left_pile <= 0 and right_pile <= 0:
-				status_label.text = "Both piles are empty."
+			if left_pile <= 0 or right_pile <= 0:
+				status_label.text = "Both piles need rocks for that move."
 				_play_arcade_error()
 				return
-			if left_pile > 0:
-				left_pile -= 1
-				removed_left = 1
-			if right_pile > 0:
-				right_pile -= 1
-				removed_right = 1
+			left_pile -= 1
+			removed_left = 1
+			right_pile -= 1
+			removed_right = 1
 			player_message = "You took 1 from both piles."
 	_play_audio("play_button_pulse")
 	_flash_arcade(ARCADE_JUICE.FLASH_CYAN, 0.18)
@@ -190,7 +191,7 @@ func _random_valid_move() -> String:
 		options.append("left")
 	if right_pile > 0:
 		options.append("right")
-	if left_pile > 0 or right_pile > 0:
+	if left_pile > 0 and right_pile > 0:
 		options.append("both")
 	return options[randi() % options.size()]
 
@@ -229,7 +230,7 @@ func _get_legal_moves() -> Array[String]:
 		moves.append("left")
 	if right_pile > 0:
 		moves.append("right")
-	if left_pile > 0 or right_pile > 0:
+	if left_pile > 0 and right_pile > 0:
 		moves.append("both")
 	return moves
 
@@ -319,11 +320,16 @@ func _on_exit_pressed() -> void:
 	_reset_duel()
 
 func _reset_duel() -> void:
-	# Difficulty by attempt: game 1 the cabinet plays purely to win; game 2 it
-	# has a 50% chance to do the same; from game 3 it goes easy.
+	# Difficulty by attempt: game 1 the cabinet has a 60% chance to play purely
+	# to win; game 2 a 30% chance; from game 3 it always goes easy.
 	GameState.rockbyte_attempt_count += 1
 	var attempt: int = GameState.rockbyte_attempt_count
-	aggressive_this_game = attempt == 1 or (attempt == 2 and randi() % 2 == 0)
+	var aggressive_chance := 0
+	if attempt == 1:
+		aggressive_chance = HARD_CHANCE_FIRST_GAME_PERCENT
+	elif attempt == 2:
+		aggressive_chance = HARD_CHANCE_SECOND_GAME_PERCENT
+	aggressive_this_game = randi() % 100 < aggressive_chance
 	visual_sequence_running = false
 	# Every duel starts from the same even 4/4 board so the setup never betrays
 	# the difficulty. Whoever RECEIVES an even/even board loses it to perfect
@@ -353,6 +359,7 @@ func _reset_duel() -> void:
 func _refresh_counts() -> void:
 	count_label.text = "LEFT PILE: %d        RIGHT PILE: %d" % [left_pile, right_pile]
 	_refresh_rock_visuals()
+	_refresh_move_buttons()
 
 func _refresh_rock_visuals() -> void:
 	_set_rock_group_count(left_rocks, left_pile)
@@ -374,10 +381,30 @@ func _get_loss_text() -> String:
 			return "Cabinet 07: pattern aid unlocked.\nTry keeping both piles even."
 
 func _set_move_buttons_enabled(enabled: bool) -> void:
-	var can_use_buttons := enabled and not visual_sequence_running
-	take_left_button.disabled = not can_use_buttons
-	take_right_button.disabled = not can_use_buttons
-	take_both_button.disabled = not can_use_buttons
+	move_buttons_enabled = enabled
+	_refresh_move_buttons()
+
+func _refresh_move_buttons() -> void:
+	# A move is only offered when the pile(s) it touches still have rocks.
+	var can_use_buttons := move_buttons_enabled and not visual_sequence_running
+	take_left_button.disabled = not can_use_buttons or left_pile <= 0
+	take_right_button.disabled = not can_use_buttons or right_pile <= 0
+	take_both_button.disabled = not can_use_buttons or left_pile <= 0 or right_pile <= 0
+	_ensure_move_focus()
+
+func _ensure_move_focus() -> void:
+	# Never strand keyboard focus on a disabled move.
+	var buttons: Array[Button] = [take_left_button, take_right_button, take_both_button]
+	var focused_disabled := false
+	for button in buttons:
+		if button.has_focus() and button.disabled:
+			focused_disabled = true
+	if not focused_disabled:
+		return
+	for button in buttons:
+		if not button.disabled and button.visible:
+			button.grab_focus()
+			return
 
 func _setup_action_queue() -> void:
 	action_queue = ACTION_QUEUE_SCRIPT.new()

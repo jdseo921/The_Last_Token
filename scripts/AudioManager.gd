@@ -250,25 +250,19 @@ func _get_track_id_for_context(context_id: String) -> String:
 
 func _get_volume_scale_for_context(context_id: String) -> float:
 	match context_id:
+		"title":
+			return 0.5
 		"staff_room", "ending":
 			return 0.58
 	return 1.0
 
 func _room_track_for_story(base_track: String) -> String:
-	# Reserved progression: each room keeps its signature track until the
-	# reveal, after which the whole arcade settles into the restored theme.
-	if has_node("/root/GameState") and (GameState.post_reveal_roam_unlocked or GameState.twist_reveal_seen):
-		return "post_reveal_roam"
+	# One signature track per room, independent of story progress.
 	return base_track
 
 func _get_arcade_hub_music_id() -> String:
-	if not has_node("/root/GameState"):
-		return "arcade_hub_grounded"
-	if GameState.post_reveal_roam_unlocked or GameState.twist_reveal_seen:
-		return "post_reveal_roam"
-	if GameState.memory_signal_level <= GameState.MEMORY_SIGNAL_UNEASY:
-		return "arcade_hub_grounded"
-	return "arcade_hub_uneasy_fractured"
+	# One signature track per room, independent of story progress.
+	return "arcade_hub_grounded"
 
 func _play_sfx(key: String) -> void:
 	if sfx_players.is_empty():

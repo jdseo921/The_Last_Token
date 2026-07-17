@@ -48,6 +48,15 @@ func _ready() -> void:
 func focus_default() -> void:
 	new_memory_button.grab_focus()
 
+func _input(event: InputEvent) -> void:
+	# Menu selection is arrow keys or the mouse. WASD drives the character, not
+	# the menu, so swallow it here rather than let a future binding leak in.
+	if not visible or not (event is InputEventKey) or not event.is_pressed():
+		return
+	var key_event := event as InputEventKey
+	if key_event.physical_keycode in [KEY_W, KEY_A, KEY_S, KEY_D]:
+		get_viewport().set_input_as_handled()
+
 func _apply_button_styles() -> void:
 	for button in [new_memory_button, restore_memory_button, settings_button, quit_button]:
 		_style_menu_button(button)

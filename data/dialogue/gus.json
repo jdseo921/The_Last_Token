@@ -129,7 +129,15 @@
     ],
     "hub_checkin_truth_filter": [
       [
-        {"speaker": "Gus", "text": "There you are. Heard the Truth Filter howl from two rooms away.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
+        {"speaker": "Player", "text": "Gus. Has anything been talking in the hallways tonight?"},
+        {"speaker": "Gus", "text": "Talking.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
+        {"speaker": "Gus", "text": "Those speakers have been shot since before I started. They pop. They hiss."},
+        {"speaker": "Gus", "text": "Sometimes they do a thing I call the ghost cough. It is not a ghost."},
+        {"speaker": "Gus", "text": "It is a loose ground wire and forty years of nobody caring.", "portrait": "res://assets/art/portraits/gus/gus_annoyed.png"},
+        {"speaker": "Gus", "text": "If it says anything clever, write it down. I will bill it."},
+        {"speaker": "Gus", "text": "...One thing, though. Closing night left me a maintenance note I never had the guts to file.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
+        {"speaker": "Gus", "text": "It read wrong, and I did not want it to read right. Ask me again when I feel brave."},
+        {"speaker": "Gus", "text": "Anyway. Heard the Truth Filter howl from two rooms away.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
         {"speaker": "Gus", "text": "It only howls when it loses the argument. That was its first loss on record."},
         {"speaker": "Gus", "text": "Mr. Byte logged your win as an anomaly. He logs my lunch breaks the same way.", "portrait": "res://assets/art/portraits/gus/gus_annoyed.png"},
         {"speaker": "Gus", "text": "Meanwhile Vendo is rerouting power to itself again. That machine sulks when nobody visits."},
@@ -140,6 +148,9 @@
       [
         {"speaker": "Gus", "text": "Word travels. Pip let you touch the prize wall and it kept all its buttons.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
         {"speaker": "Gus", "text": "A ticket stub, a token, and a badge with no name. Pip guards what the arcade cannot look at.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
+        {"speaker": "Gus", "text": "A badge with no name means a shift with no name. My schedule copy has exactly one slot nobody ever claimed.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"},
+        {"speaker": "Gus", "text": "And that note I told you about, the one I never filed - your badge just gave it somewhere to point."},
+        {"speaker": "Gus", "text": "That is a lead. I hate that it is a lead.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
         {"speaker": "Gus", "text": "You want the rest of that story, we do it my way. Paperwork.", "portrait": "res://assets/art/portraits/gus/gus_annoyed.png"},
         {"speaker": "Gus", "text": "Closing Checklist by Mira's counter. Staff Schedule in Cabinet Row. My maintenance note in the hall."},
         {"speaker": "Gus", "text": "Read all three, then find me in Maintenance Hall. I will be pretending it is a normal shift.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"}

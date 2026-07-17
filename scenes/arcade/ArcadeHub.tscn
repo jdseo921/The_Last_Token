@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/ArcadeHub.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/ReadableNote.tscn" id="10"]
 [ext_resource type="Script" path="res://scripts/MapCollisionBounds.gd" id="11"]
 [ext_resource type="FontFile" path="res://assets/fonts/m3x6.ttf" id="fpx_micro"]
+[ext_resource type="FontFile" path="res://assets/fonts/PressStart2P-Regular.ttf" id="fpx_title"]
 
 [node name="ArcadeHub" type="Node2D"]
 script = ExtResource("1")
@@ -272,7 +273,8 @@ size = Vector2(252, 30)
 color = Color(0.015, 0.018, 0.024, 0.68)
 
 [node name="MapNameLabel" type="Label" parent="UILayer"]
-position = Vector2(18, 10)
+position = Vector2(24, 20)
+theme_override_fonts/font = ExtResource("fpx_title")
 theme_override_font_sizes/font_size = 16
 text = "ARCADE HUB"
 
@@ -341,7 +343,7 @@ use_placeholder_visual = false
 position = Vector2(489, 338)
 interact_extents = Vector2(112, 136)
 interactable_kind = "vendo"
-label_text = "VENDO"
+label_text = "SODA MACHINE"
 idle_sheet_path = ""
 idle_animation_enabled = false
 use_placeholder_visual = false
@@ -358,11 +360,11 @@ idle_animation_enabled = false
 use_placeholder_visual = false
 flicker_enabled = true
 
-[node name="MrByte" parent="InteractableLayer" instance=ExtResource("5")]
+[node name="HubDirectory" parent="InteractableLayer" instance=ExtResource("5")]
 position = Vector2(246, 196)
 interact_extents = Vector2(92, 96)
-interactable_kind = "mr_byte"
-label_text = "MR. BYTE"
+interactable_kind = "hub_directory"
+label_text = "DIRECTORY"
 idle_sheet_path = "res://assets/art/characters/mr_byte/mr_byte_idle_sheet.png"
 idle_animation_enabled = false
 use_placeholder_visual = false
@@ -377,11 +379,11 @@ sprite_texture_path = ""
 use_placeholder_visual = false
 flicker_enabled = true
 
-[node name="TruthFilter" parent="InteractableLayer" instance=ExtResource("5")]
+[node name="TestCabinet" parent="InteractableLayer" instance=ExtResource("5")]
 position = Vector2(322, 240)
 interact_extents = Vector2(114, 140)
-interactable_kind = "truth_filter"
-label_text = "TRUTH FILTER"
+interactable_kind = "test_cabinet"
+label_text = "TEST CABINET"
 use_placeholder_visual = false
 flicker_enabled = true
 
@@ -403,13 +405,13 @@ use_placeholder_visual = false
 position = Vector2(621, 245)
 target_scene_path = "res://scenes/maps/hallways/CabinetHallway.tscn"
 target_spawn_id = "Spawn_FromArcadeHub"
-destination_name = "CABINET ROW"
+destination_name = "CABINET HALLWAY"
 
 [node name="ToMaintenanceHall" parent="InteractableLayer" instance=ExtResource("8")]
 position = Vector2(386, 406)
 target_scene_path = "res://scenes/maps/hallways/MaintenanceHallway.tscn"
 target_spawn_id = "Spawn_FromArcadeHub"
-destination_name = "MAINTENANCE HALL"
+destination_name = "MAINTENANCE HALLWAY"
 required_flag = "circuit_soda_completed"
 locked_dialogue = Array[String](["MAINTENANCE HALL LOCKED.", "CIRCUIT SODA ROUTE REQUIRED."])
 

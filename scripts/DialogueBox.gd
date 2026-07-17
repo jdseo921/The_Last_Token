@@ -20,6 +20,8 @@ const MACHINE_SPEAKERS := [
 	"Truth Filter",
 	"Terminal",
 	"Memory Terminal",
+	"Test Cabinet",
+	"Directory",
 	"Memory System",
 	"Memory Echo",
 	"Security Tape",
@@ -36,6 +38,9 @@ const MACHINE_SPEAKERS := [
 @onready var portrait_texture_rect: TextureRect = $Panel/Portrait
 const FONT_MACHINE := preload("res://assets/fonts/VT323-Regular.ttf")
 const FONT_BODY := preload("res://assets/fonts/m6x11.ttf")
+const ANTAGONIST_DIM_COLOR := Color(0.015, 0.0, 0.035, 1.0)
+const ANTAGONIST_DIM_ALPHA := 0.62
+const ANTAGONIST_DIM_FADE_SECONDS := 0.35
 # Machine/terminal voices render in the CRT font. Humans - and ???, which must
 # share the player's font by design - use the theme default (m5x7).
 
@@ -58,9 +63,12 @@ var antagonist_elapsed := 0.0
 var speaker_home_position := Vector2.ZERO
 var dialogue_text_home_position := Vector2.ZERO
 var continue_prompt_home_position := Vector2.ZERO
+var dim_overlay: ColorRect = null
+var dim_tween: Tween = null
 
 func _ready() -> void:
 	visible = false
+	_setup_dim_overlay()
 	continue_prompt_label.text = "PRESS E / SPACE"
 	speaker_home_position = speaker_name_label.position
 	dialogue_text_home_position = dialogue_text_label.position
@@ -125,6 +133,7 @@ func _accept_current_line() -> void:
 	if current_index >= dialogue_lines.size():
 		active = false
 		visible = false
+		_set_antagonist_dim(false)
 		dialogue_finished.emit()
 		return
 	_refresh_line()
@@ -134,6 +143,7 @@ func _refresh_line() -> void:
 		speaker_name_label.text = ""
 		dialogue_text_label.text = ""
 		_show_portrait("")
+		_set_antagonist_dim(false)
 		return
 	var line: Dictionary = dialogue_lines[current_index]
 	var speaker := str(line.get("speaker", ""))
@@ -141,6 +151,7 @@ func _refresh_line() -> void:
 	speaker_name_label.text = speaker
 	_apply_speaker_font(speaker)
 	current_line_is_antagonist = _is_antagonist_speaker(speaker)
+	_set_antagonist_dim(current_line_is_antagonist)
 	current_antagonist_effect = str(line.get("effect", "normal"))
 	antagonist_elapsed = 0.0
 	_show_portrait(_get_portrait_path(line, speaker))
@@ -227,8 +238,8 @@ func _set_text_left(left: float) -> void:
 	dialogue_text_home_position = dialogue_text_label.position
 
 func _get_reveal_mode(speaker: String) -> String:
-	if speaker == "Player":
-		return "instant"
+	# The protagonist is a person: he types like Mira, Gus and Roxy do.
+	# Machines stamp out whole words; ??? has its own slower mode.
 	if speaker in MACHINE_SPEAKERS:
 		return "words"
 	return "letters"
@@ -301,3 +312,36 @@ func _apply_speaker_font(speaker: String) -> void:
 	else:
 		speaker_name_label.add_theme_font_override("font", FONT_BODY)
 		dialogue_text_label.add_theme_font_override("font", FONT_BODY)
+
+func _setup_dim_overlay() -> void:
+	# ??? speaks and the room drops away. Sits behind the dialogue panel so the
+	# line itself stays lit.
+	dim_overlay = ColorRect.new()
+	dim_overlay.name = "AntagonistDim"
+	dim_overlay.color = ANTAGONIST_DIM_COLOR
+	dim_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	dim_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	dim_overlay.modulate.a = 0.0
+	dim_overlay.visible = false
+	add_child(dim_overlay)
+	move_child(dim_overlay, 0)
+
+func _set_antagonist_dim(enabled: bool) -> void:
+	if dim_overlay == null or not is_instance_valid(dim_overlay):
+		return
+	if dim_tween and dim_tween.is_valid():
+		dim_tween.kill()
+	if enabled:
+		dim_overlay.visible = true
+		dim_tween = create_tween()
+		dim_tween.tween_property(dim_overlay, "modulate:a", ANTAGONIST_DIM_ALPHA, ANTAGONIST_DIM_FADE_SECONDS)
+		return
+	if not dim_overlay.visible:
+		return
+	dim_tween = create_tween()
+	dim_tween.tween_property(dim_overlay, "modulate:a", 0.0, ANTAGONIST_DIM_FADE_SECONDS)
+	dim_tween.tween_callback(_hide_dim_overlay)
+
+func _hide_dim_overlay() -> void:
+	if dim_overlay != null and is_instance_valid(dim_overlay):
+		dim_overlay.visible = false

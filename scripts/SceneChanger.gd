@@ -79,52 +79,95 @@ func _ensure_fade_overlay() -> void:
 	_fade_rect.visible = false
 	_fade_layer.add_child(_fade_rect)
 
+func _capture_return_point() -> void:
+	# Called only on the way INTO a minigame, so the stored spot always belongs
+	# to the room the player is standing in right now.
+	var tree := get_tree()
+	if tree == null or tree.current_scene == null:
+		return
+	var scene := tree.current_scene
+	if scene.scene_file_path.is_empty():
+		return
+	var player := _find_player(scene)
+	if player == null:
+		return
+	GameState.set_return_point(scene.scene_file_path, player.global_position)
+
+func _find_player(node: Node) -> Node2D:
+	if node is CharacterBody2D and node.has_method("set_control_enabled"):
+		return node as Node2D
+	for child in node.get_children():
+		var found := _find_player(child)
+		if found != null:
+			return found
+	return null
+
+func go_to_return_point() -> bool:
+	# Used by "quit minigame": go back to the room we came from, not the hub.
+	if not GameState.has_return_point():
+		return false
+	change_scene(GameState.get_return_scene_path())
+	return true
+
 func go_to_arcade_hub() -> void:
 	change_scene(ARCADE_HUB_SCENE)
 
 func go_to_rockbyte_duel() -> void:
+	_capture_return_point()
 	change_scene(ROCKBYTE_DUEL_SCENE)
 
 func go_to_truth_filter() -> void:
+	_capture_return_point()
 	change_scene(TRUTH_FILTER_SCENE)
 
 func go_to_circuit_soda() -> void:
+	_capture_return_point()
 	change_scene(CIRCUIT_SODA_SCENE)
 
 func go_to_static_service_run() -> void:
+	_capture_return_point()
 	change_scene(STATIC_SERVICE_RUN_SCENE)
 
 func go_to_hub_ticket_sweep() -> void:
 	change_scene(HUB_TICKET_SWEEP_SCENE)
 
 func go_to_cabinet_trace_run() -> void:
+	_capture_return_point()
 	change_scene(CABINET_TRACE_RUN_SCENE)
 
 func go_to_snack_service_dash() -> void:
+	_capture_return_point()
 	change_scene(SNACK_SERVICE_DASH_SCENE)
 
 func go_to_prize_shelf_run() -> void:
+	_capture_return_point()
 	change_scene(PRIZE_SHELF_RUN_SCENE)
 
 func go_to_security_tape_assembly() -> void:
+	_capture_return_point()
 	change_scene(SECURITY_TAPE_ASSEMBLY_SCENE)
 
 func go_to_final_night_walk() -> void:
+	_capture_return_point()
 	change_scene(FINAL_NIGHT_WALK_SCENE)
 
 func go_to_broken_high_score() -> void:
+	_capture_return_point()
 	change_scene(BROKEN_HIGH_SCORE_SCENE)
 
 func go_to_sync_door_puzzle() -> void:
+	_capture_return_point()
 	change_scene(SYNC_DOOR_PUZZLE_SCENE)
 
 func go_to_maintenance_sync() -> void:
+	_capture_return_point()
 	change_scene(SYNC_DOOR_PUZZLE_SCENE)
 
 func go_to_staff_room() -> void:
 	change_scene(STAFF_ROOM_SCENE)
 
 func go_to_memory_echo() -> void:
+	_capture_return_point()
 	change_scene(MEMORY_ECHO_SCENE)
 
 func go_to_title_or_main() -> void:

@@ -7,7 +7,8 @@
         {"speaker": "Vendo", "text": "Please select a beverage or a coping mechanism."},
         {"speaker": "Vendo", "text": "Refunds remain impossible, but denial is currently chilled."},
         {"speaker": "Vendo", "text": "Labels may peel. Feelings may leak."},
-        {"speaker": "Vendo", "text": "Flavor profile: unresolved."}
+        {"speaker": "Vendo", "text": "Flavor profile: unresolved."},
+        {"speaker": "Vendo", "text": "House observation: nobody ages in here. They only stop meaning it."}
       ],
       [
         {"speaker": "Vendo", "text": "New promotional bundle: one can, two doubts, no receipt."},
@@ -74,19 +75,19 @@
     ],
     "truth_filter_active": [
       [
-        {"speaker": "Vendo", "text": "Memory Signal: Uneasy.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
+        {"speaker": "Vendo", "text": "Scanner mood: uneasy.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
         {"speaker": "Vendo", "text": "That is not a flavor. It is a warning label with carbonation."},
         {"speaker": "Vendo", "text": "Proceed to Cabinet Row."},
         {"speaker": "Vendo", "text": "Mr. Byte performs truth extraction with fewer bubbles."}
       ],
       [
-        {"speaker": "Vendo", "text": "Memory Signal: Uneasy.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
+        {"speaker": "Vendo", "text": "Scanner mood: uneasy.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
         {"speaker": "Vendo", "text": "Recommended pairing: Mr. Byte and a bitter aftertaste."},
         {"speaker": "Vendo", "text": "Cabinet Row is now accepting customers with unresolved labels."},
         {"speaker": "Vendo", "text": "Do not lick the Truth Filter."}
       ],
       [
-        {"speaker": "Vendo", "text": "Memory Signal: Uneasy.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
+        {"speaker": "Vendo", "text": "Scanner mood: uneasy.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
         {"speaker": "Vendo", "text": "Your thoughts are fizzing in opposite directions."},
         {"speaker": "Vendo", "text": "Cabinet Row can pressurize that into something useful."},
         {"speaker": "Vendo", "text": "Ask Mr. Byte. He enjoys sounding like a warranty document."}
@@ -99,7 +100,7 @@
         {"speaker": "Vendo", "text": "Then someone started staying past close to keep it breathing."},
         {"speaker": "Vendo", "text": "Their tab with this building only ever ran one direction. Out of them."},
         {"speaker": "Vendo", "text": "I never caught their name. My scanner only reads barcodes and regret.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
-        {"speaker": "Vendo", "text": "Memory Signal: Fractured.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
+        {"speaker": "Vendo", "text": "Scanner mood: fractured.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
         {"speaker": "Vendo", "text": "Scanner note: your label will not hold still. It keeps flickering mid-read, like it cannot decide what it says."},
         {"speaker": "Vendo", "text": "Your identity is leaking through unauthorized beverage channels."},
         {"speaker": "Vendo", "text": "Insert unstable signal into Circuit Soda."},

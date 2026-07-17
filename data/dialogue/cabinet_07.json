@@ -20,7 +20,6 @@
         {"speaker": "Cabinet 07", "text": "TOKEN RECOVERED.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_stable.png"},
         {"speaker": "Cabinet 07", "text": "SIGNAL RECOGNITION IMPROVED."},
         {"speaker": "Cabinet 07", "text": "ONE WIN LOGGED."},
-        {"speaker": "Cabinet 07", "text": "ONE WIN DOES NOT COMPLETE A PLAYER."},
         {"speaker": "Cabinet 07", "text": "IDENTITY: STILL MISSING."},
         {"speaker": "Cabinet 07", "text": "DUEL RESULT VERIFIED OLD TOKEN MATCH."},
         {"speaker": "Cabinet 07", "text": "RETURN TO MIRA."}
@@ -47,7 +46,7 @@
     ],
     "fractured_echo": [
       [
-        {"speaker": "Cabinet 07", "text": "MEMORY SIGNAL: FRACTURED.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_alert.png"},
+        {"speaker": "Cabinet 07", "text": "CABINET STATUS: RESTLESS.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_alert.png"},
         {"speaker": "Cabinet 07", "text": "SECOND FRAGMENT ACCEPTED."},
         {"speaker": "Cabinet 07", "text": "STAFF DOOR TARGET READY."},
         {"speaker": "Cabinet 07", "text": "IDENTITY STILL MISALIGNED."}
@@ -61,7 +60,7 @@
     ],
     "overloaded_echo": [
       [
-        {"speaker": "Cabinet 07", "text": "MEMORY SIGNAL: OVERLOADED.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_alert.png"},
+        {"speaker": "Cabinet 07", "text": "CABINET STATUS: LOUD.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_alert.png"},
         {"speaker": "Cabinet 07", "text": "LOCK RESPONSE: LISTENING."},
         {"speaker": "Cabinet 07", "text": "DOOR RESPONSE: UNSTABLE."},
         {"speaker": "Cabinet 07", "text": "SOURCE DENIAL DETECTED."},

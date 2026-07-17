@@ -154,7 +154,7 @@ func _complete_puzzle() -> void:
 	_play_audio("play_success_jingle")
 	_play_audio("play_door_unlock")
 	door_label.text = "Staff Door: OPEN"
-	status_label.text = "TWO SIGNALS DETECTED.\nRESTORED SIGNAL PRESENT.\nMEMORY SIGNAL: OVERLOADED.\nACCESS GRANTED."
+	status_label.text = "TWO SIGNALS DETECTED.\nRESTORED SIGNAL PRESENT.\nACCESS GRANTED."
 	warning_label.text = ""
 	signal_bar.color = Color(0.22, 0.95, 0.68, 1.0)
 	switch_a_button.visible = false

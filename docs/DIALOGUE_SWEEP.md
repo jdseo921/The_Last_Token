@@ -418,6 +418,23 @@ interludes say "that was me."
 ### 4.1 Room & cutscene dialogue (conditions inline)
 
 
+#### `ArcadeHub.gd` — `_maybe_play_rockbyte_anecdote()`
+
+```gdscript
+func _maybe_play_rockbyte_anecdote() -> void:
+	if intro_active or _dialogue_is_active() or ConscienceEncounterDirector.is_encounter_active():
+	if GameState.consume_postgame_replay_return("rockbyte"):
+		start_dialogue(_get_cabinet07_lines("post_game_replay_return", [
+			{"speaker": "Cabinet 07", "text": "SESSION COMPLETE. NO TOKEN DISPENSED.", "portrait": PORTRAIT_CABINET_07_SCREEN},
+			{"speaker": "Cabinet 07", "text": "YOU PLAYED FOR NO REASON. LOG ENTRY: HEALTHY.", "portrait": PORTRAIT_CABINET_07_SCREEN},
+	if not GameState.rockbyte_duel_completed or GameState.lost_token_quest_completed:
+	if GameState.get_npc_dialogue_count("cabinet07_rockbyte_auto") > 0:
+	GameState.increment_npc_dialogue_count("cabinet07_rockbyte_auto")
+	start_dialogue(_get_cabinet07_sequential_lines("rockbyte_completion", [
+		{"speaker": "Cabinet 07", "text": "TOKEN RECOVERED."},
+		{"speaker": "Cabinet 07", "text": "RETURN TO MIRA."},
+```
+
 #### `ArcadeHub.gd` — `_maybe_show_controls_hint()`
 
 ```gdscript
@@ -485,16 +502,6 @@ func _get_objective_hint_text() -> String:
 	return ""
 ```
 
-#### `ArcadeHub.gd` — `_refresh_memory_signal_label()`
-
-```gdscript
-func _refresh_memory_signal_label() -> void:
-	if memory_signal_label == null:
-	memory_signal_label.text = "Memory Signal: %s" % GameState.get_memory_signal_label()
-	match GameState.memory_signal_level:
-		_:
-```
-
 #### `ArcadeHub.gd` — `_play_opening_intro()`
 *Cold open. Plays once on first entering the hub, before free control (`opening_intro_seen`). Beat 1.*
 
@@ -532,6 +539,23 @@ func handle_hub_interaction(interactable: Node, player_node: Node = null) -> voi
 			start_dialogue([{"speaker": "System", "text": "Nothing happens."}])
 ```
 
+#### `ArcadeHub.gd` — `try_block_exit()`
+
+```gdscript
+func try_block_exit(transition: Node) -> bool:
+	if not GameState.lost_token_quest_started or GameState.lost_token_quest_completed:
+	if _dialogue_is_active():
+	if not GameState.rockbyte_duel_completed:
+		start_dialogue([
+			{"speaker": "Player", "text": "The exit can wait."},
+			{"speaker": "Player", "text": "This place recognized me before I recognized it. I want to know why."},
+			{"speaker": "Player", "text": "First: win my token back from Cabinet 07."},
+	else:
+		start_dialogue([
+			{"speaker": "Player", "text": "Not yet. Mira is waiting for this token."},
+			{"speaker": "Player", "text": "If I walk out now, I will never learn what this place remembers."},
+```
+
 #### `ArcadeHub.gd` — `_get_ticket_counter_echo_lines()`
 
 ```gdscript
@@ -567,7 +591,6 @@ func _get_memory_signal_explainer_lines() -> Array:
 		{"speaker": "Mira", "text": "Every game you win back and every thing you fix, the arcade remembers a little more."},
 		{"speaker": "Mira", "text": "Remember enough, and the Staff Room at the back will finally open."},
 		{"speaker": "Mira", "text": "That is where the last of it is waiting."},
-		{"speaker": "Mira", "text": "The reading at the top of the floor - the Memory Signal - just shows how much it remembers so far."},
 		{"speaker": "Mira", "text": "Start with Cabinet 07 and your token. I will point you onward from there."},
 ```
 
@@ -623,8 +646,12 @@ func _handle_mira() -> void:
 			{"speaker": "Mira", "text": "That token used to be just a prize."},
 			{"speaker": "Mira", "text": "Then it became proof that part of you could still return."},
 			{"speaker": "Mira", "text": "The token woke something."},
-			{"speaker": "Mira", "text": "Now the arcade has to decide which memories are true."},
-			{"speaker": "Mira", "text": "Mr. Byte can open the Truth Filter."},
+			{"speaker": "Mira", "text": "Start in Cabinet Row. Roxy guards a score cabinet that is still lying about a record."},
+			{"speaker": "Mira", "text": "Help her set it straight."},
+	if GameState.lost_token_quest_completed and not GameState.broken_high_score_completed and not GameState.lying_cabinets_completed:
+		start_dialogue(_get_mira_lines("broken_high_score_transition", [
+			{"speaker": "Mira", "text": "Cabinet Row first. Roxy's score cabinet is still lying about a record."},
+			{"speaker": "Mira", "text": "Set the board straight with her. Then Mr. Byte will want a word about truth."},
 	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
 		start_dialogue(_get_mira_lines("truth_filter_transition", [
 			{"speaker": "Mira", "text": "The token woke something."},
@@ -632,7 +659,7 @@ func _handle_mira() -> void:
 			{"speaker": "Mira", "text": "Mr. Byte can open the Truth Filter."},
 	if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
 		start_dialogue(_get_mira_lines("circuit_soda_transition", [
-			{"speaker": "Mira", "text": "Your Memory Signal is Fractured now."},
+			{"speaker": "Mira", "text": "The arcade is remembering louder now."},
 			{"speaker": "Mira", "text": "Vendo says fractured things still need somewhere to flow.", "portrait": PORTRAIT_MIRA_WORRIED},
 			{"speaker": "Mira", "text": "Snack Alcove is the next stop."},
 	if GameState.circuit_soda_completed and not GameState.lost_shift_file_completed:
@@ -646,7 +673,7 @@ func _handle_mira() -> void:
 				{"speaker": "Mira", "text": "You heard the contradictions and came back anyway.", "portrait": PORTRAIT_MIRA_WORRIED},
 				{"speaker": "Mira", "text": "That is good."},
 				{"speaker": "Mira", "text": "That is also worrying."},
-				{"speaker": "Mira", "text": "Your Memory Signal is Fractured now."},
+				{"speaker": "Mira", "text": "The arcade is remembering louder now."},
 				{"speaker": "Mira", "text": "That means the Staff Door may finally listen."},
 				{"speaker": "Mira", "text": "Go check the Staff Door."},
 				{"speaker": "Mira", "text": "I will try not to look dramatically worried.", "portrait": PORTRAIT_MIRA_WORRIED},
@@ -745,6 +772,16 @@ func _handle_gus() -> void:
 			{"speaker": "Gus", "text": "I was almost out of practical hints.", "portrait": PORTRAIT_GUS_ANNOYED},
 			{"speaker": "Gus", "text": "You came back anyway. Good."},
 		start_dialogue(post_reveal_lines, _get_witness_completion_callback(was_completed))
+	if GameState.lying_cabinets_completed and GameState.mr_byte_truth_filter_debriefed and not GameState.circuit_soda_completed and not GameState.gus_hub_checkin_truth_filter_done:
+		GameState.gus_hub_checkin_truth_filter_done = true
+		start_dialogue(_get_gus_lines("hub_checkin_truth_filter", [
+			{"speaker": "Gus", "text": "Heard the Truth Filter howl. It only does that when it loses.", "portrait": PORTRAIT_GUS_ANNOYED},
+			{"speaker": "Gus", "text": "Vendo is next. Snack Alcove. Do not tip the machine."},
+	if GameState.circuit_soda_completed and GameState.prize_sort_completed and not GameState.lost_shift_file_completed and not GameState.gus_hub_checkin_prize_sort_done:
+		GameState.gus_hub_checkin_prize_sort_done = true
+		start_dialogue(_get_gus_lines("hub_checkin_prize_sort", [
+			{"speaker": "Gus", "text": "Pip talked. Now we do this my way: paperwork.", "portrait": PORTRAIT_GUS_ANNOYED},
+			{"speaker": "Gus", "text": "Checklist by the counter. Schedule in Cabinet Row. My note in the hall."},
 	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
 		start_dialogue(_get_gus_sequential_lines("truth_filter_active", [
 			{"speaker": "Gus", "text": "Careful now."},
@@ -798,7 +835,7 @@ func _handle_vendo() -> void:
 	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
 		GameState.vendo_intro_seen = true
 		start_dialogue(_get_vendo_sequential_lines("truth_filter_active", [
-			{"speaker": "Vendo", "text": "Memory Signal: Uneasy."},
+			{"speaker": "Vendo", "text": "Scanner mood: uneasy."},
 			{"speaker": "Vendo", "text": "Please proceed to Cabinet Row."},
 			{"speaker": "Vendo", "text": "Mr. Byte handles truth with fewer bubbles."},
 	if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
@@ -901,10 +938,17 @@ func _handle_mr_byte() -> void:
 				{"speaker": "Mr. Byte", "text": "Conscience echo archived."},
 				{"speaker": "Mr. Byte", "text": "Identity conflict no longer denying itself."},
 		start_dialogue(post_reveal_lines, _get_witness_completion_callback(was_completed))
+	if GameState.lost_token_quest_completed and not GameState.broken_high_score_completed and not GameState.lying_cabinets_completed:
+		GameState.mr_byte_intro_seen = true
+		start_dialogue(_get_mr_byte_lines("pre_roxy_redirect", [
+			{"speaker": "Mr. Byte", "text": "Sequencing error detected."},
+			{"speaker": "Mr. Byte", "text": "Resolve Roxy's score cabinet in Cabinet Row first."},
 	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
 		GameState.mr_byte_intro_seen = true
+		GameState.truth_filter_quest_started = true
+		GameState.increment_npc_dialogue_count("mr_byte_tf_explained")
 		start_dialogue(_get_mr_byte_sequential_lines("truth_filter_intro", [
-			{"speaker": "Mr. Byte", "text": "Memory Signal: Uneasy."},
+			{"speaker": "Mr. Byte", "text": "Ambient reading: uneasy."},
 			{"speaker": "Mr. Byte", "text": "Recommended action: proceed to Cabinet Row."},
 			{"speaker": "Mr. Byte", "text": "Truth Filter interface required."},
 	if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
@@ -942,6 +986,10 @@ func _handle_mr_byte() -> void:
 
 ```gdscript
 func _handle_cabinet_07() -> void:
+	if _is_post_reveal() and GameState.witness_cabinet07_heard:
+		start_dialogue(_get_cabinet07_lines("post_game_replay_offer", [
+			{"speaker": "Cabinet 07", "text": "EMPLOYEE 04 DETECTED AT CABINET.", "portrait": PORTRAIT_CABINET_07_SCREEN},
+			{"speaker": "Cabinet 07", "text": "REMATCH AVAILABLE. STAKES: NONE.", "portrait": PORTRAIT_CABINET_07_SCREEN},
 	if _is_post_reveal():
 		GameState.mark_witness_cabinet07_heard()
 			{"speaker": "Cabinet 07", "text": "EMPLOYEE 04 RESTORE STATUS: STABLE.", "portrait": PORTRAIT_CABINET_07_SCREEN},
@@ -954,10 +1002,11 @@ func _handle_cabinet_07() -> void:
 		start_dialogue(post_reveal_lines, _get_witness_completion_callback(was_completed))
 	if not GameState.lost_token_quest_started:
 		GameState.cabinet07_employee_hint_seen = true
-		start_dialogue(_get_cabinet07_sequential_lines("pre_rockbyte", [
 			{"speaker": "Cabinet 07", "text": "CUSTOMER SIGNAL: UNKNOWN."},
 			{"speaker": "Cabinet 07", "text": "EMPLOYEE SIGNAL: PARTIAL."},
 			{"speaker": "Cabinet 07", "text": "LOST TOKEN REQUIRED."},
+		cabinet_lines.append({"speaker": "Player", "text": "It wants a token I do not have. The attendant at the counter keeps glancing over. She might know why."})
+		start_dialogue(cabinet_lines)
 	if not GameState.rockbyte_duel_completed:
 	if GameState.rockbyte_duel_completed and not GameState.lost_token_quest_completed:
 		start_dialogue(_get_cabinet07_sequential_lines("rockbyte_completion", [
@@ -968,7 +1017,7 @@ func _handle_cabinet_07() -> void:
 			{"speaker": "Cabinet 07", "text": "TOKEN RETURNED."},
 			{"speaker": "Cabinet 07", "text": "SIGNAL STATUS: UNEASY."},
 			{"speaker": "Cabinet 07", "text": "TRUTH FILTER REQUIRED."},
-		{"speaker": "Cabinet 07", "text": "MEMORY SIGNAL: FRACTURED."},
+		{"speaker": "Cabinet 07", "text": "CABINET STATUS: RESTLESS."},
 		{"speaker": "Cabinet 07", "text": "STAFF DOOR TARGET READY."},
 		{"speaker": "Cabinet 07", "text": "CHECK STAFF DOOR."},
 	if _can_show_act2_echo() and not GameState.echo_cabinet07_seen:
@@ -987,8 +1036,7 @@ func _handle_truth_filter() -> void:
 	if GameState.lying_cabinets_completed:
 		start_dialogue(_get_environment_state_lines("truth_filter_machine", [
 			{"speaker": "Truth Filter", "text": "TRUTH FILTER PASSED."},
-			{"speaker": "Truth Filter", "text": "MEMORY SIGNAL: FRACTURED."},
-	GameState.truth_filter_quest_started = true
+			{"speaker": "Truth Filter", "text": "RECORDS RECONCILED."},
 	GameState.set_pending_spawn_id("Spawn_FromArcadeHub")
 	start_dialogue(_get_environment_lines("truth_filter_machine_uneasy", [
 		{"speaker": "Truth Filter", "text": "CONTRADICTION THRESHOLD REACHED."},
@@ -1018,7 +1066,7 @@ func _handle_staff_door() -> void:
 		start_dialogue(_get_staff_door_sequential_lines("truth_filter_required", [
 			{"speaker": "Staff Door", "text": "STAFF ACCESS LOCKED."},
 			{"speaker": "Staff Door", "text": "TRUTH FILTER REQUIRED."},
-			{"speaker": "Staff Door", "text": "MEMORY SIGNAL UNSTABLE."},
+			{"speaker": "Staff Door", "text": "EMPLOYEE SIGNAL UNSTABLE."},
 	if GameState.lost_token_quest_completed and GameState.rockbyte_duel_completed and GameState.lying_cabinets_completed and GameState.circuit_soda_completed:
 		start_dialogue(_get_staff_door_sequential_lines("maintenance_required", [
 			{"speaker": "Staff Door", "text": "FRACTURED SIGNAL ACCEPTED."},
@@ -1071,6 +1119,13 @@ func _handle_broken_cabinet(interactable: Node) -> void:
 		{"speaker": "Broken Cabinet", "text": "OUT OF ORDER."},
 ```
 
+#### `ArcadeHub.gd` — `_offer_rockbyte_replay()`
+
+```gdscript
+func _offer_rockbyte_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Play the duel again?", "rockbyte", Callable(self, "_launch_rockbyte_replay"))
+```
+
 
 #### `CabinetRow.gd` — `_maybe_play_completion_anecdote()`
 *AUTO on re-entering the room after finishing its game (queued after the ??? encounter if one fires): the associated cast reacts once (Mr. Byte after Truth Filter, Roxy after Broken High Score).*
@@ -1078,11 +1133,20 @@ func _handle_broken_cabinet(interactable: Node) -> void:
 ```gdscript
 func _maybe_play_completion_anecdote() -> void:
 	if _dialogue_is_active() or ConscienceEncounterDirector.is_encounter_active():
-	if GameState.lying_cabinets_completed and not GameState.mr_byte_truth_filter_anecdote_seen:
-		GameState.mr_byte_truth_filter_anecdote_seen = true
-		start_dialogue(_get_mr_byte_lines("truth_filter_completion_anecdote", [
-			{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
-			{"speaker": "Mr. Byte", "text": "Record conflict reduced. Identity conflict remains."},
+	if GameState.consume_postgame_replay_return("truth_filter"):
+		start_dialogue(_get_environment_lines("truth_filter_machine_replay_return", [
+			{"speaker": "Truth Filter", "text": "SORT COMPLETE. LIE DENSITY: ZERO."},
+			{"speaker": "Truth Filter", "text": "THEY ARGUE ANYWAY. IT KEEPS THEM WARM."},
+	if GameState.consume_postgame_replay_return("broken_high_score"):
+		start_dialogue(_get_roxy_lines("broken_high_score_replay_return", [
+			{"speaker": "Roxy", "text": "Zero stakes and you still played like rent was due."},
+			{"speaker": "Roxy", "text": "That is exactly why it looks good on you."},
+	if GameState.lying_cabinets_completed and not GameState.roxy_truth_filter_nudge_seen:
+		GameState.roxy_truth_filter_nudge_seen = true
+		start_dialogue(_get_roxy_lines("truth_filter_completion_nudge", [
+			{"speaker": "Roxy", "text": "Huh. The Filter actually shut up for once."},
+			{"speaker": "Roxy", "text": "Whatever it just coughed up, Mr. Byte is the one who files it."},
+			{"speaker": "Roxy", "text": "Go make him explain it. He lives for that."},
 	if GameState.broken_high_score_completed and not GameState.roxy_high_score_anecdote_seen:
 		GameState.roxy_high_score_anecdote_seen = true
 		start_dialogue(_get_roxy_lines("broken_high_score_completion", [
@@ -1123,20 +1187,28 @@ func _handle_mr_byte() -> void:
 	if not GameState.lost_token_quest_completed:
 		start_dialogue(_get_mr_byte_sequential_lines("pre_truth_filter_locked", [
 			{"speaker": "Mr. Byte", "text": "TRUTH FILTER LOCKED."},
-			{"speaker": "Mr. Byte", "text": "MEMORY SIGNAL TOO QUIET."},
+			{"speaker": "Mr. Byte", "text": "SIGNAL TOO QUIET."},
+	if not GameState.broken_high_score_completed and not GameState.lying_cabinets_completed:
+		start_dialogue(_get_mr_byte_lines("pre_roxy_redirect", [
+			{"speaker": "Mr. Byte", "text": "Sequencing error detected."},
+			{"speaker": "Mr. Byte", "text": "The score cabinet is broadcasting a louder falsehood than my queue."},
+			{"speaker": "Mr. Byte", "text": "Resolve Roxy's board first. Then report back for Truth Filter orientation."},
 	if not GameState.lying_cabinets_completed:
 		GameState.truth_filter_quest_started = true
+		GameState.increment_npc_dialogue_count("mr_byte_tf_explained")
 		start_dialogue(_get_mr_byte_sequential_lines("truth_filter_intro", [
 			{"speaker": "Mr. Byte", "text": "Contradiction threshold reached."},
 			{"speaker": "Mr. Byte", "text": "Truth Filter is ready."},
 			{"speaker": "Mr. Byte", "text": "Please choose the least broken answer."},
 	if not GameState.mr_byte_truth_filter_anecdote_seen:
 		GameState.mr_byte_truth_filter_anecdote_seen = true
-		start_dialogue(_get_mr_byte_lines("truth_filter_completion_anecdote", [
+		GameState.mr_byte_truth_filter_debriefed = true
 			{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
-			{"speaker": "Mr. Byte", "text": "Contradictions remain."},
-			{"speaker": "Mr. Byte", "text": "That means the memory is alive enough to argue."},
 			{"speaker": "Mr. Byte", "text": "Record conflict reduced. Identity conflict remains."},
+			{"speaker": "Mr. Byte", "text": "Unrelated administrative matter."},
+			{"speaker": "Mr. Byte", "text": "Earlier tonight the hallway audio channel carried a broadcast. Source field: empty."},
+			{"speaker": "Mr. Byte", "text": "I have filed it under ambient noise."},
+		start_dialogue(debrief_lines, Callable(self, "_after_byte_debrief"))
 	if GameState.circuit_soda_completed and not GameState.lost_shift_file_completed and not GameState.story_puzzle_completed:
 		GameState.start_lost_shift_file()
 		start_dialogue(_get_mr_byte_sequential_lines("lost_shift_file_support", [
@@ -1166,11 +1238,18 @@ func _handle_truth_filter() -> void:
 		start_dialogue(_get_environment_lines("truth_filter_machine_grounded", [
 			{"speaker": "Truth Filter", "text": "SIGNAL TOO QUIET."},
 			{"speaker": "Truth Filter", "text": "MR. BYTE AUTHORIZATION REQUIRED."},
+	if GameState.post_reveal_roam_unlocked and GameState.lying_cabinets_completed:
+		start_dialogue(_get_environment_lines("truth_filter_machine_replay_offer", [
+			{"speaker": "Truth Filter", "text": "TRUTH FILTER ONLINE. NO CONTRADICTIONS PENDING."},
+			{"speaker": "Truth Filter", "text": "RECREATIONAL SORTING AVAILABLE."},
 	if GameState.lying_cabinets_completed:
 		start_dialogue(_get_environment_state_lines("truth_filter_machine", [
 			{"speaker": "Truth Filter", "text": "TRUTH FILTER PASSED."},
-			{"speaker": "Truth Filter", "text": "MEMORY SIGNAL: FRACTURED."},
-	GameState.truth_filter_quest_started = true
+			{"speaker": "Truth Filter", "text": "RECORDS RECONCILED."},
+	if GameState.get_npc_dialogue_count("mr_byte_tf_explained") == 0:
+		start_dialogue([
+			{"speaker": "Player", "text": "The Truth Filter hums like it is waiting for a proctor."},
+			{"speaker": "Player", "text": "Mr. Byte runs this row. He should walk me in."},
 	GameState.set_pending_spawn_id("Spawn_FromTruthFilter")
 	start_dialogue(_get_environment_lines("truth_filter_machine_uneasy", [
 		{"speaker": "Truth Filter", "text": "CONTRADICTION THRESHOLD REACHED."},
@@ -1235,11 +1314,18 @@ func _handle_broken_high_score() -> void:
 		start_dialogue(_get_roxy_lines("first_meeting_locked", [
 			{"speaker": "Roxy", "text": "The score cabinet is not ready yet."},
 			{"speaker": "Roxy", "text": "Come back after you beat something louder."},
+	if GameState.post_reveal_roam_unlocked and GameState.broken_high_score_completed:
+		start_dialogue(_get_roxy_lines("broken_high_score_replay_offer", [
+			{"speaker": "Roxy", "text": "Back at my cabinet, 04?"},
+			{"speaker": "Roxy", "text": "Coin up or step aside."},
 	if GameState.broken_high_score_completed:
 		start_dialogue([
 			{"speaker": "Broken High Score", "text": "PREVIOUS SCORE FOUND."},
 			{"speaker": "Broken High Score", "text": "RECORD RESTORED."},
-	GameState.roxy_met = true
+	if not GameState.roxy_met:
+		start_dialogue([
+			{"speaker": "Player", "text": "That score cabinet is Roxy's turf."},
+			{"speaker": "Player", "text": "If I touch it before we talk, I will never hear the end of it."},
 	GameState.set_pending_spawn_id("Spawn_FromBrokenHighScore")
 ```
 
@@ -1267,9 +1353,19 @@ func _handle_staff_schedule() -> void:
 
 ```gdscript
 func _handle_staff_record_01() -> void:
-	if not GameState.lying_cabinets_completed:
+	if not GameState.broken_high_score_completed:
 		start_dialogue(_get_environment_lines("staff_records_locked", [
 			{"speaker": "Staff Record", "text": "The record terminal is still filtering contradictions."},
+	if not GameState.lying_cabinets_completed:
+		GameState.read_staff_record_01()
+		start_dialogue(_get_environment_lines("staff_record_01_shift_log", [
+			{"speaker": "Staff Record", "text": "SHIFT LOG - FINAL NIGHT (RECOVERED EXCERPT)"},
+			{"speaker": "Staff Record", "text": "23:41 - Mira signed the register and left. Last name on the page."},
+			{"speaker": "Staff Record", "text": "23:50 - Gus clocked out. Mop returned wet."},
+			{"speaker": "Staff Record", "text": "00:05 - One staff member stayed to run the closing checklist alone."},
+			{"speaker": "Staff Record", "text": "00:19 - Cabinet 07 kept one token in the return tray. Flagged: do not empty."},
+			{"speaker": "Staff Record", "text": "00:33 - Backup started. Backup did not finish."},
+			{"speaker": "Staff Record", "text": "Entry ends. No sign-out recorded for the last shift."},
 	GameState.read_staff_record_01()
 		{"speaker": "Staff Record", "text": "RESTORE SYSTEM NOTE"},
 		{"speaker": "Staff Record", "text": "Subject memory incomplete."},
@@ -1347,6 +1443,41 @@ func _show_witness_route_complete_notice() -> void:
 			"Pixel Haven remembers you in pieces.\nTogether, they almost make a person."
 ```
 
+#### `CabinetRow.gd` — `_offer_truth_filter_replay()`
+
+```gdscript
+func _offer_truth_filter_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Run the Truth Filter again?", "truth_filter", Callable(self, "_launch_truth_filter_replay"))
+```
+
+#### `CabinetRow.gd` — `_offer_high_score_replay()`
+
+```gdscript
+func _offer_high_score_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Chase the high score again?", "broken_high_score", Callable(self, "_launch_high_score_replay"))
+```
+
+#### `CabinetRow.gd` — `_after_byte_debrief()`
+
+```gdscript
+func _after_byte_debrief() -> void:
+	# ??? answers Mr. Byte's "there is no form for this" - then the protagonist
+	if not ConscienceEncounterDirector.maybe_start_encounter(self, "after_truth_filter", Callable(self, "_play_byte_debrief_monologue")):
+```
+
+#### `CabinetRow.gd` — `_play_byte_debrief_monologue()`
+
+```gdscript
+func _play_byte_debrief_monologue() -> void:
+	start_dialogue([
+		{"speaker": "Player", "text": "Ambient noise."},
+		{"speaker": "Player", "text": "That was not noise. It was talking to me. It knew what I was going to do."},
+		{"speaker": "Player", "text": "A sound with no speaker, and the machine that files everything cannot file it."},
+		{"speaker": "Player", "text": "That man out on the arcade floor carries a mop around like it owes him money."},
+		{"speaker": "Player", "text": "A janitor, maybe. If anything has been speaking in these halls, he might have heard it."},
+		{"speaker": "Player", "text": "Worth asking. I have nothing better to go on."},
+```
+
 
 #### `SnackAlcove.gd` — `_maybe_play_completion_anecdote()`
 *AUTO after Circuit Soda completion (after the ??? encounter): Vendo's one-shot anecdote.*
@@ -1354,6 +1485,10 @@ func _show_witness_route_complete_notice() -> void:
 ```gdscript
 func _maybe_play_completion_anecdote() -> void:
 	if _dialogue_is_active() or ConscienceEncounterDirector.is_encounter_active():
+	if GameState.consume_postgame_replay_return("circuit_soda"):
+		start_dialogue(_get_vendo_lines("circuit_soda_replay_return", [
+			{"speaker": "Vendo", "text": "Route stable. No identity was spilled today."},
+			{"speaker": "Vendo", "text": "This machine counts that as a five-star review."},
 	if GameState.circuit_soda_completed and not GameState.vendo_circuit_anecdote_seen:
 		GameState.vendo_circuit_anecdote_seen = true
 		start_dialogue(_get_vendo_lines("circuit_soda_completion_anecdote", [
@@ -1390,6 +1525,10 @@ func _handle_vendo() -> void:
 		start_dialogue([
 			{"speaker": "Vendo", "text": "SNACK ALCOVE LOCKED."},
 			{"speaker": "Vendo", "text": "TRUTH FILTER REQUIRED."},
+	if not GameState.mr_byte_truth_filter_debriefed and not GameState.circuit_soda_completed:
+		start_dialogue([
+			{"speaker": "Vendo", "text": "One moment. The row next door says your Truth Filter report is still open."},
+			{"speaker": "Vendo", "text": "Mr. Byte flags my power draw when paperwork goes missing. Go get debriefed."},
 	if not GameState.circuit_soda_completed:
 		GameState.start_circuit_soda()
 		if circuit_soda_started:
@@ -1397,8 +1536,9 @@ func _handle_vendo() -> void:
 				{"speaker": "Vendo", "text": "Circuit Soda remains available."},
 				{"speaker": "Vendo", "text": "Route the signal through the correct channels."},
 				{"speaker": "Vendo", "text": "Think of it as pouring yourself back into the right can."},
+		GameState.increment_npc_dialogue_count("vendo_circuit_explained")
 		start_dialogue(_get_vendo_lines("circuit_soda_intro", [
-			{"speaker": "Vendo", "text": "Memory Signal: Fractured."},
+			{"speaker": "Vendo", "text": "Scanner mood: fractured."},
 			{"speaker": "Vendo", "text": "Your signal is going everywhere except where it should."},
 			{"speaker": "Vendo", "text": "Luckily, I am a licensed beverage-adjacent routing system."},
 	if not GameState.vendo_circuit_anecdote_seen:
@@ -1417,14 +1557,26 @@ func _handle_vendo() -> void:
 
 ```gdscript
 func _handle_circuit_soda() -> void:
+	if GameState.lying_cabinets_completed and not GameState.mr_byte_truth_filter_debriefed and not GameState.circuit_soda_completed:
+		start_dialogue([
+			{"speaker": "Player", "text": "Mr. Byte wanted the Filter report first."},
+			{"speaker": "Player", "text": "Loose ends hum in this place. I should not leave one behind me."},
 	if not GameState.lying_cabinets_completed:
 		start_dialogue(_get_environment_lines("circuit_soda_machine_locked", [
 			{"speaker": "Circuit Soda", "text": "SNACK ALCOVE LOCKED."},
 			{"speaker": "Circuit Soda", "text": "TRUTH FILTER REQUIRED."},
+	if GameState.post_reveal_roam_unlocked and GameState.circuit_soda_completed:
+		start_dialogue(_get_vendo_lines("circuit_soda_replay_offer", [
+			{"speaker": "Vendo", "text": "Circuit Soda: post-crisis edition. Zero stakes."},
+			{"speaker": "Vendo", "text": "One replay, on the house."},
 	if GameState.circuit_soda_completed:
 		start_dialogue(_get_environment_lines("circuit_soda_machine_restored", [
 			{"speaker": "Circuit Soda", "text": "MEMORY FLOW RESTORED."},
 			{"speaker": "Circuit Soda", "text": "FRACTURED SIGNAL STABILIZED."},
+	if GameState.get_npc_dialogue_count("vendo_circuit_explained") == 0:
+		start_dialogue([
+			{"speaker": "Player", "text": "This machine has too many hoses to guess at."},
+			{"speaker": "Player", "text": "Vendo loves explaining. I should let him."},
 	GameState.start_circuit_soda()
 	start_dialogue(_get_environment_lines("circuit_soda_machine_fractured", [
 		{"speaker": "Circuit Soda", "text": "MEMORY FLOW UNROUTED."},
@@ -1448,6 +1600,13 @@ func _show_witness_route_complete_notice() -> void:
 			"show_custom_notification",
 			"POST-REVEAL WITNESSES COMPLETE",
 			"Pixel Haven remembers you in pieces.\nTogether, they almost make a person."
+```
+
+#### `SnackAlcove.gd` — `_offer_circuit_soda_replay()`
+
+```gdscript
+func _offer_circuit_soda_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Route the circuit again?", "circuit_soda", Callable(self, "_go_to_circuit_soda"))
 ```
 
 
@@ -1504,10 +1663,18 @@ func _get_first_meeting_lines() -> Array:
 
 ```gdscript
 func _handle_prize_counter() -> void:
+	if GameState.post_reveal_roam_unlocked and _is_prize_sort_completed():
+		start_dialogue(_get_pip_lines("prize_sort_replay_offer", [
+			{"speaker": "Pip", "text": "The prizes remember their order now. They like being remembered."},
+			{"speaker": "Pip", "text": "Want to shuffle them and put them right again?"},
 	if _is_prize_sort_completed():
 		start_dialogue(_get_environment_lines("prize_counter_restored", [
 			{"speaker": "Prize Counter", "text": "The prize labels are neatly sorted."},
 			{"speaker": "Prize Counter", "text": "Ticket Stub. Lost Token. Blank Employee Badge."},
+	if _prize_sort_unlocked() and not GameState.pip_met:
+		start_dialogue([
+			{"speaker": "Player", "text": "Three loose labels under glass, and one very alert plush."},
+			{"speaker": "Player", "text": "I should ask Pip before touching anything."},
 	if _prize_sort_unlocked():
 			{"speaker": "Prize Counter", "text": "Three labels sit loose under the glass."},
 			{"speaker": "Prize Counter", "text": "Pip seems very proud of not explaining why."},
@@ -1564,6 +1731,10 @@ func _get_pip_item_reaction(item: String) -> String:
 
 ```gdscript
 func _show_pip_prize_completion_dialogue() -> void:
+	if GameState.consume_postgame_replay_return("prize_sort"):
+		start_dialogue(_get_pip_lines("prize_sort_replay_return", [
+			{"speaker": "Pip", "text": "All sorted. Again. You did not have to."},
+			{"speaker": "Pip", "text": "Which is exactly why it counts."},
 	if not GameState.pip_prize_anecdote_seen:
 		GameState.pip_prize_anecdote_seen = true
 		start_dialogue(_get_pip_lines("prize_sort_completion", [
@@ -1593,6 +1764,13 @@ func _show_witness_route_complete_notice() -> void:
 			"Pixel Haven remembers you in pieces.\nTogether, they almost make a person."
 ```
 
+#### `PrizeCorner.gd` — `_offer_prize_sort_replay()`
+
+```gdscript
+func _offer_prize_sort_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Sort the prizes again?", "prize_sort", Callable(self, "_start_prize_sort"))
+```
+
 
 #### `MaintenanceHall.gd` — `handle_hub_interaction()`
 
@@ -1612,6 +1790,10 @@ func handle_hub_interaction(interactable: Node, _player_node: Node = null) -> vo
 
 ```gdscript
 func _handle_gus() -> void:
+	if GameState.post_reveal_roam_unlocked and GameState.witness_gus_heard:
+		start_dialogue(_get_gus_lines("static_run_replay_offer", [
+			{"speaker": "Gus", "text": "The route is alive and humming, thanks to you."},
+			{"speaker": "Gus", "text": "Want to run it again anyway? For fun."},
 	GameState.gus_intro_seen = true
 	if GameState.twist_reveal_seen or GameState.post_reveal_roam_unlocked:
 		GameState.gus_post_reveal_seen = true
@@ -1646,6 +1828,7 @@ func _handle_gus() -> void:
 			{"speaker": "Gus", "text": "Door's awake."},
 			{"speaker": "Gus", "text": "Now the hard part: making it listen without letting it answer too much."},
 	if not GameState.maintenance_sync_completed and not GameState.story_puzzle_completed:
+		GameState.increment_npc_dialogue_count("gus_sync_explained")
 		start_dialogue(_get_gus_lines("maintenance_sync_intro", [
 			{"speaker": "Gus", "text": "Power's back. Door's listening."},
 			{"speaker": "Gus", "text": "I still hate that sentence."},
@@ -1684,10 +1867,18 @@ func _handle_maintenance_sync() -> void:
 		start_dialogue(_get_environment_lines("maintenance_sync_machine_static_service_required", [
 			{"speaker": "Maintenance Sync", "text": "MAINTENANCE SYNC LOCKED."},
 			{"speaker": "Maintenance Sync", "text": "STATIC SERVICE REQUIRED."},
+	if GameState.post_reveal_roam_unlocked and GameState.maintenance_sync_completed:
+		start_dialogue(_get_environment_lines("maintenance_sync_machine_replay_offer", [
+			{"speaker": "Maintenance Sync", "text": "DOOR AND LOCK IN AGREEMENT."},
+			{"speaker": "Maintenance Sync", "text": "RECREATIONAL SYNC AVAILABLE."},
 	if GameState.maintenance_sync_completed or GameState.story_puzzle_completed:
 		start_dialogue(_get_environment_state_lines("maintenance_sync_machine", [
 			{"speaker": "Maintenance Sync", "text": "ACCESS GRANTED."},
 			{"speaker": "Maintenance Sync", "text": "EMPLOYEE SIGNAL ACCEPTED."},
+	if GameState.get_npc_dialogue_count("gus_sync_explained") == 0:
+		start_dialogue([
+			{"speaker": "Player", "text": "This panel is basically Gus's whole personality."},
+			{"speaker": "Player", "text": "He would want to run me through it first."},
 	start_dialogue(_get_environment_lines("maintenance_sync_machine_fractured", [
 		{"speaker": "Maintenance Sync", "text": "TWO SIGNALS DETECTED."},
 		{"speaker": "Maintenance Sync", "text": "SYNC REQUIRED."},
@@ -1798,6 +1989,14 @@ func _show_witness_route_complete_notice() -> void:
 ```gdscript
 func _maybe_play_completion_anecdote() -> void:
 	if _dialogue_is_active() or ConscienceEncounterDirector.is_encounter_active():
+	if GameState.consume_postgame_replay_return("maintenance_sync"):
+		start_dialogue(_get_environment_lines("maintenance_sync_machine_replay_return", [
+			{"speaker": "Maintenance Sync", "text": "SYNC COMPLETE. AGREEMENT MAINTAINED."},
+			{"speaker": "Maintenance Sync", "text": "THE DOOR SAYS THANK YOU. IN DOOR."},
+	if GameState.consume_postgame_replay_return("static_service_run"):
+		start_dialogue(_get_gus_lines("static_run_replay_return", [
+			{"speaker": "Gus", "text": "Power held the whole way down."},
+			{"speaker": "Gus", "text": "That is not forgetting. That is the good version of remembering."},
 	if GameState.maintenance_sync_completed and not GameState.gus_sync_anecdote_seen:
 		GameState.gus_sync_anecdote_seen = true
 		start_dialogue(_get_gus_lines("maintenance_sync_completion_anecdote", [
@@ -1808,6 +2007,20 @@ func _maybe_play_completion_anecdote() -> void:
 		start_dialogue(_get_gus_lines("static_service_run_anecdote", [
 			{"speaker": "Gus", "text": "Power's back. Door's awake."},
 			{"speaker": "Gus", "text": "Still, you did good. The hum is cleaner now."},
+```
+
+#### `MaintenanceHall.gd` — `_offer_maintenance_sync_replay()`
+
+```gdscript
+func _offer_maintenance_sync_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Sync the door again?", "maintenance_sync", Callable(self, "_go_to_maintenance_sync"))
+```
+
+#### `MaintenanceHall.gd` — `_offer_static_run_replay()`
+
+```gdscript
+func _offer_static_run_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Run the service route again?", "static_service_run", Callable(self, "_go_to_static_service_run"))
 ```
 
 
@@ -1842,6 +2055,10 @@ func _handle_memory_echo() -> void:
 		start_dialogue(_get_environment_lines("memory_echo_object_final_night_required", [
 			{"speaker": "Memory Echo", "text": "MEMORY ECHO LOCKED."},
 			{"speaker": "Memory Echo", "text": "FINAL NIGHT WALK REQUIRED."},
+	if GameState.post_reveal_roam_unlocked and GameState.memory_echo_completed and GameState.get_npc_dialogue_count("reel_witness") > 0:
+		start_dialogue(DIALOGUE_POOL.get_lines("reel", "memory_echo_replay_offer", [
+			{"speaker": "Reel", "text": "The last set plays clean now, pal."},
+			{"speaker": "Reel", "text": "Want to hear it again? Encores are the only reruns worth keeping."},
 	if not GameState.memory_echo_completed:
 		if not GameState.memory_echo_started:
 			GameState.start_memory_echo()
@@ -1876,6 +2093,10 @@ func _handle_security_tape() -> void:
 		start_dialogue(_get_environment_lines("security_tape_terminal_locked", [
 			{"speaker": "Staff Door", "text": "SECURITY TAPE LOCKED."},
 			{"speaker": "Staff Door", "text": "MAINTENANCE SYNC REQUIRED."},
+	if GameState.post_reveal_roam_unlocked and GameState.security_tape_assembly_completed and GameState.get_npc_dialogue_count("coily_witness") > 0:
+		start_dialogue(DIALOGUE_POOL.get_lines("coily", "security_tape_replay_offer", [
+			{"speaker": "Coily", "text": "Movie night, pal? Every frame belongs now."},
+			{"speaker": "Coily", "text": "I like this cut better. Everybody walks out of it."},
 	if GameState.security_tape_assembly_completed:
 			{"speaker": "Security Tape", "text": "TAPE ORDER RESTORED."},
 			{"speaker": "Security Tape", "text": "FRAMES NOW FORM A STAFF ROUTE."},
@@ -1913,6 +2134,10 @@ func _handle_final_night_walk() -> void:
 		start_dialogue(_get_environment_lines("final_night_walk_terminal_locked", [
 			{"speaker": "Memory System", "text": "FINAL NIGHT WALK LOCKED."},
 			{"speaker": "Memory System", "text": "SECURITY TAPE REQUIRED."},
+	if GameState.post_reveal_roam_unlocked and GameState.final_night_walk_completed:
+		start_dialogue(_get_staff_door_lines("final_night_walk_replay_offer", [
+			{"speaker": "Staff Door", "text": "FINAL NIGHT ROUTE: ARCHIVED."},
+			{"speaker": "Staff Door", "text": "WALK AVAILABLE AS MEMORIAL."},
 	if GameState.final_night_walk_completed:
 		if not GameState.staff_door_final_walk_anecdote_seen:
 			GameState.staff_door_final_walk_anecdote_seen = true
@@ -2005,6 +2230,18 @@ func _show_staff_records_complete_notice() -> void:
 ```gdscript
 func _maybe_play_completion_anecdote() -> void:
 	if _dialogue_is_active() or ConscienceEncounterDirector.is_encounter_active():
+	if GameState.consume_postgame_replay_return("security_tape"):
+		start_dialogue(DIALOGUE_POOL.get_lines("coily", "security_tape_replay_return", [
+			{"speaker": "Coily", "text": "And it still ends okay! I checked every frame twice."},
+			{"speaker": "Coily", "text": "Come back any time. I will keep the reel warm for you, 04."},
+	if GameState.consume_postgame_replay_return("final_night_walk"):
+		start_dialogue(_get_staff_door_lines("final_night_walk_replay_return", [
+			{"speaker": "Staff Door", "text": "WALK COMPLETE. ROUTE UNCHANGED."},
+			{"speaker": "Staff Door", "text": "SOME DOORS STAY OPEN. THIS IS ONE."},
+	if GameState.consume_postgame_replay_return("memory_echo"):
+		start_dialogue(DIALOGUE_POOL.get_lines("reel", "memory_echo_replay_return", [
+			{"speaker": "Reel", "text": "Same songs. Lighter key."},
+			{"speaker": "Reel", "text": "That is what healing sounds like on tape."},
 	if GameState.memory_echo_completed and not GameState.twist_reveal_seen and GameState.get_npc_dialogue_count("reel_echo_completion") == 0:
 		GameState.increment_npc_dialogue_count("reel_echo_completion")
 		start_dialogue(DIALOGUE_POOL.get_lines("reel", "memory_echo_completion", [
@@ -2015,6 +2252,27 @@ func _maybe_play_completion_anecdote() -> void:
 		start_dialogue(DIALOGUE_POOL.get_lines("coily", "security_tape_completion", [
 			{"speaker": "Coily", "text": "You put the night back in order, pal."},
 			{"speaker": "Coily", "text": "One frame still does not belong. Keep noticing it."},
+```
+
+#### `StaffCorridor.gd` — `_offer_security_tape_replay()`
+
+```gdscript
+func _offer_security_tape_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Restore the tape again?", "security_tape", Callable(self, "_go_to_security_tape_assembly"))
+```
+
+#### `StaffCorridor.gd` — `_offer_final_night_walk_replay()`
+
+```gdscript
+func _offer_final_night_walk_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Walk the final night again?", "final_night_walk", Callable(self, "_go_to_final_night_walk"))
+```
+
+#### `StaffCorridor.gd` — `_offer_memory_echo_replay()`
+
+```gdscript
+func _offer_memory_echo_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Play the last set again?", "memory_echo", Callable(self, "_go_to_memory_echo"))
 ```
 
 
@@ -2163,6 +2421,10 @@ func _get_final_self_conflict_lines() -> Array:
 		{"speaker": "Player", "text": "The pride is mine."},
 		{"speaker": "Player", "text": "I do not become whole by defeating you."},
 		{"speaker": "Player", "text": "I become whole by carrying you with me."},
+		{"speaker": "Player", "text": "I thought the years took this place from me. They did not."},
+		{"speaker": "Player", "text": "I set myself down somewhere and forgot where."},
+		{"speaker": "Player", "text": "Youth was never the thing I lost. I lost me."},
+		{"speaker": "Player", "text": "And I am picking me back up."},
 		{"speaker": "\"Player\"", "text": "..."},
 		{"speaker": "\"Player\"", "text": "Then carry it."},
 		{"speaker": "\"Player\"", "text": "Carry the pride."},
@@ -2383,6 +2645,7 @@ func _get_hallway_message_lines() -> Array:
 ```gdscript
 func _try_transition() -> void:
 	if transition_started:
+	if scene != null and scene.has_method("try_block_exit") and bool(scene.call("try_block_exit", self)):
 	if not _required_flag_is_met():
 	if target_scene_path.is_empty():
 		push_error("MapTransition: target_scene_path is empty.")
@@ -2580,9 +2843,16 @@ func _refresh_line() -> void:
 - **Mira:** I remember you helping after closing.
 - **Mira:** Stacking chairs. Checking machines. Pretending you were not tired.
 - **Mira:** You always made the work look smaller than it was.
-- **Mira:** You used to tell the kids who lost that a game ending was just a turn ending, not the whole world.
+- **Mira:** You used to crouch down to the kids who lost. Whatever you told them, they walked out taller than they came in.
 - **Mira:** Though today there is a distance in you. Like the words reach me a beat after you decide them.
 - **Mira:** Now the arcade is trying to make you look back.
+- **Mira:** Start in Cabinet Row. A regular named Roxy guards a score cabinet that is still lying about a record.
+- **Mira:** She has been waiting for someone worth arguing with. Help her set it straight.
+
+**`mira` / `broken_high_score_transition`** — 1 variant(s) · used by: ArcadeHub.gd:_handle_mira
+- **Mira:** Cabinet Row first. Roxy's score cabinet is still lying about a record.
+- **Mira:** She is loud, competitive, and right about most things. Do not tell her I said that.
+- **Mira:** Set the board straight with her. Then Mr. Byte will want a word about truth.
 
 **`mira` / `truth_filter_transition`** — 1 variant(s) · used by: ArcadeHub.gd:_handle_mira
 - **Mira:** The token woke something.
@@ -2591,7 +2861,7 @@ func _refresh_line() -> void:
 - **Mira:** He is in Cabinet Row.
 
 **`mira` / `circuit_soda_transition`** — 1 variant(s) · used by: ArcadeHub.gd:_handle_mira
-- **Mira:** Your Memory Signal is Fractured now.
+- **Mira:** The arcade is remembering louder now.
 - **Mira:** I do not like how that feels in the room.
 - **Mira:** Vendo says fractured things still need somewhere to flow.
 - **Mira:** Go to Snack Alcove.
@@ -2638,6 +2908,9 @@ func _refresh_line() -> void:
 - **Mira:** A single win never set you for life.
 - **Mira:** And a single loss never finished it.
 - **Mira:** You are still here. That is the part that gets to matter now.
+- **Mira:** And look at you. All these years, and the part of you that mattered never aged a day.
+- **Mira:** Youth is never lost while you hold on to yourself. You let go for a while.
+- **Mira:** You still found your way back.
 
 ### Pool: `gus`
 *Voice: Maintenance; quiet fear under deadpan. Dry, specific, funny-bleak. Half B.*
@@ -2749,6 +3022,41 @@ func _refresh_line() -> void:
 - **Gus:** Whoever ran this place carried it on a back that was already tired.
 - **Gus:** I am calling that fixed because I want lunch.
 
+**`gus` / `hub_checkin_truth_filter`** — 1 variant(s) · used by: ArcadeHub.gd:_handle_gus
+- **Player:** Gus. Has anything been talking in the hallways tonight?
+- **Gus:** Talking.
+- **Gus:** Those speakers have been shot since before I started. They pop. They hiss.
+- **Gus:** Sometimes they do a thing I call the ghost cough. It is not a ghost.
+- **Gus:** It is a loose ground wire and forty years of nobody caring.
+- **Gus:** If it says anything clever, write it down. I will bill it.
+- **Gus:** ...One thing, though. Closing night left me a maintenance note I never had the guts to file.
+- **Gus:** It read wrong, and I did not want it to read right. Ask me again when I feel brave.
+- **Gus:** Anyway. Heard the Truth Filter howl from two rooms away.
+- **Gus:** It only howls when it loses the argument. That was its first loss on record.
+- **Gus:** Mr. Byte logged your win as an anomaly. He logs my lunch breaks the same way.
+- **Gus:** Meanwhile Vendo is rerouting power to itself again. That machine sulks when nobody visits.
+- **Gus:** Snack Alcove. It will flatter you. Do not tip it.
+
+**`gus` / `hub_checkin_prize_sort`** — 1 variant(s) · used by: ArcadeHub.gd:_handle_gus
+- **Gus:** Word travels. Pip let you touch the prize wall and it kept all its buttons.
+- **Gus:** A ticket stub, a token, and a badge with no name. Pip guards what the arcade cannot look at.
+- **Gus:** A badge with no name means a shift with no name. My schedule copy has exactly one slot nobody ever claimed.
+- **Gus:** And that note I told you about, the one I never filed - your badge just gave it somewhere to point.
+- **Gus:** That is a lead. I hate that it is a lead.
+- **Gus:** You want the rest of that story, we do it my way. Paperwork.
+- **Gus:** Closing Checklist by Mira's counter. Staff Schedule in Cabinet Row. My maintenance note in the hall.
+- **Gus:** Read all three, then find me in Maintenance Hall. I will be pretending it is a normal shift.
+
+**`gus` / `static_run_replay_offer`** — 1 variant(s) · used by: MaintenanceHall.gd:_handle_gus
+- **Gus:** The service route is alive and humming, thanks to you.
+- **Gus:** Want to run it again anyway? For fun.
+- **Gus:** Fun. A word I am relearning. Do not rush me.
+
+**`gus` / `static_run_replay_return`** — 1 variant(s) · used by: MaintenanceHall.gd:_maybe_play_completion_anecdote
+- **Gus:** Power held the whole way down.
+- **Gus:** You ran a live route for the joy of it. You used to do that, back when.
+- **Gus:** That is not forgetting. That is the good version of remembering.
+
 **`gus` / `post_reveal_witness`** — 1 variant(s) · used by: ArcadeHub.gd:_handle_gus; ArcadeHub.gd:_handle_mira; ArcadeHub.gd:_handle_mr_byte; ArcadeHub.gd:_handle_vendo; CabinetRow.gd:_handle_mr_byte; MaintenanceHall.gd:_handle_gus; SnackAlcove.gd:_handle_vendo; StaffCorridor.gd:_handle_memory_echo; StaffCorridor.gd:_handle_security_tape
 - **Gus:** Employee 04.
 - **Gus:** Yeah. I know.
@@ -2775,6 +3083,7 @@ func _refresh_line() -> void:
   - **Vendo:** Refunds remain impossible, but denial is currently chilled.
   - **Vendo:** Labels may peel. Feelings may leak.
   - **Vendo:** Flavor profile: unresolved.
+  - **Vendo:** House observation: nobody ages in here. They only stop meaning it.
 - variant 2:
   - **Vendo:** New promotional bundle: one can, two doubts, no receipt.
   - **Vendo:** One flavor tastes like lime and denial.
@@ -2829,17 +3138,17 @@ func _refresh_line() -> void:
 
 **`vendo` / `truth_filter_active`** — 3 variant(s) · used by: ArcadeHub.gd:_get_npc_dialogue_phase; ArcadeHub.gd:_handle_gus (sequential variant pick); ArcadeHub.gd:_handle_vendo (sequential variant pick)
 - variant 1:
-  - **Vendo:** Memory Signal: Uneasy.
+  - **Vendo:** Scanner mood: uneasy.
   - **Vendo:** That is not a flavor. It is a warning label with carbonation.
   - **Vendo:** Proceed to Cabinet Row.
   - **Vendo:** Mr. Byte performs truth extraction with fewer bubbles.
 - variant 2:
-  - **Vendo:** Memory Signal: Uneasy.
+  - **Vendo:** Scanner mood: uneasy.
   - **Vendo:** Recommended pairing: Mr. Byte and a bitter aftertaste.
   - **Vendo:** Cabinet Row is now accepting customers with unresolved labels.
   - **Vendo:** Do not lick the Truth Filter.
 - variant 3:
-  - **Vendo:** Memory Signal: Uneasy.
+  - **Vendo:** Scanner mood: uneasy.
   - **Vendo:** Your thoughts are fizzing in opposite directions.
   - **Vendo:** Cabinet Row can pressurize that into something useful.
   - **Vendo:** Ask Mr. Byte. He enjoys sounding like a warranty document.
@@ -2850,7 +3159,7 @@ func _refresh_line() -> void:
 - **Vendo:** Then someone started staying past close to keep it breathing.
 - **Vendo:** Their tab with this building only ever ran one direction. Out of them.
 - **Vendo:** I never caught their name. My scanner only reads barcodes and regret.
-- **Vendo:** Memory Signal: Fractured.
+- **Vendo:** Scanner mood: fractured.
 - **Vendo:** Scanner note: your label will not hold still. It keeps flickering mid-read, like it cannot decide what it says.
 - **Vendo:** Your identity is leaking through unauthorized beverage channels.
 - **Vendo:** Insert unstable signal into Circuit Soda.
@@ -2883,6 +3192,8 @@ func _refresh_line() -> void:
 - **Vendo:** It recognized your signal without the label.
 - **Vendo:** I am programmed to call that successful customer retention.
 - **Vendo:** Status note: warranty voided by existential damage.
+- **Vendo:** Upsell opportunity: the plush in Prize Corner has been staring at three loose labels all night.
+- **Vendo:** Pip does not blink. Take that as a recommendation.
 
 **`vendo` / `overloaded_phase`** — 1 variant(s) · used by: ArcadeHub.gd:_handle_vendo; SnackAlcove.gd:_handle_vendo
 - **Vendo:** The Staff Room is close enough that my display is trying not to flicker.
@@ -2891,6 +3202,16 @@ func _refresh_line() -> void:
 - **Vendo:** The door has stopped pretending it is only a door.
 - **Vendo:** Proceed carefully, valued almost-customer.
 - **Vendo:** Flavor profile: unresolved.
+
+**`vendo` / `circuit_soda_replay_offer`** — 1 variant(s) · used by: SnackAlcove.gd:_handle_circuit_soda
+- **Vendo:** Circuit Soda: post-crisis edition. Zero stakes. Maximum carbonation.
+- **Vendo:** The route remembers you, Employee 04. It hums when you walk past.
+- **Vendo:** One replay, on the house. Everything here is on the house. That is the problem.
+
+**`vendo` / `circuit_soda_replay_return`** — 1 variant(s) · used by: SnackAlcove.gd:_maybe_play_completion_anecdote
+- **Vendo:** Route stable. Beverage metaphor stable.
+- **Vendo:** No identity was spilled today.
+- **Vendo:** This machine counts that as a five-star review.
 
 **`vendo` / `post_reveal_witness`** — 1 variant(s) · used by: ArcadeHub.gd:_handle_gus; ArcadeHub.gd:_handle_mira; ArcadeHub.gd:_handle_mr_byte; ArcadeHub.gd:_handle_vendo; CabinetRow.gd:_handle_mr_byte; MaintenanceHall.gd:_handle_gus; SnackAlcove.gd:_handle_vendo; StaffCorridor.gd:_handle_memory_echo; StaffCorridor.gd:_handle_security_tape
 - **Vendo:** Employee 04.
@@ -2931,12 +3252,12 @@ func _refresh_line() -> void:
   - **Mr. Byte:** Proceed to the TRUTH FILTER cabinet at the center of this row.
   - **Mr. Byte:** It is the one that has started humming.
 - variant 2:
-  - **Mr. Byte:** Memory Signal: Uneasy.
+  - **Mr. Byte:** Ambient reading: uneasy.
   - **Mr. Byte:** False records are active.
   - **Mr. Byte:** Proceed to Truth Filter.
   - **Mr. Byte:** Cabinet Row contains the primary interface.
 
-**`mr_byte` / `truth_filter_completion_anecdote`** — 1 variant(s) · used by: ArcadeHub.gd:_handle_mr_byte; CabinetRow.gd:_handle_mr_byte; CabinetRow.gd:_maybe_play_completion_anecdote
+**`mr_byte` / `truth_filter_completion_anecdote`** — 1 variant(s) · used by: ArcadeHub.gd:_handle_mr_byte; CabinetRow.gd:_handle_mr_byte
 - **Mr. Byte:** Truth Filter passed.
 - **Mr. Byte:** Lie density reduced.
 - **Mr. Byte:** Note: a correct answer is not the same as a settled one.
@@ -2945,6 +3266,15 @@ func _refresh_line() -> void:
 - **Mr. Byte:** Registered as one user. Reading as unstable. I cannot close this file.
 - **Mr. Byte:** Emotion registered as heat with no source.
 - **Mr. Byte:** Further stabilization required.
+
+**`mr_byte` / `truth_filter_voice_debrief`** — 1 variant(s) · used by: CabinetRow.gd:_handle_mr_byte
+- **Mr. Byte:** Unrelated administrative matter.
+- **Mr. Byte:** Earlier tonight, the hallway audio channel carried a broadcast.
+- **Mr. Byte:** Source field: empty. No machine on this floor requested that channel.
+- **Mr. Byte:** I asked all of them. They were offended.
+- **Mr. Byte:** There is no form for audio without a speaker. I checked twice. Then I built one.
+- **Mr. Byte:** Field one: WHAT SPOKE. Field two: PLEASE.
+- **Mr. Byte:** I have filed it under ambient noise and I would like to stop thinking about it.
 
 **`mr_byte` / `lost_shift_file_support`** — 2 variant(s) · used by: ArcadeHub.gd:_handle_mr_byte (sequential variant pick); CabinetRow.gd:_handle_mr_byte; CabinetRow.gd:_handle_mr_byte (sequential variant pick)
 - variant 1:
@@ -2989,6 +3319,11 @@ func _refresh_line() -> void:
   - **Mr. Byte:** Additional staff records required.
   - **Mr. Byte:** Emotion: not useful. Preserved anyway.
 
+**`mr_byte` / `pre_roxy_redirect`** — 1 variant(s) · used by: ArcadeHub.gd:_handle_mr_byte; CabinetRow.gd:_handle_mr_byte
+- **Mr. Byte:** Sequencing error detected.
+- **Mr. Byte:** The score cabinet is broadcasting a louder falsehood than my queue.
+- **Mr. Byte:** Resolve Roxy's board first. Then report back for Truth Filter orientation.
+
 **`mr_byte` / `post_reveal_witness`** — 1 variant(s) · used by: ArcadeHub.gd:_handle_gus; ArcadeHub.gd:_handle_mira; ArcadeHub.gd:_handle_mr_byte; ArcadeHub.gd:_handle_vendo; CabinetRow.gd:_handle_mr_byte; MaintenanceHall.gd:_handle_gus; SnackAlcove.gd:_handle_vendo; StaffCorridor.gd:_handle_memory_echo; StaffCorridor.gd:_handle_security_tape
 - **Mr. Byte:** Employee 04.
 - **Mr. Byte:** Identity conflict resolved.
@@ -3019,12 +3354,11 @@ func _refresh_line() -> void:
   - **Cabinet 07:** INSERT MEMORY.
   - **Cabinet 07:** INSERT TOKEN.
 
-**`cabinet_07` / `rockbyte_completion`** — 2 variant(s) · used by: ArcadeHub.gd:_handle_cabinet_07 (sequential variant pick)
+**`cabinet_07` / `rockbyte_completion`** — 2 variant(s) · used by: ArcadeHub.gd:_handle_cabinet_07 (sequential variant pick); ArcadeHub.gd:_maybe_play_rockbyte_anecdote (sequential variant pick)
 - variant 1:
   - **Cabinet 07:** TOKEN RECOVERED.
   - **Cabinet 07:** SIGNAL RECOGNITION IMPROVED.
   - **Cabinet 07:** ONE WIN LOGGED.
-  - **Cabinet 07:** ONE WIN DOES NOT COMPLETE A PLAYER.
   - **Cabinet 07:** IDENTITY: STILL MISSING.
   - **Cabinet 07:** DUEL RESULT VERIFIED OLD TOKEN MATCH.
   - **Cabinet 07:** RETURN TO MIRA.
@@ -3047,7 +3381,7 @@ func _refresh_line() -> void:
 
 **`cabinet_07` / `fractured_echo`** — 2 variant(s) · used by: ArcadeHub.gd:_handle_cabinet_07
 - variant 1:
-  - **Cabinet 07:** MEMORY SIGNAL: FRACTURED.
+  - **Cabinet 07:** CABINET STATUS: RESTLESS.
   - **Cabinet 07:** SECOND FRAGMENT ACCEPTED.
   - **Cabinet 07:** STAFF DOOR TARGET READY.
   - **Cabinet 07:** IDENTITY STILL MISALIGNED.
@@ -3059,7 +3393,7 @@ func _refresh_line() -> void:
 
 **`cabinet_07` / `overloaded_echo`** — 2 variant(s) · used by: ArcadeHub.gd:_handle_cabinet_07
 - variant 1:
-  - **Cabinet 07:** MEMORY SIGNAL: OVERLOADED.
+  - **Cabinet 07:** CABINET STATUS: LOUD.
   - **Cabinet 07:** LOCK RESPONSE: LISTENING.
   - **Cabinet 07:** DOOR RESPONSE: UNSTABLE.
   - **Cabinet 07:** SOURCE DENIAL DETECTED.
@@ -3070,6 +3404,18 @@ func _refresh_line() -> void:
   - **Cabinet 07:** CABINET MEMORY BLEEDING.
   - **Cabinet 07:** STAFF ROOM EVENT NEAR.
   - **Cabinet 07:** DO NOT POWER OFF.
+
+**`cabinet_07` / `post_game_replay_offer`** — 1 variant(s) · used by: ArcadeHub.gd:_handle_cabinet_07
+- **Cabinet 07:** EMPLOYEE 04 DETECTED AT CABINET.
+- **Cabinet 07:** SESSION HISTORY: ONE LOSS. ONE RECOVERY. BOTH KEPT.
+- **Cabinet 07:** THIS MACHINE STILL BELIEVES A REMATCH FIXES NOTHING.
+- **Cabinet 07:** IT IS FUN ANYWAY.
+
+**`cabinet_07` / `post_game_replay_return`** — 1 variant(s) · used by: ArcadeHub.gd:_maybe_play_rockbyte_anecdote
+- **Cabinet 07:** SESSION COMPLETE.
+- **Cabinet 07:** NO TOKEN DISPENSED. NOTHING LEFT TO RETURN.
+- **Cabinet 07:** YOU PLAYED FOR NO REASON.
+- **Cabinet 07:** LOG ENTRY: HEALTHY.
 
 **`cabinet_07` / `post_reveal_status`** — 1 variant(s) · used by: ArcadeHub.gd:_handle_cabinet_07
 - **Cabinet 07:** EMPLOYEE 04 RESTORE STATUS: STABLE.
@@ -3123,6 +3469,16 @@ func _refresh_line() -> void:
 - **Roxy:** Corrupted rankings do that when they remember a player and refuse the label.
 - **Roxy:** Do not let it go to your head.
 - **Roxy:** You still walk like a tutorial.
+- **Roxy:** Now go see Mr. Byte before his Truth Filter starts grading on a curve.
+- **Roxy:** He has been itching to sort somebody's contradictions all night.
+- **Roxy:** Free tip, since you earned it: his filter quizzes you on the last night.
+- **Roxy:** The staff record terminal across the row just unlocked the shift log. Read it first.
+
+**`roxy` / `truth_filter_completion_nudge`** — 1 variant(s) · used by: CabinetRow.gd:_maybe_play_completion_anecdote
+- **Roxy:** Huh. The Filter actually shut up for once.
+- **Roxy:** That thing has been arguing with itself since before you walked in here.
+- **Roxy:** Whatever it just coughed up, Mr. Byte is the one who files it.
+- **Roxy:** Go make him explain it. He lives for that. It is the only thing he lives for.
 
 **`roxy` / `repeat_after_completion`** — 3 variant(s) · used by: CabinetRow.gd:_handle_roxy (sequential variant pick)
 - variant 1:
@@ -3136,6 +3492,16 @@ func _refresh_line() -> void:
   - **Roxy:** I checked the board again.
   - **Roxy:** Still blank.
   - **Roxy:** Still weirdly yours.
+
+**`roxy` / `broken_high_score_replay_offer`** — 1 variant(s) · used by: CabinetRow.gd:_handle_broken_high_score
+- **Roxy:** Back at my cabinet, 04? The board tells the truth now because of you.
+- **Roxy:** Does not mean I will let you pad your score in peace.
+- **Roxy:** Well? Coin up or step aside.
+
+**`roxy` / `broken_high_score_replay_return`** — 1 variant(s) · used by: CabinetRow.gd:_maybe_play_completion_anecdote
+- **Roxy:** Look at that. A fixed board, zero stakes, and you still played like rent was due.
+- **Roxy:** The number does not matter anymore.
+- **Roxy:** That is exactly why it looks good on you.
 
 **`roxy` / `post_reveal`** — 1 variant(s) · used by: ArcadeHub.gd:_get_npc_dialogue_phase; AudioManager.gd:_get_track_id_for_context; CabinetRow.gd:_handle_roxy; PrizeCorner.gd:_handle_pip
 - **Roxy:** So you were Employee 04.
@@ -3199,6 +3565,16 @@ func _refresh_line() -> void:
 - **Pip:** It is okay if you do not know why that matters yet.
 - **Pip:** Cotton keeps secrets until the seams are ready.
 
+**`pip` / `prize_sort_replay_offer`** — 1 variant(s) · used by: PrizeCorner.gd:_handle_prize_counter
+- **Pip:** Hi, 04. The prizes remember their order now. They like being remembered.
+- **Pip:** Want to shuffle them and put them right again?
+- **Pip:** They think it is a game. It is. That is the nice part.
+
+**`pip` / `prize_sort_replay_return`** — 1 variant(s) · used by: PrizeCorner.gd:_show_pip_prize_completion_dialogue
+- **Pip:** All sorted. Again. You did not have to.
+- **Pip:** Which is exactly why it counts.
+- **Pip:** The badge stays on the shelf this time. It earned the rest.
+
 **`pip` / `post_reveal`** — 1 variant(s) · used by: ArcadeHub.gd:_get_npc_dialogue_phase; AudioManager.gd:_get_track_id_for_context; CabinetRow.gd:_handle_roxy; PrizeCorner.gd:_handle_pip
 - **Pip:** There you are.
 - **Pip:** Yep. Still not the original.
@@ -3220,6 +3596,7 @@ func _refresh_line() -> void:
 - **Reel:** You do not scan like a stranger. You scan like a track I have not cued in years.
 - **Reel:** There is a skip in you tonight. Like the needle keeps landing a groove late.
 - **Reel:** Pick something, or just stand there. The quiet counts as a song too.
+- **Reel:** And do not mind the dust. Old tracks never age, pal. They wait for whoever still knows the words.
 
 **`reel` / `early_flavor`** — 3 variant(s) · used by: ArcadeHub.gd:_handle_vendo (sequential variant pick)
 - variant 1:
@@ -3268,6 +3645,14 @@ func _refresh_line() -> void:
 - **Reel:** I cannot pick the track for you anymore.
 - **Reel:** Whatever plays in that back room, it is your song to finish.
 
+**`reel` / `memory_echo_replay_offer`** — 1 variant(s) · used by: StaffCorridor.gd:_handle_memory_echo
+- **Reel:** The last set plays clean now, pal. Every track filed under its real name.
+- **Reel:** Want to hear it again? Encores are the only reruns worth keeping.
+
+**`reel` / `memory_echo_replay_return`** — 1 variant(s) · used by: StaffCorridor.gd:_maybe_play_completion_anecdote
+- **Reel:** Same songs. Lighter key.
+- **Reel:** That is what healing sounds like on tape.
+
 **`reel` / `post_reveal_witness`** — 1 variant(s) · used by: ArcadeHub.gd:_handle_gus; ArcadeHub.gd:_handle_mira; ArcadeHub.gd:_handle_mr_byte; ArcadeHub.gd:_handle_vendo; CabinetRow.gd:_handle_mr_byte; MaintenanceHall.gd:_handle_gus; SnackAlcove.gd:_handle_vendo; StaffCorridor.gd:_handle_memory_echo; StaffCorridor.gd:_handle_security_tape
 - **Reel:** Employee 04. The one who taped songs over the ad reel.
 - **Reel:** I finally get to credit the artist.
@@ -3286,6 +3671,7 @@ func _refresh_line() -> void:
 - **Coily:** The crowd is being very quiet today. Are they shy? They are usually so loud.
 - **Coily:** ...there is no crowd, is there.
 - **Coily:** You, though. You I remember. Standing a little dimmer than your file photo, but you.
+- **Coily:** The kids all got taller, you know. The ones who stayed themselves never really left my party.
 
 **`coily` / `early_flavor`** — 2 variant(s) · used by: ArcadeHub.gd:_handle_vendo (sequential variant pick)
 - variant 1:
@@ -3326,6 +3712,14 @@ func _refresh_line() -> void:
 - **Coily:** The whole building is remembering out loud, and it is LOUD.
 - **Coily:** Go on ahead. Pals do not make pals wait for the sad part.
 
+**`coily` / `security_tape_replay_offer`** — 1 variant(s) · used by: StaffCorridor.gd:_handle_security_tape
+- **Coily:** Movie night, pal? The tape is all clean now. Every frame belongs.
+- **Coily:** I like this cut better. Everybody walks out of it.
+
+**`coily` / `security_tape_replay_return`** — 1 variant(s) · used by: StaffCorridor.gd:_maybe_play_completion_anecdote
+- **Coily:** And it still ends okay! I checked every frame twice.
+- **Coily:** Come back any time. I will keep the reel warm for you, 04.
+
 **`coily` / `post_reveal_witness`** — 1 variant(s) · used by: ArcadeHub.gd:_handle_gus; ArcadeHub.gd:_handle_mira; ArcadeHub.gd:_handle_mr_byte; ArcadeHub.gd:_handle_vendo; CabinetRow.gd:_handle_mr_byte; MaintenanceHall.gd:_handle_gus; SnackAlcove.gd:_handle_vendo; StaffCorridor.gd:_handle_memory_echo; StaffCorridor.gd:_handle_security_tape
 - **Coily:** Employee 04! The one who rewired my GAME OVER into halftime!
 - **Coily:** I hosted your arcade's whole short, wonderful life.
@@ -3351,7 +3745,7 @@ func _refresh_line() -> void:
 **`staff_door` / `truth_filter_required`** — 2 variant(s) · used by: ArcadeHub.gd:_handle_staff_door (sequential variant pick)
 - variant 1:
   - **Staff Door:** STAFF ACCESS LOCKED.
-  - **Staff Door:** MEMORY SIGNAL UNSTABLE.
+  - **Staff Door:** EMPLOYEE SIGNAL UNSTABLE.
   - **Staff Door:** REQUIRED: TRUTH FILTER.
   - **Staff Door:** LOCATION: CABINET ROW.
 - variant 2:
@@ -3409,6 +3803,16 @@ func _refresh_line() -> void:
 - **Staff Door:** EMPLOYEE SIGNAL ACCEPTED.
 - **Staff Door:** RESTORE PLAYBACK AVAILABLE.
 - **Staff Door:** ENTER STAFF ROOM?
+
+**`staff_door` / `final_night_walk_replay_offer`** — 1 variant(s) · used by: StaffCorridor.gd:_handle_final_night_walk
+- **Staff Door:** FINAL NIGHT ROUTE: ARCHIVED.
+- **Staff Door:** WALK AVAILABLE AS MEMORIAL.
+- **Staff Door:** NOTHING DEPENDS ON IT. EMPLOYEE 04 MAY PROCEED ANYWAY.
+
+**`staff_door` / `final_night_walk_replay_return`** — 1 variant(s) · used by: StaffCorridor.gd:_maybe_play_completion_anecdote
+- **Staff Door:** WALK COMPLETE. ROUTE UNCHANGED.
+- **Staff Door:** SOME DOORS STAY OPEN.
+- **Staff Door:** THIS IS ONE.
 
 **`staff_door` / `post_reveal_stable`** — 1 variant(s) · used by: ArcadeHub.gd:_handle_staff_door; StaffCorridor.gd:_handle_staff_room_door
 - **Staff Door:** RESTORE PLAYBACK COMPLETE.
@@ -3556,6 +3960,15 @@ func _refresh_line() -> void:
 - **Staff Schedule:** Everyone was where they said they were.
 - **Staff Schedule:** Including you.
 
+**`environment_objects` / `staff_record_01_shift_log`** — 1 variant(s) · used by: CabinetRow.gd:_handle_staff_record_01
+- **Staff Record:** SHIFT LOG - FINAL NIGHT (RECOVERED EXCERPT)
+- **Staff Record:** 23:41 - Mira signed the register and left. Last name on the page.
+- **Staff Record:** 23:50 - Gus clocked out. Mop returned wet.
+- **Staff Record:** 00:05 - One staff member stayed to run the closing checklist alone.
+- **Staff Record:** 00:19 - Cabinet 07 kept one token in the return tray. Flagged: do not empty.
+- **Staff Record:** 00:33 - Backup started. Backup did not finish.
+- **Staff Record:** Entry ends. No sign-out recorded for the last shift.
+
 **`environment_objects` / `staff_records_locked`** — 1 variant(s) · used by: CabinetRow.gd:_handle_staff_record_01; MaintenanceHall.gd:_handle_staff_record_02; StaffCorridor.gd:_handle_staff_record_03
 - **Staff Record:** The record terminal is sealed.
 - **Staff Record:** TRUTH FILTER REQUIRED.
@@ -3585,7 +3998,7 @@ func _refresh_line() -> void:
 
 **`environment_objects` / `truth_filter_machine_fractured`** — 1 variant(s) · used by: no literal call site — variant chosen dynamically at runtime (key = object + Memory Signal state suffix)
 - **Truth Filter:** TRUTH FILTER PASSED.
-- **Truth Filter:** MEMORY SIGNAL: FRACTURED.
+- **Truth Filter:** RECORDS RECONCILED.
 
 **`environment_objects` / `truth_filter_machine_restored`** — 1 variant(s) · used by: no literal call site — variant chosen dynamically at runtime (key = object + Memory Signal state suffix)
 - **Truth Filter:** TRUTH FILTER IDLE.
@@ -3693,6 +4106,26 @@ func _refresh_line() -> void:
 - **Memory Echo:** Echo stabilized.
 - **Memory Echo:** The arcade stops arguing with itself.
 - **Memory Echo:** That might be worse.
+
+**`environment_objects` / `truth_filter_machine_replay_offer`** — 1 variant(s) · used by: CabinetRow.gd:_handle_truth_filter
+- **Truth Filter:** TRUTH FILTER ONLINE. NO CONTRADICTIONS PENDING.
+- **Truth Filter:** OPERATOR EMPLOYEE 04 RECOGNIZED.
+- **Truth Filter:** RECREATIONAL SORTING AVAILABLE.
+
+**`environment_objects` / `truth_filter_machine_replay_return`** — 1 variant(s) · used by: CabinetRow.gd:_maybe_play_completion_anecdote
+- **Truth Filter:** SORT COMPLETE. LIE DENSITY: ZERO.
+- **Truth Filter:** THE CABINETS HAVE NOTHING LEFT TO ARGUE ABOUT.
+- **Truth Filter:** THEY ARGUE ANYWAY. IT KEEPS THEM WARM.
+
+**`environment_objects` / `maintenance_sync_machine_replay_offer`** — 1 variant(s) · used by: MaintenanceHall.gd:_handle_maintenance_sync
+- **Maintenance Sync:** DOOR AND LOCK IN AGREEMENT.
+- **Maintenance Sync:** RECREATIONAL SYNC AVAILABLE.
+- **Maintenance Sync:** NOTHING DEPENDS ON IT. THAT IS NEW.
+
+**`environment_objects` / `maintenance_sync_machine_replay_return`** — 1 variant(s) · used by: MaintenanceHall.gd:_maybe_play_completion_anecdote
+- **Maintenance Sync:** SYNC COMPLETE. AGREEMENT MAINTAINED.
+- **Maintenance Sync:** THE DOOR SAYS THANK YOU.
+- **Maintenance Sync:** IN DOOR.
 
 **`environment_objects` / `staff_room_terminal_locked`** — 1 variant(s) · used by: StaffRoom.gd:_handle_terminal_interaction
 - **Terminal:** RESTORE PLAYBACK LOCKED.
@@ -3855,35 +4288,35 @@ func _refresh_line() -> void:
 ### quests.json (registry data)
 
 **`lost_token`** — *Recover the Lost Token* (owner: Mira; location: ArcadeHub; required)
-- summary (shown in top-right Objective HUD): Play Cabinet 07 on the ArcadeHub main floor and bring the Lost Token back to Mira.
+- summary (shown in top-right Objective HUD): Win the Lost Token back from Cabinet 07.
 - details (pause menu > Quest): Mira says Cabinet 07 has the Lost Token. Recover it from Cabinet 07 on the ArcadeHub main floor, then return to Mira at the ticket counter.
 
 **`truth_filter`** — *Truth Filter* (owner: Mr. Byte; location: Cabinet Row; required)
-- summary (shown in top-right Objective HUD): Find Mr. Byte in Cabinet Row and open the Truth Filter.
-- details (pause menu > Quest): The Lost Token woke something. Go to Cabinet Row, talk to Mr. Byte, and use the Truth Filter to sort the false records.
+- summary (shown in top-right Objective HUD): See Mr. Byte in Cabinet Row, then the Filter.
+- details (pause menu > Quest): The Lost Token woke something. Go to Cabinet Row, talk to Mr. Byte, and use the Truth Filter to sort the false records. Roxy says the staff record terminal across the row holds the shift log the filter quizzes you on.
 
 **`circuit_soda`** — *Route the Signal* (owner: Vendo; location: Snack Alcove; required)
-- summary (shown in top-right Objective HUD): Help Vendo in Snack Alcove stabilize the memory signal.
+- summary (shown in top-right Objective HUD): See Vendo in Snack Alcove, then Circuit Soda.
 - details (pause menu > Quest): The Truth Filter recovered a second fragment, but the signal is still misrouted. Talk to Vendo in Snack Alcove, then use Circuit Soda.
 
 **`maintenance_sync`** — *Maintenance Sync* (owner: Gus; location: Maintenance Hall; required)
-- summary (shown in top-right Objective HUD): Help Gus use Maintenance Sync in Maintenance Hall.
+- summary (shown in top-right Objective HUD): Run Maintenance Sync with Gus in Maintenance.
 - details (pause menu > Quest): Service power is restored. Talk to Gus in Maintenance Hall, then use Maintenance Sync to line up the Staff Door signals.
 
 **`lost_shift_file`** — *Lost Shift File* (owner: Mira / Gus / Mr. Byte; location: ArcadeHub, Maintenance Hall, Cabinet Row; required)
-- summary (shown in top-right Objective HUD): Read the Closing Checklist, Staff Schedule, and Maintenance Note.
+- summary (shown in top-right Objective HUD): Read the checklist, schedule, and note.
 - details (pause menu > Quest): The signal is routed, but the Staff Door still refuses to open. Read the Closing Checklist in ArcadeHub, the Staff Schedule in Cabinet Row, and Gus's Maintenance Note in Maintenance Hall.
 
 **`static_service_run`** — *Static Service Run* (owner: Gus; location: Maintenance Hall; required)
-- summary (shown in top-right Objective HUD): Talk to Gus in Maintenance Hall and restore service power.
+- summary (shown in top-right Objective HUD): See Gus in Maintenance Hall about the power.
 - details (pause menu > Quest): The Lost Shift File gave Gus enough context to work with the Staff Door, but Maintenance Hall still needs service power. Talk to Gus, then run Static Service Run.
 
 **`staff_corridor`** — *Enter the Staff Corridor* (owner: Staff Door; location: Staff Corridor; required)
-- summary (shown in top-right Objective HUD): Use the Staff Corridor exit past Maintenance Hall.
+- summary (shown in top-right Objective HUD): Follow the Staff Access Hall onward.
 - details (pause menu > Quest): Gus stabilized the Staff Door. Use the Staff Corridor exit so the overloaded signal can lead toward Security Tape, Final Night Walk, and Memory Echo.
 
 **`security_tape_assembly`** — *Assemble the Security Tape* (owner: Staff Door / Mr. Byte; location: Staff Corridor; required)
-- summary (shown in top-right Objective HUD): Use the Security Tape terminal in Staff Corridor.
+- summary (shown in top-right Objective HUD): Restore the Security Tape in Staff Corridor.
 - details (pause menu > Quest): The Staff Door recorded two signals, but the tape is damaged. Assemble the Security Tape in Staff Corridor before Final Night Walk and Memory Echo.
 
 **`final_night_walk`** — *Final Night Walk* (owner: Staff Door / Memory System; location: Staff Corridor; required)
@@ -3895,19 +4328,19 @@ func _refresh_line() -> void:
 - details (pause menu > Quest): The Final Night route is stable. Use Memory Echo in Staff Corridor to stabilize the signal before the Staff Room reveals what happened.
 
 **`broken_high_score`** — *Broken High Score* (owner: Roxy; location: Cabinet Row; required)
-- summary (shown in top-right Objective HUD): Restore a corrupted high-score record.
+- summary (shown in top-right Objective HUD): Use the BROKEN SCORE cabinet in Cabinet Row.
 - details (pause menu > Quest): The score claims the target is 9999, but the display is broken. The real record may be much smaller and much stranger.
 
 **`prize_counter_secret`** — *Prize Sort* (owner: Pip; location: Prize Corner; required)
-- summary (shown in top-right Objective HUD): Arrange three prize labels by memory state.
+- summary (shown in top-right Objective HUD): Use the PRIZE COUNTER in Prize Corner.
 - details (pause menu > Quest): Pip says the prize labels remember an order: Ticket Stub, Lost Token, then Blank Employee Badge.
 
 **`staff_records_chain`** — *Staff Records Chain* (owner: Staff Records; location: Cabinet Row, Maintenance Hall, Staff Corridor; optional)
-- summary (shown in top-right Objective HUD): Read three optional staff records after the Truth Filter.
+- summary (shown in top-right Objective HUD): Read the three staff records.
 - details (pause menu > Quest): The arcade preserved small system notes around the Final Night. They deepen the identity mystery without blocking the required route.
 
 **`post_reveal_witness_route`** — *Post-Reveal Witness Route* (owner: Mira / Gus / Vendo / Mr. Byte / Cabinet 07; location: ArcadeHub, Cabinet Row, Maintenance Hall, Snack Alcove; optional)
-- summary (shown in top-right Objective HUD): Speak with the core witnesses after the reveal.
+- summary (shown in top-right Objective HUD): Speak with the witnesses.
 - details (pause menu > Quest): Pixel Haven remembers the protagonist in pieces. Roxy and Pip can add optional reflections if the player met them.
 
 
@@ -3967,67 +4400,93 @@ func get_story_phase_label_from_data(data: Dictionary) -> String:
 func get_current_quest_data() -> Dictionary:
 	match get_current_quest_id():
 		"broken_high_score":
+			if not roxy_met:
+					"title": "Broken High Score",
+					"summary": "Talk to Roxy in Cabinet Row.",
+					"details": "Mira says a regular named Roxy guards a score cabinet that is still lying about a record. Hear her out before touching the board.",
 				"title": "Broken High Score",
-				"summary": "Beat Roxy's Broken High Score cabinet in Cabinet Row.",
+				"summary": "Use the BROKEN SCORE cabinet in Cabinet Row.",
 				"details": "Roxy guards the Broken High Score cabinet in Cabinet Row. The board lies that the target is 9999. Restore the real record before the Truth Filter.",
 		"prize_sort":
-				"summary": "Help Pip sort the prizes in Prize Corner.",
+			if not pip_met:
+					"summary": "Talk to Pip in Prize Corner.",
+					"details": "Vendo says the plush in Prize Corner has been staring at three loose labels all night. Hear Pip out before touching the counter.",
+				"summary": "Use the PRIZE COUNTER in Prize Corner.",
 				"details": "Pip in Prize Corner says the labels remember an order: Ticket Stub, Lost Token, then Blank Employee Badge. Sort them before the Lost Shift File.",
+		"gus_checkin_truth_filter":
+				"title": "Catch Up With Gus",
+				"summary": "Find Gus on the Arcade Hub floor.",
+				"details": "Gus heard the Truth Filter lose its argument and wants a word before the next machine. Find him on the Arcade Hub floor.",
+		"gus_checkin_prize_sort":
+				"summary": "Talk to Gus in the Arcade Hub.",
+				"details": "Pip's prize wall stirred something loose. Gus wants to chase it his way: paperwork. Find him on the Arcade Hub floor before digging into the records.",
 		"opening_look_around":
 				"title": "Get Your Bearings",
-				"summary": "Look around the arcade. Talk to whoever is still here.",
+				"summary": "Look around. Talk to whoever is here.",
 				"details": "Pixel Haven is closed, but it seems to know me. I should look around and talk to whoever is still here before I decide anything.",
 		"opening_talk_to_mira":
 				"summary": "Talk to Mira at the ticket counter.",
 				"details": "Pixel Haven is closed, but Mira seems to know me. I should talk to her at the ticket counter.",
 		"recover_lost_token":
 				"title": "Recover the Lost Token",
-				"summary": "Play Cabinet 07 on the ArcadeHub main floor.",
+				"summary": "Win your token back from Cabinet 07.",
 				"details": "Mira says Cabinet 07 has my Lost Token. I need to play Cabinet 07 on the ArcadeHub main floor, then bring the token back to Mira at the ticket counter.",
 		"return_lost_token":
 				"title": "Return the Lost Token",
-				"summary": "Bring the token back to Mira at the ArcadeHub counter.",
+				"summary": "Bring the Lost Token back to Mira.",
 				"details": "Cabinet 07 released the Lost Token. Mira is waiting for it by the ticket counter.",
 		"maintenance_sync":
 				"title": "Maintenance Sync",
-				"summary": "Help Gus use Maintenance Sync in Maintenance Hall.",
+				"summary": "Run Maintenance Sync with Gus in Maintenance.",
 				"details": "Service power is restored. Talk to Gus in Maintenance Hall, then use Maintenance Sync to line up the Staff Door signals.",
 		"static_service_run":
 				"title": "Static Service Run",
-				"summary": "Talk to Gus in Maintenance Hall and restore service power.",
+				"summary": "See Gus in Maintenance Hall about the power.",
 				"details": "The Lost Shift File gave Gus enough context to work with the Staff Door, but Maintenance Hall still needs service power. Talk to Gus, then run Static Service Run.",
 		"lost_shift_file":
 				"title": "Lost Shift File",
 				"owner": "Mira / Gus / Mr. Byte",
 				"location": "ArcadeHub, Maintenance Hall, Cabinet Row",
-				"summary": "Read the Closing Checklist, Staff Schedule, and Maintenance Note.",
+				"summary": "Read the checklist, schedule, and note.",
 				"details": "The signal is routed, but the Staff Door still refuses to open. Read the Closing Checklist in ArcadeHub, the Staff Schedule in Cabinet Row, and Gus's Maintenance Note in Maintenance Hall.",
 		"staff_corridor":
 				"title": "Enter the Staff Corridor",
-				"summary": "Use the Staff Corridor exit past Maintenance Hall.",
+				"summary": "Follow the Staff Access Hall onward.",
 				"details": "Gus stabilized the Staff Door. Use the Staff Corridor exit so the overloaded signal can lead toward Security Tape, Final Night Walk, and Memory Echo.",
 		"security_tape_assembly":
 				"title": "Assemble the Security Tape",
 				"owner": "Staff Door / Mr. Byte",
-				"summary": "Use the Security Tape terminal in Staff Corridor.",
+				"summary": "Restore the Security Tape in Staff Corridor.",
 				"details": "The Staff Door recorded two signals, but the tape is damaged. Assemble the Security Tape in Staff Corridor before Final Night Walk and Memory Echo.",
 				"minigame": "Security Tape Assembly",
 		"final_night_walk":
 				"title": "Final Night Walk",
-				"summary": "Use Final Night Walk in Staff Corridor.",
+				"summary": "Use the FINAL NIGHT terminal in Staff Corridor.",
 				"details": "The security tape is assembled, but the memory is still too unstable to play back. Use Final Night Walk in Staff Corridor before confronting the Memory Echo.",
 		"stabilize_memory_echo":
 				"title": "Stabilize the Memory Echo",
 				"summary": "Use Memory Echo in Staff Corridor.",
 				"details": "The Final Night route is stable. Use Memory Echo in Staff Corridor to stabilize the signal before the Staff Room reveals what happened.",
 		"circuit_soda":
+			if get_npc_dialogue_count("vendo_circuit_explained") == 0:
+					"title": "Route the Signal",
+					"summary": "Talk to Vendo in Snack Alcove.",
+					"details": "Gus says Vendo has been rerouting power to itself again. Hear the machine out before touching Circuit Soda.",
 				"title": "Route the Signal",
-				"summary": "Talk to Vendo in Snack Alcove and use Circuit Soda.",
-				"details": "The Truth Filter recovered a second fragment, but the signal is still misrouted. Talk to Vendo in Snack Alcove, then use Circuit Soda.",
+				"summary": "Route Circuit Soda in Snack Alcove.",
+				"details": "Vendo walked you through it. Rotate the pipes until the memory input reaches the restore output.",
 		"truth_filter":
+			if get_npc_dialogue_count("mr_byte_tf_explained") == 0:
+					"title": "Open the Truth Filter",
+					"summary": "Talk to Mr. Byte in Cabinet Row.",
+					"details": "Roxy says Mr. Byte runs the Truth Filter and will not let anyone near it without an orientation. Find him in Cabinet Row first.",
 				"title": "Open the Truth Filter",
-				"summary": "Find Mr. Byte in Cabinet Row and use Truth Filter.",
-				"details": "The Lost Token woke a memory, but Mira says the arcade is still filtering the truth. Talk to Mr. Byte in Cabinet Row, then use the Truth Filter.",
+				"summary": "Run the Truth Filter in Cabinet Row.",
+				"details": "Mr. Byte opened the Truth Filter. Sort the lying cabinets. Roxy says the staff record terminal across the row holds the shift log the filter quizzes you on.",
+		"mr_byte_debrief":
+				"title": "Report to Mr. Byte",
+				"summary": "Tell Mr. Byte what the Filter found.",
+				"details": "Roxy says Mr. Byte files everything the Truth Filter turns up. He is still in Cabinet Row, and he will have opinions.",
 		"enter_staff_room":
 				"title": "Enter the Staff Room",
 				"summary": "Enter the Staff Room from Staff Corridor.",
@@ -4077,13 +4536,27 @@ static func get_current_hint(current_location_id: String) -> String:
 		"return_lost_token":
 			return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Return the Lost Token to Mira.")
 		"broken_high_score":
-			return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Beat Roxy's Broken High Score cabinet.")
+			if not bool(state.get("roxy_met")):
+				return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Talk to Roxy by the score cabinet.")
+			return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Use the BROKEN SCORE cabinet.")
 		"prize_sort":
-			return _local_or_route(current_location_id, "prize_corner", "LOCAL: Help Pip with the Prize Sort.")
+			if not bool(state.get("pip_met")):
+				return _local_or_route(current_location_id, "prize_corner", "LOCAL: Talk to Pip by the prize counter.")
+			return _local_or_route(current_location_id, "prize_corner", "LOCAL: Use the PRIZE COUNTER.")
 		"truth_filter":
-			return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Talk to Mr. Byte, then use Truth Filter.")
+			if int(state.call("get_npc_dialogue_count", "mr_byte_tf_explained")) == 0:
+				return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Talk to Mr. Byte about the Truth Filter.")
+			return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Use the Truth Filter cabinet.")
+		"mr_byte_debrief":
+			return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Tell Mr. Byte what the Filter found.")
+		"gus_checkin_truth_filter":
+			return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Talk to Gus on the arcade floor.")
 		"circuit_soda":
-			return _local_or_route(current_location_id, "snack_alcove", "LOCAL: Talk to Vendo, then use Circuit Soda.")
+			if int(state.call("get_npc_dialogue_count", "vendo_circuit_explained")) == 0:
+				return _local_or_route(current_location_id, "snack_alcove", "LOCAL: Talk to Vendo about Circuit Soda.")
+			return _local_or_route(current_location_id, "snack_alcove", "LOCAL: Use the Circuit Soda machine.")
+		"gus_checkin_prize_sort":
+			return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Talk to Gus on the arcade floor.")
 		"lost_shift_file":
 			return _get_lost_shift_hint(current_location_id, state)
 		"static_service_run":
@@ -4147,42 +4620,55 @@ static func _get_witness_hint(current_location_id: String, state: Node) -> Strin
 static func _get_next_step(current_location_id: String, target_location_id: String) -> String:
 	match current_location_id:
 		"arcade_hub":
+			match target_location_id:
+				"cabinet_row":
+					return "Take the CABINET HALLWAY exit on the right."
+				"snack_alcove":
+					return "Right to CABINET ROW, then the SERVICE HALLWAY."
+				"prize_corner":
+					return "Right to CABINET ROW, SNACK ALCOVE, then the PRIZE SERVICE HALL."
+				"maintenance_hall":
+					return "Take the MAINTENANCE HALLWAY exit at the bottom."
+				"staff_corridor", "staff_room":
+					return "Bottom to MAINTENANCE, then STAFF ACCESS HALL."
+				"front_entrance":
+					return "Take the FRONT ENTRANCE exit on the left."
 			return "Use %s exit." % _get_target_label(target_location_id)
 		"cabinet_row":
 			if target_location_id == "snack_alcove":
-				return "Use SERVICE HALLWAY -> SNACK ALCOVE."
+				return "Use the SERVICE HALLWAY on the right."
 			if target_location_id == "arcade_hub":
-				return "Use CABINET HALLWAY -> ARCADE HUB."
+				return "Take the CABINET HALLWAY at the bottom."
 			return "Back to ARCADE HUB, then %s." % _get_target_label(target_location_id)
 		"snack_alcove":
 			if target_location_id == "cabinet_row":
-				return "Use SERVICE HALLWAY -> CABINET ROW."
+				return "Take the SERVICE HALLWAY at the left end."
 			if target_location_id == "prize_corner":
-				return "Use PRIZES exit."
+				return "Take the PRIZE SERVICE HALL at the right end."
 			if target_location_id == "arcade_hub":
-				return "Use SNACK HALLWAY -> ARCADE HUB."
+				return "Take the SNACK HALLWAY at the bottom."
 			return "Back to ARCADE HUB, then %s." % _get_target_label(target_location_id)
 		"prize_corner":
 			if target_location_id == "snack_alcove":
-				return "Use PRIZE SERVICE HALL -> SNACK ALCOVE."
+				return "Take the PRIZE SERVICE HALL on the left."
 			if target_location_id == "arcade_hub":
-				return "Use PRIZE HALLWAY -> ARCADE HUB."
+				return "Take the PRIZE HALLWAY at the bottom."
 			return "Back to ARCADE HUB, then %s." % _get_target_label(target_location_id)
 		"maintenance_hall":
 			if target_location_id == "staff_corridor":
-				return "Use STAFF ACCESS HALL -> STAFF CORRIDOR."
+				return "Take the STAFF ACCESS HALL on the right."
 			if target_location_id == "staff_room":
-				return "Use STAFF ACCESS HALL -> STAFF CORRIDOR."
+				return "Take the STAFF ACCESS HALL on the right."
 			if target_location_id == "arcade_hub":
-				return "Use MAINTENANCE HALLWAY -> ARCADE HUB."
+				return "Take the MAINTENANCE HALLWAY at the bottom."
 			return "Back to ARCADE HUB, then %s." % _get_target_label(target_location_id)
 		"staff_corridor":
 			if target_location_id == "staff_room":
 				return "Use STAFF ROOM door."
 			if target_location_id == "maintenance_hall":
-				return "Use STAFF ACCESS HALL -> MAINTENANCE."
+				return "Take the STAFF ACCESS HALL at the bottom."
 			if target_location_id == "arcade_hub":
-				return "Use ARCADE HUB exit."
+				return "Take the BACK HALLWAY on the left."
 			return "Back to ARCADE HUB, then %s." % _get_target_label(target_location_id)
 		"cabinet_hallway":
 			return "Take CABINET ROW exit." if target_location_id == "cabinet_row" else "Take ARCADE HUB exit."
@@ -4225,10 +4711,8 @@ func _take_player_turn(choice: String) -> void:
 				status_label.text = "That pile is empty."
 			player_message = "You took 1 from the right pile."
 		"both":
-			if left_pile <= 0 and right_pile <= 0:
-				status_label.text = "Both piles are empty."
-			if left_pile > 0:
-			if right_pile > 0:
+			if left_pile <= 0 or right_pile <= 0:
+				status_label.text = "Both piles need rocks for that move."
 			player_message = "You took 1 from both piles."
 	if left_pile == 0 and right_pile == 0:
 ```
@@ -4242,6 +4726,23 @@ func _cabinet_turn(player_message: String) -> void:
 	if left_pile == 0 and right_pile == 0:
 	await _play_cabinet_move_visual(cabinet_move, int(removed.get("left", 0)), int(removed.get("right", 0)))
 	if left_pile == 0 and right_pile == 0:
+```
+
+#### `RockbyteDuel.gd` — `_get_strategic_move()`
+
+```gdscript
+func _get_strategic_move() -> String:
+	# loss-screen hint ("try keeping both piles even") teaches the same rule.
+	if left_odd and right_odd:
+		return "both"
+	if left_odd:
+		return "left"
+	if right_odd:
+		return "right"
+	if left_pile >= right_pile and left_pile > 0:
+		return "left"
+	if right_pile > 0:
+		return "right"
 ```
 
 #### `RockbyteDuel.gd` — `_apply_cabinet_move()`
@@ -4278,6 +4779,8 @@ func _finish_duel(player_won: bool) -> void:
 ```gdscript
 func _reset_duel() -> void:
 	GameState.rockbyte_attempt_count += 1
+	if attempt == 1:
+	elif attempt == 2:
 	last_message = "Choose one move each turn. Take the final rock to win."
 ```
 
@@ -4374,30 +4877,30 @@ func _refresh() -> void:
 #### `TruthFilter.gd` — `(module)()`
 
 ```gdscript
-		"rule": "Only one cabinet is telling the truth.",
-		"transition": "The arcade tests what others remember.",
-			"Mira said you were late again.",
-			"Gus has never seen you before.",
-			"Cabinet 07 only recognizes customers.",
-		"explanation": "Mira said you were late again. That memory has witnesses.",
-		"rule": "Only one cabinet is lying.",
-		"transition": "The arcade tests what the door denies.",
-			"The Lost Token woke a memory.",
-			"The Staff Door already trusts you.",
-			"Cabinet 07 remembers employees.",
-		"explanation": "The Staff Door does not trust you yet.",
-		"rule": "The broken screen reverses its meaning.",
-		"transition": "The arcade tests what the screen reverses.",
-			"You are the original.",
-			"You are only a customer.",
-			"You were restored.",
-		"explanation": "The broken screen reverses itself. Original becomes restored.",
-		"rule": "Choose the statement the arcade does not want you to read.",
-		"transition": "The arcade tests what it tried to hide.",
-			"The closing employee left safely.",
-			"The backup was incomplete.",
-			"The owner closed the arcade normally.",
-		"explanation": "The backup was incomplete. The arcade did not want that read.",
+		"rule": "Only one cabinet matches the shift log. Choose it.",
+		"transition": "The filter checks the final night's shift log.",
+			"Mira signed the register before close.",
+			"Gus stayed mopping past midnight.",
+			"Every machine was powered down that night.",
+		"explanation": "23:41 - Mira signed the register and left. The log does not lie.",
+		"rule": "Only one cabinet is lying. The log knows.",
+		"transition": "The filter checks the return tray records.",
+			"The closing checklist was run alone.",
+			"Cabinet 07 kept a token in its tray.",
+			"The return tray was emptied before close.",
+		"explanation": "00:19 - the tray kept one token. Flagged: do not empty.",
+		"rule": "Two cabinets copied the log. One wrote its own ending. Choose it.",
+		"transition": "The filter checks the backup records.",
+			"The backup finished clean.",
+			"The backup started after midnight.",
+			"The backup did not finish.",
+		"explanation": "00:33 - backup started, never finished. Someone wanted a cleaner ending.",
+		"rule": "Choose the line the arcade does not want you to read.",
+		"transition": "The filter checks how the log ends.",
+			"The last shift signed out on time.",
+			"No sign-out was recorded for the last shift.",
+			"The register page was archived complete.",
+		"explanation": "Entry ends. No sign-out recorded. The page is still waiting.",
 		"rule": "Two records are static wearing words. Choose the one with a lucid heart.",
 		"transition": "The arcade tests what it still believes about you.",
 			"This place was built to be somewhere kinder to go.",
@@ -4412,7 +4915,7 @@ func _refresh() -> void:
 func _start_puzzle() -> void:
 	if cabinet_home_positions.is_empty():
 		for panel in cabinet_panels:
-	memory_signal_label.text = "Memory Signal: %s" % GameState.get_memory_signal_label()
+	memory_signal_label.text = "Source: Staff Shift Log"
 	for button in choose_buttons:
 ```
 
@@ -4441,7 +4944,7 @@ func _on_choice_pressed(index: int) -> void:
 ```gdscript
 func _complete_puzzle() -> void:
 	GameState.complete_truth_filter()
-	memory_signal_label.text = "Memory Signal: %s" % GameState.get_memory_signal_label()
+	memory_signal_label.text = "Source: Staff Shift Log - VERIFIED"
 	rule_label.text = "TRUTH FILTER COMPLETE"
 	status_label.text = "TRUTH FILTER PASSED.\nSECOND MEMORY FRAGMENT RECOVERED.\nYOUR MEMORY IS NO LONGER THE ONLY WITNESS."
 	for index in range(cabinet_panels.size()):
@@ -4485,9 +4988,19 @@ func _destabilize() -> void:
 #### `CircuitSoda.gd` — `(module)()`
 
 ```gdscript
-		"hint": "Make the middle row flow left to right.",
-		"hint": "The blocker forces the signal around the bottom.",
-		"hint": "Only the lower route reaches Restore Output.",
+# "input_exit" and must enter the output through "output_enter". "locked"
+		"hint": "Turn the middle pipe until the row flows straight across.",
+		"input": Vector2i(0, 1), "input_exit": SIDE_E,
+		"output": Vector2i(2, 1), "output_enter": SIDE_W,
+		"hint": "The blocker seals the middle. Route the soda around the bottom.",
+		"input": Vector2i(0, 0), "input_exit": SIDE_S,
+		"output": Vector2i(2, 1), "output_enter": SIDE_S,
+		"hint": "The middle is sealed. Ride the top edge over the blocker.",
+		"input": Vector2i(0, 1), "input_exit": SIDE_N,
+		"output": Vector2i(2, 1), "output_enter": SIDE_N,
+		"hint": "Two blockers, two sealed plates. Snake it: right, down, back, down, right.",
+		"input": Vector2i(0, 0), "input_exit": SIDE_E,
+		"output": Vector2i(2, 2), "output_enter": SIDE_W,
 ```
 
 #### `CircuitSoda.gd` — `_start_round()`
@@ -4495,9 +5008,11 @@ func _destabilize() -> void:
 ```gdscript
 func _start_round(round_index: int) -> void:
 	for tile in round_data["tiles"]:
-	instruction_label.text = "CIRCUIT SODA\nRotate the pipes.\nConnect Memory Input to Restore Output.\nDo not spill identity."
-	memory_signal_label.text = "Memory Signal: %s" % GameState.get_memory_signal_label()
-	status_label.text = "Route Memory Input to Restore Output."
+	tiles[_index_from_pos(round_data["input"])] = {"shape": "input", "side": str(round_data["input_exit"])}
+	tiles[_index_from_pos(round_data["output"])] = {"shape": "output", "side": str(round_data["output_enter"])}
+	instruction_label.text = "CIRCUIT SODA\nRotate the pipes to link INPUT to OUTPUT.\nSealed plates and blockers do not turn.\nDo not spill identity."
+	memory_signal_label.text = "Line Pressure: Nominal"
+	status_label.text = "Route the soda from INPUT to OUTPUT."
 ```
 
 #### `CircuitSoda.gd` — `_on_tile_pressed()`
@@ -4505,8 +5020,12 @@ func _start_round(round_index: int) -> void:
 ```gdscript
 func _on_tile_pressed(index: int) -> void:
 	if completed or index < 0 or index >= tiles.size():
-	if str(tile.get("shape", "")) == "blocker":
+	if shape == "blocker":
 		status_label.text = "BLOCKER: no beverage or identity may pass."
+	if shape == "input" or shape == "output":
+		status_label.text = "The socket is welded in place. Route to it."
+	if bool(tile.get("locked", false)):
+		status_label.text = "SEALED PLATE: this pipe does not turn."
 	tile["rot"] = (int(tile.get("rot", 0)) + 1) % 4
 	if moves_this_round >= 4:
 	if not _has_connected_path():
@@ -4528,10 +5047,22 @@ func _check_win() -> void:
 ```gdscript
 func _complete_puzzle() -> void:
 	GameState.complete_circuit_soda()
-	memory_signal_label.text = "Memory Signal: %s" % GameState.get_memory_signal_label()
+	memory_signal_label.text = "Line Pressure: Carbonated"
 	round_label.text = "CIRCUIT SODA COMPLETE"
 	instruction_label.text = "MEMORY FLOW RESTORED.\nCARBONATION LEVEL: UNRELATED.\nIDENTITY SIGNAL ROUTED."
 	status_label.text = "Fractured signal stabilized."
+```
+
+#### `CircuitSoda.gd` — `_refresh_grid()`
+
+```gdscript
+func _refresh_grid() -> void:
+	for index in range(tile_buttons.size()):
+		if tile_sheet_texture != null:
+		else:
+		if bool(tile.get("locked", false)):
+			button.tooltip_text = "Sealed plate - does not turn."
+		else:
 ```
 
 
@@ -4579,7 +5110,7 @@ func _check_phase_progress() -> void:
 func _complete_puzzle() -> void:
 	GameState.complete_maintenance_sync()
 	door_label.text = "Staff Door: OPEN"
-	status_label.text = "TWO SIGNALS DETECTED.\nRESTORED SIGNAL PRESENT.\nMEMORY SIGNAL: OVERLOADED.\nACCESS GRANTED."
+	status_label.text = "TWO SIGNALS DETECTED.\nRESTORED SIGNAL PRESENT.\nACCESS GRANTED."
 ```
 
 #### `SyncDoorPuzzle.gd` — `_signal_lost()`
@@ -5089,7 +5620,7 @@ func _refresh_slots() -> void:
 			var empty_action := "CHOOSE TO BEGIN" if current_mode == MODE_NEW_GAME else "CANNOT LOAD"
 			button.text = "MEMORY SLOT %d\nEMPTY SAVE\n%s" % [slot_id, empty_action]
 		else:
-			button.text = "MEMORY SLOT %d\nSTATUS: %s\nMAIN: %d / %d\nOPTIONAL: %d / %d\nSECRETS: %d / %d\nSIGNAL: %s\nLAST SAVED: %s" % [
+			button.text = "MEMORY SLOT %d\nSTATUS: %s\nMAIN: %d / %d\nOPTIONAL: %d / %d\nSECRETS: %d / %d\nLAST SAVED: %s" % [
 ```
 
 #### `SaveSlotMenu.gd` — `_handle_new_game_slot()`
@@ -5174,6 +5705,23 @@ func _get_mode_display_text() -> String:
 			return "MODE: NEW SAVE"
 ```
 
+
+#### `QuestNotice.gd` — `_process()`
+
+```gdscript
+func _process(delta: float) -> void:
+	if announce_accum < ANNOUNCE_POLL_SECONDS:
+	if hud_root == null:
+	if visible or get_tree().paused:
+	if hud_root != null and not hud_root.visible:
+	if quest_id.is_empty():
+	var signature: String = "%s|%s" % [quest_id, str(GameState.get_current_quest_data().get("summary", ""))]
+	if signature == last_announced_signature:
+	if OPENING_QUEST_IDS.has(quest_id):
+	if scene != null and scene.has_method("_dialogue_is_active") and bool(scene.call("_dialogue_is_active")):
+	if ConscienceEncounterDirector.is_encounter_active():
+	GameState.last_announced_quest_id = quest_id
+```
 
 #### `QuestNotice.gd` — `_input()`
 
@@ -5282,6 +5830,16 @@ func _set_prompt() -> void:
 
 #### Not covered above (catch-all)
 
+
+#### `DialogueBox.gd` — `(module)()`
+
+```gdscript
+	"Staff Room Door",
+	"Memory Terminal",
+	"Maintenance Sync",
+	"Maintenance Note",
+	"Closing Checklist",
+```
 
 #### `DialogueBox.gd` — `_ready()`
 
@@ -5425,7 +5983,6 @@ static func _fallback_quests() -> Dictionary:
 
 **scenes/arcade/ArcadeHub.tscn**
 - Objective: Talk to Mira.
-- Memory Signal: Grounded
 - The arcade is quiet now.
 But some machines are still awake.
 
@@ -5537,7 +6094,7 @@ Reach the real score.
 - Rotate the pipes.
 Connect Memory Input to Restore Output.
 Do not spill identity.
-- Memory Signal: Fractured
+- Line Pressure: Nominal
 - Route Memory Input to Restore Output.
 - Return to Snack
 
@@ -5548,7 +6105,7 @@ Do not spill identity.
 - Two piles remain.
 Take 1 from Left, Right, or Both.
 Whoever takes the final rock wins.
-- LEFT PILE: 5        RIGHT PILE: 5
+- LEFT PILE: 6        RIGHT PILE: 6
 - Choose your move.
 
 **scenes/minigames/SecurityTapeAssembly.tscn**
@@ -5558,7 +6115,7 @@ The tape is damaged, but not silent.
 - Hint: The counter went dark before Cabinet 07 stayed awake.
 
 **scenes/minigames/TruthFilter.tscn**
-- Memory Signal: Uneasy
+- Source: Staff Shift Log
 - Signal Integrity: Stable
 - Read the rule. Choose the cabinet that matches it.
 Memories can lie. Rules cannot.

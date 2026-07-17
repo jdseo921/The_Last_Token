@@ -147,13 +147,13 @@ flicker_enabled = true
 position = Vector2(320, 406)
 target_scene_path = "res://scenes/maps/hallways/CabinetHallway.tscn"
 target_spawn_id = "Spawn_FromCabinetRow"
-destination_name = "ARCADE HUB"
+destination_name = "CABINET HALLWAY"
 
 [node name="ToSnackAlcove" parent="." instance=ExtResource("3")]
 position = Vector2(606, 254)
 target_scene_path = "res://scenes/maps/hallways/CabinetSnackHallway.tscn"
 target_spawn_id = "Spawn_FromCabinetRow"
-destination_name = "SNACK ALCOVE"
+destination_name = "SERVICE HALLWAY"
 required_flag = "lying_cabinets_completed"
 locked_dialogue = Array[String](["SNACK ALCOVE LOCKED.", "TRUTH FILTER REQUIRED."])
 

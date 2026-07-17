@@ -67,7 +67,7 @@ offset_bottom = 38.0
 [node name="MemorySignalLabel" type="Label" parent="SignalPanel/SignalVBox"]
 custom_minimum_size = Vector2(0, 16)
 theme_override_font_sizes/font_size = 16
-text = "Memory Signal: Uneasy"
+text = "Source: Staff Shift Log"
 horizontal_alignment = 1
 
 [node name="SignalIntegrityLabel" type="Label" parent="SignalPanel/SignalVBox"]

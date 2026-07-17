@@ -245,7 +245,7 @@
     "truth_filter_machine_fractured": [
       [
         {"speaker": "Truth Filter", "text": "TRUTH FILTER PASSED."},
-        {"speaker": "Truth Filter", "text": "MEMORY SIGNAL: FRACTURED."}
+        {"speaker": "Truth Filter", "text": "RECORDS RECONCILED."}
       ]
     ],
     "truth_filter_machine_restored": [
@@ -429,6 +429,49 @@
         {"speaker": "Maintenance Sync", "text": "SYNC COMPLETE. AGREEMENT MAINTAINED."},
         {"speaker": "Maintenance Sync", "text": "THE DOOR SAYS THANK YOU."},
         {"speaker": "Maintenance Sync", "text": "IN DOOR."}
+      ]
+    ],
+    "test_cabinet_memories": [
+      [
+        {"speaker": "Test Cabinet", "text": "TEST LOG 114: difficulty lowered again."},
+        {"speaker": "Test Cabinet", "text": "Note attached: 'kids should win on allowance money.'"},
+        {"speaker": "Test Cabinet", "text": "The handwriting on those notes got worse every year. The kindness never did."}
+      ],
+      [
+        {"speaker": "Test Cabinet", "text": "ARCHIVE: initials screen skipped 4,412 times by the same staff signal."},
+        {"speaker": "Test Cabinet", "text": "Whoever tuned me never once entered their own name."},
+        {"speaker": "Test Cabinet", "text": "They said the top slot belonged to customers."}
+      ],
+      [
+        {"speaker": "Test Cabinet", "text": "MEMORY: one coin taped under my control panel. Replaced every week for years."},
+        {"speaker": "Test Cabinet", "text": "For the kid who ran out. There was always a kid who ran out."}
+      ],
+      [
+        {"speaker": "Test Cabinet", "text": "CALIBRATION NOTE: 'if the claw feels rigged, fix it. Even when it costs us.'"},
+        {"speaker": "Test Cabinet", "text": "Margins were never my point. I was built to be beatable."}
+      ],
+      [
+        {"speaker": "Test Cabinet", "text": "FINAL TEST SESSION: unfinished."},
+        {"speaker": "Test Cabinet", "text": "The tester stood here until the screen went dark, pressed START twice, and left."},
+        {"speaker": "Test Cabinet", "text": "I kept the credit. It is still here."}
+      ]
+    ],
+    "hub_directory_notes": [
+      [
+        {"speaker": "Directory", "text": "PIXEL HAVEN FLOOR GUIDE."},
+        {"speaker": "Directory", "text": "CABINET ROW: games. SNACK ALCOVE: sugar. PRIZE CORNER: negotiation."},
+        {"speaker": "Directory", "text": "MAINTENANCE: authorized personnel and one unauthorized mop."}
+      ],
+      [
+        {"speaker": "Directory", "text": "LOST AND FOUND CONTAINS: one left shoe, three retainers, a birthday crown, and the concept of Tuesday."}
+      ],
+      [
+        {"speaker": "Directory", "text": "STAFF BULLETIN, FINAL POSTING: 'whoever keeps topping the demo scores after close, leave some for the customers.'"},
+        {"speaker": "Directory", "text": "No one ever signed the complaint."}
+      ],
+      [
+        {"speaker": "Directory", "text": "EMPLOYEE OF THE MONTH: [WATER DAMAGE]."},
+        {"speaker": "Directory", "text": "The photo is gone. The frame stayed up. Nobody wanted to be the one to take it down."}
       ]
     ],
     "staff_room_terminal_locked": [

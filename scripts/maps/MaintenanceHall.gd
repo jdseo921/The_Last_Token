@@ -38,6 +38,11 @@ func _maybe_start_conscience_encounter() -> void:
 
 func _apply_spawn_position() -> void:
 	var spawn_id := GameState.consume_pending_spawn_id()
+	# Coming back from a minigame in this room: stand exactly where we left.
+	var back: Variant = GameState.consume_return_point(scene_file_path)
+	if back != null:
+		player.global_position = back
+		return
 	var marker := get_node_or_null(spawn_id)
 	if marker is Marker2D:
 		player.global_position = marker.global_position

@@ -17,7 +17,7 @@
     "truth_filter_required": [
       [
         {"speaker": "Staff Door", "text": "STAFF ACCESS LOCKED."},
-        {"speaker": "Staff Door", "text": "MEMORY SIGNAL UNSTABLE."},
+        {"speaker": "Staff Door", "text": "EMPLOYEE SIGNAL UNSTABLE."},
         {"speaker": "Staff Door", "text": "REQUIRED: TRUTH FILTER."},
         {"speaker": "Staff Door", "text": "LOCATION: CABINET ROW."}
       ],

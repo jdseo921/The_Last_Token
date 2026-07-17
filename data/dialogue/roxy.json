@@ -54,6 +54,14 @@
         {"speaker": "Roxy", "text": "The staff record terminal across the row just unlocked the shift log. Read it first."}
       ]
     ],
+    "truth_filter_completion_nudge": [
+      [
+        {"speaker": "Roxy", "text": "Huh. The Filter actually shut up for once."},
+        {"speaker": "Roxy", "text": "That thing has been arguing with itself since before you walked in here."},
+        {"speaker": "Roxy", "text": "Whatever it just coughed up, Mr. Byte is the one who files it."},
+        {"speaker": "Roxy", "text": "Go make him explain it. He lives for that. It is the only thing he lives for."}
+      ]
+    ],
     "repeat_after_completion": [
       [
         {"speaker": "Roxy", "text": "Your score is back."},

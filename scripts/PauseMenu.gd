@@ -120,7 +120,9 @@ func _on_load_pressed() -> void:
 func _on_exit_minigame_pressed() -> void:
 	_play_audio("play_ui_confirm")
 	get_tree().paused = false
-	SceneChanger.go_to_arcade_hub()
+	# Back to the room the minigame was launched from (falls back to the hub).
+	if not SceneChanger.go_to_return_point():
+		SceneChanger.go_to_arcade_hub()
 
 func _on_title_pressed() -> void:
 	_play_audio("play_ui_cancel")

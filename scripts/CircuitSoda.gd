@@ -3,7 +3,6 @@ extends Control
 const TILE_SHEET_PATH := "res://assets/art/minigames/circuit_soda/circuit_soda_tiles_sheet.png"
 const ARCADE_JUICE := preload("res://scripts/ArcadeJuice.gd")
 
-const GRID_SIZE := 3
 const SIDE_N := "N"
 const SIDE_E := "E"
 const SIDE_S := "S"
@@ -20,39 +19,65 @@ const DIRS := {
 	SIDE_S: Vector2i(0, 1),
 	SIDE_W: Vector2i(-1, 0),
 }
+# How many clockwise art turns point a socket's opening at a given side
+# (frames 4/5 open toward S at rot 0).
+const SOCKET_ROT_FOR_SIDE := {
+	SIDE_S: 0,
+	SIDE_W: 1,
+	SIDE_N: 2,
+	SIDE_E: 3,
+}
 
+# Levels. INPUT/OUTPUT are fixed sockets: the flow leaves the input through
+# "input_exit" and must enter the output through "output_enter". "locked"
+# tiles cannot be rotated; "blocker" tiles pass nothing.
 const ROUNDS: Array[Dictionary] = [
 	{
-		"title": "Round 1 / 3",
-		"hint": "Make the middle row flow left to right.",
-		"input": Vector2i(0, 1),
-		"output": Vector2i(2, 1),
+		"title": "Round 1 / 4",
+		"hint": "Turn the middle pipe until the row flows straight across.",
+		"cols": 3, "rows": 3,
+		"input": Vector2i(0, 1), "input_exit": SIDE_E,
+		"output": Vector2i(2, 1), "output_enter": SIDE_W,
 		"tiles": [
-			{"shape": "corner", "rot": 0}, {"shape": "straight", "rot": 0}, {"shape": "corner", "rot": 1},
-			{"shape": "straight", "rot": 0}, {"shape": "straight", "rot": 0}, {"shape": "straight", "rot": 0},
+			{"shape": "corner", "rot": 0}, {"shape": "straight", "rot": 1}, {"shape": "corner", "rot": 1},
+			{}, {"shape": "straight", "rot": 1}, {},
 			{"shape": "corner", "rot": 3}, {"shape": "straight", "rot": 0}, {"shape": "corner", "rot": 2},
 		],
 	},
 	{
-		"title": "Round 2 / 3",
-		"hint": "The blocker forces the signal around the bottom.",
-		"input": Vector2i(0, 0),
-		"output": Vector2i(2, 1),
+		"title": "Round 2 / 4",
+		"hint": "The blocker seals the middle. Route the soda around the bottom.",
+		"cols": 3, "rows": 3,
+		"input": Vector2i(0, 0), "input_exit": SIDE_S,
+		"output": Vector2i(2, 1), "output_enter": SIDE_S,
 		"tiles": [
-			{"shape": "corner", "rot": 0}, {"shape": "straight", "rot": 1}, {"shape": "corner", "rot": 2},
-			{"shape": "straight", "rot": 1}, {"shape": "blocker", "rot": 0}, {"shape": "corner", "rot": 2},
-			{"shape": "corner", "rot": 3}, {"shape": "straight", "rot": 0}, {"shape": "corner", "rot": 0},
+			{}, {"shape": "straight", "rot": 0}, {"shape": "corner", "rot": 2},
+			{"shape": "straight", "rot": 0}, {"shape": "blocker", "rot": 0}, {},
+			{"shape": "corner", "rot": 2}, {"shape": "straight", "rot": 0, "locked": true}, {"shape": "corner", "rot": 0},
 		],
 	},
 	{
-		"title": "Round 3 / 3",
-		"hint": "Only the lower route reaches Restore Output.",
-		"input": Vector2i(0, 1),
-		"output": Vector2i(2, 2),
+		"title": "Round 3 / 4",
+		"hint": "The middle is sealed. Ride the top edge over the blocker.",
+		"cols": 3, "rows": 3,
+		"input": Vector2i(0, 1), "input_exit": SIDE_N,
+		"output": Vector2i(2, 1), "output_enter": SIDE_N,
 		"tiles": [
-			{"shape": "corner", "rot": 1}, {"shape": "straight", "rot": 0}, {"shape": "corner", "rot": 2},
-			{"shape": "junction", "rot": 1}, {"shape": "straight", "rot": 0}, {"shape": "corner", "rot": 3},
-			{"shape": "corner", "rot": 3}, {"shape": "straight", "rot": 0}, {"shape": "corner", "rot": 0},
+			{"shape": "corner", "rot": 2}, {"shape": "straight", "rot": 0, "locked": true}, {"shape": "corner", "rot": 3},
+			{}, {"shape": "blocker", "rot": 0}, {},
+			{"shape": "corner", "rot": 0}, {"shape": "straight", "rot": 1}, {"shape": "corner", "rot": 3},
+		],
+	},
+	{
+		"title": "Round 4 / 4",
+		"hint": "Two blockers, two sealed plates. Snake it: right, down, back, down, right.",
+		"cols": 3, "rows": 3,
+		"input": Vector2i(0, 0), "input_exit": SIDE_E,
+		"output": Vector2i(2, 2), "output_enter": SIDE_W,
+		"tiles": [
+			{}, {"shape": "straight", "rot": 0, "locked": true}, {"shape": "corner", "rot": 3},
+			{"shape": "blocker", "rot": 0}, {"shape": "corner", "rot": 2}, {"shape": "corner", "rot": 0},
+			{"shape": "blocker", "rot": 0}, {"shape": "corner", "rot": 1}, {},
 		],
 	},
 ]
@@ -69,6 +94,8 @@ const ROUNDS: Array[Dictionary] = [
 var current_round := 0
 var moves_this_round := 0
 var completed := false
+var grid_cols := 3
+var grid_rows := 3
 var tiles: Array[Dictionary] = []
 var tile_buttons: Array[Button] = []
 var tile_sheet_texture: Texture2D = null
@@ -83,7 +110,6 @@ func _ready() -> void:
 	hint_button.pressed.connect(_show_hint)
 	exit_button.pressed.connect(_on_exit_pressed)
 	tile_sheet_texture = _load_texture(TILE_SHEET_PATH)
-	_create_grid_buttons()
 	_setup_feedback_flash()
 	_start_round(0)
 
@@ -91,9 +117,11 @@ func _create_grid_buttons() -> void:
 	tile_buttons.clear()
 	for child in grid.get_children():
 		child.queue_free()
-	for index in range(GRID_SIZE * GRID_SIZE):
+	grid.columns = grid_cols
+	var button_size := Vector2(88, 56) if grid_cols <= 3 else Vector2(68, 52)
+	for index in range(grid_cols * grid_rows):
 		var button := Button.new()
-		button.custom_minimum_size = Vector2(88, 56)
+		button.custom_minimum_size = button_size
 		button.focus_mode = Control.FOCUS_ALL
 		button.expand_icon = false
 		button.pressed.connect(_on_tile_pressed.bind(index))
@@ -109,14 +137,20 @@ func _start_round(round_index: int) -> void:
 	hint_button.visible = true
 	hint_button.disabled = true
 	var round_data := ROUNDS[current_round]
+	grid_cols = int(round_data.get("cols", 3))
+	grid_rows = int(round_data.get("rows", 3))
+	_create_grid_buttons()
 	tiles = []
 	for tile in round_data["tiles"]:
 		var tile_data: Dictionary = tile
 		tiles.append(tile_data.duplicate(true))
+	# Fixed sockets live in the grid as immovable tiles.
+	tiles[_index_from_pos(round_data["input"])] = {"shape": "input", "side": str(round_data["input_exit"])}
+	tiles[_index_from_pos(round_data["output"])] = {"shape": "output", "side": str(round_data["output_enter"])}
 	round_label.text = str(round_data["title"])
-	instruction_label.text = "CIRCUIT SODA\nRotate the pipes.\nConnect Memory Input to Restore Output.\nDo not spill identity."
-	memory_signal_label.text = "Memory Signal: %s" % GameState.get_memory_signal_label()
-	status_label.text = "Route Memory Input to Restore Output."
+	instruction_label.text = "CIRCUIT SODA\nRotate the pipes to link INPUT to OUTPUT.\nSealed plates and blockers do not turn.\nDo not spill identity."
+	memory_signal_label.text = "Line Pressure: Nominal"
+	status_label.text = "Route the soda from INPUT to OUTPUT."
 	_refresh_grid()
 	_check_win()
 
@@ -124,10 +158,20 @@ func _on_tile_pressed(index: int) -> void:
 	if completed or index < 0 or index >= tiles.size():
 		return
 	var tile := tiles[index]
-	if str(tile.get("shape", "")) == "blocker":
+	var shape := str(tile.get("shape", ""))
+	if shape == "blocker":
 		status_label.text = "BLOCKER: no beverage or identity may pass."
 		_play_audio("play_error_buzz")
 		ARCADE_JUICE.flash_overlay(self, feedback_flash, ARCADE_JUICE.FLASH_RED, 0.28)
+		return
+	if shape == "input" or shape == "output":
+		status_label.text = "The socket is welded in place. Route to it."
+		_play_audio("play_error_buzz")
+		return
+	if bool(tile.get("locked", false)):
+		status_label.text = "SEALED PLATE: this pipe does not turn."
+		_play_audio("play_error_buzz")
+		ARCADE_JUICE.flash_overlay(self, feedback_flash, ARCADE_JUICE.FLASH_RED, 0.2)
 		return
 	ARCADE_JUICE.pulse_control(self, tile_buttons[index])
 	_play_audio("play_button_pulse")
@@ -170,7 +214,7 @@ func _check_win() -> void:
 func _complete_puzzle() -> void:
 	completed = true
 	GameState.complete_circuit_soda()
-	memory_signal_label.text = "Memory Signal: %s" % GameState.get_memory_signal_label()
+	memory_signal_label.text = "Line Pressure: Carbonated"
 	round_label.text = "CIRCUIT SODA COMPLETE"
 	instruction_label.text = "MEMORY FLOW RESTORED.\nCARBONATION LEVEL: UNRELATED.\nIDENTITY SIGNAL ROUTED."
 	status_label.text = "Fractured signal stabilized."
@@ -180,29 +224,31 @@ func _complete_puzzle() -> void:
 	exit_button.grab_focus()
 	_play_audio("play_success_jingle")
 	ARCADE_JUICE.flash_overlay(self, feedback_flash, ARCADE_JUICE.FLASH_CYAN, 0.34)
+	_refresh_grid()
 
 func _has_connected_path() -> bool:
+	# What you see is what routes: flow leaves the INPUT socket through its
+	# visible opening and wins the moment it enters the OUTPUT socket through
+	# the OUTPUT's visible opening.
 	var round_data := ROUNDS[current_round]
 	var input_pos: Vector2i = round_data["input"]
 	var output_pos: Vector2i = round_data["output"]
-	var input_index := _index_from_pos(input_pos)
-	if not _tile_has_side(input_index, SIDE_W):
-		return false
+	var output_enter := str(round_data["output_enter"])
 	var queue: Array[Vector2i] = [input_pos]
 	var visited := {}
 	visited[input_pos] = true
 	while not queue.is_empty():
 		var pos: Vector2i = queue.pop_front()
-		var index := _index_from_pos(pos)
-		if pos == output_pos and _tile_has_side(index, SIDE_E):
-			return true
-		for side in _get_tile_connections(index):
+		for side in _get_tile_connections(_index_from_pos(pos)):
 			var next_pos: Vector2i = pos + DIRS[side]
 			if not _pos_in_grid(next_pos):
 				continue
+			if next_pos == output_pos:
+				if str(OPPOSITE[side]) == output_enter:
+					return true
+				continue
 			var next_index := _index_from_pos(next_pos)
-			var opposite_side: String = OPPOSITE[side]
-			if not _tile_has_side(next_index, opposite_side):
+			if not _tile_has_side(next_index, str(OPPOSITE[side])):
 				continue
 			if visited.has(next_pos):
 				continue
@@ -211,62 +257,78 @@ func _has_connected_path() -> bool:
 	return false
 
 func _refresh_grid() -> void:
-	var round_data := ROUNDS[current_round]
-	var input_pos: Vector2i = round_data["input"]
-	var output_pos: Vector2i = round_data["output"]
 	for index in range(tile_buttons.size()):
 		var button := tile_buttons[index]
-		var pos := _pos_from_index(index)
 		var tile := tiles[index]
-		var text := _get_tile_text(tile)
-		if pos == input_pos:
-			text = "INPUT\n%s" % text
-		elif pos == output_pos:
-			text = "%s\nOUTPUT" % text
+		var shape := str(tile.get("shape", ""))
 		if tile_sheet_texture != null:
-			button.icon = _get_tile_icon(tile, pos, input_pos, output_pos)
-			button.text = _get_compact_tile_text(tile, pos, input_pos, output_pos)
+			button.icon = _get_tile_icon(tile)
+			button.text = _get_compact_tile_text(tile)
 		else:
 			button.icon = null
-			button.text = text
-		button.disabled = completed or str(tile.get("shape", "")) == "blocker"
+			button.text = _get_tile_text(tile)
+		button.disabled = completed or shape == "blocker" or shape == "input" or shape == "output"
+		if bool(tile.get("locked", false)):
+			button.modulate = Color(0.78, 0.82, 0.9, 1.0)
+			button.tooltip_text = "Sealed plate - does not turn."
+		else:
+			button.modulate = Color.WHITE
+			button.tooltip_text = ""
 
 func _get_tile_text(tile: Dictionary) -> String:
-	var shape := str(tile.get("shape", "blocker"))
-	if shape == "blocker":
-		return "BLOCK"
-	var sides := _get_connections_for_tile(tile)
-	return "%s\n%s" % [shape.to_upper(), _format_sides(sides)]
+	var shape := str(tile.get("shape", ""))
+	match shape:
+		"blocker":
+			return "BLOCK"
+		"input":
+			return "INPUT"
+		"output":
+			return "OUTPUT"
+		"":
+			return ""
+	var label := _format_sides(_get_connections_for_tile(tile))
+	if bool(tile.get("locked", false)):
+		label += "\nSEALED"
+	return label
 
-func _get_compact_tile_text(tile: Dictionary, pos: Vector2i, input_pos: Vector2i, output_pos: Vector2i) -> String:
-	if pos == input_pos:
-		return "INPUT"
-	if pos == output_pos:
-		return "OUTPUT"
-	var shape := str(tile.get("shape", "blocker"))
-	if shape == "blocker":
-		return "BLOCK"
+func _get_compact_tile_text(tile: Dictionary) -> String:
+	var shape := str(tile.get("shape", ""))
+	match shape:
+		"blocker":
+			return "BLOCK"
+		"input":
+			return "INPUT"
+		"output":
+			return "OUTPUT"
+		"":
+			return ""
+	if bool(tile.get("locked", false)):
+		return "SEALED"
 	return _format_sides(_get_connections_for_tile(tile))
 
-func _get_tile_icon(tile: Dictionary, pos: Vector2i, input_pos: Vector2i, output_pos: Vector2i) -> Texture2D:
-	if pos == input_pos:
-		return _get_tile_atlas(4)
-	if pos == output_pos:
-		return _get_tile_atlas(5)
+func _get_tile_icon(tile: Dictionary) -> Texture2D:
+	var shape := str(tile.get("shape", ""))
 	var rot := int(tile.get("rot", 0)) % 4
-	match str(tile.get("shape", "blocker")):
+	match shape:
+		"input":
+			return _get_rotated_tile(4, int(SOCKET_ROT_FOR_SIDE.get(str(tile.get("side", SIDE_S)), 0)))
+		"output":
+			return _get_rotated_tile(5, int(SOCKET_ROT_FOR_SIDE.get(str(tile.get("side", SIDE_S)), 0)))
 		"straight":
 			return _get_rotated_tile(0, rot)
 		"corner":
 			return _get_rotated_tile(1, rot)
 		"junction":
 			return _get_rotated_tile(2, rot)
-		_:
+		"blocker":
 			return _get_tile_atlas(3)
+		_:
+			return null
 
 func _get_rotated_tile(frame_index: int, rot: int) -> Texture2D:
-	# Rotate the pipe sprite itself so a click visibly turns the pipe, matching
-	# the connection logic (rot = number of 90-degree clockwise turns).
+	# Rotate the pipe sprite itself so a click visibly turns the pipe; the
+	# connection tables below are keyed to the drawn art, so what you see is
+	# exactly what the flow check evaluates.
 	if rot == 0:
 		return _get_tile_atlas(frame_index)
 	var key := frame_index * 10 + rot
@@ -307,33 +369,37 @@ func _get_tile_connections(index: int) -> Array:
 	return _get_connections_for_tile(tiles[index])
 
 func _get_connections_for_tile(tile: Dictionary) -> Array:
-	var shape := str(tile.get("shape", "blocker"))
+	# Base orientations match the DRAWN sprites at rot 0:
+	# straight = horizontal (E-W), corner = E-S bend, junction = S-W-N tee.
+	var shape := str(tile.get("shape", ""))
 	var rot := int(tile.get("rot", 0)) % 4
 	match shape:
+		"input", "output":
+			return [str(tile.get("side", SIDE_S))]
 		"straight":
 			if rot % 2 == 0:
-				return [SIDE_N, SIDE_S]
-			return [SIDE_E, SIDE_W]
+				return [SIDE_E, SIDE_W]
+			return [SIDE_N, SIDE_S]
 		"corner":
 			match rot:
 				0:
-					return [SIDE_N, SIDE_E]
-				1:
 					return [SIDE_E, SIDE_S]
-				2:
+				1:
 					return [SIDE_S, SIDE_W]
-				_:
+				2:
 					return [SIDE_W, SIDE_N]
+				_:
+					return [SIDE_N, SIDE_E]
 		"junction":
 			match rot:
 				0:
-					return [SIDE_E, SIDE_S, SIDE_W]
-				1:
 					return [SIDE_S, SIDE_W, SIDE_N]
-				2:
+				1:
 					return [SIDE_W, SIDE_N, SIDE_E]
-				_:
+				2:
 					return [SIDE_N, SIDE_E, SIDE_S]
+				_:
+					return [SIDE_E, SIDE_S, SIDE_W]
 		_:
 			return []
 
@@ -347,13 +413,13 @@ func _format_sides(sides: Array) -> String:
 	return "-".join(side_names)
 
 func _pos_in_grid(pos: Vector2i) -> bool:
-	return pos.x >= 0 and pos.x < GRID_SIZE and pos.y >= 0 and pos.y < GRID_SIZE
+	return pos.x >= 0 and pos.x < grid_cols and pos.y >= 0 and pos.y < grid_rows
 
 func _index_from_pos(pos: Vector2i) -> int:
-	return pos.y * GRID_SIZE + pos.x
+	return pos.y * grid_cols + pos.x
 
 func _pos_from_index(index: int) -> Vector2i:
-	return Vector2i(index % GRID_SIZE, int(index / GRID_SIZE))
+	return Vector2i(index % grid_cols, int(index / grid_cols))
 
 func _on_exit_pressed() -> void:
 	ARCADE_JUICE.pulse_control(self, exit_button)
