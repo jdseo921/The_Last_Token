@@ -77,10 +77,10 @@ The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys t
 | Player obscured dialogue portrait | 96x96 | `assets/art/portraits/player/player_obscured.png` | Integrated | Default protagonist dialogue portrait before the final Staff Room reveal; face and clothes are blacked out so no expression is readable. |
 | Player revealed dialogue portrait | 96x96 | `assets/art/portraits/player/player_neutral.png` | Integrated | Preserved normal protagonist portrait; used only once `twist_reveal_seen` is true, starting with the final Staff Room self-conflict and post-reveal dialogue. |
 | Player final conscience portrait | 96x96 | `assets/art/portraits/player/player_conscience_revealed.png` | Integrated | Used only when the antagonist is revealed as `"Player"` in the final Staff Room conversation; earlier `???` encounters intentionally have no sprite or portrait window. |
-| Mira sprite | 32x32 | `assets/art/characters/mira/` | Placeholder | Warm but slightly haunted silhouette. |
-| Mira diagonal facing sheet | 4 frames, 32x32 each | `assets/art/characters/mira/mira_turn_diagonal_sheet.png` | Integrated | Used when Mira turns toward the protagonist. |
-| Gus sprite | 32x32 | `assets/art/characters/gus/` | Placeholder | Practical arcade regular. |
-| Gus diagonal facing sheet | 4 frames, 32x32 each | `assets/art/characters/gus/gus_turn_diagonal_sheet.png` | Integrated | Used when Gus turns toward the protagonist. |
+| Mira sprite | 32x32 | `assets/art/characters/mira/mira_idle_sheet_v2.png` | Integrated | Portrait-matched burgundy staff sprite with two idle frames. |
+| Mira diagonal facing sheet | 4 frames, 32x32 each | `assets/art/characters/mira/mira_turn_diagonal_sheet_v2.png` | Integrated | Portrait-matched northeast/northwest/southeast/southwest turns. |
+| Gus sprite | 32x32 | `assets/art/characters/gus/gus_idle_sheet_v2.png` | Integrated | Portrait-matched work-shirt sprite with two idle frames. |
+| Gus diagonal facing sheet | 4 frames, 32x32 each | `assets/art/characters/gus/gus_turn_diagonal_sheet_v2.png` | Integrated | Portrait-matched northeast/northwest/southeast/southwest turns. |
 | Vendo sprite | 32x48 or 48x48 | `assets/art/characters/vendo/` | Placeholder | Machine-like NPC; vending-machine readable. |
 | Mr. Byte sprite | 32x48 or 48x48 | `assets/art/characters/mr_byte/` | Placeholder | Kiosk/helper machine silhouette. |
 | Cabinet 07 sprite | 48x64 or 64x64 | `assets/art/hub/cabinets/` | Placeholder | Important story cabinet; screen glow. |
@@ -99,6 +99,7 @@ The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys t
 | Cabinet 07 flicker art | 48x64 or 64x64 | `assets/art/hub/cabinets/cabinet_07_flicker.png` / `cabinet_07_flicker_sheet.png` | Integrated | Optional flicker overlay/state; sheet kept for future animation. |
 | Broken cabinet art | 48x48 or 64x48 | `assets/art/hub/cabinets/broken_cabinet.png` | Integrated | Replaces broken cabinet placeholder when present. |
 | Cabinet Row background | 640x440 | `assets/art/maps/cabinet_row/cabinet_row_background_640x440.png` | Integrated | Optional map background with placeholder fallback. |
+| Cabinet Row Logs prop | 72x64 | `assets/art/props/logs_stack.png` | Integrated | Generated stacked-document interactable; points players toward the Truth Filter evidence rule. |
 | Snack Alcove background | 640x440 | `assets/art/maps/snack_alcove/snack_alcove_background_640x440.png` | Integrated | Optional map background with placeholder fallback. |
 | Prize Corner background | 640x440 | `assets/art/maps/prize_corner/prize_corner_background_640x440.png` | Integrated | Optional map background with placeholder fallback. |
 | Maintenance Hall background | 640x440 | `assets/art/maps/maintenance_hall/maintenance_hall_background_640x440.png` | Integrated | Optional map background with placeholder fallback. |
@@ -121,33 +122,34 @@ The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys t
 | Memory recall panels | 320x180 | `assets/art/cutscenes/memory_reveal/` | Integrated | Eight mono-color 8-bit reveal panels are wired into the Staff Room slideshow; fallback remains if a file is removed. |
 | Conscience overlay | 640x440 transparent overlay | `assets/art/cutscenes/conscience/conscience_overlay.png` | Planned | Optional dark/glitch overlay for `ConscienceEncounter`; current ColorRect fallback remains. |
 | Conscience glitch bars | 640x440 transparent overlay or bar strip | `assets/art/cutscenes/conscience/glitch_bars.png` | Planned | Optional bar art; scripted ColorRect glitch bars remain fallback. |
-| Rockbyte Duel background | 640x440 | `assets/art/minigames/rockbyte_duel/backgrounds/rockbyte_background.png` | Integrated | Generated arcade-cabinet backdrop; rules and pile UI remain script-owned for readability. |
+| Rockbyte Duel deluxe background | 640x440 | `assets/art/minigames/rockbyte_duel/backgrounds/rockbyte_duel_deluxe.png` | Integrated | Generated neon cabinet arena with UI-safe dark panels; game text remains script-owned. |
+| Rockbyte Duel deluxe sprite set | 40x56, 52x68, 18x18 | `assets/art/minigames/rockbyte_duel/sprites/` | Integrated | Generated player duelist, Cabinet 07 rival, and cyan/magenta data-rock sprites. Source masters and reproducible build script are retained. |
 | Sync Door screen art | 320x180 or UI pieces | `assets/art/minigames/sync_door/` | Placeholder | Switch states must remain obvious. |
-| Truth Filter cabinet states | 4 frames, 64x64 each | `assets/art/minigames/truth_filter/truth_filter_cabinets_sheet.png` | Integrated | Optional state sheet with panel-color fallback. |
+| Truth Filter verdict chamber | 640x440 | `assets/art/minigames/truth_filter/backgrounds/truth_filter_verdict_chamber.png` | Integrated | Generated late-80s memory-adjudication console with dedicated rule, record, status, and control bays. |
+| Truth Filter deluxe cabinet states | 4 frames, 104x144 each | `assets/art/minigames/truth_filter/truth_filter_deluxe_cabinet_states.png` | Integrated | Generated normal, scanning, verified, and false-record cabinet states; translucent scripted screens preserve statement readability. |
 | Circuit Soda tile sheet | 6 frames, 32x32 each | `assets/art/minigames/circuit_soda/circuit_soda_tiles_sheet.png` | Integrated | Optional tile icons with text-button fallback. |
-| Broken High Score screen art | 640x440 | `assets/art/minigames/broken_high_score/broken_high_score_screen.png` | Integrated | Optional screen background with flat-color fallback; feature remains non-blocking. |
-| Adventure player 8-bit sprite | 16x16 | `assets/art/minigames/adventure/player_8bit.png` | Integrated | Shared optional player sprite for Static Service Run and Final Night Walk; colored square fallback remains. |
-| Static Service maintenance tiles | 16x16 or 24x24 tiles | `assets/art/minigames/adventure/maintenance_tiles.png` | Planned | Future tile sheet for service floor/walls; current colored placeholder grid remains readable if missing. |
-| Static Service static leak | 16x16 | `assets/art/minigames/adventure/static_leak.png` | Integrated | Hazard art; reads as electrical/static leak at tile scale, with text marker fallback. |
-| Static Service signal fuse | 16x16 | `assets/art/minigames/adventure/signal_fuse.png` | Integrated | Collectible art for Signal Fuses; current `F` marker remains if missing. |
-| Static Service breaker panel | 16x16 | `assets/art/minigames/adventure/breaker_panel.png` | Integrated | Goal tile art; visually distinct from fuses and hazards. |
+| Circuit Soda advanced tile sheet | 4 frames in a 2x2 atlas, 32x32 each | `assets/art/minigames/circuit_soda/circuit_soda_advanced_tiles_sheet.png` | Integrated | Generated cross, dead-end cap, and terminal cores; terminal hoses and fixed-pipe bolts are composed from puzzle data so art and validation stay aligned. |
+| Broken High Score deluxe screen art | 640x440 | `assets/art/minigames/broken_high_score/broken_high_score_deluxe.png` | Integrated | Generated neon score chamber with UI-safe center and side alcoves; flat-color fallback remains. |
+| Broken High Score rival sprites | 84x140 and 96x144 | `assets/art/minigames/broken_high_score/sprites/` | Integrated | Generated Roxy score-rival pose and damaged cabinet opponent; source masters and build script are retained. |
+| After-Hours Archive background | 640x440 | `assets/art/maps/hallways/snack_hallway_background_640x440.png` | Integrated | Generated single-north-exit archive map with clear walking lanes and the Night Ledger cabinet. |
+| Night Ledger generated set | 640x440 background plus cabinet/token/32x32 props | `assets/art/minigames/night_ledger/` | Integrated | Four-section optional adventure with audit stamps, keys, receipt ghosts, checkpoints, mint, gate, and a visibly awarded Duplex Token. |
+| Hybrid exploration environment atlas | 7 themed cells | `assets/art/minigames/hybrid_exploration/exploration_environment_atlas.png` | Integrated | Shared environment art for all five reachable scrolling adventures. |
+| Hybrid exploration prop atlas | 7 themed cells | `assets/art/minigames/hybrid_exploration/exploration_prop_atlas.png` | Integrated | Shared collectible, hazard, key, and exit art for the five reachable stages. |
+| Prize Echo readable marker set | 64x56 tag, 72x88 gate, 80x96 exit | `assets/art/minigames/hybrid_exploration/prize_*_v2.png` | Integrated | Generated high-contrast pixel sprites sized for the zoomed-out Prize Echo viewport; gate and exit captions are rendered separately above floor-aligned art. |
+| Adventure checkpoint flag | 72x88 | `assets/art/minigames/hybrid_exploration/adventure_checkpoint_flag_v2.png` | Integrated | Shared generated neon flag for all five scrolling adventures; floor-aligned with a large outlined SAVE caption above it. |
 | Security Tape background | 640x440 | `assets/art/minigames/security_tape/security_tape_background.png` | Integrated | Full-screen tape backdrop behind the existing panel; text contrast remains panel-owned. |
 | Security Tape fragment panel | Scalable UI panel or 96x32 per button | `assets/art/minigames/security_tape/tape_fragment_panel.png` | Planned | Optional button/panel texture for tape fragments; text labels must remain legible. |
 | Security Tape static overlay | 640x440 transparent overlay | `assets/art/minigames/security_tape/tape_static_overlay.png` | Integrated | Subtle generated static layer; ignores input and stays low-opacity. |
-| Final Night tiles | 16x16 or 24x24 tiles | `assets/art/minigames/adventure/final_night_tiles.png` | Planned | Future tile sheet for the memory route; current purple/blue placeholder grid remains. |
-| Final Night memory frame | 16x16 | `assets/art/minigames/adventure/memory_frame.png` | Integrated | Ordered collectible art; frame number/text feedback remains readable. |
-| Final Night rewind static | 16x16 | `assets/art/minigames/adventure/rewind_static.png` | Integrated | Hazard art; distinct from Static Service's static leak. |
-| Final Night staff door marker | 16x16 | `assets/art/minigames/adventure/staff_door_marker.png` | Integrated | Goal/exit marker art; suggests the Staff Door without revealing Staff Room content. |
 
 ## Hub Character Idle Sheet Checklist
 | Sheet | Recommended Size | Folder | Status | Notes |
 |---|---:|---|---|---|
 | Player idle sheet | 2 frames, 32x32 each | `assets/art/characters/player/player_idle_sheet.png` | Integrated | Sheet is 64x32 total; optional hub-only visual, movement remains script-owned. |
-| Mira idle sheet | 2 frames, 32x32 each | `assets/art/characters/mira/mira_idle_sheet.png` | Integrated | Sheet is 64x32 total; can replace placeholder body when present. |
-| Gus idle sheet | 2 frames, 32x32 each | `assets/art/characters/gus/gus_idle_sheet.png` | Integrated | Sheet is 64x32 total; can replace placeholder body when present. |
+| Mira idle sheet | 2 frames, 32x32 each | `assets/art/characters/mira/mira_idle_sheet_v2.png` | Integrated | Portrait-matched 64x32 overworld sheet with a four-facing companion sheet. |
+| Gus idle sheet | 2 frames, 32x32 each | `assets/art/characters/gus/gus_idle_sheet_v2.png` | Integrated | Portrait-matched 64x32 overworld sheet with a four-facing companion sheet. |
 | Vendo idle sheet | 2 frames, 48x48 each | `assets/art/characters/vendo/vendo_idle_sheet.png` | Integrated | Sheet is 96x48 total; larger machine silhouette for readability. |
 | Mr. Byte idle sheet | 2 frames, 48x48 each | `assets/art/characters/mr_byte/mr_byte_idle_sheet.png` | Integrated | Sheet is 96x48 total; larger terminal silhouette for readability. |
-| Roxy idle sheet | 2 frames, 32x32 each | `assets/art/characters/roxy/roxy_idle_sheet.png` | Integrated | Sheet is 64x32 total; optional interactable idle animation with placeholder fallback. |
+| Roxy idle sheet | 2 frames, 32x32 each | `assets/art/characters/roxy/roxy_idle_sheet_v2.png` | Integrated | Full-body portrait-matched 64x32 overworld sheet with a four-facing companion sheet. |
 | Pip idle sheet | 2 frames, 32x32 each | `assets/art/characters/pip/pip_idle_sheet.png` | Integrated | Sheet is 64x32 total; optional interactable idle animation with placeholder fallback. |
 
 ## Dialogue Portrait Checklist
@@ -156,8 +158,9 @@ The JSON lookup draft is `data/asset_manifest.json`. It maps stable asset keys t
 | Player obscured | Integrated | `player_obscured.png`; default protagonist portrait before the Staff Room reveal, with face/clothes blacked out and no visible expression. |
 | Player revealed | In Progress | `player_neutral.png`; preserved normal portrait, switched in only after `twist_reveal_seen` during the final Staff Room event sequence and post-reveal dialogue. |
 | Player final conscience | Integrated | `player_conscience_revealed.png`; glitched shaded protagonist portrait used only by the final Staff Room `"Player"` speaker. |
-| Mira | In Progress | `mira_neutral.png`, `mira_worried.png`; default portrait wired, worried variant used on emotional lines. |
-| Gus | In Progress | `gus_neutral.png`, `gus_annoyed.png`; default portrait wired, annoyed variant used on joke/practical lines. |
+| Mira | Integrated | Refreshed portrait-matched set: neutral, worried, sad, relieved, and afraid expressions at 128x128. |
+| Gus | Integrated | Refreshed portrait-matched set: neutral, deadpan, caring, annoyed, and alarmed expressions at 128x128. |
+| Night Ledger | Integrated | Generated machine-faced neutral, dry, grave, delighted, panic, and grin portraits at 128x128. |
 | Vendo | In Progress | `vendo_neutral.png`; machine face/display, word-by-word dialogue tone. |
 | Mr. Byte | In Progress | `mr_byte_neutral.png`; kiosk/helper display. |
 | Cabinet 07 | In Progress | `cabinet_07_screen.png`; default portrait wired, explicit recognition lines added. |
@@ -179,14 +182,14 @@ The final portrait is integrated. Earlier `???` encounters do not show an antago
 | Arcade hub grounded | `assets/audio/music/arcade_hub_grounded.mp3` | Integrated | ArcadeHub while Memory Signal is Grounded. |
 | Arcade hub uneasy/fractured | `assets/audio/music/arcade_hub_uneasy_fractured.mp3` | Integrated | ArcadeHub after Memory Signal changes before post-reveal. |
 | Cabinet Row records | `assets/audio/music/cabinet_row_records.mp3` | Integrated | Cabinet Row. |
-| Snack Alcove Vendo | `assets/audio/music/snack_alcove_vendo.mp3` | Integrated | Snack Alcove. |
+| Snack Alcove Vendo | `assets/audio/music/snack_alcove_vendo.mp3` | Integrated | Snack Alcove, After-Hours Archive, and Circuit Soda. |
 | Maintenance Hall static | `assets/audio/music/maintenance_hall_static.mp3` | Integrated | Maintenance Hall. |
 | Staff Corridor overloaded | `assets/audio/music/staff_corridor_overloaded.mp3` | Integrated | Staff Corridor. |
 | Staff Room reveal bed | `assets/audio/music/staff_room_reveal_bed.mp3` | Integrated | Staff Room and Ending Prompt. |
 | Post-reveal roam | `assets/audio/music/post_reveal_roam.mp3` | Integrated | ArcadeHub post-reveal roam. |
 | Rockbyte Duel game | `assets/audio/music/rockbyte_duel_game.mp3` | Integrated | Rockbyte Duel. |
 | Truth Filter game | `assets/audio/music/truth_filter_game.mp3` | Integrated | Truth Filter. |
-| Circuit Soda game | `assets/audio/music/circuit_soda_game.mp3` | Integrated | Circuit Soda. |
+| Circuit Soda game | `assets/audio/music/circuit_soda_game.mp3` | Integrated | Prize Corner and Prize Echo Run. |
 | Static Service Run game | `assets/audio/music/static_service_run_game.mp3` | Integrated | Static Service Run. |
 | Maintenance Sync game | `assets/audio/music/maintenance_sync_game.mp3` | Integrated | Maintenance Sync. |
 | Security Tape / Final Night game | `assets/audio/music/security_tape_final_night_game.mp3` | Integrated | Security Tape Assembly and Final Night Walk. |

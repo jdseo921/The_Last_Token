@@ -19,59 +19,64 @@ mouse_filter = 2
 color = Color(0, 0, 0, 0.72)
 
 [node name="Panel" type="Panel" parent="."]
-offset_left = 176.0
-offset_top = 34.0
-offset_right = 464.0
-offset_bottom = 414.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -165.0
+offset_right = 150.0
+offset_bottom = 165.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="VBox" type="VBoxContainer" parent="Panel"]
-offset_left = 28.0
-offset_top = 24.0
-offset_right = 260.0
-offset_bottom = 354.0
-theme_override_constants/separation = 8
+layout_mode = 0
+offset_left = 22.0
+offset_top = 18.0
+offset_right = 278.0
+offset_bottom = 312.0
+theme_override_constants/separation = 6
 
 [node name="TitleLabel" type="Label" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 30)
+custom_minimum_size = Vector2(0, 28)
 theme_override_fonts/font = ExtResource("fpx_title")
 theme_override_font_sizes/font_size = 16
 text = "PAUSED"
 horizontal_alignment = 1
 
 [node name="ContinueButton" type="Button" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 34)
+custom_minimum_size = Vector2(0, 32)
 text = "Continue"
 
 [node name="QuestButton" type="Button" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 34)
+custom_minimum_size = Vector2(0, 32)
 text = "Quest"
 
 [node name="SaveButton" type="Button" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 34)
+custom_minimum_size = Vector2(0, 32)
 text = "Save"
 
 [node name="LoadButton" type="Button" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 34)
+custom_minimum_size = Vector2(0, 32)
 text = "Load"
 
 [node name="SettingsButton" type="Button" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 34)
+custom_minimum_size = Vector2(0, 32)
 text = "Settings"
 
+[node name="ControlsButton" type="Button" parent="Panel/VBox"]
+custom_minimum_size = Vector2(0, 32)
+text = "Controls"
+
 [node name="ExitMinigameButton" type="Button" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 34)
+custom_minimum_size = Vector2(0, 32)
 text = "Exit Minigame"
 
 [node name="TitleButton" type="Button" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 34)
+custom_minimum_size = Vector2(0, 32)
 text = "Return to Main Menu"
-
-[node name="StatusLabel" type="Label" parent="Panel/VBox"]
-custom_minimum_size = Vector2(0, 36)
-theme_override_font_sizes/font_size = 16
-text = ""
-horizontal_alignment = 1
-autowrap_mode = 3
 
 [node name="FadeOverlay" type="ColorRect" parent="."]
 visible = false

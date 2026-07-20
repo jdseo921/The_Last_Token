@@ -1,6 +1,9 @@
 extends CanvasLayer
 
+const DEBUG := preload("res://scripts/Debug.gd")
+
 signal dialogue_finished
+signal dialogue_started(lines: Array)
 
 const ADVANCE_COOLDOWN_MSEC := 180
 const LETTERS_PER_SECOND := 42.0
@@ -15,6 +18,7 @@ const MACHINE_SPEAKERS := [
 	"Staff Door",
 	"Staff Room Door",
 	"Vendo",
+	"SIP-2",
 	"Mr. Byte",
 	"Broken Cabinet",
 	"Truth Filter",
@@ -27,22 +31,22 @@ const MACHINE_SPEAKERS := [
 	"Security Tape",
 	"Maintenance Sync",
 	"Maintenance Note",
-	"Closing Checklist",
-	"Staff Schedule",
 	"Staff Record",
 	"Staff Records",
+	"Night Ledger",
+	"Prize Counter",
+	"Prize Shelf",
 	"System",
 ]
 
 @onready var panel: Panel = $Panel
 @onready var portrait_texture_rect: TextureRect = $Panel/Portrait
-const FONT_MACHINE := preload("res://assets/fonts/VT323-Regular.ttf")
 const FONT_BODY := preload("res://assets/fonts/m6x11.ttf")
 const ANTAGONIST_DIM_COLOR := Color(0.015, 0.0, 0.035, 1.0)
 const ANTAGONIST_DIM_ALPHA := 0.62
 const ANTAGONIST_DIM_FADE_SECONDS := 0.35
-# Machine/terminal voices render in the CRT font. Humans - and ???, which must
-# share the player's font by design - use the theme default (m5x7).
+# Every voice uses the same readable pixel font. Portraits, reveal cadence and
+# text effects distinguish speakers without moving or restyling the copy.
 
 @onready var speaker_name_label: Label = $Panel/SpeakerName
 @onready var dialogue_text_label: Label = $Panel/DialogueText
@@ -67,6 +71,7 @@ var dim_overlay: ColorRect = null
 var dim_tween: Tween = null
 
 func _ready() -> void:
+	add_to_group("dialogue_boxes")
 	visible = false
 	_setup_dim_overlay()
 	continue_prompt_label.text = "PRESS E / SPACE"
@@ -77,6 +82,9 @@ func _ready() -> void:
 	var settings := get_node_or_null("/root/GameSettings")
 	if settings and settings.has_signal("settings_changed"):
 		settings.settings_changed.connect(_apply_settings)
+
+func _exit_tree() -> void:
+	_set_unknown_voice_music_dim(false)
 
 func _process(delta: float) -> void:
 	if active and current_line_is_antagonist:
@@ -106,7 +114,16 @@ func start_dialogue(lines: Array) -> void:
 	current_index = 0
 	active = not dialogue_lines.is_empty()
 	visible = active
+	if not active:
+		_set_unknown_voice_music_dim(false)
+		DEBUG.warning(self, "dialogue", "empty_dialogue_ignored")
 	last_advance_msec = Time.get_ticks_msec()
+	if active:
+		DEBUG.info(self, "dialogue", "dialogue_started", {
+			"line_count": dialogue_lines.size(),
+			"first_speaker": str((dialogue_lines[0] as Dictionary).get("speaker", "")) if dialogue_lines[0] is Dictionary else "<invalid>",
+		})
+		dialogue_started.emit(dialogue_lines)
 	_refresh_line()
 
 func _input(event: InputEvent) -> void:
@@ -133,7 +150,15 @@ func _accept_current_line() -> void:
 	if current_index >= dialogue_lines.size():
 		active = false
 		visible = false
+		# Clear the outgoing speaker before callbacks can start another dialogue.
+		# Otherwise the previous portrait can flash for one frame during a
+		# cutscene-to-monologue handoff.
+		speaker_name_label.text = ""
+		dialogue_text_label.text = ""
+		_show_portrait("")
 		_set_antagonist_dim(false)
+		_set_unknown_voice_music_dim(false)
+		DEBUG.info(self, "dialogue", "dialogue_finished", {"line_count": dialogue_lines.size()})
 		dialogue_finished.emit()
 		return
 	_refresh_line()
@@ -152,9 +177,18 @@ func _refresh_line() -> void:
 	_apply_speaker_font(speaker)
 	current_line_is_antagonist = _is_antagonist_speaker(speaker)
 	_set_antagonist_dim(current_line_is_antagonist)
+	_set_unknown_voice_music_dim(speaker == "???" and not _should_show_revealed_player_portrait())
 	current_antagonist_effect = str(line.get("effect", "normal"))
 	antagonist_elapsed = 0.0
-	_show_portrait(_get_portrait_path(line, speaker))
+	var portrait_path := _get_portrait_path(line, speaker)
+	_show_portrait(portrait_path)
+	DEBUG.info(self, "dialogue", "line_presented", {
+		"index": current_index,
+		"speaker": speaker,
+		"characters": text.length(),
+		"portrait": portrait_path,
+		"antagonist": current_line_is_antagonist,
+	})
 	_apply_portrait_veil()
 	_reset_line_visuals()
 	current_reveal_mode = "antagonist" if current_line_is_antagonist else _get_reveal_mode(speaker)
@@ -292,6 +326,11 @@ func _play_audio(method_name: String) -> void:
 	if audio_manager and audio_manager.has_method(method_name):
 		audio_manager.call(method_name)
 
+func _set_unknown_voice_music_dim(enabled: bool) -> void:
+	var audio_manager := get_node_or_null("/root/AudioManager")
+	if audio_manager and audio_manager.has_method("set_unknown_voice_music_dimmed"):
+		audio_manager.call("set_unknown_voice_music_dimmed", enabled)
+
 func _apply_settings() -> void:
 	var settings := get_node_or_null("/root/GameSettings")
 	if settings == null:
@@ -305,13 +344,9 @@ func _get_text_speed() -> float:
 		return 1.0
 	return maxf(float(settings.get("text_speed")), 0.5)
 
-func _apply_speaker_font(speaker: String) -> void:
-	if MACHINE_SPEAKERS.has(speaker):
-		speaker_name_label.add_theme_font_override("font", FONT_MACHINE)
-		dialogue_text_label.add_theme_font_override("font", FONT_MACHINE)
-	else:
-		speaker_name_label.add_theme_font_override("font", FONT_BODY)
-		dialogue_text_label.add_theme_font_override("font", FONT_BODY)
+func _apply_speaker_font(_speaker: String) -> void:
+	speaker_name_label.add_theme_font_override("font", FONT_BODY)
+	dialogue_text_label.add_theme_font_override("font", FONT_BODY)
 
 func _setup_dim_overlay() -> void:
 	# ??? speaks and the room drops away. Sits behind the dialogue panel so the

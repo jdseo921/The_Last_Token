@@ -1,5 +1,7 @@
 extends Area2D
 
+const DEBUG := preload("res://scripts/Debug.gd")
+
 @export var target_scene_path: String = ""
 @export var target_spawn_id: String = "Spawn_Default"
 @export var required_flag: String = ""
@@ -8,6 +10,8 @@ extends Area2D
 @export var auto_transition_on_body_entered := true
 @export var destination_name := ""
 @export var arrow_direction := "auto"
+@export var label_offset_override := Vector2.ZERO
+@export var route_mode := ""
 
 const ARM_DELAY_SECONDS := 0.35
 const PROXIMITY_RADIUS := 96.0
@@ -53,11 +57,11 @@ func _build_marker_visuals() -> void:
 		add_child(name_label)
 	name_label.text = _get_destination_name()
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_label.add_theme_font_override("font", preload("res://assets/fonts/m3x6.ttf"))
+	name_label.add_theme_font_override("font", preload("res://assets/fonts/m6x11.ttf"))
 	name_label.add_theme_font_size_override("font_size", 16)
 	name_label.add_theme_color_override("font_outline_color", Color(0.01, 0.02, 0.03, 1.0))
 	name_label.add_theme_constant_override("outline_size", 2)
-	var label_offset := _label_offset(dir)
+	var label_offset := label_offset_override if label_offset_override != Vector2.ZERO else _label_offset(dir)
 	name_label.position = label_offset
 	name_label.size = Vector2(150, 16)
 	name_label.visible = false
@@ -159,19 +163,42 @@ func _try_transition() -> void:
 		return
 	var scene := get_tree().current_scene
 	if scene != null and scene.has_method("try_block_exit") and bool(scene.call("try_block_exit", self)):
+		DEBUG.info(self, "navigation", "exit_blocked_by_scene", _debug_transition_data())
 		return
 	if not _required_flag_is_met():
+		DEBUG.info(self, "navigation", "exit_blocked_by_flag", _debug_transition_data())
 		_show_locked_dialogue()
 		return
+	if not route_mode.is_empty():
+		if _try_route_mode():
+			return
 	if target_scene_path.is_empty():
+		DEBUG.failure(self, "navigation", "exit_missing_target", _debug_transition_data())
 		push_error("MapTransition: target_scene_path is empty.")
 		return
 	if not ResourceLoader.exists(target_scene_path):
+		DEBUG.failure(self, "navigation", "exit_target_not_found", _debug_transition_data())
 		push_error("MapTransition: target scene does not exist: %s" % target_scene_path)
 		return
 	transition_started = true
+	DEBUG.info(self, "navigation", "exit_transition_started", _debug_transition_data())
 	GameState.set_pending_spawn_id(target_spawn_id)
 	SceneChanger.change_scene(target_scene_path)
+
+func _try_route_mode() -> bool:
+	match route_mode:
+		"staff_sequence":
+			transition_started = true
+			if not GameState.security_tape_assembly_completed:
+				SceneChanger.go_to_security_tape_assembly()
+			elif not GameState.final_night_walk_completed:
+				SceneChanger.go_to_final_night_walk()
+			elif not GameState.memory_echo_completed:
+				SceneChanger.go_to_memory_echo()
+			else:
+				SceneChanger.go_to_staff_room()
+			return true
+	return false
 
 func _required_flag_is_met() -> bool:
 	if required_flag.is_empty():
@@ -202,3 +229,13 @@ func _find_dialogue_host() -> Node:
 	if scene != null and scene.has_method("start_dialogue"):
 		return scene
 	return null
+
+func _debug_transition_data() -> Dictionary:
+	return {
+		"exit": str(get_path()),
+		"target": target_scene_path,
+		"spawn": target_spawn_id,
+		"required_flag": required_flag,
+		"required_flag_met": _required_flag_is_met(),
+		"armed": armed,
+	}

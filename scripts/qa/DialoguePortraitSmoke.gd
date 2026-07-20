@@ -2,6 +2,25 @@ extends SceneTree
 
 const PORTRAIT_REGISTRY := preload("res://scripts/DialoguePortraitRegistry.gd")
 const DIALOGUE_DIR := "res://data/dialogue"
+const REFRESHED_PORTRAITS := [
+	"res://assets/art/portraits/mira/mira_neutral.png",
+	"res://assets/art/portraits/mira/mira_worried.png",
+	"res://assets/art/portraits/mira/mira_sad.png",
+	"res://assets/art/portraits/mira/mira_relieved.png",
+	"res://assets/art/portraits/mira/mira_afraid.png",
+	"res://assets/art/portraits/gus/gus_neutral.png",
+	"res://assets/art/portraits/gus/gus_deadpan.png",
+	"res://assets/art/portraits/gus/gus_caring.png",
+	"res://assets/art/portraits/gus/gus_annoyed.png",
+	"res://assets/art/portraits/gus/gus_alarmed.png",
+	"res://assets/art/portraits/night_ledger/night_ledger_neutral.png",
+	"res://assets/art/portraits/night_ledger/night_ledger_dry.png",
+	"res://assets/art/portraits/night_ledger/night_ledger_grave.png",
+	"res://assets/art/portraits/night_ledger/night_ledger_delighted.png",
+	"res://assets/art/portraits/night_ledger/night_ledger_panic.png",
+	"res://assets/art/portraits/night_ledger/night_ledger_grin.png",
+]
+const SIDE_SAFETY_MARGIN := 4
 
 var failed := false
 
@@ -12,6 +31,12 @@ func _init() -> void:
 	_expect_portrait("\"Player\"", false, "res://assets/art/portraits/player/player_conscience_revealed.png")
 	_expect_portrait("Roxy", false, "res://assets/art/portraits/roxy/roxy_smug.png")
 	_expect_portrait("Pip", false, "res://assets/art/portraits/pip/pip_warm.png")
+	_expect_portrait("Night Ledger", false, "res://assets/art/portraits/night_ledger/night_ledger_neutral.png")
+	_expect_portrait("Mira", false, "res://assets/art/portraits/mira/mira_neutral.png")
+	_expect_portrait("Gus", false, "res://assets/art/portraits/gus/gus_neutral.png")
+	_expect_portrait("SIP-2", false, "res://assets/art/portraits/vendo/vendo_neutral.png")
+	for portrait_path in REFRESHED_PORTRAITS:
+		_expect_refreshed_portrait(portrait_path)
 	_check_dialogue_portrait_references()
 	if failed:
 		push_error("DialoguePortraitSmoke: FAIL")
@@ -79,6 +104,39 @@ func _expect_portrait_resource(path: String, source_path: String) -> void:
 	var resource := load(path)
 	if not resource is Texture2D:
 		_fail("Portrait resource is not a Texture2D at %s referenced by %s" % [path, source_path])
+
+func _expect_refreshed_portrait(path: String) -> void:
+	var image := Image.new()
+	var load_error := image.load(ProjectSettings.globalize_path(path))
+	if load_error != OK:
+		_fail("Refreshed portrait cannot be read: %s" % path)
+		return
+	if image.get_size() != Vector2i(128, 128):
+		_fail("Refreshed portrait must be 128x128: %s" % path)
+		return
+	if image.get_pixel(0, 0).a > 0.05:
+		_fail("Refreshed portrait must keep transparent corners: %s" % path)
+	for y in range(image.get_height()):
+		for x in range(SIDE_SAFETY_MARGIN):
+			if image.get_pixel(x, y).a > 0.05 or image.get_pixel(image.get_width() - 1 - x, y).a > 0.05:
+				_fail("Refreshed portrait clips the side safety margin: %s" % path)
+				return
+	var head_center_x := _get_upper_foreground_center_x(image)
+	if absf(head_center_x - 64.0) > 3.5:
+		_fail("Refreshed portrait head is not centered (%.2f): %s" % [head_center_x, path])
+
+func _get_upper_foreground_center_x(image: Image) -> float:
+	var upper_limit := int(round(float(image.get_height()) * 0.48))
+	var weighted_x := 0.0
+	var total_weight := 0.0
+	for y in range(upper_limit):
+		for x in range(image.get_width()):
+			var alpha := image.get_pixel(x, y).a
+			if alpha <= 0.05:
+				continue
+			weighted_x += float(x) * alpha
+			total_weight += alpha
+	return weighted_x / total_weight if total_weight > 0.0 else 64.0
 
 func _fail(message: String) -> void:
 	failed = true

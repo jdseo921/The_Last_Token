@@ -8,12 +8,14 @@ const ACTION_BINDINGS := {
 	"move_left": [KEY_A, KEY_LEFT],
 	"move_right": [KEY_D, KEY_RIGHT],
 	"interact": [KEY_E, KEY_SPACE],
+	"jump": [KEY_E, KEY_SPACE],
+	"crouch": [KEY_S, KEY_DOWN],
 	"cancel": [KEY_ESCAPE, KEY_BACKSPACE],
 }
 
 const TOTAL_GAMES_COUNT := 4
 const TOTAL_REQUIRED_PROGRESS_COUNT := 12
-const TOTAL_OPTIONAL_GAMES_COUNT := 0
+const TOTAL_OPTIONAL_GAMES_COUNT := 1
 const TOTAL_SECRETS_COUNT := 7
 const MEMORY_SIGNAL_GROUNDED := 0
 const MEMORY_SIGNAL_UNEASY := 1
@@ -30,17 +32,15 @@ var rockbyte_duel_loss_count := 0
 var rockbyte_attempt_count := 0
 var truth_filter_quest_started := false
 var lying_cabinets_completed := false
-var second_memory_fragment_collected := false
 var circuit_soda_started := false
 var circuit_soda_completed := false
 var lost_shift_file_started := false
 var lost_shift_file_completed := false
-var closing_checklist_read := false
-var maintenance_note_read := false
-var staff_schedule_read := false
-var mira_lost_shift_intro_seen := false
-var gus_lost_shift_comment_seen := false
-var mr_byte_lost_shift_comment_seen := false
+# The internal lost_shift_file id is retained for save compatibility. The
+# current player-facing quest is Closing Shift Echoes and uses ordered clues.
+var closing_shift_mira_clue_found := false
+var closing_shift_score_clue_found := false
+var closing_shift_service_clue_found := false
 var static_service_run_started := false
 var static_service_run_completed := false
 var gus_static_run_anecdote_seen := false
@@ -80,12 +80,18 @@ var vendo_post_reveal_seen := false
 var roxy_met := false
 var pip_met := false
 var pip_secret_started := false
+var prize_echo_unlocked := false
 var pip_secret_completed := false
 var prize_sort_completed := false
 var pip_post_reveal_secret_seen := false
+var night_ledger_started := false
+var night_ledger_completed := false
+var night_ledger_token_collected := false
+var night_ledger_debrief_seen := false
 var mira_rockbyte_anecdote_seen := false
 var mr_byte_truth_filter_anecdote_seen := false
 var vendo_circuit_anecdote_seen := false
+var vendo_unknown_clue_seen := false
 var gus_sync_anecdote_seen := false
 var memory_echo_anecdote_seen := false
 var roxy_high_score_anecdote_seen := false
@@ -149,7 +155,7 @@ var mr_byte_truth_filter_debriefed := false
 # relaunched from a machine's replay offer, and whether it was won.
 var postgame_replay_pending := ""
 var postgame_replay_won := false
-var last_announced_quest_id := ""
+var route_cue_close_tip_seen := false
 var npc_dialogue_counts: Dictionary = {}
 var pending_spawn_id := ""
 var ui_notice_blocking := false
@@ -166,6 +172,65 @@ func _ensure_input_actions() -> void:
 			key_event.physical_keycode = key_code
 			if not InputMap.action_has_event(action_name, key_event):
 				InputMap.action_add_event(action_name, key_event)
+
+
+func get_debug_snapshot() -> Dictionary:
+	var quest_data := get_current_quest_data()
+	return {
+		"quest": get_current_quest_id(),
+		"quest_title": str(quest_data.get("title", "")),
+		"objective": str(quest_data.get("summary", "")),
+		"phase": get_story_phase_label(),
+		"required_progress": get_required_progress_count(),
+		"required_total": get_total_required_progress_count(),
+		"optional_progress": get_optional_games_completed_count(),
+		"memory_signal": get_memory_signal_label(),
+		"pending_spawn": pending_spawn_id,
+		"return_scene": return_scene_path if has_arcade_return_position else "",
+		"return_position": arcade_return_position if has_arcade_return_position else Vector2.ZERO,
+		"ui_notice_blocking": ui_notice_blocking,
+		"postgame_replay": postgame_replay_pending,
+		"save_slot": save_slot_index,
+	}
+
+
+func validate_debug_state() -> PackedStringArray:
+	var issues := PackedStringArray()
+	if lost_token_quest_completed and (not rockbyte_duel_completed or not lost_token_collected):
+		issues.append("Lost Token is complete without both the Rockbyte win and recovered token.")
+	if lying_cabinets_completed and not broken_high_score_completed:
+		issues.append("Truth Filter is complete before Broken High Score.")
+	if circuit_soda_completed and not lying_cabinets_completed:
+		issues.append("Circuit Soda is complete before Truth Filter.")
+	if prize_sort_completed and not circuit_soda_completed:
+		issues.append("Prize Echo is complete before Circuit Soda.")
+	if closing_shift_score_clue_found and not closing_shift_mira_clue_found:
+		issues.append("Closing Shift score clue exists before Mira's clue.")
+	if closing_shift_service_clue_found and not closing_shift_score_clue_found:
+		issues.append("Closing Shift service clue exists before Broken Score's clue.")
+	if lost_shift_file_completed and not (
+		closing_shift_mira_clue_found
+		and closing_shift_score_clue_found
+		and closing_shift_service_clue_found
+	):
+		issues.append("Closing Shift Echoes is complete without all three ordered clues.")
+	if static_service_run_completed and not lost_shift_file_completed:
+		issues.append("Static Service Run is complete before Closing Shift Echoes.")
+	if maintenance_sync_completed and not static_service_run_completed:
+		issues.append("Maintenance Sync is complete before Static Service Run.")
+	if security_tape_assembly_completed and not maintenance_sync_completed:
+		issues.append("Security Tape is complete before Maintenance Sync.")
+	if final_night_walk_completed and not security_tape_assembly_completed:
+		issues.append("Final Night Walk is complete before Security Tape.")
+	if memory_echo_completed and not final_night_walk_completed:
+		issues.append("Memory Echo is complete before Final Night Walk.")
+	if twist_reveal_seen and not memory_echo_completed:
+		issues.append("The identity reveal is marked seen before Memory Echo.")
+	if post_reveal_roam_unlocked and not twist_reveal_seen:
+		issues.append("Post-Reveal Roam is unlocked before the identity reveal.")
+	if has_arcade_return_position and return_scene_path.is_empty():
+		issues.append("A minigame return position exists without its owning scene.")
+	return issues
 
 func get_games_completed_count() -> int:
 	return get_games_completed_count_from_data(to_save_data())
@@ -229,9 +294,8 @@ func get_total_required_progress_count() -> int:
 func get_optional_games_completed_count() -> int:
 	return get_optional_games_completed_count_from_data(to_save_data())
 
-func get_optional_games_completed_count_from_data(_data: Dictionary) -> int:
-	# Broken High Score and Prize Sort are now required beats, counted in required progress.
-	return 0
+func get_optional_games_completed_count_from_data(data: Dictionary) -> int:
+	return 1 if bool(data.get("night_ledger_completed", data.get("archive_recall_completed", false))) else 0
 
 func get_compatible_save_data_for_summary(data: Dictionary) -> Dictionary:
 	var compatible := data.duplicate(true)
@@ -267,6 +331,10 @@ func _apply_route_compatibility_to_data(data: Dictionary) -> void:
 		data["lost_shift_file_completed"] = true
 	if _is_lost_shift_file_complete_in_data(data):
 		data["lost_shift_file_completed"] = true
+	if bool(data.get("lost_shift_file_completed", false)):
+		# Static Service is the next active quest after the reconstructed closing
+		# sequence. Older saves did not record the new access latch separately.
+		data["staff_corridor_unlocked"] = true
 
 func get_total_optional_games_count() -> int:
 	return TOTAL_OPTIONAL_GAMES_COUNT
@@ -312,21 +380,31 @@ func get_story_phase_label_from_data(data: Dictionary) -> String:
 		return "Memory Echo"
 	if bool(data.get("security_tape_assembly_completed", false)):
 		return "Final Night Walk"
-	if bool(data.get("staff_corridor_unlocked", false)):
+	# The Staff Access latch opens early so players are not blocked after Gus's
+	# briefing. It is a route permission, not a story-phase advance.
+	if bool(data.get("maintenance_sync_completed", false)) or bool(data.get("story_puzzle_completed", false)):
 		return "Security Tape Assembly"
-	if bool(data.get("story_puzzle_completed", false)):
-		return "Staff Corridor"
 	if bool(data.get("static_service_run_completed", false)):
 		return "Maintenance Sync"
 	if _is_lost_shift_file_complete_in_data(data):
 		return "Static Service Run"
+	if bool(data.get("staff_corridor_unlocked", false)):
+		return "Staff Corridor"
 	if bool(data.get("circuit_soda_completed", false)) and not bool(data.get("prize_sort_completed", false)) and not _is_lost_shift_file_complete_in_data(data):
-		return "Prize Sort"
+		if not bool(data.get("conscience_encounter_2_seen", false)):
+			return "Circuit Soda Debrief"
+		if not bool(data.get("vendo_unknown_clue_seen", false)):
+			return "Ask About the Voice"
+		return "Prize Echo Ascent"
+	if bool(data.get("prize_sort_completed", false)) and not bool(data.get("pip_prize_anecdote_seen", false)) and not _is_lost_shift_file_complete_in_data(data):
+		return "Prize Echo Ascent"
+	if bool(data.get("pip_prize_anecdote_seen", false)) and not bool(data.get("gus_hub_checkin_prize_sort_done", false)) and not _is_lost_shift_file_complete_in_data(data):
+		return "Gus Has a Lead"
 	if bool(data.get("circuit_soda_completed", false)) and not _is_lost_shift_file_complete_in_data(data):
-		return "Lost Shift File"
+		return "Closing Shift Echoes"
 	if bool(data.get("circuit_soda_completed", false)):
-		return "Lost Shift File"
-	if bool(data.get("second_memory_fragment_collected", false)) or bool(data.get("lying_cabinets_completed", false)):
+		return "Closing Shift Echoes"
+	if bool(data.get("lying_cabinets_completed", false)) or bool(data.get("second_memory_fragment_collected", false)):
 		return "Truth Filter Cleared"
 	if bool(data.get("lost_token_quest_completed", false)) and not bool(data.get("broken_high_score_completed", false)) and not bool(data.get("lying_cabinets_completed", false)):
 		return "Broken High Score"
@@ -358,7 +436,7 @@ func get_memory_signal_label_from_level(level: int) -> String:
 func get_memory_signal_level_from_data(data: Dictionary) -> int:
 	if bool(data.get("post_reveal_roam_unlocked", false)):
 		return MEMORY_SIGNAL_RESTORED
-	if bool(data.get("staff_corridor_unlocked", false)) or bool(data.get("story_puzzle_completed", false)) or bool(data.get("maintenance_sync_completed", false)):
+	if bool(data.get("story_puzzle_completed", false)) or bool(data.get("maintenance_sync_completed", false)):
 		return MEMORY_SIGNAL_OVERLOADED
 	if bool(data.get("lying_cabinets_completed", false)) or bool(data.get("second_memory_fragment_collected", false)):
 		return MEMORY_SIGNAL_FRACTURED
@@ -376,17 +454,13 @@ func reset_for_new_game() -> void:
 	rockbyte_attempt_count = 0
 	truth_filter_quest_started = false
 	lying_cabinets_completed = false
-	second_memory_fragment_collected = false
 	circuit_soda_started = false
 	circuit_soda_completed = false
 	lost_shift_file_started = false
 	lost_shift_file_completed = false
-	closing_checklist_read = false
-	maintenance_note_read = false
-	staff_schedule_read = false
-	mira_lost_shift_intro_seen = false
-	gus_lost_shift_comment_seen = false
-	mr_byte_lost_shift_comment_seen = false
+	closing_shift_mira_clue_found = false
+	closing_shift_score_clue_found = false
+	closing_shift_service_clue_found = false
 	static_service_run_started = false
 	static_service_run_completed = false
 	gus_static_run_anecdote_seen = false
@@ -425,12 +499,18 @@ func reset_for_new_game() -> void:
 	roxy_met = false
 	pip_met = false
 	pip_secret_started = false
+	prize_echo_unlocked = false
 	pip_secret_completed = false
 	prize_sort_completed = false
 	pip_post_reveal_secret_seen = false
+	night_ledger_started = false
+	night_ledger_completed = false
+	night_ledger_token_collected = false
+	night_ledger_debrief_seen = false
 	mira_rockbyte_anecdote_seen = false
 	mr_byte_truth_filter_anecdote_seen = false
 	vendo_circuit_anecdote_seen = false
+	vendo_unknown_clue_seen = false
 	gus_sync_anecdote_seen = false
 	memory_echo_anecdote_seen = false
 	roxy_high_score_anecdote_seen = false
@@ -482,7 +562,7 @@ func reset_for_new_game() -> void:
 	mr_byte_truth_filter_debriefed = false
 	postgame_replay_pending = ""
 	postgame_replay_won = false
-	last_announced_quest_id = ""
+	route_cue_close_tip_seen = false
 	npc_dialogue_counts.clear()
 	pending_spawn_id = ""
 	clear_arcade_return_position()
@@ -525,7 +605,6 @@ func complete_truth_filter() -> void:
 	flag_postgame_replay_win()
 	truth_filter_quest_started = true
 	lying_cabinets_completed = true
-	second_memory_fragment_collected = true
 	update_memory_signal_from_progress()
 
 func start_circuit_soda() -> void:
@@ -536,33 +615,53 @@ func complete_circuit_soda() -> void:
 	flag_postgame_replay_win()
 	circuit_soda_started = true
 	circuit_soda_completed = true
-	lost_shift_file_started = true
 	update_memory_signal_from_progress()
 
 func start_lost_shift_file() -> void:
 	lost_shift_file_started = true
 
-func read_closing_checklist() -> void:
-	lost_shift_file_started = true
-	closing_checklist_read = true
-	_complete_lost_shift_file_if_ready()
+func find_closing_shift_mira_clue() -> bool:
+	if not lost_shift_file_started:
+		return false
+	closing_shift_mira_clue_found = true
+	return true
 
-func read_maintenance_note() -> void:
-	lost_shift_file_started = true
-	maintenance_note_read = true
-	_complete_lost_shift_file_if_ready()
+func find_closing_shift_score_clue() -> bool:
+	if not lost_shift_file_started or not closing_shift_mira_clue_found:
+		return false
+	closing_shift_score_clue_found = true
+	return true
 
-func read_staff_schedule() -> void:
-	lost_shift_file_started = true
-	staff_schedule_read = true
-	_complete_lost_shift_file_if_ready()
+func find_closing_shift_service_clue() -> bool:
+	if not lost_shift_file_started or not closing_shift_score_clue_found:
+		return false
+	closing_shift_service_clue_found = true
+	return true
 
-func _complete_lost_shift_file_if_ready() -> void:
-	if closing_checklist_read and maintenance_note_read and staff_schedule_read:
-		lost_shift_file_completed = true
+func closing_shift_clues_complete() -> bool:
+	return (
+		closing_shift_mira_clue_found
+		and closing_shift_score_clue_found
+		and closing_shift_service_clue_found
+	)
+
+func complete_closing_shift_echoes() -> bool:
+	if not closing_shift_clues_complete():
+		return false
+	lost_shift_file_completed = true
+	# The Maintenance Hall now leads directly into the Staff Access route once
+	# the closing sequence has been reconstructed. Static Service still gates
+	# the machinery beyond it, but the hallway is no longer falsely locked.
+	staff_corridor_unlocked = true
+	update_memory_signal_from_progress()
+	return true
 
 func start_static_service_run() -> void:
 	static_service_run_started = true
+	# The restored current releases the Staff Access Hall latch. The later sync
+	# still gates its machinery, but the player is no longer told the door is
+	# locked after Gus has already sent them into the service route.
+	staff_corridor_unlocked = true
 	update_memory_signal_from_progress()
 
 func complete_static_service_run() -> void:
@@ -724,8 +823,15 @@ func complete_broken_high_score() -> void:
 func complete_pip_secret() -> void:
 	flag_postgame_replay_win()
 	pip_secret_started = true
+	prize_echo_unlocked = true
 	pip_secret_completed = true
 	prize_sort_completed = true
+
+func complete_night_ledger_run() -> void:
+	flag_postgame_replay_win()
+	night_ledger_started = true
+	night_ledger_completed = true
+	night_ledger_token_collected = true
 
 func read_staff_record_01() -> void:
 	staff_record_01_read = true
@@ -837,8 +943,14 @@ func get_current_quest_id() -> String:
 	if lying_cabinets_completed and not circuit_soda_completed:
 		return "circuit_soda"
 	if circuit_soda_completed and not prize_sort_completed and not lost_shift_file_completed and not maintenance_sync_completed and not story_puzzle_completed:
+		if not conscience_encounter_2_seen:
+			return "vendo_circuit_debrief"
+		if not vendo_unknown_clue_seen:
+			return "ask_vendo_about_unknown"
 		return "prize_sort"
-	if circuit_soda_completed and not gus_hub_checkin_prize_sort_done and not lost_shift_file_completed and not maintenance_sync_completed and not story_puzzle_completed:
+	if circuit_soda_completed and prize_sort_completed and not pip_prize_anecdote_seen and not lost_shift_file_completed and not maintenance_sync_completed and not story_puzzle_completed:
+		return "prize_sort"
+	if circuit_soda_completed and pip_prize_anecdote_seen and not gus_hub_checkin_prize_sort_done and not lost_shift_file_completed and not maintenance_sync_completed and not story_puzzle_completed:
 		return "gus_checkin_prize_sort"
 	if circuit_soda_completed and not lost_shift_file_completed and not maintenance_sync_completed and not story_puzzle_completed:
 		return "lost_shift_file"
@@ -864,6 +976,26 @@ func get_current_quest_id() -> String:
 
 func get_current_quest_data() -> Dictionary:
 	match get_current_quest_id():
+		"vendo_circuit_debrief":
+			return {
+				"id": "vendo_circuit_debrief",
+				"title": "Circuit Soda Debrief",
+				"summary": "Talk to Vendo after Circuit Soda.",
+				"details": "Circuit Soda accepted the route. Vendo in Snack Alcove may be able to explain what the machine recognized.",
+				"owner": "Vendo",
+				"location": "SnackAlcove",
+				"required": true,
+			}
+		"ask_vendo_about_unknown":
+			return {
+				"id": "ask_vendo_about_unknown",
+				"title": "Ask About the Voice",
+				"summary": "Ask Vendo about the unknown voice.",
+				"details": "Something spoke through the static after Circuit Soda. I still do not know what it is. Vendo may have a clue.",
+				"owner": "Vendo",
+				"location": "SnackAlcove",
+				"required": true,
+			}
 		"broken_high_score":
 			if not roxy_met:
 				return _with_registry_quest_data({
@@ -876,21 +1008,28 @@ func get_current_quest_data() -> Dictionary:
 				"id": "broken_high_score",
 				"title": "Broken High Score",
 				"summary": "Use the BROKEN SCORE cabinet in Cabinet Row.",
-				"details": "Roxy guards the Broken High Score cabinet in Cabinet Row. The board lies that the target is 9999. Restore the real record before the Truth Filter.",
+				"details": "Roxy guards the Broken High Score cabinet in Cabinet Row. The board lies that the target is 999999. Restore the real record before the Truth Filter.",
 			}, "broken_high_score")
 		"prize_sort":
+			if prize_sort_completed and not pip_prize_anecdote_seen:
+				return _with_registry_quest_data({
+					"id": "prize_sort",
+					"title": "Prize Echo Ascent",
+					"summary": "Take the Echo Token to Pip.",
+					"details": "The shelf route released an Echo Token. Bring it to Pip in Prize Corner so they can examine its markings before you leave.",
+				}, "prize_counter_secret")
 			if not pip_met:
 				return _with_registry_quest_data({
 					"id": "prize_sort",
-					"title": "Prize Sort",
-					"summary": "Talk to Pip in Prize Corner.",
-					"details": "Vendo says the plush in Prize Corner has been staring at three loose labels all night. Hear Pip out before touching the counter.",
+					"title": "Prize Echo Ascent",
+					"summary": "Head through Prize Service Hall.",
+					"details": "Vendo says Prize Service Hall is the passage on the right between the two machines. Follow it to Prize Corner and ask Pip about the shelf route.",
 				}, "prize_counter_secret")
 			return _with_registry_quest_data({
 				"id": "prize_sort",
-				"title": "Prize Sort",
-				"summary": "Use the PRIZE COUNTER in Prize Corner.",
-				"details": "Pip in Prize Corner says the labels remember an order: Ticket Stub, Lost Token, then Blank Employee Badge. Sort them before the Lost Shift File.",
+				"title": "Prize Echo Ascent",
+				"summary": "Use the shelf beside Pip.",
+				"details": "Complete Prize Echo Ascent: follow all eighteen echo tags in order, open the three rail locks, then bring what the shelf releases back to Pip.",
 			}, "prize_counter_secret")
 		"gus_checkin_truth_filter":
 			return {
@@ -907,7 +1046,7 @@ func get_current_quest_data() -> Dictionary:
 				"id": "gus_checkin_prize_sort",
 				"title": "Gus Has a Lead",
 				"summary": "Talk to Gus in the Arcade Hub.",
-				"details": "Pip's prize wall stirred something loose. Gus wants to chase it his way: paperwork. Find him on the Arcade Hub floor before digging into the records.",
+				"details": "Pip found an old service mark on the Echo Token and thinks Gus can trace it. Take the token to Gus on the Arcade Hub floor.",
 				"owner": "Gus",
 				"location": "ArcadeHub",
 				"required": true,
@@ -916,8 +1055,8 @@ func get_current_quest_data() -> Dictionary:
 			return _with_registry_quest_data({
 				"id": "opening_look_around",
 				"title": "Get Your Bearings",
-				"summary": "Look around. Talk to whoever is here.",
-				"details": "Pixel Haven is closed, but it seems to know me. I should look around and talk to whoever is still here before I decide anything.",
+				"summary": "Look around. Talk to whoever is still here.",
+				"details": "I only stepped inside because the lights were on. I do not recognize this closed arcade or the people still here, but curiosity is pulling me farther in. I should look around before I decide anything.",
 			}, "lost_token")
 		"opening_talk_to_mira":
 			return _with_registry_quest_data({
@@ -952,18 +1091,29 @@ func get_current_quest_data() -> Dictionary:
 				"id": "static_service_run",
 				"title": "Static Service Run",
 				"summary": "See Gus in Maintenance Hall about the power.",
-				"details": "The Lost Shift File gave Gus enough context to work with the Staff Door, but Maintenance Hall still needs service power. Talk to Gus, then run Static Service Run.",
+				"details": "The closing-shift echoes gave Gus enough context to work with the Staff Door, but Maintenance Hall still needs service power. Talk to Gus, then run Static Service Run.",
 			}, "static_service_run")
 		"lost_shift_file":
+			var clue_summary := "Talk to Mira at the ticket counter."
+			var clue_location := "ArcadeHub"
+			if closing_shift_mira_clue_found and not closing_shift_score_clue_found:
+				clue_summary = "Follow the familiar thread in Cabinet Row."
+				clue_location = "Cabinet Row"
+			elif closing_shift_score_clue_found and not closing_shift_service_clue_found:
+				clue_summary = "Follow the next thread in Snack Alcove."
+				clue_location = "SnackAlcove"
+			elif closing_shift_clues_complete():
+				clue_summary = "Return to Gus in the Arcade Hub."
+				clue_location = "ArcadeHub"
 			return {
 				"id": "lost_shift_file",
-				"title": "Lost Shift File",
-				"owner": "Mira / Gus / Mr. Byte",
-				"location": "ArcadeHub, Maintenance Hall, Cabinet Row",
-				"summary": "Read the checklist, schedule, and note.",
-				"details": "The signal is routed, but the Staff Door still refuses to open. Read the Closing Checklist in ArcadeHub, the Staff Schedule in Cabinet Row, and Gus's Maintenance Note in Maintenance Hall.",
+				"title": "Closing Shift Echoes",
+				"owner": "Gus",
+				"location": clue_location,
+				"summary": clue_summary,
+				"details": "Gus is sorting the accessible shift files. Begin with Mira, then follow the threads that feel familiar before reporting what surfaced.",
 				"required": true,
-				"starts_after": "circuit_soda_completed",
+				"starts_after": "pip_prize_anecdote_seen",
 				"minigame": "None",
 				"memory_signal_after": "Fractured",
 			}
@@ -1081,9 +1231,6 @@ func _with_registry_quest_data(base_data: Dictionary, registry_id: String) -> Di
 	merged["memory_signal_after"] = str(registry_data.get("memory_signal_after", ""))
 	return merged
 
-func mark_current_quest_announced() -> void:
-	last_announced_quest_id = get_current_quest_id()
-
 func get_npc_dialogue_count(key: String) -> int:
 	return int(npc_dialogue_counts.get(key, 0))
 
@@ -1102,10 +1249,10 @@ func update_memory_signal_from_progress() -> void:
 	if post_reveal_roam_unlocked:
 		set_memory_signal_level(MEMORY_SIGNAL_RESTORED)
 		return
-	if staff_corridor_unlocked or story_puzzle_completed:
+	if maintenance_sync_completed or story_puzzle_completed:
 		set_memory_signal_level(MEMORY_SIGNAL_OVERLOADED)
 		return
-	if lying_cabinets_completed or second_memory_fragment_collected:
+	if lying_cabinets_completed:
 		set_memory_signal_level(MEMORY_SIGNAL_FRACTURED)
 		return
 	if lost_token_quest_completed:
@@ -1137,17 +1284,13 @@ func to_save_data() -> Dictionary:
 		"rockbyte_attempt_count": rockbyte_attempt_count,
 		"truth_filter_quest_started": truth_filter_quest_started,
 		"lying_cabinets_completed": lying_cabinets_completed,
-		"second_memory_fragment_collected": second_memory_fragment_collected,
 		"circuit_soda_started": circuit_soda_started,
 		"circuit_soda_completed": circuit_soda_completed,
 		"lost_shift_file_started": lost_shift_file_started,
 		"lost_shift_file_completed": lost_shift_file_completed,
-		"closing_checklist_read": closing_checklist_read,
-		"maintenance_note_read": maintenance_note_read,
-		"staff_schedule_read": staff_schedule_read,
-		"mira_lost_shift_intro_seen": mira_lost_shift_intro_seen,
-		"gus_lost_shift_comment_seen": gus_lost_shift_comment_seen,
-		"mr_byte_lost_shift_comment_seen": mr_byte_lost_shift_comment_seen,
+		"closing_shift_mira_clue_found": closing_shift_mira_clue_found,
+		"closing_shift_score_clue_found": closing_shift_score_clue_found,
+		"closing_shift_service_clue_found": closing_shift_service_clue_found,
 		"static_service_run_started": static_service_run_started,
 		"static_service_run_completed": static_service_run_completed,
 		"gus_static_run_anecdote_seen": gus_static_run_anecdote_seen,
@@ -1186,12 +1329,18 @@ func to_save_data() -> Dictionary:
 		"roxy_met": roxy_met,
 		"pip_met": pip_met,
 		"pip_secret_started": pip_secret_started,
+		"prize_echo_unlocked": prize_echo_unlocked,
 		"pip_secret_completed": pip_secret_completed,
 		"prize_sort_completed": prize_sort_completed,
 		"pip_post_reveal_secret_seen": pip_post_reveal_secret_seen,
+		"night_ledger_started": night_ledger_started,
+		"night_ledger_completed": night_ledger_completed,
+		"night_ledger_token_collected": night_ledger_token_collected,
+		"night_ledger_debrief_seen": night_ledger_debrief_seen,
 		"mira_rockbyte_anecdote_seen": mira_rockbyte_anecdote_seen,
 		"mr_byte_truth_filter_anecdote_seen": mr_byte_truth_filter_anecdote_seen,
 		"vendo_circuit_anecdote_seen": vendo_circuit_anecdote_seen,
+		"vendo_unknown_clue_seen": vendo_unknown_clue_seen,
 		"gus_sync_anecdote_seen": gus_sync_anecdote_seen,
 		"memory_echo_anecdote_seen": memory_echo_anecdote_seen,
 		"roxy_high_score_anecdote_seen": roxy_high_score_anecdote_seen,
@@ -1232,7 +1381,7 @@ func to_save_data() -> Dictionary:
 		"gus_hub_checkin_prize_sort_done": gus_hub_checkin_prize_sort_done,
 		"roxy_truth_filter_nudge_seen": roxy_truth_filter_nudge_seen,
 		"mr_byte_truth_filter_debriefed": mr_byte_truth_filter_debriefed,
-		"last_announced_quest_id": last_announced_quest_id,
+		"route_cue_close_tip_seen": route_cue_close_tip_seen,
 		"npc_dialogue_counts": npc_dialogue_counts.duplicate(true),
 	}
 
@@ -1259,22 +1408,34 @@ func apply_save_data(data: Dictionary) -> void:
 	rockbyte_duel_loss_count = int(data.get("rockbyte_duel_loss_count", rockbyte_duel_loss_count))
 	rockbyte_attempt_count = int(data.get("rockbyte_attempt_count", rockbyte_attempt_count))
 	truth_filter_quest_started = bool(data.get("truth_filter_quest_started", truth_filter_quest_started))
-	lying_cabinets_completed = bool(data.get("lying_cabinets_completed", lying_cabinets_completed))
-	second_memory_fragment_collected = bool(data.get("second_memory_fragment_collected", second_memory_fragment_collected))
+	lying_cabinets_completed = bool(data.get("lying_cabinets_completed", data.get("second_memory_fragment_collected", lying_cabinets_completed)))
 	circuit_soda_started = bool(data.get("circuit_soda_started", circuit_soda_started))
 	circuit_soda_completed = bool(data.get("circuit_soda_completed", circuit_soda_completed))
 	lost_shift_file_started = bool(data.get("lost_shift_file_started", false))
 	lost_shift_file_completed = bool(data.get("lost_shift_file_completed", false))
-	closing_checklist_read = bool(data.get("closing_checklist_read", false))
-	maintenance_note_read = bool(data.get("maintenance_note_read", false))
-	staff_schedule_read = bool(data.get("staff_schedule_read", false))
-	mira_lost_shift_intro_seen = bool(data.get("mira_lost_shift_intro_seen", false))
-	gus_lost_shift_comment_seen = bool(data.get("gus_lost_shift_comment_seen", false))
-	mr_byte_lost_shift_comment_seen = bool(data.get("mr_byte_lost_shift_comment_seen", false))
-	if closing_checklist_read or maintenance_note_read or staff_schedule_read:
+	var legacy_checklist_read := bool(data.get("closing_checklist_read", false))
+	var legacy_maintenance_note_read := bool(data.get("maintenance_note_read", false))
+	var legacy_staff_schedule_read := bool(data.get("staff_schedule_read", false))
+	var has_ordered_clue_state := (
+		data.has("closing_shift_mira_clue_found")
+		or data.has("closing_shift_score_clue_found")
+		or data.has("closing_shift_service_clue_found")
+	)
+	closing_shift_mira_clue_found = bool(data.get("closing_shift_mira_clue_found", false))
+	closing_shift_score_clue_found = bool(data.get("closing_shift_score_clue_found", false))
+	closing_shift_service_clue_found = bool(data.get("closing_shift_service_clue_found", false))
+	if not has_ordered_clue_state:
+		# Migrate the three retired document interactions into the equivalent
+		# ordered evidence steps without discarding old player progress.
+		closing_shift_mira_clue_found = legacy_checklist_read
+		closing_shift_score_clue_found = legacy_staff_schedule_read
+		closing_shift_service_clue_found = legacy_maintenance_note_read
+	if legacy_checklist_read or legacy_maintenance_note_read or legacy_staff_schedule_read:
 		lost_shift_file_started = true
-	if closing_checklist_read and maintenance_note_read and staff_schedule_read:
+	if legacy_checklist_read and legacy_maintenance_note_read and legacy_staff_schedule_read:
 		lost_shift_file_completed = true
+	if closing_shift_mira_clue_found or closing_shift_score_clue_found or closing_shift_service_clue_found:
+		lost_shift_file_started = true
 	static_service_run_started = bool(data.get("static_service_run_started", false))
 	static_service_run_completed = bool(data.get("static_service_run_completed", false))
 	gus_static_run_anecdote_seen = bool(data.get("gus_static_run_anecdote_seen", false))
@@ -1292,6 +1453,8 @@ func apply_save_data(data: Dictionary) -> void:
 		static_service_run_completed = true
 	staff_room_unlocked = data.get("staff_room_unlocked", staff_room_unlocked)
 	staff_corridor_unlocked = bool(data.get("staff_corridor_unlocked", staff_room_unlocked or story_puzzle_completed))
+	if static_service_run_started or lost_shift_file_completed:
+		staff_corridor_unlocked = true
 	security_tape_assembly_started = bool(data.get("security_tape_assembly_started", false))
 	security_tape_assembly_completed = bool(data.get("security_tape_assembly_completed", false))
 	security_tape_wrong_order_count = int(data.get("security_tape_wrong_order_count", security_tape_wrong_order_count))
@@ -1370,14 +1533,24 @@ func apply_save_data(data: Dictionary) -> void:
 	roxy_met = bool(data.get("roxy_met", roxy_met))
 	pip_met = bool(data.get("pip_met", pip_met))
 	pip_secret_started = bool(data.get("pip_secret_started", pip_secret_started))
+	prize_echo_unlocked = bool(data.get("prize_echo_unlocked", data.get("pip_secret_completed", pip_secret_completed)))
 	pip_secret_completed = bool(data.get("pip_secret_completed", pip_secret_completed))
 	prize_sort_completed = bool(data.get("prize_sort_completed", pip_secret_completed))
 	if prize_sort_completed:
+		prize_echo_unlocked = true
 		pip_secret_completed = true
 	pip_post_reveal_secret_seen = bool(data.get("pip_post_reveal_secret_seen", pip_post_reveal_secret_seen))
+	night_ledger_started = bool(data.get("night_ledger_started", data.get("archive_history_started", night_ledger_started)))
+	night_ledger_completed = bool(data.get("night_ledger_completed", data.get("archive_recall_completed", night_ledger_completed)))
+	night_ledger_token_collected = bool(data.get("night_ledger_token_collected", data.get("archive_duplex_token_collected", night_ledger_completed)))
+	night_ledger_debrief_seen = bool(data.get("night_ledger_debrief_seen", data.get("archive_history_debrief_seen", night_ledger_debrief_seen)))
+	if night_ledger_completed:
+		night_ledger_started = true
+		night_ledger_token_collected = true
 	mira_rockbyte_anecdote_seen = bool(data.get("mira_rockbyte_anecdote_seen", mira_rockbyte_anecdote_seen))
 	mr_byte_truth_filter_anecdote_seen = bool(data.get("mr_byte_truth_filter_anecdote_seen", mr_byte_truth_filter_anecdote_seen))
 	vendo_circuit_anecdote_seen = bool(data.get("vendo_circuit_anecdote_seen", vendo_circuit_anecdote_seen))
+	vendo_unknown_clue_seen = bool(data.get("vendo_unknown_clue_seen", vendo_unknown_clue_seen))
 	gus_sync_anecdote_seen = bool(data.get("gus_sync_anecdote_seen", gus_sync_anecdote_seen))
 	memory_echo_anecdote_seen = bool(data.get("memory_echo_anecdote_seen", memory_echo_anecdote_seen))
 	roxy_high_score_anecdote_seen = bool(data.get("roxy_high_score_anecdote_seen", roxy_high_score_anecdote_seen))
@@ -1425,7 +1598,7 @@ func apply_save_data(data: Dictionary) -> void:
 	gus_hub_checkin_prize_sort_done = bool(data.get("gus_hub_checkin_prize_sort_done", gus_hub_checkin_prize_sort_done))
 	roxy_truth_filter_nudge_seen = bool(data.get("roxy_truth_filter_nudge_seen", roxy_truth_filter_nudge_seen))
 	mr_byte_truth_filter_debriefed = bool(data.get("mr_byte_truth_filter_debriefed", mr_byte_truth_filter_debriefed))
-	last_announced_quest_id = str(data.get("last_announced_quest_id", last_announced_quest_id))
+	route_cue_close_tip_seen = bool(data.get("route_cue_close_tip_seen", route_cue_close_tip_seen))
 	var dialogue_counts_value: Variant = data.get("npc_dialogue_counts", npc_dialogue_counts)
 	if dialogue_counts_value is Dictionary:
 		npc_dialogue_counts = dialogue_counts_value.duplicate(true)

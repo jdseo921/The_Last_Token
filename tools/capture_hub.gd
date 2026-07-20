@@ -4,7 +4,7 @@ var _n: Node = null
 var _el := 0.0
 
 func _initialize() -> void:
-	DirAccess.make_dir_recursive_absolute("user://captures")
+	DirAccess.make_dir_recursive_absolute("res://tmp/captures")
 
 func _process(d: float) -> bool:
 	if _n == null:
@@ -21,7 +21,11 @@ func _process(d: float) -> bool:
 		return false
 	_el += d
 	if _el >= 1.2:
-		root.get_texture().get_image().save_png("user://captures/hub_wired.png")
+		var viewport_texture := root.get_texture()
+		if viewport_texture == null:
+			push_error("Hub capture requires a rendering display; the headless dummy renderer has no framebuffer.")
+			return true
+		viewport_texture.get_image().save_png("res://tmp/captures/hub_wired.png")
 		print("saved hub_wired.png")
 		return true
 	return false

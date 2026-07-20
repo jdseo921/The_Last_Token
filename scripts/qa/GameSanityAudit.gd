@@ -12,8 +12,7 @@ const MAPS := [
 	"res://scenes/maps/CabinetRow.tscn", "res://scenes/maps/SnackAlcove.tscn",
 	"res://scenes/maps/MaintenanceHall.tscn", "res://scenes/maps/StaffCorridor.tscn",
 	"res://scenes/maps/PrizeCorner.tscn", "res://scenes/maps/FrontEntrance.tscn",
-	"res://scenes/maps/PartyRoom.tscn", "res://scenes/maps/Workshop.tscn",
-	"res://scenes/maps/MemoryCore.tscn", "res://scenes/maps/Restrooms.tscn",
+	"res://scenes/maps/PartyRoom.tscn", "res://scenes/maps/Restrooms.tscn",
 	"res://scenes/maps/hallways/CabinetHallway.tscn", "res://scenes/maps/hallways/SnackHallway.tscn",
 	"res://scenes/maps/hallways/PrizeHallway.tscn", "res://scenes/maps/hallways/MaintenanceHallway.tscn",
 	"res://scenes/maps/hallways/BackHallway.tscn", "res://scenes/maps/hallways/CabinetSnackHallway.tscn",
@@ -91,7 +90,7 @@ func _check_transitions() -> void:
 
 func _check_dialogue_overflow() -> void:
 	var font: Font = load("res://assets/fonts/m6x11.ttf")
-	machine_font = load("res://assets/fonts/VT323-Regular.ttf")
+	machine_font = font
 	if font == null:
 		font = ThemeDB.fallback_font
 	if machine_font == null:
@@ -151,6 +150,10 @@ func _check_save_safety() -> void:
 	if gs == null or sm == null:
 		_fail("save: GameState/SaveManager autoloads missing")
 		return
+	# Keep the destructive corrupted-save check inside the workspace. Normal game
+	# sessions leave this override empty and continue to use user://saves.
+	sm.set("save_dir_override", "res://tmp/qa_saves")
+	sm.call("delete_save", TEST_SLOT)
 	gs.call("reset_for_new_game")
 	gs.call("start_lost_token_quest")
 	gs.set("rockbyte_duel_completed", true)
@@ -163,14 +166,7 @@ func _check_save_safety() -> void:
 	if not bool(summary.get("save_exists", false)):
 		_fail("save: summary reports no save after saving")
 	gs.call("reset_for_new_game")
-	var slot_path := "user://saves/save_slot_%d.json" % TEST_SLOT
-	if not FileAccess.file_exists(slot_path):
-		# path scheme may differ; find it
-		var save_dir := DirAccess.open("user://saves")
-		if save_dir != null:
-			for f in save_dir.get_files():
-				if str(TEST_SLOT) in f:
-					slot_path = "user://saves/" + f
+	var slot_path := str(sm.call("_get_slot_path", TEST_SLOT))
 	var file := FileAccess.open(slot_path, FileAccess.READ)
 	if file == null:
 		_fail("save: cannot locate written save file")
@@ -189,6 +185,7 @@ func _check_save_safety() -> void:
 	if loaded:
 		_fail("save: corrupted save loaded as valid")
 	sm.call("delete_save", TEST_SLOT)
+	sm.set("save_dir_override", "")
 	gs.call("reset_for_new_game")
 	print("  D save: roundtrip ok, corrupted file rejected safely (summary keys: %d)" % corrupt_summary.size())
 

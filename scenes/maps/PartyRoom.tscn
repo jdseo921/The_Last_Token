@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/QuestNotice.tscn" id="7"]
 [ext_resource type="Script" path="res://scripts/MapCollisionBounds.gd" id="8"]
 [ext_resource type="FontFile" path="res://assets/fonts/PressStart2P-Regular.ttf" id="fpx_title"]
-[ext_resource type="FontFile" path="res://assets/fonts/m3x6.ttf" id="fpx_micro"]
+[ext_resource type="FontFile" path="res://assets/fonts/m6x11.ttf" id="fpx_micro"]
 
 [node name="PartyRoom" type="Node2D"]
 script = ExtResource("1")
@@ -95,6 +95,7 @@ theme_override_font_sizes/font_size = 16
 text = "PARTY ROOM"
 
 [node name="HintLabel" type="Label" parent="UILayer"]
+visible = false
 position = Vector2(24, 48)
 size = Vector2(430, 42)
 theme_override_fonts/font = ExtResource("fpx_micro")

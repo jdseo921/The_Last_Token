@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/MemoryEcho.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/ui/ChoiceBox.tscn" id="2"]
+[ext_resource type="FontFile" path="res://assets/fonts/m6x11.ttf" id="fpx_body"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="pause_menu"]
 
 [node name="MemoryEcho" type="Control"]
 layout_mode = 3
@@ -11,6 +13,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
+
+[node name="PauseMenu" parent="." instance=ExtResource("pause_menu")]
+is_minigame_context = true
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
@@ -60,16 +65,19 @@ offset_top = 18.0
 offset_right = 472.0
 offset_bottom = 42.0
 theme_override_font_sizes/font_size = 16
+theme_override_fonts/font = ExtResource("fpx_body")
 text = "Memory Echo"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="EchoLabel" type="Label" parent="Panel"]
 layout_mode = 0
 offset_left = 34.0
 offset_top = 40.0
 offset_right = 462.0
-offset_bottom = 76.0
-theme_override_font_sizes/font_size = 16
+offset_bottom = 126.0
+theme_override_fonts/font = ExtResource("fpx_body")
+theme_override_font_sizes/font_size = 15
 text = "You came here before."
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -78,10 +86,11 @@ autowrap_mode = 3
 [node name="ResponseLabel" type="Label" parent="Panel"]
 layout_mode = 0
 offset_left = 34.0
-offset_top = 146.0
+offset_top = 140.0
 offset_right = 462.0
-offset_bottom = 212.0
-theme_override_font_sizes/font_size = 16
+offset_bottom = 216.0
+theme_override_fonts/font = ExtResource("fpx_body")
+theme_override_font_sizes/font_size = 15
 text = ""
 horizontal_alignment = 1
 vertical_alignment = 1

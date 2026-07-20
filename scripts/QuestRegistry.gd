@@ -5,59 +5,13 @@ const QUEST_DATA_PATH := "res://data/quests.json"
 static var _quests_loaded := false
 static var _quests: Dictionary = {}
 
+
 static func get_quest(id: String) -> Dictionary:
 	var quests := _get_quests()
 	if quests.has(id) and quests[id] is Dictionary:
 		return (quests[id] as Dictionary).duplicate(true)
 	return {}
 
-static func get_active_main_quest_id() -> String:
-	var state := _get_game_state()
-	if state == null:
-		return ""
-	if not state.lost_token_quest_completed:
-		return "lost_token"
-	if not state.lying_cabinets_completed:
-		return "truth_filter"
-	if not state.circuit_soda_completed:
-		return "circuit_soda"
-	if not state.lost_shift_file_completed:
-		return "lost_shift_file"
-	if not state.static_service_run_completed:
-		return "static_service_run"
-	if not state.story_puzzle_completed:
-		return "maintenance_sync"
-	if not state.security_tape_assembly_completed:
-		return "security_tape_assembly"
-	if not state.final_night_walk_completed:
-		return "final_night_walk"
-	if not state.memory_echo_completed:
-		return "memory_echo"
-	if not state.twist_reveal_seen:
-		return "staff_corridor"
-	return ""
-
-static func _get_game_state() -> Node:
-	var main_loop := Engine.get_main_loop()
-	if main_loop is SceneTree:
-		return (main_loop as SceneTree).root.get_node_or_null("GameState")
-	return null
-
-static func get_active_main_quest_data() -> Dictionary:
-	return get_quest(get_active_main_quest_id())
-
-static func get_quest_owner(id: String) -> String:
-	return str(get_quest(id).get("owner", ""))
-
-static func get_quest_location(id: String) -> String:
-	return str(get_quest(id).get("location", ""))
-
-static func get_completion_dialogue(id: String) -> Array:
-	var quest := get_quest(id)
-	var value: Variant = quest.get("completion_dialogue", [])
-	if value is Array:
-		return (value as Array).duplicate(true)
-	return []
 
 static func _get_quests() -> Dictionary:
 	if not _quests_loaded:
@@ -65,258 +19,21 @@ static func _get_quests() -> Dictionary:
 		_quests_loaded = true
 	return _quests
 
-static func _load_quests() -> Dictionary:
-	if ResourceLoader.exists(QUEST_DATA_PATH):
-		var file := FileAccess.open(QUEST_DATA_PATH, FileAccess.READ)
-		if file != null:
-			var parsed: Variant = JSON.parse_string(file.get_as_text())
-			if parsed is Dictionary:
-				var parsed_dict := parsed as Dictionary
-				var quest_value: Variant = parsed_dict.get("quests", {})
-				if quest_value is Dictionary:
-					return (quest_value as Dictionary).duplicate(true)
-	push_warning("QuestRegistry: using fallback quest definitions.")
-	return _fallback_quests()
 
-static func _fallback_quests() -> Dictionary:
-	return {
-		"lost_token": {
-			"id": "lost_token",
-			"title": "Recover the Lost Token",
-			"owner": "Mira",
-			"location": "ArcadeHub",
-			"summary": "Play Cabinet 07 and bring the Lost Token back to Mira.",
-			"details": "Mira says Cabinet 07 has the Lost Token. Recover it, then return to the ticket counter.",
-			"minigame": "Rockbyte Duel",
-			"required": true,
-			"starts_after": "story_started",
-			"completion_dialogue": [
-				{"speaker": "Mira", "text": "You brought it back."},
-				{"speaker": "Mira", "text": "That token used to be just a prize."},
-				{"speaker": "Mira", "text": "Then it became proof that part of you could still return."},
-				{"speaker": "Mira", "text": "It remembered you before you did."},
-			],
-			"memory_signal_after": "Uneasy",
-		},
-		"truth_filter": {
-			"id": "truth_filter",
-			"title": "Truth Filter",
-			"owner": "Mr. Byte",
-			"location": "Cabinet Row",
-			"summary": "Meet Mr. Byte in Cabinet Row and open the Truth Filter.",
-			"details": "The Lost Token woke a memory, but the arcade is still filtering the truth. Mr. Byte can open the Truth Filter from Cabinet Row.",
-			"minigame": "Truth Filter",
-			"required": true,
-			"starts_after": "lost_token_quest_completed",
-			"completion_dialogue": [
-				{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
-				{"speaker": "Mr. Byte", "text": "Contradictions remain."},
-				{"speaker": "Mr. Byte", "text": "That means the memory is alive enough to argue."},
-				{"speaker": "Mr. Byte", "text": "Record conflict reduced. Identity conflict remains."},
-			],
-			"memory_signal_after": "Fractured",
-		},
-		"circuit_soda": {
-			"id": "circuit_soda",
-			"title": "Route the Signal",
-			"owner": "Vendo",
-			"location": "Snack Alcove",
-			"summary": "Help Vendo stabilize the memory signal.",
-			"details": "The Truth Filter recovered a second fragment, but the signal is still misrouted. Vendo says the arcade can move a memory through the wrong machine and still recognize the flavor.",
-			"minigame": "Circuit Soda",
-			"required": true,
-			"starts_after": "lying_cabinets_completed",
-			"completion_dialogue": [
-				{"speaker": "Vendo", "text": "Signal routed."},
-				{"speaker": "Vendo", "text": "You successfully became beverage-adjacent data."},
-				{"speaker": "Vendo", "text": "I would offer a receipt, but the printer remembers too much."},
-				{"speaker": "Vendo", "text": "Your label is still missing, but the machine knows what shelf you go on."},
-			],
-			"memory_signal_after": "Fractured",
-		},
-		"maintenance_sync": {
-			"id": "maintenance_sync",
-			"title": "Maintenance Sync",
-			"owner": "Gus",
-			"location": "Maintenance Hall",
-			"summary": "Help Gus stabilize the Staff Door signals.",
-			"details": "Vendo routed the signal, but the Staff Door still needs two unstable signals to line up. Gus says the door is listening for something doubled.",
-			"minigame": "Maintenance Sync",
-			"required": true,
-			"starts_after": "static_service_run_completed",
-			"completion_dialogue": [
-				{"speaker": "Gus", "text": "Door's listening now."},
-				{"speaker": "Gus", "text": "I do not like doors that listen."},
-				{"speaker": "Gus", "text": "But if it opens, part of you matched something it lost."},
-				{"speaker": "Gus", "text": "It matched you against something in its log. I did not read it. On purpose."},
-			],
-			"memory_signal_after": "Overloaded",
-		},
-		"lost_shift_file": {
-			"id": "lost_shift_file",
-			"title": "Lost Shift File",
-			"owner": "Mira / Gus / Mr. Byte",
-			"location": "ArcadeHub, Maintenance Hall, Cabinet Row",
-			"summary": "Read the records from the Final Night.",
-			"details": "The signal is routed, but the Staff Door still refuses to open. Three records from the Final Night may explain why.",
-			"minigame": "None",
-			"required": true,
-			"starts_after": "circuit_soda_completed",
-			"completion_dialogue": [
-				{"speaker": "Quest", "text": "LOST SHIFT FILE COMPLETE"},
-				{"speaker": "Quest", "text": "A redacted staff number was assigned to Cabinet shutdown."},
-			],
-			"memory_signal_after": "Fractured",
-		},
-		"static_service_run": {
-			"id": "static_service_run",
-			"title": "Static Service Run",
-			"owner": "Gus",
-			"location": "Maintenance Hall",
-			"summary": "Restore service power for the Staff Door systems.",
-			"details": "The Lost Shift File gave Gus enough context to work with the door, but the maintenance system still needs power. Run the service route and recover the Signal Fuses.",
-			"minigame": "Static Service Run",
-			"required": true,
-			"starts_after": "lost_shift_file_completed",
-			"completion_dialogue": [
-				{"speaker": "Gus", "text": "Power's back."},
-				{"speaker": "Gus", "text": "Door's awake."},
-				{"speaker": "Gus", "text": "That is usually good news, except when the door is smarter than the staff."},
-				{"speaker": "Gus", "text": "Now we can line the door up with what it lost."},
-			],
-			"memory_signal_after": "Fractured",
-		},
-		"staff_corridor": {
-			"id": "staff_corridor",
-			"title": "Enter the Staff Corridor",
-			"owner": "Staff Door",
-			"location": "Staff Corridor",
-			"summary": "Follow the Overloaded signal past the Staff Door.",
-			"details": "Gus stabilized the door, but the arcade is not ready to show the Staff Room yet. Something is echoing in the corridor.",
-			"minigame": "None",
-			"required": true,
-			"starts_after": "maintenance_sync_completed",
-			"completion_dialogue": [
-				{"speaker": "Staff Door", "text": "ACCESS GRANTED."},
-				{"speaker": "Staff Door", "text": "EMPLOYEE SIGNAL ACCEPTED."},
-			],
-			"memory_signal_after": "Overloaded",
-		},
-		"security_tape_assembly": {
-			"id": "security_tape_assembly",
-			"title": "Assemble the Security Tape",
-			"owner": "Staff Door / Mr. Byte",
-			"location": "Staff Corridor",
-			"summary": "Restore the damaged Final Night sequence.",
-			"details": "The Staff Door recorded two signals, but the tape is damaged. Assemble the fragments before confronting the Memory Echo.",
-			"minigame": "Security Tape Assembly",
-			"required": true,
-			"starts_after": "maintenance_sync_completed",
-			"completion_dialogue": [
-				{"speaker": "Mr. Byte", "text": "Tape order restored."},
-				{"speaker": "Staff Door", "text": "The Staff Door did not record a customer."},
-			],
-			"memory_signal_after": "Overloaded",
-		},
-		"final_night_walk": {
-			"id": "final_night_walk",
-			"title": "Final Night Walk",
-			"owner": "Staff Door / Memory System",
-			"location": "Staff Corridor",
-			"summary": "Walk through the reconstructed Final Night.",
-			"details": "The security tape is assembled, but the memory is still too unstable to play back. Walk the reconstructed route before confronting the Memory Echo.",
-			"minigame": "Final Night Walk",
-			"required": true,
-			"starts_after": "security_tape_assembly_completed",
-			"completion_dialogue": [
-				{"speaker": "Staff Door", "text": "ROUTE ACCEPTED."},
-				{"speaker": "Staff Door", "text": "FINAL NIGHT SEQUENCE STABILIZED."},
-				{"speaker": "Staff Door", "text": "ONE WALKED IN."},
-				{"speaker": "Staff Door", "text": "TWO SIGNALS ANSWERED."},
-			],
-			"memory_signal_after": "Overloaded",
-		},
-		"memory_echo": {
-			"id": "memory_echo",
-			"title": "Stabilize the Memory Echo",
-			"owner": "Memory Echo",
-			"location": "Staff Corridor",
-			"summary": "Stabilize the Memory Echo.",
-			"details": "The Final Night route is stable. The Memory Echo can now stabilize the signal before the Staff Room reveals what happened.",
-			"minigame": "Memory Echo",
-			"required": true,
-			"starts_after": "final_night_walk_completed",
-			"completion_dialogue": [
-				{"speaker": "Memory Echo", "text": "Echo stabilized."},
-				{"speaker": "Memory Echo", "text": "The arcade stops arguing with itself."},
-				{"speaker": "Memory Echo", "text": "That might be worse."},
-			],
-			"memory_signal_after": "Overloaded",
-		},
-		"broken_high_score": {
-			"id": "broken_high_score",
-			"title": "Broken High Score",
-			"owner": "Roxy",
-			"location": "Cabinet Row",
-			"summary": "Restore a corrupted high-score record.",
-			"details": "The score claims the target is 9999, but the display is broken. The real record may be much smaller and much stranger.",
-			"minigame": "Broken High Score",
-			"required": true,
-			"starts_after": "rockbyte_duel_completed",
-			"completion_dialogue": [
-				{"speaker": "Roxy", "text": "Huh. Your score came back."},
-				{"speaker": "Roxy", "text": "That usually does not happen after a reset."},
-				{"speaker": "Roxy", "text": "Do not let it go to your head. You still walk like a tutorial."},
-			],
-			"memory_signal_after": "No Change",
-		},
-		"prize_counter_secret": {
-			"id": "prize_counter_secret",
-			"title": "Prize Sort",
-			"owner": "Pip",
-			"location": "Prize Corner",
-			"summary": "Arrange three prize labels by memory state.",
-			"details": "Pip says the prize labels remember an order: Ticket Stub, Lost Token, then Blank Employee Badge.",
-			"minigame": "Prize Sort",
-			"required": true,
-			"starts_after": "circuit_soda_completed",
-			"completion_dialogue": [
-				{"speaker": "Pip", "text": "Prizes sorted."},
-				{"speaker": "Pip", "text": "Some rewards remember their owner before the owner remembers them."},
-			],
-			"memory_signal_after": "No Change",
-		},
-		"staff_records_chain": {
-			"id": "staff_records_chain",
-			"title": "Staff Records Chain",
-			"owner": "Staff Records",
-			"location": "Cabinet Row, Maintenance Hall, Staff Corridor",
-			"summary": "Read three optional staff records after the Truth Filter.",
-			"details": "The arcade preserved small system notes around the Final Night. They deepen the identity mystery without blocking the required route.",
-			"minigame": "None",
-			"required": false,
-			"starts_after": "lying_cabinets_completed",
-			"completion_dialogue": [
-				{"speaker": "Quest", "text": "STAFF RECORDS CHAIN COMPLETE"},
-				{"speaker": "Quest", "text": "The arcade knew the number before it knew the name."},
-			],
-			"memory_signal_after": "No Change",
-		},
-		"post_reveal_witness_route": {
-			"id": "post_reveal_witness_route",
-			"title": "Post-Reveal Witness Route",
-			"owner": "Mira / Gus / Vendo / Mr. Byte / Cabinet 07",
-			"location": "ArcadeHub, Cabinet Row, Maintenance Hall, Snack Alcove",
-			"summary": "Speak with the core witnesses after the reveal.",
-			"details": "Pixel Haven remembers the protagonist in pieces. Roxy and Pip can add optional reflections if the player met them.",
-			"minigame": "None",
-			"required": false,
-			"starts_after": "post_reveal_roam_unlocked",
-			"completion_dialogue": [
-				{"speaker": "Quest", "text": "POST-REVEAL WITNESSES COMPLETE"},
-				{"speaker": "Quest", "text": "Pixel Haven remembers you in pieces."},
-				{"speaker": "Quest", "text": "Together, they almost make a person."},
-			],
-			"memory_signal_after": "Restored",
-		},
-	}
+static func _load_quests() -> Dictionary:
+	if not ResourceLoader.exists(QUEST_DATA_PATH):
+		push_error("QuestRegistry: missing %s" % QUEST_DATA_PATH)
+		return {}
+	var file := FileAccess.open(QUEST_DATA_PATH, FileAccess.READ)
+	if file == null:
+		push_error("QuestRegistry: could not open %s" % QUEST_DATA_PATH)
+		return {}
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	if not parsed is Dictionary:
+		push_error("QuestRegistry: invalid quest JSON")
+		return {}
+	var quest_value: Variant = (parsed as Dictionary).get("quests", {})
+	if not quest_value is Dictionary:
+		push_error("QuestRegistry: quest JSON has no quests dictionary")
+		return {}
+	return (quest_value as Dictionary).duplicate(true)

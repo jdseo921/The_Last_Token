@@ -3,10 +3,12 @@
   "sets": {
     "first_meeting_locked": [
       [
-        {"speaker": "Roxy", "text": "Whoa. New challenger detected.", "portrait": "res://assets/art/portraits/roxy/roxy_smug.png"},
-        {"speaker": "Roxy", "text": "Actually, no. New challenger pending."},
+        {"speaker": "Roxy", "text": "Whoa. You look exactly like the person in half the staff photos.", "portrait": "res://assets/art/portraits/roxy/roxy_startled.png"},
+        {"speaker": "Roxy", "text": "Except you are looking at this room like you have never seen it.", "portrait": "res://assets/art/portraits/roxy/roxy_uneasy.png"},
+        {"speaker": "Player", "text": "I have not."},
+        {"speaker": "Roxy", "text": "That answer was supposed to make this less weird.", "portrait": "res://assets/art/portraits/roxy/roxy_uneasy.png"},
         {"speaker": "Roxy", "text": "The good cabinet is still pretending it has standards."},
-        {"speaker": "Roxy", "text": "Come back when you have beaten something louder than the carpet."},
+        {"speaker": "Roxy", "text": "Come back when you have beaten something louder than the carpet.", "portrait": "res://assets/art/portraits/roxy/roxy_focused.png"},
         {"speaker": "Roxy", "text": "I will be here, defending my undefeated record against boredom.", "portrait": "res://assets/art/portraits/roxy/roxy_smug.png"}
       ]
     ],
@@ -14,62 +16,67 @@
       [
         {"speaker": "Roxy", "text": "Finally. Player Two showed up.", "portrait": "res://assets/art/portraits/roxy/roxy_smug.png"},
         {"speaker": "Roxy", "text": "You look like someone who loses to menus."},
-        {"speaker": "Roxy", "text": "Good news: the Broken High Score cabinet also loses to menus."},
-        {"speaker": "Roxy", "text": "It says the target is 9999 because it has commitment issues."},
-        {"speaker": "Roxy", "text": "Scoreboards love lying when nobody checks the math.", "portrait": "res://assets/art/portraits/roxy/roxy_smug.png"},
-        {"speaker": "Roxy", "text": "Go prove the fake target is fake."},
+        {"speaker": "Roxy", "text": "Good news: the Broken High Score cabinet also loses to menus.", "portrait": "res://assets/art/portraits/roxy/roxy_focused.png"},
+        {"speaker": "Roxy", "text": "It says the target is 999999 because it has commitment issues.", "portrait": "res://assets/art/portraits/roxy/roxy_uneasy.png"},
+        {"speaker": "Roxy", "text": "Scoreboards love lying when nobody checks the math.", "portrait": "res://assets/art/portraits/roxy/roxy_focused.png"},
+        {"speaker": "Roxy", "text": "Go prove the fake target is fake.", "portrait": "res://assets/art/portraits/roxy/roxy_focused.png"},
         {"speaker": "Roxy", "text": "Try not to celebrate like a tutorial pop-up."}
       ]
     ],
     "broken_high_score_hint": [
       [
-        {"speaker": "Roxy", "text": "Hint one: 9999 is nonsense."},
+        {"speaker": "Roxy", "text": "Hint one: 999999 is nonsense.", "portrait": "res://assets/art/portraits/roxy/roxy_focused.png"},
         {"speaker": "Roxy", "text": "Hint two: the cabinet knows it."},
-        {"speaker": "Roxy", "text": "Hint three: bully the smaller number until it confesses."}
+        {"speaker": "Roxy", "text": "Hint three: bully the smaller number until it confesses.", "portrait": "res://assets/art/portraits/roxy/roxy_smug.png"}
       ],
       [
-        {"speaker": "Roxy", "text": "If a scoreboard screams 9999, it is overcompensating."},
-        {"speaker": "Roxy", "text": "Watch the broken digits."},
+        {"speaker": "Roxy", "text": "If a scoreboard screams 999999, it is overcompensating."},
+        {"speaker": "Roxy", "text": "Watch the broken digits.", "portrait": "res://assets/art/portraits/roxy/roxy_focused.png"},
         {"speaker": "Roxy", "text": "The lie has cracks big enough to park a joystick in."}
       ],
       [
-        {"speaker": "Roxy", "text": "The target is not the target."},
+        {"speaker": "Roxy", "text": "The target is not the target.", "portrait": "res://assets/art/portraits/roxy/roxy_uneasy.png"},
         {"speaker": "Roxy", "text": "Classic arcade move."},
         {"speaker": "Roxy", "text": "Next it will say INSERT COIN while stealing your confidence."}
       ]
     ],
     "broken_high_score_completion": [
       [
-        {"speaker": "Roxy", "text": "Huh. Your score came back.", "portrait": "res://assets/art/portraits/roxy/roxy_respectful.png"},
-        {"speaker": "Roxy", "text": "That usually does not happen after a reset."},
+        {"speaker": "Roxy", "text": "Huh. Your score came back.", "portrait": "res://assets/art/portraits/roxy/roxy_startled.png"},
+        {"speaker": "Roxy", "text": "That usually does not happen after a reset.", "portrait": "res://assets/art/portraits/roxy/roxy_uneasy.png"},
         {"speaker": "Roxy", "text": "The points restored clean."},
-        {"speaker": "Roxy", "text": "The name stayed blank."},
-        {"speaker": "Roxy", "text": "Blank names are bad scoreboard manners."},
+        {"speaker": "Roxy", "text": "The name stayed blank.", "portrait": "res://assets/art/portraits/roxy/roxy_uneasy.png"},
+        {"speaker": "Roxy", "text": "Blank names are bad scoreboard manners.", "portrait": "res://assets/art/portraits/roxy/roxy_uneasy.png"},
         {"speaker": "Roxy", "text": "Corrupted rankings do that when they remember a player and refuse the label.", "portrait": "res://assets/art/portraits/roxy/roxy_respectful.png"},
+        {"speaker": "Roxy", "text": "A score is evidence. It is not a biography."},
+        {"speaker": "Roxy", "text": "You won one cabinet. It returned a clue, not a future.", "portrait": "res://assets/art/portraits/roxy/roxy_sincere.png"},
+        {"speaker": "Roxy", "text": "You used to tell kids the same thing after a bad round. They always left standing a little taller."},
+        {"speaker": "Player", "text": "Mira remembered the laugh. You remember what came after the loss."},
+        {"speaker": "Roxy", "text": "Different witnesses. Same stubborn regular.", "portrait": "res://assets/art/portraits/roxy/roxy_respectful.png"},
         {"speaker": "Roxy", "text": "Do not let it go to your head."},
         {"speaker": "Roxy", "text": "You still walk like a tutorial."},
-        {"speaker": "Roxy", "text": "Now go see Mr. Byte before his Truth Filter starts grading on a curve."},
+        {"speaker": "Roxy", "text": "Now go see Mr. Byte before his Truth Filter starts grading on a curve.", "portrait": "res://assets/art/portraits/roxy/roxy_focused.png"},
         {"speaker": "Roxy", "text": "He has been itching to sort somebody's contradictions all night."},
-        {"speaker": "Roxy", "text": "Free tip, since you earned it: his filter quizzes you on the last night."},
-        {"speaker": "Roxy", "text": "The staff record terminal across the row just unlocked the shift log. Read it first."}
+        {"speaker": "Roxy", "text": "Free tip, since you earned it: his filter quizzes you on the last night.", "portrait": "res://assets/art/portraits/roxy/roxy_respectful.png"},
+        {"speaker": "Roxy", "text": "The staff record terminal across the row just unlocked the shift log. Read it first.", "portrait": "res://assets/art/portraits/roxy/roxy_focused.png"}
       ]
     ],
     "truth_filter_completion_nudge": [
       [
-        {"speaker": "Roxy", "text": "Huh. The Filter actually shut up for once."},
+        {"speaker": "Roxy", "text": "Huh. The Filter actually shut up for once.", "portrait": "res://assets/art/portraits/roxy/roxy_startled.png"},
         {"speaker": "Roxy", "text": "That thing has been arguing with itself since before you walked in here."},
-        {"speaker": "Roxy", "text": "Whatever it just coughed up, Mr. Byte is the one who files it."},
+        {"speaker": "Roxy", "text": "Whatever it just coughed up, Mr. Byte is the one who files it.", "portrait": "res://assets/art/portraits/roxy/roxy_focused.png"},
         {"speaker": "Roxy", "text": "Go make him explain it. He lives for that. It is the only thing he lives for."}
       ]
     ],
     "repeat_after_completion": [
       [
-        {"speaker": "Roxy", "text": "Your score is back."},
-        {"speaker": "Roxy", "text": "Your name is not."},
+        {"speaker": "Roxy", "text": "Your score is back.", "portrait": "res://assets/art/portraits/roxy/roxy_respectful.png"},
+        {"speaker": "Roxy", "text": "Your name is not.", "portrait": "res://assets/art/portraits/roxy/roxy_uneasy.png"},
         {"speaker": "Roxy", "text": "Very dramatic. Medium execution."}
       ],
       [
-        {"speaker": "Roxy", "text": "The rankings stopped twitching when you walked by."},
+        {"speaker": "Roxy", "text": "The rankings stopped twitching when you walked by.", "portrait": "res://assets/art/portraits/roxy/roxy_uneasy.png"},
         {"speaker": "Roxy", "text": "That is either respect or bad wiring."}
       ],
       [
@@ -80,7 +87,7 @@
     ],
     "broken_high_score_replay_offer": [
       [
-        {"speaker": "Roxy", "text": "Back at my cabinet, 04? The board tells the truth now because of you."},
+        {"speaker": "Roxy", "text": "Back at my cabinet, 04? The board tells the truth now because of you.", "portrait": "res://assets/art/portraits/roxy/roxy_respectful.png"},
         {"speaker": "Roxy", "text": "Does not mean I will let you pad your score in peace."},
         {"speaker": "Roxy", "text": "Well? Coin up or step aside."}
       ]
@@ -88,20 +95,22 @@
     "broken_high_score_replay_return": [
       [
         {"speaker": "Roxy", "text": "Look at that. A fixed board, zero stakes, and you still played like rent was due."},
-        {"speaker": "Roxy", "text": "The number does not matter anymore."},
-        {"speaker": "Roxy", "text": "That is exactly why it looks good on you."}
+        {"speaker": "Roxy", "text": "The number does not matter anymore.", "portrait": "res://assets/art/portraits/roxy/roxy_sincere.png"},
+        {"speaker": "Roxy", "text": "That is exactly why it looks good on you.", "portrait": "res://assets/art/portraits/roxy/roxy_respectful.png"}
       ]
     ],
     "post_reveal": [
       [
         {"speaker": "Roxy", "text": "So you were Employee 04.", "portrait": "res://assets/art/portraits/roxy/roxy_respectful.png"},
         {"speaker": "Roxy", "text": "That explains the blank high score."},
-        {"speaker": "Roxy", "text": "Hard to rank a memory."},
-        {"speaker": "Roxy", "text": "Also hard to trash-talk one, but I am adapting."},
-        {"speaker": "Roxy", "text": "You built a score the arcade could not name."},
+        {"speaker": "Roxy", "text": "Hard to rank a whole person.", "portrait": "res://assets/art/portraits/roxy/roxy_uneasy.png"},
+        {"speaker": "Roxy", "text": "The cabinet remembered your score. We remembered the player."},
+        {"speaker": "Roxy", "text": "You built a score the arcade could not name.", "portrait": "res://assets/art/portraits/roxy/roxy_sincere.png"},
         {"speaker": "Roxy", "text": "Then you came back and beat the cabinet anyway."},
+        {"speaker": "Roxy", "text": "That win did not make you whole. It just gave you another move."},
+        {"speaker": "Roxy", "text": "A scoreboard can count a round. It cannot decide what happens after it."},
         {"speaker": "Roxy", "text": "That is annoying."},
-        {"speaker": "Roxy", "text": "That is also kind of impressive.", "portrait": "res://assets/art/portraits/roxy/roxy_respectful.png"},
+        {"speaker": "Roxy", "text": "That is also kind of impressive.", "portrait": "res://assets/art/portraits/roxy/roxy_sincere.png"},
         {"speaker": "Roxy", "text": "Rematch privilege granted. Do not make it emotional.", "portrait": "res://assets/art/portraits/roxy/roxy_smug.png"}
       ]
     ]

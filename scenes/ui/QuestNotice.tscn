@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/QuestNotice.gd" id="1"]
-[ext_resource type="FontFile" path="res://assets/fonts/m3x6.ttf" id="fpx_micro"]
+[ext_resource type="FontFile" path="res://assets/fonts/m6x11.ttf" id="fpx_micro"]
 
 [node name="QuestNotice" type="CanvasLayer"]
 layer = 82

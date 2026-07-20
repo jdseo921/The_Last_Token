@@ -3,14 +3,14 @@
   "sets": {
     "opening_first_meeting": [
       [
-        {"speaker": "Mira", "text": "You made it back.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
-        {"speaker": "Mira", "text": "I was afraid the door had forgotten you for good.", "portrait": "res://assets/art/portraits/mira/mira_afraid.png"},
-        {"speaker": "Player", "text": "I know this place."},
-        {"speaker": "Player", "text": "I do not know why I know this place."},
+        {"speaker": "Mira", "text": "You came in. It really is you.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
+        {"speaker": "Mira", "text": "But you are looking at me like we have never met.", "portrait": "res://assets/art/portraits/mira/mira_afraid.png"},
+        {"speaker": "Player", "text": "I only stepped inside because the lights were on."},
+        {"speaker": "Player", "text": "I do not recognize this place."},
         {"speaker": "Player", "text": "Do I know you?"},
         {"speaker": "Mira", "text": "Yes."},
         {"speaker": "Mira", "text": "But not in a way I can explain all at once."},
-        {"speaker": "Player", "text": "That is not comforting."},
+        {"speaker": "Player", "text": "I am not sure that makes me feel safer."},
         {"speaker": "Mira", "text": "I know. I am trying to keep it gentle.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
         {"speaker": "Mira", "text": "The room has to remember you before I am allowed to."},
         {"speaker": "Mira", "text": "If I say too much too soon, it will not hold."}
@@ -22,6 +22,7 @@
         {"speaker": "Mira", "text": "It kept it the way this place keeps everything."},
         {"speaker": "Mira", "text": "A little too long, and a little too tightly."},
         {"speaker": "Mira", "text": "Go to Cabinet Row. Win it back from the machine."},
+        {"speaker": "Player", "text": "(I walk into a closed arcade, get recognized by strangers, and immediately receive an errand. Curiosity has consequences.)"},
         {"speaker": "Mira", "text": "Then bring it to me."},
         {"speaker": "Mira", "text": "I would like to watch you hold something that is yours."}
       ]
@@ -30,7 +31,7 @@
       [
         {"speaker": "Mira", "text": "Cabinet 07 is waiting.", "portrait": "res://assets/art/portraits/mira/mira_worried.png"},
         {"speaker": "Mira", "text": "It only opens for signals it almost remembers."},
-        {"speaker": "Player", "text": "That sounds like a terrible way to recognize someone."},
+        {"speaker": "Player", "text": "That sounds like a difficult way to recognize someone."},
         {"speaker": "Mira", "text": "Around here, it counts as friendly."}
       ],
       [
@@ -51,18 +52,15 @@
     "lost_token_return_anecdote": [
       [
         {"speaker": "Mira", "text": "You brought it back.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
-        {"speaker": "Mira", "text": "That token was once just a prize."},
-        {"speaker": "Mira", "text": "A cheap little thing from the counter."},
-        {"speaker": "Mira", "text": "Then the arcade held onto it like proof."},
-        {"speaker": "Mira", "text": "Not because you won. Because it matched your signal."},
-        {"speaker": "Mira", "text": "Proof that something here still knows you.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
-        {"speaker": "Mira", "text": "I remember you helping after closing.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
-        {"speaker": "Mira", "text": "Stacking chairs. Checking machines. Pretending you were not tired."},
-        {"speaker": "Mira", "text": "You always made the work look smaller than it was."},
-        {"speaker": "Mira", "text": "You used to crouch down to the kids who lost. Whatever you told them, they walked out taller than they came in."},
-        {"speaker": "Mira", "text": "Though today there is a distance in you. Like the words reach me a beat after you decide them."},
-        {"speaker": "Mira", "text": "Now the arcade is trying to make you look back.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
-        {"speaker": "Mira", "text": "Start in Cabinet Row. A regular named Roxy guards a score cabinet that is still lying about a record."},
+        {"speaker": "Mira", "text": "It started as a cheap counter prize. You kept it long after the ribbon faded."},
+        {"speaker": "Player", "text": "Why would that matter to me?"},
+        {"speaker": "Mira", "text": "I only know one part clearly.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
+        {"speaker": "Mira", "text": "You challenged Rockbyte Duel with it and demanded a best-of-five after the cabinet won."},
+        {"speaker": "Mira", "text": "You lost that too. Then you laughed until I did.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
+        {"speaker": "Player", "text": "That sounds like someone I would like to remember."},
+        {"speaker": "Mira", "text": "The cabinet returned the token because it recognized your signal. One win did not prove a whole person."},
+        {"speaker": "Mira", "text": "It is a clue, not an answer. The others remember different pieces."},
+        {"speaker": "Mira", "text": "Start with Roxy in Cabinet Row. Her score cabinet is lying about a record.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
         {"speaker": "Mira", "text": "She has been waiting for someone worth arguing with. Help her set it straight."}
       ]
     ],
@@ -90,16 +88,18 @@
         {"speaker": "Mira", "text": "Talk to him there."}
       ]
     ],
-    "lost_shift_file_dialogue": [
+    "closing_shift_echoes_clue": [
       [
-        {"speaker": "Mira", "text": "The records are waking up now."},
-        {"speaker": "Mira", "text": "I remember locking the counter.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
-        {"speaker": "Mira", "text": "I remember the carpet lights going dim."},
-        {"speaker": "Mira", "text": "But the last part is still missing.", "portrait": "res://assets/art/portraits/mira/mira_afraid.png"},
-        {"speaker": "Mira", "text": "There was a schedule."},
-        {"speaker": "Mira", "text": "There was a maintenance note."},
-        {"speaker": "Mira", "text": "Gus and Mr. Byte may remember the edges."},
-        {"speaker": "Mira", "text": "Please do not force the center before it is ready."}
+        {"speaker": "Mira", "text": "The final shift? I locked this counter before midnight."},
+        {"speaker": "Mira", "text": "After that, the night turns into noise. I wish I could tell you where to look.", "portrait": "res://assets/art/portraits/mira/mira_worried.png"},
+        {"speaker": "Player", "text": "Something in Cabinet Row keeps pulling at me. I will start with the score board."},
+        {"speaker": "Mira", "text": "I do not know if it means anything. Just be gentle with yourself while you find out."}
+      ]
+    ],
+    "closing_shift_echoes_hint": [
+      [
+        {"speaker": "Mira", "text": "I am sorry. I still do not know what happened after I locked up."},
+        {"speaker": "Player", "text": "The score board is the only thread I have. I will follow that first.", "portrait": "res://assets/art/portraits/mira/mira_worried.png"}
       ]
     ],
     "overloaded_pre_staff_room": [
@@ -118,26 +118,26 @@
       [
         {"speaker": "Mira", "text": "Employee 04.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
         {"speaker": "Mira", "text": "I can say it now.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
-        {"speaker": "Mira", "text": "I knew you as a coworker before I knew you as a restored memory.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
+        {"speaker": "Mira", "text": "I knew you before tonight. Not as a file or an echo. As you.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
         {"speaker": "Mira", "text": "You stayed late when everyone else wanted to leave."},
         {"speaker": "Mira", "text": "You checked whether everyone got home."},
         {"speaker": "Mira", "text": "You made broken cabinets feel less broken."},
         {"speaker": "Mira", "text": "I waited because I did not know what else counted as helping."},
         {"speaker": "Mira", "text": "I felt guilty for waiting.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
-        {"speaker": "Mira", "text": "Guilty for being relieved when you came back wrong instead of not at all."},
+        {"speaker": "Mira", "text": "Guilty for being relieved you came back at all, and frightened that you did not remember us."},
         {"speaker": "Mira", "text": "For a while it was like talking to you through glass. You were here, and somewhere far off, all at once."},
-        {"speaker": "Mira", "text": "I never understood what happened to you out there. None of us did. Whatever it was, you were the only one who had to face it."},
+        {"speaker": "Mira", "text": "I never understood what was happening inside you before the final night. None of us did."},
         {"speaker": "Mira", "text": "But you came back with the hard parts too."},
-        {"speaker": "Mira", "text": "You came back enough to be spoken to."},
-        {"speaker": "Mira", "text": "I am so relieved I get to remember you gently.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
-        {"speaker": "Mira", "text": "You spent your whole life telling people a single loss is not the end."},
-        {"speaker": "Mira", "text": "Let me say it back to you, since you never could.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
-        {"speaker": "Mira", "text": "It was not the end."},
-        {"speaker": "Mira", "text": "A single win never set you for life."},
-        {"speaker": "Mira", "text": "And a single loss never finished it."},
-        {"speaker": "Mira", "text": "You are still here. That is the part that gets to matter now.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
-        {"speaker": "Mira", "text": "And look at you. All these years, and the part of you that mattered never aged a day."},
-        {"speaker": "Mira", "text": "Youth is never lost while you hold on to yourself. You let go for a while."},
+        {"speaker": "Mira", "text": "You came back able to hear us, even before you understood why."},
+        {"speaker": "Mira", "text": "I am so relieved I get to know all of you again.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
+        {"speaker": "Mira", "text": "The part that dreamed of this place was not childish. It was the part willing to care."},
+        {"speaker": "Mira", "text": "The part that counted bills was not cruel. It was scared the dream would consume you."},
+        {"speaker": "Mira", "text": "Neither part could carry a whole life alone."},
+        {"speaker": "Mira", "text": "You spent years telling players that one loss was not their identity."},
+        {"speaker": "Mira", "text": "Games end cleanly. Lives keep moving after the screen goes dark.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
+        {"speaker": "Mira", "text": "A win cannot carry your whole life. A loss cannot sentence it."},
+        {"speaker": "Mira", "text": "And a young heart is not one that ignores reality. It is one that still chooses care after seeing the cost."},
+        {"speaker": "Mira", "text": "The heart of your youth was not gone. You stopped listening to it for a while."},
         {"speaker": "Mira", "text": "You still found your way back.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"}
       ]
     ]

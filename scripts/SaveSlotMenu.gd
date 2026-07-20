@@ -72,7 +72,7 @@ func _build_slots() -> void:
 	for slot_id in range(1, 4):
 		var button := Button.new()
 		button.text = "MEMORY SLOT %d" % slot_id
-		button.custom_minimum_size = Vector2(0, 96)
+		button.custom_minimum_size = Vector2(0, 76)
 		button.add_theme_font_size_override("font_size", 16)
 		button.pressed.connect(_on_slot_pressed.bind(slot_id))
 		slots_vbox.add_child(button)
@@ -84,23 +84,15 @@ func _refresh_slots() -> void:
 	for slot_id in range(1, 4):
 		var button := slot_buttons[slot_id - 1]
 		var summary := SaveManager.get_slot_summary(slot_id)
-		var save_exists := bool(summary.get("save_exists", false))
 		button.disabled = false
-		if not save_exists:
-			var empty_action := "CHOOSE TO BEGIN" if current_mode == MODE_NEW_GAME else "CANNOT LOAD"
-			button.text = "MEMORY SLOT %d\nEMPTY SAVE\n%s" % [slot_id, empty_action]
-		else:
-			button.text = "MEMORY SLOT %d\nSTATUS: %s\nMAIN: %d / %d\nOPTIONAL: %d / %d\nSECRETS: %d / %d\nLAST SAVED: %s" % [
-				slot_id,
-				summary.get("story_phase", "Unknown"),
-				int(summary.get("required_progress_count", 0)),
-				int(summary.get("total_required_progress_count", 0)),
-				int(summary.get("optional_games_completed_count", 0)),
-				int(summary.get("total_optional_games_count", 0)),
-				int(summary.get("secrets_found_count", 0)),
-				int(summary.get("total_secrets_count", 0)),
-				summary.get("last_saved_at", "Unknown"),
-			]
+		button.text = _format_slot_text(slot_id, summary)
+
+
+func _format_slot_text(slot_id: int, summary: Dictionary) -> String:
+	var save_exists := bool(summary.get("save_exists", false))
+	var status := str(summary.get("story_phase", "UNKNOWN")) if save_exists else "EMPTY"
+	var last_saved := str(summary.get("last_saved_at", "UNKNOWN")) if save_exists else "NEVER"
+	return "MEMORY SLOT %d\nSTATUS: %s\nLAST SAVED: %s" % [slot_id, status, last_saved]
 
 func _on_slot_pressed(slot_id: int) -> void:
 	if transition_in_progress:

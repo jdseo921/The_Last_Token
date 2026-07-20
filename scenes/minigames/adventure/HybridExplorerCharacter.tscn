@@ -1,0 +1,39 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/minigames/adventure/HybridExplorerController.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape_player"]
+size = Vector2(18, 28)
+
+[node name="HybridExplorerCharacter" type="CharacterBody2D"]
+collision_layer = 1
+collision_mask = 1
+floor_stop_on_slope = true
+floor_snap_length = 3.0
+script = ExtResource("1_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape_player")
+
+[node name="VisualRoot" type="Node2D" parent="."]
+
+[node name="Body" type="Polygon2D" parent="VisualRoot"]
+polygon = PackedVector2Array(-8, -14, 8, -14, 9, 8, 4, 14, -4, 14, -9, 8)
+color = Color(0.22, 0.9, 1, 1)
+
+[node name="Core" type="Polygon2D" parent="VisualRoot"]
+polygon = PackedVector2Array(-4, -8, 4, -8, 5, 3, 0, 8, -5, 3)
+color = Color(0.92, 0.24, 0.72, 1)
+
+[node name="Face" type="Polygon2D" parent="VisualRoot"]
+polygon = PackedVector2Array(-4, -11, 4, -11, 4, -6, -4, -6)
+color = Color(0.02, 0.04, 0.08, 1)
+
+[node name="Eye" type="Polygon2D" parent="VisualRoot"]
+polygon = PackedVector2Array(1, -10, 4, -10, 4, -8, 1, -8)
+color = Color(0.98, 0.82, 0.28, 1)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(120, -28)
+position_smoothing_enabled = true
+position_smoothing_speed = 7.0

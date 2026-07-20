@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/HubInteractable.gd" id="1"]
-[ext_resource type="FontFile" path="res://assets/fonts/m3x6.ttf" id="fpx_micro"]
+[ext_resource type="FontFile" path="res://assets/fonts/m6x11.ttf" id="fpx_micro"]
 
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(64, 64)
@@ -31,6 +31,6 @@ offset_top = 14.0
 offset_right = 70.0
 offset_bottom = 34.0
 theme_override_fonts/font = ExtResource("fpx_micro")
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 14
 text = "PLACEHOLDER"
 horizontal_alignment = 1

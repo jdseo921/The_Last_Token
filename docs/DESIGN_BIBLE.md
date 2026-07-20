@@ -1,6 +1,8 @@
 # The Last Token — Design Bible (Canonical)
 
-> **Status:** This document and [`STAGE_DESIGN.md`](STAGE_DESIGN.md) are the single source of truth for story and gameplay direction. Where any older root-level planning doc disagrees (`STORY_DENSITY_PLAN.md`, `LORE_QUEST_PLAN.md`, `DIALOGUE_EXPANSION_PLAN.md`, `MINIGAME_ROSTER.md`, etc.), **this wins.** Canon is defined as the shipped game data (`data/dialogue/*.json`, `data/quests.json`, `scripts/StaffRoom.gd`) reconciled and clarified here.
+> **Historical planning document:** superseded by [`STORY_CANON.md`](STORY_CANON.md) and the shipped dialogue/quest data. Several scene names and story explanations below remain only for design-history context.
+
+> **Original status:** This document and [`STAGE_DESIGN.md`](STAGE_DESIGN.md) previously served as the planning baseline. Current canon is defined above.
 >
 > **Target runtime:** 45–60 minutes for the required route. Optional content may push a completionist run to ~70. This replaces the old "55–75 min" figure.
 

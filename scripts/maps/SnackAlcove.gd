@@ -27,16 +27,12 @@ func _ready() -> void:
 	_apply_spawn_position()
 	_on_prompt_changed("")
 	_refresh_circuit_soda_state()
-	call_deferred("_maybe_start_conscience_encounter")
+	call_deferred("_maybe_play_circuit_replay_return")
 
 func can_open_pause_menu() -> bool:
 	return not _dialogue_is_active() and not ConscienceEncounterDirector.is_encounter_active()
 
-func _maybe_start_conscience_encounter() -> void:
-	if not ConscienceEncounterDirector.maybe_start_encounter(self, "after_circuit_soda", Callable(self, "_maybe_play_completion_anecdote")):
-		_maybe_play_completion_anecdote()
-
-func _maybe_play_completion_anecdote() -> void:
+func _maybe_play_circuit_replay_return() -> void:
 	if _dialogue_is_active() or ConscienceEncounterDirector.is_encounter_active():
 		return
 	if GameState.consume_postgame_replay_return("circuit_soda"):
@@ -44,13 +40,15 @@ func _maybe_play_completion_anecdote() -> void:
 			{"speaker": "Vendo", "text": "Route stable. No identity was spilled today."},
 			{"speaker": "Vendo", "text": "This machine counts that as a five-star review."},
 		]))
-		return
-	if GameState.circuit_soda_completed and not GameState.vendo_circuit_anecdote_seen:
-		GameState.vendo_circuit_anecdote_seen = true
-		start_dialogue(_get_vendo_lines("circuit_soda_completion_anecdote", [
-			{"speaker": "Vendo", "text": "Signal routed."},
-			{"speaker": "Vendo", "text": "Most machines reject unlabeled product. This one did not."},
-		]))
+
+func _queue_post_circuit_conscience() -> void:
+	call_deferred("_start_post_circuit_conscience")
+
+func _start_post_circuit_conscience() -> void:
+	ConscienceEncounterDirector.maybe_start_encounter(self, "after_circuit_soda")
+
+func _complete_vendo_unknown_clue() -> void:
+	GameState.vendo_unknown_clue_seen = true
 
 func _apply_spawn_position() -> void:
 	var spawn_id := GameState.consume_pending_spawn_id()
@@ -170,6 +168,7 @@ func _handle_vendo() -> void:
 		GameState.increment_npc_dialogue_count("vendo_circuit_explained")
 		start_dialogue(_get_vendo_lines("circuit_soda_intro", [
 			{"speaker": "Vendo", "text": "Scanner mood: fractured."},
+			{"speaker": "Player", "text": "(A vending machine missed me. Nothing makes sense anymore, but apparently my signal needs a soda.)"},
 			{"speaker": "Vendo", "text": "Your signal is going everywhere except where it should."},
 			{"speaker": "Vendo", "text": "Luckily, I am a licensed beverage-adjacent routing system."},
 		]))
@@ -177,10 +176,28 @@ func _handle_vendo() -> void:
 	if not GameState.vendo_circuit_anecdote_seen:
 		GameState.vendo_circuit_anecdote_seen = true
 		start_dialogue(_get_vendo_lines("circuit_soda_completion_anecdote", [
-			{"speaker": "Vendo", "text": "Signal routed."},
-			{"speaker": "Vendo", "text": "Unfortunately, routed does not mean understood."},
-			{"speaker": "Vendo", "text": "Mira and Gus have records. Try not to enjoy paperwork."},
-		]))
+			{"speaker": "Vendo", "text": "Signal routed. Receipt says: identity recognized, label unavailable."},
+			{"speaker": "Player", "text": "It recognized me without knowing what I am."},
+			{"speaker": "Vendo", "text": "One route moved toward the bright display. Another kept checking the cutoff valve."},
+			{"speaker": "Player", "text": "So the machine fixed a route, not me."},
+		]), Callable(self, "_queue_post_circuit_conscience"))
+		return
+	if not GameState.conscience_encounter_2_seen:
+		start_dialogue([
+			{"speaker": "Player", "text": "That static is still hanging in the air."},
+		], Callable(self, "_queue_post_circuit_conscience"))
+		return
+	if not GameState.vendo_unknown_clue_seen:
+		start_dialogue(_get_vendo_lines("unknown_voice_clue", [
+			{"speaker": "Player", "text": "Something spoke through the static after Circuit Soda. Any idea what it was?"},
+			{"speaker": "Vendo", "text": "Diagnostic result: speaker unknown. Customer service equally unknown."},
+			{"speaker": "Vendo", "text": "It sounded like a warning that forgot to introduce itself."},
+			{"speaker": "Player", "text": "So it may be protecting me. Or hiding something."},
+			{"speaker": "Vendo", "text": "Correct. Extremely unhelpful."},
+			{"speaker": "Vendo", "text": "Prize Service Hall is the passage on the right, between Circuit Soda and me."},
+			{"speaker": "Vendo", "text": "Ask Pip about the loose labels. Shelves overhear what machines miss."},
+			{"speaker": "Player", "text": "(Mystery voice, talking vending machine, suspicious plush. Finally, a normal errand.)"},
+		]), Callable(self, "_complete_vendo_unknown_clue"))
 		return
 	start_dialogue(_get_vendo_lines("overloaded_phase", [
 		{"speaker": "Vendo", "text": "Signal routed."},
@@ -215,7 +232,7 @@ func _handle_circuit_soda() -> void:
 	if GameState.get_npc_dialogue_count("vendo_circuit_explained") == 0:
 		start_dialogue([
 			{"speaker": "Player", "text": "This machine has too many hoses to guess at."},
-			{"speaker": "Player", "text": "Vendo loves explaining. I should let him."},
+			{"speaker": "Player", "text": "The vending machine nearby looks unusually talkative. I should ask before touching this."},
 		])
 		return
 	GameState.start_circuit_soda()
@@ -229,10 +246,37 @@ func _go_to_circuit_soda() -> void:
 	SceneChanger.go_to_circuit_soda()
 
 func _handle_snack_service_adventure() -> void:
-	start_dialogue([
+	if GameState.lost_shift_file_started and not GameState.lost_shift_file_completed:
+		if not GameState.closing_shift_mira_clue_found:
+			start_dialogue([
+				{"speaker": "Player", "text": "This route feels familiar, but Gus said to ask Mira first."},
+			])
+			return
+		if not GameState.closing_shift_score_clue_found:
+			start_dialogue([
+				{"speaker": "Player", "text": "The route is missing its start time. Broken Score should have it."},
+			])
+			return
+		if not GameState.closing_shift_service_clue_found:
+			GameState.find_closing_shift_service_clue()
+			start_dialogue([
+				{"speaker": "Service Dash", "text": "LAST SERVICE CUTOFF: 00:18"},
+				{"speaker": "Player", "text": "Broken Score logged 00:17, and this cutoff followed one minute later."},
+				{"speaker": "Player", "text": "I found the route without remembering it. Gus may understand what that means."},
+			])
+			return
+		start_dialogue([
+			{"speaker": "Player", "text": "00:17 at Broken Score. 00:18 here. I should take the sequence back to Gus."},
+		])
+		return
+	var lines := [
 		{"speaker": "Service Slot", "text": "The service slot is jammed with old labels."},
-		{"speaker": "Service Slot", "text": "Vendo insists this is a feature. Refunds remain impossible."},
-	])
+	]
+	if GameState.vendo_intro_seen:
+		lines.append({"speaker": "Service Slot", "text": "Vendo insists this is a feature. Refunds remain impossible."})
+	else:
+		lines.append({"speaker": "Service Slot", "text": "A faded sticker calls this a feature. It also rejects refunds."})
+	start_dialogue(lines)
 
 func _go_to_snack_service_dash() -> void:
 	GameState.set_pending_spawn_id("Spawn_FromSnackAdventure")

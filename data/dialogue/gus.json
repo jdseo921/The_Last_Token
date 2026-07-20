@@ -3,7 +3,9 @@
   "sets": {
     "pre_lost_token_flavor": [
       [
-        {"speaker": "Gus", "text": "You again. Great.", "portrait": "res://assets/art/portraits/gus/gus_annoyed.png"},
+        {"speaker": "Gus", "text": "You again. Great. Except you are looking at me like a stranger.", "portrait": "res://assets/art/portraits/gus/gus_annoyed.png"},
+        {"speaker": "Player", "text": "Are we not strangers?"},
+        {"speaker": "Gus", "text": "...Ask Mira. I fix machines, not missing years.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
         {"speaker": "Gus", "text": "I just finished cleaning up the previous session."},
         {"speaker": "Player", "text": "Previous session?"},
         {"speaker": "Gus", "text": "Arcade talk.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
@@ -67,14 +69,21 @@
         {"speaker": "Gus", "text": "Either way, Snack Alcove."}
       ]
     ],
-    "lost_shift_file_phase": [
+    "closing_shift_maintenance_followup": [
       [
-        {"speaker": "Gus", "text": "The maintenance note is ugly."},
-        {"speaker": "Gus", "text": "Door-report ugly.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"},
-        {"speaker": "Gus", "text": "I saw the Staff Door log the last night wrong. Read it three times."},
-        {"speaker": "Gus", "text": "Something in that reading I still cannot make sit right."},
-        {"speaker": "Gus", "text": "I pretended that was routine work."},
-        {"speaker": "Gus", "text": "Routine work is easier to carry than fear.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"}
+        {"speaker": "Gus", "text": "You made it. I pulled the closing sequence apart again."},
+        {"speaker": "Gus", "text": "Broken Score and Service Dash agree: the shutdown reached this hall.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"},
+        {"speaker": "Gus", "text": "The door can wait. First we bring the service line back safely."}
+      ]
+    ],
+    "static_service_full_intro": [
+      [
+        {"speaker": "Gus", "text": "You made it. Broken Score and Service Dash agree that the shutdown ended here.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
+        {"speaker": "Player", "text": "So the route I followed leads to this service line."},
+        {"speaker": "Gus", "text": "Yes. The recovered sequence gives me context, but the line itself is still dead."},
+        {"speaker": "Gus", "text": "Restore its breaker cells and relays before we ask the Staff Door anything important.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"},
+        {"speaker": "Player", "text": "And after that, we look at what the door remembers?"},
+        {"speaker": "Gus", "text": "After that, we take one careful step. The rest can wait its turn.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"}
       ]
     ],
     "static_service_run_intro": [
@@ -101,13 +110,15 @@
         {"speaker": "Gus", "text": "That is usually how repair bills become personal."},
         {"speaker": "Gus", "text": "Still, you did good.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
         {"speaker": "Gus", "text": "The hum is cleaner now."},
-        {"speaker": "Gus", "text": "Cleaner does not mean safe.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"}
+        {"speaker": "Gus", "text": "One repaired line does not erase years of overdue work."},
+        {"speaker": "Gus", "text": "Cleaner does not mean safe. It means we can take the next step.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"}
       ]
     ],
     "maintenance_sync_intro": [
       [
         {"speaker": "Gus", "text": "Power's back. Door's listening.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"},
         {"speaker": "Gus", "text": "I still hate that sentence."},
+        {"speaker": "Player", "text": "(A vending machine missed me. Now a door is listening. I am still deciding how I feel about being noticed.)"},
         {"speaker": "Gus", "text": "The door is arguing with its own lock."},
         {"speaker": "Gus", "text": "Help me line up what it thinks it heard."},
         {"speaker": "Gus", "text": "Then maybe it opens instead of judging us."}
@@ -121,6 +132,7 @@
         {"speaker": "Gus", "text": "Not with words."},
         {"speaker": "Gus", "text": "Worse. With agreement."},
         {"speaker": "Gus", "text": "It matched you against something in its log.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"},
+        {"speaker": "Gus", "text": "Same access code answered twice. One answer held the door open. One begged it to close."},
         {"speaker": "Gus", "text": "I did not read the log. On purpose."},
         {"speaker": "Gus", "text": "Some doors grieve. This one files it under access control."},
         {"speaker": "Gus", "text": "Whoever ran this place carried it on a back that was already tired.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
@@ -146,14 +158,23 @@
     ],
     "hub_checkin_prize_sort": [
       [
-        {"speaker": "Gus", "text": "Word travels. Pip let you touch the prize wall and it kept all its buttons.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
-        {"speaker": "Gus", "text": "A ticket stub, a token, and a badge with no name. Pip guards what the arcade cannot look at.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
-        {"speaker": "Gus", "text": "A badge with no name means a shift with no name. My schedule copy has exactly one slot nobody ever claimed.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"},
-        {"speaker": "Gus", "text": "And that note I told you about, the one I never filed - your badge just gave it somewhere to point."},
-        {"speaker": "Gus", "text": "That is a lead. I hate that it is a lead.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
-        {"speaker": "Gus", "text": "You want the rest of that story, we do it my way. Paperwork.", "portrait": "res://assets/art/portraits/gus/gus_annoyed.png"},
-        {"speaker": "Gus", "text": "Closing Checklist by Mira's counter. Staff Schedule in Cabinet Row. My maintenance note in the hall."},
-        {"speaker": "Gus", "text": "Read all three, then find me in Maintenance Hall. I will be pretending it is a normal shift.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"}
+        {"speaker": "Player", "text": "Pip found a closing-shift code beneath the prize paint. They thought you might recognize it."},
+        {"speaker": "Gus", "text": "I do. It belongs to an inventory pass with a matching maintenance copy.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
+        {"speaker": "Gus", "text": "That gives me a shift to trace, but the witness list is damaged. I am not certain who saw which part."},
+        {"speaker": "Gus", "text": "Start with Mira. She closed the front counter and usually noticed who stayed behind.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
+        {"speaker": "Player", "text": "Mira first. If anything else feels familiar, I will take it slowly."},
+        {"speaker": "Gus", "text": "Good. I will sort the files here. Bring back whatever the arcade helps you connect.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"}
+      ]
+    ],
+    "closing_shift_echoes_debrief": [
+      [
+        {"speaker": "Gus", "text": "You found all three? I only knew to send you to Mira.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"},
+        {"speaker": "Player", "text": "Mira did not know where the trail went. The score board felt familiar, and then the service line did too. I followed the feeling and found a one-minute shutdown sequence."},
+        {"speaker": "Gus", "text": "Then you may be remembering how to move through this place before you remember why.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
+        {"speaker": "Gus", "text": "You used to do that on the hardest nights: fix the next thing before admitting how much the whole place hurt."},
+        {"speaker": "Player", "text": "I would rather understand that slowly."},
+        {"speaker": "Gus", "text": "Fair. What we know now is enough: the timestamp and cutoff lead to the dead service line.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
+        {"speaker": "Gus", "text": "I unlocked the Maintenance Hallway. The service line is ready when you are."}
       ]
     ],
     "static_run_replay_offer": [
@@ -183,8 +204,10 @@
         {"speaker": "Gus", "text": "Still are, in the ways that matter.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
         {"speaker": "Gus", "text": "You always said routine was easier to carry than fear."},
         {"speaker": "Gus", "text": "Whole time you were the most scared one here, still sweeping up."},
-        {"speaker": "Gus", "text": "Some days you answered like the man I knew. Some days like there was a lot less of him in the room."},
-        {"speaker": "Gus", "text": "Never asked what had changed in you. Figured whatever it was, it was yours to carry, not mine to pry at."},
+        {"speaker": "Gus", "text": "You walked in with the part that still noticed strange lights and wanted to see what was inside."},
+        {"speaker": "Gus", "text": "The other part remembered every exit, every unpaid repair, and every person depending on you."},
+        {"speaker": "Gus", "text": "I recognize both. Same stubborn person. Different loads."},
+        {"speaker": "Gus", "text": "A young heart does not mean being young enough to ignore bills. It means the bills do not get to decide what you are allowed to love.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
         {"speaker": "Gus", "text": "I do not want to clean around another absence.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"}
       ]
     ]

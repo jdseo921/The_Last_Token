@@ -1,7 +1,7 @@
 # MINIGAME_SCREEN_GUIDE.md
 
 ## Purpose
-This guide defines how future minigame screens should be built for The Last Token. The current minigames should not be replaced automatically; use `MinigameScreenTemplate.tscn` when a future pass intentionally upgrades a minigame scene.
+This guide defines how future minigame screens should be built for The Last Token. The current minigames should not be replaced automatically; use `MinigameScreenTemplate.tscn` when a future pass intentionally upgrades a minigame scene. All new boxed copy must also follow [the minigame UI contract](docs/MINIGAME_UI.md).
 
 ## Core Rule
 Every minigame gets its own scene. A minigame should feel like a distinct arcade cabinet screen with its own visual identity, but it must still be readable and playable without final art.

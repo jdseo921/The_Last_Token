@@ -3,17 +3,16 @@
 	"title": "Circuit Soda",
 	"owner": "Vendo",
 	"location": "Snack Alcove",
-	"rounds": 3,
-	"grid_size": "3x3",
+	"rounds": 4,
+	"grid_size": "4x3",
 	"instructions": [
 		"CIRCUIT SODA",
-		"Rotate the pipes.",
-		"Connect Memory Input to Restore Output.",
-		"Do not spill identity."
+		"Link visible hoses from INPUT to OUTPUT.",
+		"Amber-bolted pipes are fixed.",
+		"Some hoses lead to dead ends."
 	],
 	"completion_text": [
 		"MEMORY FLOW RESTORED.",
-		"CARBONATION LEVEL: UNRELATED.",
 		"IDENTITY SIGNAL ROUTED."
 	]
 }

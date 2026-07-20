@@ -42,6 +42,7 @@ theme_override_fonts/font = ExtResource("fpx_title")
 theme_override_font_sizes/font_size = 16
 text = "MAINTENANCE SYNC"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="InstructionLabel" type="Label" parent="Panel/VBox"]
 custom_minimum_size = Vector2(0, 76)
@@ -49,24 +50,28 @@ text = "Two signals must be active together.
 One signal remembers.
 One signal returns."
 horizontal_alignment = 1
+vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="PhaseLabel" type="Label" parent="Panel/VBox"]
 custom_minimum_size = Vector2(0, 24)
 text = "Phase 1 / 3 - Basic Sync"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="WarningLabel" type="Label" parent="Panel/VBox"]
 custom_minimum_size = Vector2(0, 30)
 theme_override_font_sizes/font_size = 16
 text = ""
 horizontal_alignment = 1
+vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="DoorLabel" type="Label" parent="Panel/VBox"]
 custom_minimum_size = Vector2(0, 36)
 text = "Staff Door: Locked"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="SignalBar" type="ColorRect" parent="Panel/VBox"]
 custom_minimum_size = Vector2(0, 16)
@@ -76,6 +81,7 @@ color = Color(0.18, 0.22, 0.34, 0.8)
 custom_minimum_size = Vector2(0, 76)
 text = "Activate both switches to open the door."
 horizontal_alignment = 1
+vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="SwitchesHBox" type="HBoxContainer" parent="Panel/VBox"]

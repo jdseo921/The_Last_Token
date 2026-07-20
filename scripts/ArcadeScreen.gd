@@ -8,21 +8,22 @@ class_name ArcadeScreen
 
 const CRT_OVERLAY_PATH := "res://assets/art/ui/crt/crt_overlay.svg"
 
-static func apply(host: Control, background_path: String = "") -> void:
+static func apply(host: Control, background_path: String = "", include_scanlines := true) -> void:
 	if host == null or not is_instance_valid(host):
 		return
 	if not background_path.is_empty():
 		_apply_background(host, background_path)
-	if host.has_node("ArcadeScanlines"):
+	if host.has_node("ArcadeScanlines") or host.has_node("ArcadeCRTOverlay"):
 		return
-	var scan := TextureRect.new()
-	scan.name = "ArcadeScanlines"
-	scan.texture = _make_scanline_texture()
-	scan.stretch_mode = TextureRect.STRETCH_TILE
-	scan.set_anchors_preset(Control.PRESET_FULL_RECT)
-	scan.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	scan.z_index = 90
-	host.add_child(scan)
+	if include_scanlines:
+		var scan := TextureRect.new()
+		scan.name = "ArcadeScanlines"
+		scan.texture = _make_scanline_texture()
+		scan.stretch_mode = TextureRect.STRETCH_TILE
+		scan.set_anchors_preset(Control.PRESET_FULL_RECT)
+		scan.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		scan.z_index = 90
+		host.add_child(scan)
 	var tex := _load_texture(CRT_OVERLAY_PATH)
 	if tex != null:
 		var overlay := TextureRect.new()
@@ -69,9 +70,21 @@ static func _make_scanline_texture() -> ImageTexture:
 	return ImageTexture.create_from_image(img)
 
 static func _load_texture(path: String) -> Texture2D:
-	if path.is_empty() or not ResourceLoader.exists(path):
+	if path.is_empty():
 		return null
-	var resource := load(path)
-	if resource is Texture2D:
-		return resource
-	return null
+	if ResourceLoader.exists(path):
+		var resource := load(path)
+		if resource is Texture2D:
+			return resource
+	return _load_raw_png_texture(path)
+
+static func _load_raw_png_texture(path: String) -> Texture2D:
+	if not path.ends_with(".png"):
+		return null
+	var image := Image.new()
+	var error := image.load(path)
+	if error != OK and path.begins_with("res://"):
+		error = image.load(ProjectSettings.globalize_path(path))
+	if error != OK:
+		return null
+	return ImageTexture.create_from_image(image)

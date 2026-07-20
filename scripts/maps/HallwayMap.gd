@@ -2,8 +2,20 @@ extends Node2D
 
 const ROUTE_CUE_SCRIPT := preload("res://scripts/RouteCue.gd")
 const AMBIENT_EFFECTS := preload("res://scripts/AmbientSpriteEffects.gd")
+const QUEST_NOTICE_SCENE := preload("res://scenes/ui/QuestNotice.tscn")
 const HALLWAY_BG_DIR := "res://assets/art/maps/hallways/"
 const HALLWAY_PLACEHOLDERS := ["Background", "FloorBand", "StaticStripe"]
+const DEFAULT_EXIT_ANCHORS := [Vector2(58, 233), Vector2(581, 233)]
+const HALLWAY_EXIT_ANCHORS := {
+	"cabinet_hallway": [Vector2(58, 233), Vector2(581, 233)],
+	"prize_hallway": [Vector2(73, 227), Vector2(566, 227)],
+	"maintenance_hallway": [Vector2(59, 233), Vector2(579, 233)],
+	"back_hallway": [Vector2(62, 231), Vector2(576, 231)],
+	"cabinet_snack_hallway": [Vector2(61, 298), Vector2(578, 298)],
+	"snack_prize_hallway": [Vector2(59, 233), Vector2(579, 232)],
+	"maintenance_staff_hallway": [Vector2(77, 233), Vector2(562, 233)],
+}
+const SPAWN_CLEARANCE := 56.0
 
 @export var hallway_id := ""
 @export var title_text := "HALLWAY"
@@ -24,17 +36,49 @@ func _ready() -> void:
 	# Hallways are transitional: keep whatever track is already playing.
 	if AudioManager.get_current_music_id().is_empty():
 		AudioManager.play_music_for_context(_get_music_context())
+	_ensure_objective_hud()
+	_align_side_exits()
 	_apply_background_art()
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
 	title_label.text = title_text
-	hint_label.text = hint_text
-	hint_label.visible = not hint_text.is_empty()
+	# RouteCue carries actionable guidance; keep the decorative subtitle clear so
+	# the map title remains the only text in the upper-left header.
+	hint_label.text = ""
+	hint_label.visible = false
 	_setup_ambient_sprite_effects()
 	_setup_route_cue()
 	_apply_spawn_position()
 	_on_prompt_changed("")
 	call_deferred("_maybe_show_hallway_message")
+
+
+func _ensure_objective_hud() -> void:
+	# Every hallway is a full map and must retain the same top-right objective
+	# HUD as the destination rooms. One legacy hallway had an authored copy;
+	# this shared setup supplies it everywhere else without duplicate layers.
+	if get_node_or_null("QuestNotice") != null:
+		return
+	var quest_notice := QUEST_NOTICE_SCENE.instantiate()
+	quest_notice.name = "QuestNotice"
+	add_child(quest_notice)
+
+func _align_side_exits() -> void:
+	# The generated hallway frames use several different silhouettes. These
+	# anchors are measured from each background's actual neon wall recess.
+	var anchors: Array = HALLWAY_EXIT_ANCHORS.get(hallway_id, DEFAULT_EXIT_ANCHORS)
+	for child in get_children():
+		var is_transition := child is Area2D and child.get("target_scene_path") != null
+		if not child is Marker2D and not is_transition:
+			continue
+		var side_node := child as Node2D
+		var is_left: bool = side_node.position.x < 320.0
+		var exit_anchor: Vector2 = anchors[0 if is_left else 1]
+		if child is Marker2D:
+			var inward_offset: float = SPAWN_CLEARANCE if is_left else -SPAWN_CLEARANCE
+			side_node.position = exit_anchor + Vector2(inward_offset, 0.0)
+		else:
+			side_node.position = exit_anchor
 
 func can_open_pause_menu() -> bool:
 	return not _dialogue_is_active()
@@ -247,36 +291,34 @@ func _get_hallway_message_phase() -> String:
 func _get_hallway_message_lines() -> Array:
 	if hallway_id.is_empty() or GameState.twist_reveal_seen or GameState.post_reveal_roam_unlocked:
 		return []
+	if not _hallway_message_story_gate_is_open():
+		return []
 	match hallway_id:
 		"cabinet_hallway":
-			if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
-				return [
-					{"speaker": "???", "text": "The cabinets wake for tokens, not mercy.", "effect": "glitch"},
-					{"speaker": "???", "text": "A prize can open a door. It cannot clear the score."},
-				]
+			return [
+				{"speaker": "???", "text": "The cabinets know your hands. You do not know theirs.", "effect": "glitch"},
+				{"speaker": "???", "text": "A prize can return a clue. It cannot tell you what your whole life means."},
+			]
 		"snack_hallway":
-			if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
-				return [
-					{"speaker": "???", "text": "Every route in this arcade has a return path.", "effect": "glitch"},
-					{"speaker": "???", "text": "Watch which lights follow you back."},
-				]
+			return [
+				{"speaker": "???", "text": "Every route in this arcade has a return path.", "effect": "glitch"},
+				{"speaker": "???", "text": "Watch which lights follow you back."},
+			]
 		"prize_hallway":
-			if GameState.lost_token_quest_completed and not GameState.memory_echo_completed:
-				return [
-					{"speaker": "???", "text": "Prizes remember hands better than names."},
-					{"speaker": "???", "text": "Something on the shelf is choosing which hand to trust.", "effect": "glitch"},
-				]
+			return [
+				{"speaker": "???", "text": "Prizes remember hands better than names."},
+				{"speaker": "???", "text": "Something on the shelf remembers those hands wanting and working.", "effect": "glitch"},
+			]
 		"maintenance_hallway":
 			if GameState.lost_shift_file_completed and not GameState.static_service_run_completed:
 				return [
 					{"speaker": "???", "text": "The file opened a service route.", "effect": "glitch"},
 					{"speaker": "???", "text": "Service routes are where arcades hide their bad wiring."},
 				]
-			if GameState.circuit_soda_completed and not GameState.lost_shift_file_completed:
-				return [
-					{"speaker": "???", "text": "Maintenance is a tidy word for old damage.", "effect": "glitch"},
-					{"speaker": "???", "text": "Ask Gus why the door counted one extra signal."},
-				]
+			return [
+				{"speaker": "???", "text": "Maintenance is a tidy word for old damage.", "effect": "glitch"},
+				{"speaker": "???", "text": "Ask Gus why one access code answered with two priorities."},
+			]
 		"back_hallway":
 			if GameState.final_night_walk_completed and not GameState.memory_echo_completed:
 				return [
@@ -284,27 +326,51 @@ func _get_hallway_message_lines() -> Array:
 					{"speaker": "???", "text": "Clean playback does not mean a clean ending.", "effect": "glitch"},
 					{"speaker": "???", "text": "The one walking behind you is carrying what you set down.", "effect": "shake"},
 				]
-			if GameState.staff_corridor_unlocked and not GameState.memory_echo_completed:
-				return [
-					{"speaker": "???", "text": "Back halls count footsteps after the tokens stop falling."},
-					{"speaker": "???", "text": "One set keeps landing half a beat behind yours.", "effect": "shake"},
-				]
+			return [
+				{"speaker": "???", "text": "Back halls count footsteps after the tokens stop falling."},
+				{"speaker": "???", "text": "One set keeps landing half a beat behind yours.", "effect": "shake"},
+			]
 		"cabinet_snack_hallway":
-			if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
-				return [
-					{"speaker": "???", "text": "Truth leaves a metallic taste.", "effect": "glitch"},
-					{"speaker": "???", "text": "Fizz can cover it. It cannot fix it."},
-				]
+			return [
+				{"speaker": "???", "text": "Truth leaves a metallic taste.", "effect": "glitch"},
+				{"speaker": "???", "text": "Fizz can cover it. It cannot fix it."},
+			]
 		"snack_prize_hallway":
-			if GameState.circuit_soda_completed and not GameState.memory_echo_completed:
-				return [
-					{"speaker": "???", "text": "The prize shelf still knows what you wanted."},
-					{"speaker": "???", "text": "Wanting is not always a safe memory.", "effect": "glitch"},
-				]
+			return [
+				{"speaker": "???", "text": "The prize shelf still knows what you wanted."},
+				{"speaker": "???", "text": "Wanting is not always a safe memory.", "effect": "glitch"},
+				{"speaker": "Player", "text": "Is it trying to keep me away from something?"},
+				{"speaker": "Player", "text": "I cannot tell if that is malice... or genuine concern."},
+			]
 		"maintenance_staff_hallway":
-			if GameState.maintenance_sync_completed and not GameState.memory_echo_completed:
-				return [
-					{"speaker": "???", "text": "The door heard both knocks."},
-					{"speaker": "???", "text": "The second knock is still waiting for your hand.", "effect": "glitch"},
-				]
+			return [
+				{"speaker": "???", "text": "The door heard one hand knock with two intentions."},
+				{"speaker": "???", "text": "One asked to enter. One asked to be done.", "effect": "glitch"},
+			]
 	return []
+
+func _hallway_message_story_gate_is_open() -> bool:
+	match hallway_id:
+		"cabinet_hallway":
+			return GameState.lost_token_quest_completed and not GameState.broken_high_score_completed
+		"snack_hallway", "cabinet_snack_hallway":
+			return GameState.lying_cabinets_completed \
+				and GameState.mr_byte_truth_filter_debriefed \
+				and GameState.gus_hub_checkin_truth_filter_done \
+				and not GameState.circuit_soda_completed
+		"prize_hallway", "snack_prize_hallway":
+			return GameState.circuit_soda_completed \
+				and GameState.vendo_unknown_clue_seen \
+				and not GameState.prize_sort_completed
+		"maintenance_hallway":
+			return GameState.circuit_soda_completed \
+				and GameState.prize_sort_completed \
+				and GameState.gus_hub_checkin_prize_sort_done \
+				and not GameState.static_service_run_completed
+		"back_hallway":
+			var final_walk_window := GameState.final_night_walk_completed and not GameState.memory_echo_completed
+			var security_tape_window := GameState.maintenance_sync_completed and not GameState.security_tape_assembly_completed
+			return final_walk_window or security_tape_window
+		"maintenance_staff_hallway":
+			return GameState.maintenance_sync_completed and not GameState.security_tape_assembly_completed
+	return false

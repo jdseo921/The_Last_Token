@@ -1,14 +1,15 @@
 extends Node
 
+const DEBUG := preload("res://scripts/Debug.gd")
+
 const ARCADE_HUB_SCENE := "res://scenes/arcade/ArcadeHub.tscn"
 const ROCKBYTE_DUEL_SCENE := "res://scenes/minigames/RockbyteDuel.tscn"
 const TRUTH_FILTER_SCENE := "res://scenes/minigames/TruthFilter.tscn"
 const CIRCUIT_SODA_SCENE := "res://scenes/minigames/CircuitSoda.tscn"
 const STATIC_SERVICE_RUN_SCENE := "res://scenes/minigames/StaticServiceRun.tscn"
-const HUB_TICKET_SWEEP_SCENE := "res://scenes/minigames/HubTicketSweep.tscn"
-const CABINET_TRACE_RUN_SCENE := "res://scenes/minigames/CabinetTraceRun.tscn"
 const SNACK_SERVICE_DASH_SCENE := "res://scenes/minigames/SnackServiceDash.tscn"
 const PRIZE_SHELF_RUN_SCENE := "res://scenes/minigames/PrizeShelfRun.tscn"
+const NIGHT_LEDGER_RUN_SCENE := "res://scenes/minigames/NightLedgerRun.tscn"
 const SECURITY_TAPE_ASSEMBLY_SCENE := "res://scenes/minigames/SecurityTapeAssembly.tscn"
 const FINAL_NIGHT_WALK_SCENE := "res://scenes/minigames/FinalNightWalk.tscn"
 const BROKEN_HIGH_SCORE_SCENE := "res://scenes/minigames/BrokenHighScore.tscn"
@@ -18,6 +19,7 @@ const MEMORY_ECHO_SCENE := "res://scenes/cutscenes/MemoryEcho.tscn"
 const TITLE_OR_MAIN_SCENE := "res://scenes/main/Main.tscn"
 const CABINET_ROW_SCENE := "res://scenes/maps/CabinetRow.tscn"
 const SNACK_ALCOVE_SCENE := "res://scenes/maps/SnackAlcove.tscn"
+const SNACK_HALLWAY_SCENE := "res://scenes/maps/hallways/SnackHallway.tscn"
 const PRIZE_CORNER_SCENE := "res://scenes/maps/PrizeCorner.tscn"
 const MAINTENANCE_HALL_SCENE := "res://scenes/maps/MaintenanceHall.tscn"
 const STAFF_CORRIDOR_SCENE := "res://scenes/maps/StaffCorridor.tscn"
@@ -31,17 +33,23 @@ var _transitioning := false
 
 func change_scene(scene_path: String) -> void:
 	if scene_path.is_empty():
+		DEBUG.failure(self, "scene", "transition_rejected", {"reason": "empty_path"})
 		push_error("SceneChanger: empty scene path")
 		return
 	if not ResourceLoader.exists(scene_path):
+		DEBUG.failure(self, "scene", "transition_rejected", {"reason": "missing_resource", "target": scene_path})
 		push_error("SceneChanger: scene path does not exist: %s" % scene_path)
 		return
 	var tree := get_tree()
 	if tree == null:
+		DEBUG.failure(self, "scene", "transition_rejected", {"reason": "missing_tree", "target": scene_path})
 		push_error("SceneChanger: SceneTree unavailable")
 		return
 	if _transitioning:
+		DEBUG.warning(self, "scene", "transition_ignored", {"reason": "already_transitioning", "target": scene_path})
 		return
+	var source_path := tree.current_scene.scene_file_path if tree.current_scene != null else "<none>"
+	DEBUG.info(self, "scene", "transition_started", {"from": source_path, "to": scene_path})
 	_transitioning = true
 	_ensure_fade_overlay()
 	_fade_rect.visible = true
@@ -60,9 +68,23 @@ func change_scene(scene_path: String) -> void:
 	await fade_in.finished
 	_fade_rect.visible = false
 	_transitioning = false
+	DEBUG.info(self, "scene", "transition_completed", {"from": source_path, "to": scene_path})
 
 func is_transitioning() -> bool:
 	return _transitioning
+
+func play_brief_fade() -> void:
+	if _transitioning:
+		return
+	_ensure_fade_overlay()
+	_fade_rect.visible = true
+	_fade_rect.color.a = 0.0
+	var tween := create_tween()
+	tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tween.tween_property(_fade_rect, "color:a", 0.88, 0.18)
+	tween.tween_property(_fade_rect, "color:a", 0.0, 0.26)
+	await tween.finished
+	_fade_rect.visible = false
 
 func _ensure_fade_overlay() -> void:
 	if _fade_layer != null and is_instance_valid(_fade_layer):
@@ -84,14 +106,25 @@ func _capture_return_point() -> void:
 	# to the room the player is standing in right now.
 	var tree := get_tree()
 	if tree == null or tree.current_scene == null:
+		DEBUG.warning(self, "scene", "return_point_not_captured", {"reason": "missing_current_scene"})
 		return
 	var scene := tree.current_scene
 	if scene.scene_file_path.is_empty():
+		DEBUG.warning(self, "scene", "return_point_not_captured", {"reason": "scene_has_no_path"})
 		return
 	var player := _find_player(scene)
 	if player == null:
+		DEBUG.warning(self, "scene", "return_point_not_captured", {"reason": "player_not_found", "scene": scene.scene_file_path})
 		return
-	GameState.set_return_point(scene.scene_file_path, player.global_position)
+	var state := _game_state()
+	if state == null:
+		DEBUG.failure(self, "scene", "return_point_not_captured", {"reason": "missing_game_state"})
+		return
+	state.call("set_return_point", scene.scene_file_path, player.global_position)
+	DEBUG.info(self, "scene", "return_point_captured", {
+		"scene": scene.scene_file_path,
+		"position": player.global_position,
+	})
 
 func _find_player(node: Node) -> Node2D:
 	if node is CharacterBody2D and node.has_method("set_control_enabled"):
@@ -104,10 +137,20 @@ func _find_player(node: Node) -> Node2D:
 
 func go_to_return_point() -> bool:
 	# Used by "quit minigame": go back to the room we came from, not the hub.
-	if not GameState.has_return_point():
+	var state := _game_state()
+	if state == null or not bool(state.call("has_return_point")):
+		DEBUG.warning(self, "scene", "return_point_unavailable")
 		return false
-	change_scene(GameState.get_return_scene_path())
+	var return_scene := str(state.call("get_return_scene_path"))
+	DEBUG.info(self, "scene", "returning_from_minigame", {
+		"scene": return_scene,
+		"position": state.get("arcade_return_position"),
+	})
+	change_scene(return_scene)
 	return true
+
+func _game_state() -> Node:
+	return get_node_or_null("/root/GameState")
 
 func go_to_arcade_hub() -> void:
 	change_scene(ARCADE_HUB_SCENE)
@@ -128,13 +171,6 @@ func go_to_static_service_run() -> void:
 	_capture_return_point()
 	change_scene(STATIC_SERVICE_RUN_SCENE)
 
-func go_to_hub_ticket_sweep() -> void:
-	change_scene(HUB_TICKET_SWEEP_SCENE)
-
-func go_to_cabinet_trace_run() -> void:
-	_capture_return_point()
-	change_scene(CABINET_TRACE_RUN_SCENE)
-
 func go_to_snack_service_dash() -> void:
 	_capture_return_point()
 	change_scene(SNACK_SERVICE_DASH_SCENE)
@@ -142,6 +178,10 @@ func go_to_snack_service_dash() -> void:
 func go_to_prize_shelf_run() -> void:
 	_capture_return_point()
 	change_scene(PRIZE_SHELF_RUN_SCENE)
+
+func go_to_night_ledger() -> void:
+	_capture_return_point()
+	change_scene(NIGHT_LEDGER_RUN_SCENE)
 
 func go_to_security_tape_assembly() -> void:
 	_capture_return_point()
@@ -178,6 +218,9 @@ func go_to_cabinet_row() -> void:
 
 func go_to_snack_alcove() -> void:
 	change_scene(SNACK_ALCOVE_SCENE)
+
+func go_to_snack_hallway() -> void:
+	change_scene(SNACK_HALLWAY_SCENE)
 
 func go_to_prize_corner() -> void:
 	change_scene(PRIZE_CORNER_SCENE)

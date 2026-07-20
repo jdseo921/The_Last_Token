@@ -4,7 +4,6 @@ const ROUTE_CUE_SCRIPT := preload("res://scripts/RouteCue.gd")
 const AMBIENT_EFFECTS := preload("res://scripts/AmbientSpriteEffects.gd")
 const BACKGROUND_ART_PATH := "res://assets/art/maps/cabinet_row/cabinet_row_background_640x440.png"
 const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
-const QUEST_REGISTRY := preload("res://scripts/QuestRegistry.gd")
 
 @onready var player: CharacterBody2D = $Player
 @onready var background_art: Sprite2D = $BackgroundArt
@@ -150,16 +149,12 @@ func handle_hub_interaction(interactable: Node, _player_node: Node = null) -> vo
 			_handle_mr_byte()
 		"truth_filter":
 			_handle_truth_filter()
-		"cabinet_trace_adventure":
-			_handle_cabinet_trace_adventure()
 		"roxy":
 			_handle_roxy()
 		"broken_high_score":
 			_handle_broken_high_score()
-		"staff_schedule":
-			_handle_staff_schedule()
-		"staff_record_01":
-			_handle_staff_record_01()
+		"truth_filter_logs":
+			_handle_truth_filter_logs()
 		_:
 			start_dialogue([{"speaker": "System", "text": "Nothing happens."}])
 
@@ -204,28 +199,25 @@ func _handle_mr_byte() -> void:
 		GameState.mr_byte_truth_filter_debriefed = true
 		var debrief_lines := _get_mr_byte_lines("truth_filter_completion_anecdote", [
 			{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
-			{"speaker": "Mr. Byte", "text": "Record conflict reduced. Identity conflict remains."},
+			{"speaker": "Mr. Byte", "text": "The records identify operator STAFF 04. The owner name is missing."},
 		])
 		debrief_lines.append_array(_get_mr_byte_lines("truth_filter_voice_debrief", [
-			{"speaker": "Mr. Byte", "text": "Unrelated administrative matter."},
-			{"speaker": "Mr. Byte", "text": "Earlier tonight the hallway audio channel carried a broadcast. Source field: empty."},
-			{"speaker": "Mr. Byte", "text": "I have filed it under ambient noise."},
+			{"speaker": "Mr. Byte", "text": "The hallway broadcast had no registered speaker."},
+			{"speaker": "Mr. Byte", "text": "Ask Gus whether he heard it."},
 		]))
 		start_dialogue(debrief_lines, Callable(self, "_after_byte_debrief"))
 		return
-	if GameState.circuit_soda_completed and not GameState.lost_shift_file_completed and not GameState.story_puzzle_completed:
-		GameState.start_lost_shift_file()
-		start_dialogue(_get_mr_byte_sequential_lines("lost_shift_file_support", [
-			{"speaker": "Mr. Byte", "text": "Staff schedule access: damaged but readable."},
-			{"speaker": "Mr. Byte", "text": "Machines refuse the name. Records retain the assignment."},
-			{"speaker": "Mr. Byte", "text": "Read the schedule near this kiosk."},
+	if GameState.lost_shift_file_started and not GameState.lost_shift_file_completed and not GameState.story_puzzle_completed:
+		start_dialogue(_get_mr_byte_sequential_lines("closing_shift_echoes_support", [
+			{"speaker": "Mr. Byte", "text": "Closing-shift evidence route detected."},
+			{"speaker": "Mr. Byte", "text": "Gus is sorting the files. Begin with Mira; recovered connections may supply the rest."},
+			{"speaker": "Mr. Byte", "text": "The Logs beside this kiosk remain available for Truth Filter reference."},
 		]))
 		return
 	if GameState.lost_shift_file_completed and not GameState.maintenance_sync_completed and not GameState.story_puzzle_completed:
-		GameState.mr_byte_lost_shift_comment_seen = true
-		start_dialogue(_get_mr_byte_lines("lost_shift_file_support", [
-			{"speaker": "Mr. Byte", "text": "Lost Shift File reconstructed."},
-			{"speaker": "Mr. Byte", "text": "Identity reference remains restricted."},
+		start_dialogue(_get_mr_byte_lines("closing_shift_echoes_complete_support", [
+			{"speaker": "Mr. Byte", "text": "Closing-shift sequence reconstructed."},
+			{"speaker": "Mr. Byte", "text": "Service-line continuation authorized."},
 		]))
 		return
 	if GameState.maintenance_sync_completed and not GameState.security_tape_assembly_completed and not GameState.story_puzzle_completed:
@@ -271,16 +263,6 @@ func _handle_truth_filter() -> void:
 		{"speaker": "Truth Filter", "text": "SORT FALSE RECORDS."},
 	]), Callable(SceneChanger, "go_to_truth_filter"))
 
-func _handle_cabinet_trace_adventure() -> void:
-	start_dialogue([
-		{"speaker": "Idle Cabinet", "text": "This cabinet is dark. Its trace board was pulled for parts long ago."},
-		{"speaker": "Idle Cabinet", "text": "One good machine on this row still runs. That was always the way here."},
-	])
-
-func _go_to_cabinet_trace_run() -> void:
-	GameState.set_pending_spawn_id("Spawn_FromCabinetAdventure")
-	SceneChanger.go_to_cabinet_trace_run()
-
 func _handle_roxy() -> void:
 	var was_roxy_met := GameState.roxy_met
 	GameState.roxy_met = true
@@ -290,13 +272,13 @@ func _handle_roxy() -> void:
 		start_dialogue(_get_roxy_lines("post_reveal", [
 			{"speaker": "Roxy", "text": "So you were Employee 04."},
 			{"speaker": "Roxy", "text": "That explains the blank high score."},
-			{"speaker": "Roxy", "text": "Hard to rank a memory."},
+			{"speaker": "Roxy", "text": "Hard to rank a whole person."},
 		]), _get_witness_completion_callback(was_completed))
 		return
 	if not _broken_high_score_unlocked():
 		start_dialogue(_get_roxy_lines("first_meeting_locked", [
-			{"speaker": "Roxy", "text": "Whoa. New challenger detected."},
-			{"speaker": "Roxy", "text": "Actually, no. New challenger pending."},
+			{"speaker": "Roxy", "text": "Whoa. You look exactly like the person in half the staff photos."},
+			{"speaker": "Roxy", "text": "Except you are looking at this room like you have never seen it."},
 			{"speaker": "Roxy", "text": "Come back when the score cabinet wakes up."},
 		]))
 		return
@@ -347,6 +329,25 @@ func _handle_broken_high_score() -> void:
 		]), Callable(self, "_offer_high_score_replay"))
 		return
 	if GameState.broken_high_score_completed:
+		if GameState.lost_shift_file_started and not GameState.lost_shift_file_completed:
+			if not GameState.closing_shift_mira_clue_found:
+				start_dialogue([
+					{"speaker": "Player", "text": "The restored digits feel familiar, but I need to ask Mira about the closing shift first."},
+				])
+				return
+			if not GameState.closing_shift_score_clue_found:
+				GameState.find_closing_shift_score_clue()
+				start_dialogue(_get_environment_lines("broken_score_closing_shift_clue", [
+					{"speaker": "Broken Score", "text": "RESTORED ENTRY: 00:17 / FINAL INPUT"},
+					{"speaker": "Player", "text": "That is not a score. It is a time."},
+					{"speaker": "Player", "text": "And I somehow know the next check was Service Dash in Snack Alcove."},
+				]))
+				return
+			if not GameState.closing_shift_service_clue_found:
+				start_dialogue([
+					{"speaker": "Player", "text": "00:17. The next check was Service Dash in Snack Alcove."},
+				])
+				return
 		start_dialogue([
 			{"speaker": "Broken High Score", "text": "PREVIOUS SCORE FOUND."},
 			{"speaker": "Broken High Score", "text": "RECORD RESTORED."},
@@ -354,60 +355,37 @@ func _handle_broken_high_score() -> void:
 		return
 	if not GameState.roxy_met:
 		start_dialogue([
-			{"speaker": "Player", "text": "That score cabinet is Roxy's turf."},
-			{"speaker": "Player", "text": "If I touch it before we talk, I will never hear the end of it."},
+			{"speaker": "Player", "text": "The woman beside that score cabinet keeps watching it."},
+			{"speaker": "Player", "text": "I should ask her before touching anything."},
 		])
 		return
 	GameState.set_pending_spawn_id("Spawn_FromBrokenHighScore")
 	SceneChanger.go_to_broken_high_score()
 
-func _handle_staff_schedule() -> void:
-	if not GameState.circuit_soda_completed:
-		start_dialogue(_get_environment_lines("staff_schedule_grounded", [
-			{"speaker": "Staff Schedule", "text": "The schedule screen is scrambled."},
-			{"speaker": "Staff Schedule", "text": "Mr. Byte has not unlocked staff records yet."},
-		]))
-		return
-	var was_completed := GameState.lost_shift_file_completed
-	GameState.read_staff_schedule()
-	var lines := _get_environment_state_lines("staff_schedule", [
-		{"speaker": "Staff Schedule", "text": "STAFF SCHEDULE"},
-		{"speaker": "Staff Schedule", "text": "Final Night"},
-		{"speaker": "Staff Schedule", "text": "Mira - Counter"},
-		{"speaker": "Staff Schedule", "text": "Gus - Maintenance"},
-		{"speaker": "Staff Schedule", "text": "Employee ## - Cabinet shutdown"},
-		{"speaker": "Staff Schedule", "text": "Status: unresolved"},
-	])
-	lines.append_array(_get_lost_shift_completion_lines())
-	var after_dialogue := Callable(self, "_after_lost_shift_file_completed") if not was_completed and GameState.lost_shift_file_completed else Callable()
-	start_dialogue(lines, after_dialogue)
-
-func _handle_staff_record_01() -> void:
+func _handle_truth_filter_logs() -> void:
 	if not GameState.broken_high_score_completed:
 		start_dialogue(_get_environment_lines("staff_records_locked", [
-			{"speaker": "Staff Record", "text": "The record terminal is still filtering contradictions."},
+			{"speaker": "Player", "text": "The stacked logs are too scrambled to follow. Restoring Broken Score may give them an order."},
 		]))
 		return
 	if not GameState.lying_cabinets_completed:
-		# Pre-Truth-Filter: the recovered shift log doubles as the filter's answer
-		# key (Roxy points players here).
+		# The retired Record 01 clue now lives in a visible stack of Logs. It is
+		# deliberately a readable hint rather than another quest collectible.
 		GameState.read_staff_record_01()
 		start_dialogue(_get_environment_lines("staff_record_01_shift_log", [
-			{"speaker": "Staff Record", "text": "SHIFT LOG - FINAL NIGHT (RECOVERED EXCERPT)"},
-			{"speaker": "Staff Record", "text": "23:41 - Mira signed the register and left. Last name on the page."},
-			{"speaker": "Staff Record", "text": "23:50 - Gus clocked out. Mop returned wet."},
-			{"speaker": "Staff Record", "text": "00:05 - One staff member stayed to run the closing checklist alone."},
-			{"speaker": "Staff Record", "text": "00:19 - Cabinet 07 kept one token in the return tray. Flagged: do not empty."},
-			{"speaker": "Staff Record", "text": "00:33 - Backup started. Backup did not finish."},
-			{"speaker": "Staff Record", "text": "Entry ends. No sign-out recorded for the last shift."},
+			{"speaker": "Logs", "text": "FINAL SHIFT EXCERPT"},
+			{"speaker": "Logs", "text": "23:41 - Mira signed out last on the register."},
+			{"speaker": "Logs", "text": "23:50 - Gus clocked out after mopping."},
+			{"speaker": "Logs", "text": "00:05 - One worker remained. No sign-out followed."},
+			{"speaker": "Player", "text": "Three clean facts. The Truth Filter probably wants the record that fits all of them."},
 		]))
 		return
 	var was_completed := GameState.staff_records_chain_completed
 	GameState.read_staff_record_01()
 	var lines := _get_environment_state_lines("staff_records", [
-		{"speaker": "Staff Record", "text": "RESTORE SYSTEM NOTE"},
-		{"speaker": "Staff Record", "text": "Subject memory incomplete."},
-		{"speaker": "Staff Record", "text": "Do not repeat name until signal stabilizes."},
+		{"speaker": "Logs", "text": "RESTORE SYSTEM NOTE"},
+		{"speaker": "Logs", "text": "Subject memory incomplete."},
+		{"speaker": "Logs", "text": "Do not repeat name until signal stabilizes."},
 	])
 	lines.append_array(_get_mr_byte_lines("staff_records_chain", [
 		{"speaker": "Mr. Byte", "text": "Staff record chain active."},
@@ -417,40 +395,6 @@ func _handle_staff_record_01() -> void:
 	lines.append_array(_get_staff_records_completion_lines())
 	var after_dialogue := Callable(self, "_show_staff_records_complete_notice") if not was_completed and GameState.staff_records_chain_completed else Callable()
 	start_dialogue(lines, after_dialogue)
-
-func _get_lost_shift_completion_lines() -> Array:
-	if not GameState.lost_shift_file_completed:
-		return []
-	return [
-		{"speaker": "Quest", "text": "LOST SHIFT FILE COMPLETE"},
-		{"speaker": "Quest", "text": "A redacted staff number was assigned to Cabinet shutdown."},
-	]
-
-func _show_lost_shift_complete_notice() -> void:
-	if quest_notice and quest_notice.has_method("show_custom_notification"):
-		quest_notice.call(
-			"show_custom_notification",
-			"QUEST COMPLETE",
-			"LOST SHIFT FILE COMPLETE",
-			"A redacted staff number was assigned to Cabinet shutdown."
-		)
-
-func _after_lost_shift_file_completed() -> void:
-	_show_lost_shift_complete_notice()
-	call_deferred("_maybe_play_midpoint_turn")
-
-func _maybe_play_midpoint_turn() -> void:
-	if not GameState.lost_shift_file_completed or GameState.midpoint_turn_seen:
-		return
-	GameState.midpoint_turn_seen = true
-	start_dialogue([
-		{"speaker": "Player", "text": "Three records. One shift folded shut and never filed."},
-		{"speaker": "Player", "text": "I keep telling myself I am looking for the way out of here."},
-		{"speaker": "Player", "text": "But the front door was never the locked one."},
-		{"speaker": "Player", "text": "Whatever stayed behind on the last night is waiting past the Staff Door."},
-		{"speaker": "Player", "text": "I am done trying to leave. I want to look at it."},
-		{"speaker": "Player", "text": "Mira is still at her counter. She deserves to hear what I found... or I can carry it alone and keep working."},
-	])
 
 func _get_staff_records_completion_lines() -> Array:
 	if not GameState.staff_records_chain_completed:
@@ -524,16 +468,6 @@ func _setup_ambient_sprite_effects() -> void:
 			"sprite_alpha": 0.78,
 		},
 		{
-			"name": "CabinetTraceSpark",
-			"position": Vector2(420, 132),
-			"scale": Vector2(1.5, 1.5),
-			"effect_type": "random_screen_flash",
-			"speed": 0.76,
-			"intensity": 0.08,
-			"sprite_sheet_path": AMBIENT_EFFECTS.STATIC_SPARK,
-			"sprite_alpha": 0.76,
-		},
-		{
 			"name": "BrokenScoreStatic",
 			"position": Vector2(500, 126),
 			"scale": Vector2(1.45, 1.45),
@@ -597,10 +531,7 @@ func _after_byte_debrief() -> void:
 
 func _play_byte_debrief_monologue() -> void:
 	start_dialogue([
-		{"speaker": "Player", "text": "Ambient noise."},
-		{"speaker": "Player", "text": "That was not noise. It was talking to me. It knew what I was going to do."},
-		{"speaker": "Player", "text": "A sound with no speaker, and the machine that files everything cannot file it."},
-		{"speaker": "Player", "text": "That man out on the arcade floor carries a mop around like it owes him money."},
-		{"speaker": "Player", "text": "A janitor, maybe. If anything has been speaking in these halls, he might have heard it."},
-		{"speaker": "Player", "text": "Worth asking. I have nothing better to go on."},
+		{"speaker": "Player", "text": "That was not ambient noise. It spoke to me and knew my next move."},
+		{"speaker": "Player", "text": "Mr. Byte could not trace it. The man in the hub looks like he has spent too many nights keeping this place alive."},
+		{"speaker": "Player", "text": "He might know what that voice was. It is worth asking."},
 	])

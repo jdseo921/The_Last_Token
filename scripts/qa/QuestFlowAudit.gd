@@ -52,12 +52,19 @@ func _run() -> void:
 	_beat("mr byte debrief", func(): gs.mr_byte_truth_filter_debriefed = true)
 	_beat("gus check-in: post-filter", func(): gs.gus_hub_checkin_truth_filter_done = true)
 	_beat("circuit soda", func(): gs.complete_circuit_soda())
-	_beat("prize sort", func(): gs.complete_pip_secret())
-	_beat("gus check-in: post-prizes", func(): gs.gus_hub_checkin_prize_sort_done = true)
-	_beat("lost shift file", func():
-		gs.read_closing_checklist()
-		gs.read_maintenance_note()
-		gs.read_staff_schedule())
+	_beat("Vendo debrief and unknown voice", func():
+		gs.vendo_circuit_anecdote_seen = true
+		gs.mark_conscience_encounter_seen("after_circuit_soda"))
+	_beat("Vendo unknown-voice clue", func(): gs.vendo_unknown_clue_seen = true)
+	_beat("Prize Echo Ascent", func(): gs.complete_pip_secret())
+	_beat("Pip examines Echo Token", func(): gs.pip_prize_anecdote_seen = true)
+	_beat("Gus starts closing-shift investigation", func():
+		gs.gus_hub_checkin_prize_sort_done = true
+		gs.start_lost_shift_file())
+	_beat("Mira closing-shift clue", func(): gs.find_closing_shift_mira_clue())
+	_beat("Broken Score clue", func(): gs.find_closing_shift_score_clue())
+	_beat("Service Dash clue", func(): gs.find_closing_shift_service_clue())
+	_beat("Closing Shift Echoes debrief", func(): gs.complete_closing_shift_echoes())
 	_beat("static service run", func(): gs.complete_static_service_run())
 	_beat("maintenance sync", func(): gs.complete_maintenance_sync())
 	_beat("security tape", func(): gs.complete_security_tape_assembly())

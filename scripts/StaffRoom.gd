@@ -72,6 +72,8 @@ func _apply_spawn_position() -> void:
 
 func handle_hub_interaction(interactable: Node, player_node: Node = null) -> void:
 	match str(interactable.interactable_kind):
+		"security_tape_desk":
+			_handle_archive_desk()
 		"reveal_terminal":
 			_handle_terminal_interaction()
 		"employee_04_file":
@@ -80,13 +82,58 @@ func handle_hub_interaction(interactable: Node, player_node: Node = null) -> voi
 func _get_environment_lines(key: String, fallback: Array) -> Array:
 	return DIALOGUE_POOL.get_lines("environment_objects", key, fallback)
 
+func _handle_archive_desk() -> void:
+	if player and player.has_method("set_control_enabled"):
+		player.set_control_enabled(false)
+	if not GameState.maintenance_sync_completed:
+		_start_terminal_dialogue([
+			{"speaker": "Archive Desk", "text": "STAFF ACCESS OFFLINE."},
+		], Callable(self, "_restore_player_control"))
+		return
+	if not GameState.security_tape_assembly_completed:
+		_start_terminal_dialogue([
+			{"speaker": "Archive Desk", "text": "SECURITY TAPE FRAGMENTS READY."},
+			{"speaker": "Player", "text": "(The desk has the damaged tape. I can put its night back in order.)"},
+		], Callable(self, "_go_to_security_tape_assembly"))
+		return
+	if not GameState.final_night_walk_completed:
+		_start_terminal_dialogue([
+			{"speaker": "Archive Desk", "text": "TAPE ORDER RESTORED. ROUTE TRACE AVAILABLE."},
+			{"speaker": "Player", "text": "(The final night is next. I can follow it from here.)"},
+		], Callable(self, "_go_to_final_night_walk"))
+		return
+	if not GameState.memory_echo_completed:
+		_start_terminal_dialogue([
+			{"speaker": "Archive Desk", "text": "MEMORY ECHO CONSOLE RESPONDING."},
+			{"speaker": "Player", "text": "(One last signal is waiting in the archive.)"},
+		], Callable(self, "_go_to_memory_echo"))
+		return
+	_start_terminal_dialogue([
+		{"speaker": "Archive Desk", "text": "ARCHIVE COMPLETE. THE DRAWER IS QUIET."},
+	], Callable(self, "_restore_player_control"))
+
+func _go_to_security_tape_assembly() -> void:
+	GameState.start_security_tape_assembly()
+	GameState.set_pending_spawn_id("Spawn_FromSecurityTape")
+	SceneChanger.go_to_security_tape_assembly()
+
+func _go_to_final_night_walk() -> void:
+	GameState.start_final_night_walk()
+	GameState.set_pending_spawn_id("Spawn_FromFinalNightWalk")
+	SceneChanger.go_to_final_night_walk()
+
+func _go_to_memory_echo() -> void:
+	GameState.start_memory_echo()
+	GameState.set_pending_spawn_id("Spawn_FromMemoryEcho")
+	SceneChanger.go_to_memory_echo()
+
 func _handle_employee_04_file() -> void:
 	if player and player.has_method("set_control_enabled"):
 		player.set_control_enabled(false)
 	if GameState.conscience_final_room_seen:
 		GameState.employee_04_file_found = true
 		_start_terminal_dialogue(_get_environment_lines("employee_04_file_integrated", [
-			{"speaker": "Employee File", "text": "EMPLOYEE 04 // RESTORED MEMORY ACTIVE."},
+			{"speaker": "Employee File", "text": "EMPLOYEE 04 // IDENTITY STATUS: INTEGRATED."},
 			{"speaker": "Employee File", "text": "The photo is yours."},
 			{"speaker": "Employee File", "text": "The file was never about someone else."},
 			{"speaker": "Employee File", "text": "The regret field is no longer sealed."},
@@ -95,13 +142,13 @@ func _handle_employee_04_file() -> void:
 	if GameState.twist_reveal_seen:
 		GameState.employee_04_file_found = true
 		_start_terminal_dialogue(_get_environment_lines("employee_04_file_restored", [
-			{"speaker": "Employee File", "text": "EMPLOYEE 04 // RESTORED MEMORY ACTIVE."},
+			{"speaker": "Employee File", "text": "EMPLOYEE 04 // MEMORY ACCESS: RECOVERED."},
 			{"speaker": "Employee File", "text": "The photo is yours."},
 			{"speaker": "Employee File", "text": "The file was never about someone else."},
 		]), Callable(self, "_restore_player_control"))
 		return
 	_start_terminal_dialogue(_get_environment_lines("employee_04_file_archived", [
-		{"speaker": "Employee File", "text": "EMPLOYEE 04 // STATUS: ARCHIVED RESTORE PROFILE."},
+		{"speaker": "Employee File", "text": "EMPLOYEE 04 // MEMORY ACCESS: SEALED."},
 		{"speaker": "Employee File", "text": "The photo is corrupted beyond recognition."},
 	]), Callable(self, "_restore_player_control"))
 
@@ -112,8 +159,8 @@ func _handle_terminal_interaction() -> void:
 		player.set_control_enabled(false)
 	if GameState.twist_reveal_seen and GameState.conscience_final_room_seen:
 		_start_terminal_dialogue(_get_environment_lines("staff_room_terminal_restored", [
-			{"speaker": "Terminal", "text": "EMPLOYEE 04 RESTORE STATUS: STABLE."},
-			{"speaker": "Terminal", "text": "CONSCIENCE ECHO INTEGRATED."},
+			{"speaker": "Terminal", "text": "EMPLOYEE 04 IDENTITY STATUS: INTEGRATED."},
+			{"speaker": "Terminal", "text": "SEPARATED SIGNALS: SHARING MEMORY."},
 			{"speaker": "Terminal", "text": "MEMORY LOOP CLOSED."},
 		]), Callable(self, "_restore_player_control"))
 		return
@@ -131,7 +178,7 @@ func _handle_terminal_interaction() -> void:
 	reveal_in_progress = true
 	_start_terminal_dialogue(_get_environment_lines("staff_room_terminal_available", [
 		{"speaker": "Terminal", "text": "Employee file recovered."},
-		{"speaker": "Terminal", "text": "Restoration subject found."},
+		{"speaker": "Terminal", "text": "Identity signal matched."},
 		{"speaker": "Terminal", "text": "Name: Employee 04."},
 	]), Callable(self, "_start_reveal"))
 
@@ -159,14 +206,14 @@ func _start_reveal() -> void:
 		active_cutscene.connect("cutscene_finished", _on_reveal_finished, CONNECT_ONE_SHOT)
 	if active_cutscene.has_method("start_cutscene"):
 		active_cutscene.start_cutscene([
-			{"image_path": MEMORY_REVEAL_PANEL_DIR + "reveal_01.svg", "caption": "You built these cabinets by hand, to give tired people somewhere kinder to go.", "effect": "fade"},
+			{"image_path": MEMORY_REVEAL_PANEL_DIR + "reveal_01.svg", "caption": "You carried a young dream: build a kinder place where tired people could play.", "effect": "fade"},
 			{"image_path": MEMORY_REVEAL_PANEL_DIR + "reveal_02.svg", "caption": "For a while, the floor was never empty.", "effect": "fade"},
-			{"image_path": MEMORY_REVEAL_PANEL_DIR + "reveal_03.svg", "caption": "Then the crowds thinned. The bills did not.", "effect": "slow_zoom"},
-			{"image_path": MEMORY_REVEAL_PANEL_DIR + "reveal_04.svg", "caption": "You kept the lights on by going without, and told everyone else to take care of themselves.", "effect": "fade"},
-			{"image_path": MEMORY_REVEAL_PANEL_DIR + "reveal_05.svg", "caption": "On the last night, you came to close Pixel Haven yourself.", "effect": "slow_zoom"},
-			{"image_path": MEMORY_REVEAL_PANEL_DIR + "reveal_06.svg", "caption": "One loss, and you read your whole life like a game-over screen.", "effect": "glitch_flash"},
-			{"image_path": MEMORY_REVEAL_PANEL_DIR + "reveal_07.svg", "caption": "The part of you that could not carry it broke away, and hid the memory to keep you safe.", "effect": "glitch_flash"},
-			{"image_path": MEMORY_REVEAL_PANEL_DIR + "reveal_08.svg", "caption": "The arcade kept every memory of you. You woke without your own.", "effect": "fade"},
+			{"image_path": MEMORY_REVEAL_PANEL_DIR + "reveal_03.svg", "caption": "Then crowds thinned while rent, payroll, and repairs kept arriving.", "effect": "slow_zoom"},
+			{"image_path": MEMORY_REVEAL_PANEL_DIR + "reveal_04.svg", "caption": "You protected the dream by hiding its cost, until hope and responsibility stopped speaking.", "effect": "fade"},
+			{"image_path": MEMORY_REVEAL_PANEL_DIR + "reveal_05.svg", "caption": "On the final night, one part came to close Pixel Haven. Another still wanted one more round.", "effect": "slow_zoom"},
+			{"image_path": MEMORY_REVEAL_PANEL_DIR + "reveal_06.svg", "caption": "After years of losses, you mistook the final notice for a verdict on your whole life.", "effect": "glitch_flash"},
+			{"image_path": MEMORY_REVEAL_PANEL_DIR + "reveal_07.svg", "caption": "Your mind separated what still dreamed from what remembered the cost, trying to keep both alive.", "effect": "glitch_flash"},
+			{"image_path": MEMORY_REVEAL_PANEL_DIR + "reveal_08.svg", "caption": "You returned without shared memories. The arcade recognized the whole signature before you did.", "effect": "fade"},
 		])
 
 func _on_reveal_finished() -> void:
@@ -203,99 +250,51 @@ func _show_ending_prompt() -> void:
 func _get_final_self_conflict_lines() -> Array:
 	var lines := [
 		{"speaker": "Player", "text": "Employee 04."},
-		{"speaker": "Player", "text": "That was not a clue."},
-		{"speaker": "Player", "text": "It was my name tag."},
+		{"speaker": "Player", "text": "Owner. Repair hand. The person everyone here recognized."},
+		{"speaker": "Player", "text": "That was me."},
 		{"speaker": "\"Player\"", "text": "Reality should not be like a game."},
-		{"speaker": "\"Player\"", "text": "A single win should not solve everything."},
-		{"speaker": "\"Player\"", "text": "A single loss should not ruin everything in an instant."},
-		{"speaker": "\"Player\"", "text": "Yet you chose like a game would choose."},
-		{"speaker": "\"Player\"", "text": "One decision."},
-		{"speaker": "\"Player\"", "text": "One final input."},
-		{"speaker": "\"Player\"", "text": "One ending forced onto everyone else."},
-		{"speaker": "\"Player\"", "text": "You told people to take care of themselves."},
-		{"speaker": "\"Player\"", "text": "You built games to give them somewhere kinder to go."},
-		{"speaker": "\"Player\"", "text": "And when it was your turn to stay alive through the hardship..."},
-		{"speaker": "\"Player\"", "text": "You failed to carry out your own motto."},
-		{"speaker": "Player", "text": "..."},
-		{"speaker": "\"Player\"", "text": "That silence is honest, at least."},
+		{"speaker": "\"Player\"", "text": "A clean win cannot solve rent, exhaustion, or grief."},
+		{"speaker": "\"Player\"", "text": "A hard loss should not become a life sentence."},
+		{"speaker": "Player", "text": "It was not one loss. It was years of them arriving together."},
+		{"speaker": "\"Player\"", "text": "I know. I kept every total you could no longer look at."},
 		{"speaker": "\"Player\"", "text": "I am you."},
 		{"speaker": "\"Player\"", "text": "You are me."},
-		{"speaker": "\"Player\"", "text": "I was born the moment regret hit you."},
-		{"speaker": "\"Player\"", "text": "On that day."},
-		{"speaker": "\"Player\"", "text": "When you understood what your decision would do to Pixel Haven."},
-		{"speaker": "\"Player\"", "text": "When you understood what it would leave behind."},
-		{"speaker": "\"Player\"", "text": "I took the weight because you could not carry it."},
-		{"speaker": "\"Player\"", "text": "I sealed away the poverty."},
-		{"speaker": "\"Player\"", "text": "The exhaustion."},
-		{"speaker": "\"Player\"", "text": "The unpaid bills."},
-		{"speaker": "\"Player\"", "text": "The shame of caring more about players than profit."},
-		{"speaker": "\"Player\"", "text": "The anger that your best work could still be forgotten."},
-		{"speaker": "\"Player\"", "text": "I buried the memory so you could live without it."},
-		{"speaker": "\"Player\"", "text": "So you could wake up as someone else."},
-		{"speaker": "\"Player\"", "text": "So you could choose a path that did not hurt this much."},
-		{"speaker": "Player", "text": "I thought forgetting would make me free."},
-		{"speaker": "\"Player\"", "text": "It made you incomplete."},
-		{"speaker": "Player", "text": "I was never a man of my word."},
-		{"speaker": "Player", "text": "I told others to take care of themselves."},
-		{"speaker": "Player", "text": "I told them games could be a place to rest."},
-		{"speaker": "Player", "text": "But I did not give myself that same mercy."},
-		{"speaker": "Player", "text": "Being someone who loved games proved it."},
-		{"speaker": "Player", "text": "Games were always about giving people joy that was not meant for me."},
-		{"speaker": "Player", "text": "No matter what I made..."},
-		{"speaker": "Player", "text": "No matter how carefully I built it..."},
-		{"speaker": "Player", "text": "It could fall out of trend."},
-		{"speaker": "Player", "text": "It could be replaced."},
-		{"speaker": "Player", "text": "It could be forgotten."},
-		{"speaker": "Player", "text": "I used to think that was the reason games had such short lives."},
-		{"speaker": "Player", "text": "But I was wrong."},
-		{"speaker": "\"Player\"", "text": "Then tell me what you were wrong about."},
-		{"speaker": "Player", "text": "I thought a game died when it stopped winning."},
-		{"speaker": "Player", "text": "I thought a person was the same."},
-		{"speaker": "Player", "text": "I thought I was the same."},
-		{"speaker": "\"Player\"", "text": "You are describing the night you gave up."},
-		{"speaker": "Player", "text": "..."},
-		{"speaker": "Player", "text": "One bad night. One final total."},
-		{"speaker": "Player", "text": "I read it like a game-over screen."},
-		{"speaker": "Player", "text": "I treated a single loss as the end of everything."},
-		{"speaker": "\"Player\"", "text": "It felt like the end of everything."},
-		{"speaker": "Player", "text": "Feeling like the end is not the same as being the end."},
-		{"speaker": "Player", "text": "That was the one rule I built into every cabinet on this floor."},
-		{"speaker": "Player", "text": "Reality is not a game."},
-		{"speaker": "Player", "text": "A single win does not set you for life."},
-		{"speaker": "Player", "text": "A single loss does not mean it is all over."},
-		{"speaker": "Player", "text": "I made that promise to everyone who ever stood at a screen."},
-		{"speaker": "Player", "text": "I never once turned it toward myself."},
-		{"speaker": "Player", "text": "A game lasts as long as someone wants to carry it."},
-		{"speaker": "Player", "text": "Not as long as it earns."},
-		{"speaker": "Player", "text": "Not as long as it trends."},
-		{"speaker": "Player", "text": "Not as long as it wins."},
-		{"speaker": "Player", "text": "I made simple things."},
-		{"speaker": "Player", "text": "Feeble things, sometimes."},
-		{"speaker": "Player", "text": "Games with cheap lights, stubborn cabinets, and rules anyone could understand."},
-		{"speaker": "Player", "text": "But I wanted them to give people solace."},
-		{"speaker": "Player", "text": "I wanted them to give people fun."},
-		{"speaker": "Player", "text": "I wanted someone tired, lonely, or afraid to stand in front of a screen and feel lighter for a while."},
-		{"speaker": "Player", "text": "I cared about that more than money."},
-		{"speaker": "Player", "text": "And maybe that was foolish."},
-		{"speaker": "Player", "text": "But it was also the part of me I was proud of."},
+		{"speaker": "\"Player\"", "text": "I formed slowly: every overdue bill, every repair, every promise you made while hiding the cost."},
+		{"speaker": "\"Player\"", "text": "The final night did not create me. It gave the separation a voice."},
+		{"speaker": "\"Player\"", "text": "You kept the dream of Pixel Haven. I kept the bitter reality behind it."},
+		{"speaker": "\"Player\"", "text": "Responsibility. Poverty. Exhaustion. Shame. The fear that caring was hurting everyone."},
+		{"speaker": "Player", "text": "You took those memories to protect the part of me that could still hope."},
+		{"speaker": "\"Player\"", "text": "And I kept warning you away so you would never make the same promises again."},
+		{"speaker": "Player", "text": "That protection left both of us incomplete."},
+		{"speaker": "Player", "text": "The dream without the ledger could hurt people."},
+		{"speaker": "Player", "text": "The ledger without the dream had no reason to save anything."},
+		{"speaker": "\"Player\"", "text": "Then what was the dream worth? The arcade still closed."},
+		{"speaker": "Player", "text": "Closing was real. The debt was real. The people we exhausted were real."},
+		{"speaker": "Player", "text": "No minigame win erases that, pays a bill, or makes the final night harmless."},
+		{"speaker": "Player", "text": "Those wins only returned clues and gave me another move."},
+		{"speaker": "Player", "text": "Games need clean wins and losses because they end in minutes."},
+		{"speaker": "Player", "text": "A life keeps changing after the score stops."},
+		{"speaker": "Player", "text": "One win cannot carry it forever. One loss cannot define everything that follows."},
+		{"speaker": "\"Player\"", "text": "And the young heart you keep defending? Was that not the part that ignored me?"},
+		{"speaker": "Player", "text": "I misunderstood it too."},
+		{"speaker": "Player", "text": "A young heart is not ignorance, endless optimism, or refusing to grow."},
+		{"speaker": "Player", "text": "It is the part willing to wonder, play, and care after it understands the cost."},
+		{"speaker": "Player", "text": "The heart of youth is not gone unless I let it go."},
+		{"speaker": "Player", "text": "Holding onto it means letting it grow strong enough to face you."},
+		{"speaker": "\"Player\"", "text": "Not silence me."},
+		{"speaker": "Player", "text": "No. Listen to you. Let you listen back."},
 		{"speaker": "Player", "text": "The regret is mine too."},
 		{"speaker": "Player", "text": "The fear is mine."},
 		{"speaker": "Player", "text": "The failure is mine."},
 		{"speaker": "Player", "text": "The pride is mine."},
 		{"speaker": "Player", "text": "I do not become whole by defeating you."},
-		{"speaker": "Player", "text": "I become whole by carrying you with me."},
-		{"speaker": "Player", "text": "I thought the years took this place from me. They did not."},
-		{"speaker": "Player", "text": "I set myself down somewhere and forgot where."},
-		{"speaker": "Player", "text": "Youth was never the thing I lost. I lost me."},
-		{"speaker": "Player", "text": "And I am picking me back up."},
+		{"speaker": "Player", "text": "I become whole when the dream and the truth take the same turn."},
 		{"speaker": "\"Player\"", "text": "..."},
-		{"speaker": "\"Player\"", "text": "Then carry it."},
-		{"speaker": "\"Player\"", "text": "Carry the pride."},
-		{"speaker": "\"Player\"", "text": "Carry the regret."},
-		{"speaker": "\"Player\"", "text": "Carry the arcade."},
+		{"speaker": "\"Player\"", "text": "Then carry the pride and the regret."},
+		{"speaker": "\"Player\"", "text": "Carry the wonder and the ledger."},
 		{"speaker": "\"Player\"", "text": "But do not make me bury you again."},
 		{"speaker": "Player", "text": "I will not."},
-		{"speaker": "\"Player\"", "text": "Then I have nothing left to protect you from."},
+		{"speaker": "\"Player\"", "text": "Then I have nothing left to hide from you."},
 		{"speaker": "\"Player\"", "text": "No more endings to force on your behalf."},
 		{"speaker": "\"Player\"", "text": "From here, we take our turns together."},
 	]

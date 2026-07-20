@@ -25,7 +25,7 @@ func _ready() -> void:
 	_setup_route_cue()
 	_apply_spawn_position()
 	_on_prompt_changed("")
-	call_deferred("_maybe_start_conscience_encounter")
+	call_deferred("_maybe_play_completion_anecdote")
 
 func can_open_pause_menu() -> bool:
 	return not _dialogue_is_active() and not ConscienceEncounterDirector.is_encounter_active()
@@ -130,8 +130,6 @@ func handle_hub_interaction(interactable: Node, _player_node: Node = null) -> vo
 			_handle_memory_echo()
 		"staff_room_door":
 			_handle_staff_room_door()
-		"staff_record_03":
-			_handle_staff_record_03()
 		_:
 			start_dialogue([{"speaker": "System", "text": "Nothing happens."}])
 
@@ -332,44 +330,6 @@ func _handle_staff_room_door() -> void:
 		{"speaker": "Staff Room Door", "text": "ENTER STAFF ROOM?"},
 	]), Callable(SceneChanger, "go_to_staff_room"))
 
-func _handle_staff_record_03() -> void:
-	if not GameState.lying_cabinets_completed:
-		start_dialogue(_get_environment_lines("staff_records_locked", [
-			{"speaker": "Staff Record", "text": "The corridor log has not finished restoring."},
-		]))
-		return
-	var was_completed := GameState.staff_records_chain_completed
-	GameState.read_staff_record_03()
-	var lines := _get_environment_state_lines("staff_records", [
-		{"speaker": "Staff Record", "text": "STAFF CORRIDOR LOG"},
-		{"speaker": "Staff Record", "text": "Employee number sealed until Staff Room playback."},
-		{"speaker": "Staff Record", "text": "Name field unavailable."},
-	])
-	lines.append_array(_get_mr_byte_lines("staff_records_chain", [
-		{"speaker": "Mr. Byte", "text": "Record fragment accepted."},
-		{"speaker": "Mr. Byte", "text": "Identity checksum incomplete."},
-		{"speaker": "Mr. Byte", "text": "Additional staff records required."},
-	]))
-	lines.append_array(_get_staff_records_completion_lines())
-	var after_dialogue := Callable(self, "_show_staff_records_complete_notice") if not was_completed and GameState.staff_records_chain_completed else Callable()
-	start_dialogue(lines, after_dialogue)
-
-func _get_staff_records_completion_lines() -> Array:
-	if not GameState.staff_records_chain_completed:
-		return []
-	return [
-		{"speaker": "Quest", "text": "STAFF RECORDS CHAIN COMPLETE"},
-		{"speaker": "Quest", "text": "The arcade knew the number before it knew the name."},
-	]
-
-func _show_staff_records_complete_notice() -> void:
-	if quest_notice and quest_notice.has_method("show_custom_notification"):
-		quest_notice.call(
-			"show_custom_notification",
-			"QUEST COMPLETE",
-			"STAFF RECORDS CHAIN COMPLETE",
-			"The arcade knew the number before it knew the name."
-		)
 
 func _setup_ambient_sprite_effects() -> void:
 	AMBIENT_EFFECTS.create_layer(self, ui_layer, [

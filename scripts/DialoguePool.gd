@@ -10,6 +10,7 @@ const CHARACTER_FILES := {
 	"cabinet_07": "cabinet_07.json",
 	"roxy": "roxy.json",
 	"pip": "pip.json",
+	"night_ledger": "night_ledger.json",
 	"reel": "reel.json",
 	"coily": "coily.json",
 	"staff_door": "staff_door.json",

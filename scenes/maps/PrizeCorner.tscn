@@ -10,7 +10,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/QuestNotice.tscn" id="8"]
 [ext_resource type="Script" path="res://scripts/MapCollisionBounds.gd" id="9"]
 [ext_resource type="FontFile" path="res://assets/fonts/PressStart2P-Regular.ttf" id="fpx_title"]
-[ext_resource type="FontFile" path="res://assets/fonts/m3x6.ttf" id="fpx_micro"]
+[ext_resource type="FontFile" path="res://assets/fonts/m6x11.ttf" id="fpx_micro"]
 
 [node name="PrizeCorner" type="Node2D"]
 script = ExtResource("1")
@@ -75,8 +75,8 @@ position = Vector2(320, 318)
 [node name="InteractableLayer" type="Node2D" parent="."]
 
 [node name="PrizeCounter" parent="InteractableLayer" instance=ExtResource("6")]
-position = Vector2(320, 182)
-interact_extents = Vector2(250, 88)
+position = Vector2(188, 166)
+interact_extents = Vector2(150, 100)
 interactable_kind = "prize_counter"
 label_text = "PRIZE COUNTER"
 show_label = false
@@ -84,17 +84,21 @@ use_placeholder_visual = false
 
 [node name="Pip" parent="InteractableLayer" instance=ExtResource("6")]
 position = Vector2(320, 232)
+interact_extents = Vector2(58, 64)
 interactable_kind = "pip"
 label_text = "PIP"
 idle_sheet_path = "res://assets/art/characters/pip/pip_idle_sheet.png"
+label_font_size = 12
+label_offset = Vector2(0, -5)
 use_placeholder_visual = true
 idle_bob_enabled = true
 
 [node name="PrizeShelfRun" parent="InteractableLayer" instance=ExtResource("6")]
 position = Vector2(466, 232)
-interact_extents = Vector2(100, 90)
+interact_extents = Vector2(82, 72)
 interactable_kind = "prize_shelf_adventure"
 label_text = "SHELF RUN"
+label_offset = Vector2(0, -10)
 use_placeholder_visual = false
 idle_bob_enabled = true
 
@@ -122,6 +126,7 @@ theme_override_font_sizes/font_size = 16
 text = "PRIZE CORNER"
 
 [node name="HintLabel" type="Label" parent="UILayer"]
+visible = false
 position = Vector2(24, 48)
 size = Vector2(420, 42)
 theme_override_fonts/font = ExtResource("fpx_micro")

@@ -66,6 +66,8 @@ func start_encounter(new_encounter_id: String, lines: Array) -> void:
 	active = not dialogue_lines.is_empty()
 	visible = active
 	if active:
+		if encounter_id != "staff_corridor_warning":
+			_set_unknown_voice_music_dim(true)
 		# Fade the dimmed overlay in rather than popping so it lands as a mood shift.
 		overlay_root.modulate.a = 0.0
 		_fade_overlay(1.0, 0.45)
@@ -123,6 +125,7 @@ func _refresh_line() -> void:
 	continue_label.visible = effect != "silent"
 	line_locked_until_msec = Time.get_ticks_msec() + DEFAULT_LINE_LOCKOUT_MSEC + int(maxf(pause_seconds, 0.0) * 1000.0)
 	_apply_line_effect(effect)
+	_apply_staff_warning_portrait_blur()
 
 func _apply_line_effect(effect: String) -> void:
 	dialogue_panel.position = panel_home_position
@@ -165,6 +168,8 @@ func _finish_encounter() -> void:
 	fade_tween.tween_callback(_cleanup_and_free)
 
 func _cleanup_and_free() -> void:
+	if encounter_id != "staff_corridor_warning":
+		_set_unknown_voice_music_dim(false)
 	visible = false
 	_set_player_control(true)
 	encounter_finished.emit(encounter_id)
@@ -205,6 +210,20 @@ func _apply_identity_reveal() -> void:
 		silhouette.visible = false
 		silhouette_fallback.visible = true
 		silhouette_fallback.modulate = Color(1.0 + k, 1.0 + k, 1.0 + k, 1.0)
+
+func _apply_staff_warning_portrait_blur() -> void:
+	if encounter_id != "staff_corridor_warning" or silhouette == null:
+		return
+	var shader := load("res://assets/shaders/portrait_blur.gdshader") as Shader
+	if shader == null:
+		return
+	var material := ShaderMaterial.new()
+	material.shader = shader
+	var denominator := maxf(float(dialogue_lines.size() - 1), 1.0)
+	var progress := float(current_index) / denominator
+	material.set_shader_parameter("blur_strength", lerpf(0.9, 0.3, progress))
+	silhouette.material = material
+	silhouette.modulate = Color(0.72, 0.8, 0.92, 1.0)
 
 func _hide_identity_art() -> void:
 	silhouette.visible = false
@@ -251,6 +270,15 @@ func _play_audio(method_name: String) -> void:
 	var audio_manager := get_node_or_null("/root/AudioManager")
 	if audio_manager and audio_manager.has_method(method_name):
 		audio_manager.call(method_name)
+
+func _set_unknown_voice_music_dim(enabled: bool) -> void:
+	var audio_manager := get_node_or_null("/root/AudioManager")
+	if audio_manager and audio_manager.has_method("set_unknown_voice_music_dimmed"):
+		audio_manager.call("set_unknown_voice_music_dimmed", enabled)
+
+func _exit_tree() -> void:
+	if encounter_id != "staff_corridor_warning":
+		_set_unknown_voice_music_dim(false)
 
 func _animate_antagonist_text(delta: float) -> void:
 	antagonist_elapsed += delta

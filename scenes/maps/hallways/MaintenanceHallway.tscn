@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="5"]
 [ext_resource type="Script" path="res://scripts/MapCollisionBounds.gd" id="6"]
 [ext_resource type="FontFile" path="res://assets/fonts/PressStart2P-Regular.ttf" id="fpx_title"]
-[ext_resource type="FontFile" path="res://assets/fonts/m3x6.ttf" id="fpx_micro"]
+[ext_resource type="FontFile" path="res://assets/fonts/m6x11.ttf" id="fpx_micro"]
 
 [node name="MaintenanceHallway" type="Node2D"]
 script = ExtResource("1")
@@ -65,6 +65,7 @@ theme_override_font_sizes/font_size = 16
 text = "MAINTENANCE HALLWAY"
 
 [node name="HintLabel" type="Label" parent="UILayer"]
+visible = false
 position = Vector2(24, 48)
 size = Vector2(392, 34)
 theme_override_fonts/font = ExtResource("fpx_micro")

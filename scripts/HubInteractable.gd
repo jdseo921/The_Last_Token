@@ -1,5 +1,7 @@
 extends Area2D
 
+const DEBUG := preload("res://scripts/Debug.gd")
+
 @export var interactable_kind: String = "npc"
 @export var label_text: String = ""
 @export var sprite_texture_path: String = ""
@@ -11,6 +13,8 @@ extends Area2D
 @export var idle_frame_duration: float = 0.45
 @export var visual_scale: float = 1.0
 @export var show_label := true
+@export var label_font_size := 14
+@export var label_offset := Vector2.ZERO
 @export var use_placeholder_visual := true
 @export var idle_bob_enabled := false
 @export var flicker_enabled := false
@@ -36,6 +40,8 @@ func _ready() -> void:
 	visual_root.scale = Vector2(visual_scale, visual_scale)
 	base_visual_position = visual_root.position
 	label.text = label_text
+	label.add_theme_font_size_override("font_size", label_font_size)
+	label.position += label_offset
 	_apply_placeholder_style()
 	_apply_optional_sprite_art()
 	_refresh_visual_visibility()
@@ -54,11 +60,23 @@ func interact(player: Node = null) -> void:
 	if player is Node2D:
 		face_target((player as Node2D).global_position)
 	var hub := _find_interaction_handler()
+	DEBUG.info(self, "interaction", "interactable_used", {
+		"kind": interactable_kind,
+		"label": label_text,
+		"node": str(get_path()),
+		"handler": str(hub.get_path()) if hub != null else "<none>",
+		"player": str(player.get_path()) if player != null else "<none>",
+	})
 	if hub and hub.has_method("handle_hub_interaction"):
 		hub.handle_hub_interaction(self, player)
 		return
 	if hub and hub.has_method("handle_interactable_interaction"):
 		hub.handle_interactable_interaction(self, player)
+		return
+	DEBUG.warning(self, "interaction", "interactable_has_no_handler", {
+		"kind": interactable_kind,
+		"node": str(get_path()),
+	})
 
 func _find_interaction_handler() -> Node:
 	var cursor: Node = self

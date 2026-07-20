@@ -19,8 +19,6 @@ var scenes := [
 	"res://scenes/maps/PrizeCorner.tscn",
 	"res://scenes/maps/FrontEntrance.tscn",
 	"res://scenes/maps/PartyRoom.tscn",
-	"res://scenes/maps/Workshop.tscn",
-	"res://scenes/maps/MemoryCore.tscn",
 	"res://scenes/maps/Restrooms.tscn",
 	"res://scenes/maps/hallways/CabinetHallway.tscn",
 	"res://scenes/maps/hallways/SnackHallway.tscn",

@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/MinigameScreenTemplate.gd" id="1"]
 [ext_resource type="FontFile" path="res://assets/fonts/PressStart2P-Regular.ttf" id="fpx_title"]
+[ext_resource type="PackedScene" path="res://scenes/ui/MinigameTextBox.tscn" id="3_text_box"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="4_pause"]
 
 [node name="MinigameScreenTemplate" type="Control"]
 layout_mode = 3
@@ -68,23 +70,15 @@ theme_override_font_sizes/font_size = 16
 text = "MINIGAME TITLE"
 horizontal_alignment = 1
 
-[node name="InstructionPanel" type="Panel" parent="."]
+[node name="InstructionPanel" parent="." instance=ExtResource("3_text_box")]
 layout_mode = 0
 offset_left = 56.0
 offset_top = 86.0
 offset_right = 584.0
 offset_bottom = 150.0
-
-[node name="InstructionLabel" type="Label" parent="InstructionPanel"]
-layout_mode = 0
-offset_left = 12.0
-offset_top = 8.0
-offset_right = 516.0
-offset_bottom = 56.0
-text = ""
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 3
+text_value = "Instructions go here."
+min_font_size = 11
+max_font_size = 16
 
 [node name="GameArea" type="Panel" parent="."]
 layout_mode = 0
@@ -102,41 +96,27 @@ offset_bottom = 78.0
 text = ""
 horizontal_alignment = 1
 
-[node name="StatusPanel" type="Panel" parent="."]
+[node name="StatusPanel" parent="." instance=ExtResource("3_text_box")]
 layout_mode = 0
 offset_left = 72.0
 offset_top = 304.0
 offset_right = 568.0
 offset_bottom = 346.0
+text_value = "Status text goes here."
+text_role = 4
+min_font_size = 11
+max_font_size = 15
+vertical_padding = 6
 
-[node name="StatusLabel" type="Label" parent="StatusPanel"]
-layout_mode = 0
-offset_left = 12.0
-offset_top = 8.0
-offset_right = 484.0
-offset_bottom = 34.0
-text = "Status text goes here."
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="ResultPanel" type="Panel" parent="."]
+[node name="ResultPanel" parent="." instance=ExtResource("3_text_box")]
 visible = false
 layout_mode = 0
 offset_left = 112.0
 offset_top = 170.0
 offset_right = 528.0
 offset_bottom = 288.0
-
-[node name="ResultLabel" type="Label" parent="ResultPanel"]
-layout_mode = 0
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 400.0
-offset_bottom = 102.0
-text = ""
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 3
+horizontal_padding = 16
+vertical_padding = 16
 
 [node name="EffectsLayer" type="CanvasLayer" parent="."]
 layer = 5
@@ -157,3 +137,6 @@ offset_top = 362.0
 offset_right = 400.0
 offset_bottom = 400.0
 text = "Exit"
+
+[node name="PauseMenu" parent="." instance=ExtResource("4_pause")]
+is_minigame_context = true

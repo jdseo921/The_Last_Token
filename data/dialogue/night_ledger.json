@@ -1,0 +1,85 @@
+{
+  "character_id": "night_ledger",
+  "sets": {
+    "pre_circuit_soda": [
+      [
+        {"speaker": "Night Ledger", "text": "ROUTE CLEARANCE MISSING: CIRCUIT SODA.", "portrait": "res://assets/art/portraits/night_ledger/night_ledger_grave.png"},
+        {"speaker": "Night Ledger", "text": "Complete the soda circuit. I only audit signals that can reach an output.", "portrait": "res://assets/art/portraits/night_ledger/night_ledger_dry.png"},
+        {"speaker": "Player", "text": "I still do not know why this cabinet has opinions about plumbing."}
+      ]
+    ],
+    "archive_bills": [
+      [
+        {"speaker": "Player", "text": "Rent past due. Payroll delayed. Three repair invoices... every total is circled twice. The smeared signature feels familiar."}
+      ]
+    ],
+    "archive_bills_post_reveal": [
+      [
+        {"speaker": "Player", "text": "These papers were mine. I kept circling the totals as if one more pass could make enough money appear."},
+        {"speaker": "Player", "text": "I remember folding them into this drawer before opening time. I wanted the lights to stay kind for everyone else."}
+      ]
+    ],
+    "archive_tv": [
+      [
+        {"speaker": "Player", "text": "An old tube television with a repair-shop sticker. The case has been opened more than once."},
+        {"speaker": "Player", "text": "A note says the replacement was denied because the old one still worked. Whoever owned this place kept repairing yesterday because tomorrow cost too much."}
+      ]
+    ],
+    "archive_tv_post_reveal": [
+      [
+        {"speaker": "Player", "text": "That television was mine. I watched its late-night flicker wash over repair receipts from this exact spot."},
+        {"speaker": "Player", "text": "I kept saying the old set still worked. Maybe I needed one familiar thing to keep working."}
+      ]
+    ],
+    "quest_intro": [
+      [
+        {"speaker": "Night Ledger", "text": "EVERYTHING IN THIS ROOM IS OPERATIONAL. THE ARCHIVE RUN IS READY WHEN YOU ARE.", "portrait": "res://assets/art/portraits/night_ledger/night_ledger_grin.png"},
+        {"speaker": "Night Ledger", "text": "OWNER SIGNATURE PRESENT. OWNER APPEARS SURPRISED BY OWNERSHIP.", "portrait": "res://assets/art/portraits/night_ledger/night_ledger_panic.png"},
+        {"speaker": "Night Ledger", "text": "I am Night Ledger. I audited closing shifts. I now also have teeth. Metaphorically.", "portrait": "res://assets/art/portraits/night_ledger/night_ledger_delighted.png"},
+        {"speaker": "Player", "text": "That last word did not help."},
+        {"speaker": "Night Ledger", "text": "My archive is a vertical audit. Climb the switchback shelves and use marked gates between floors."},
+        {"speaker": "Night Ledger", "text": "Hold jump for height. Three extra jumps remain available in the air."},
+        {"speaker": "Night Ledger", "text": "Collect twelve numbered stamps in order and three keys. The mint opens when the record balances."},
+        {"speaker": "Player", "text": "Whatever token this mints does not seem necessary, but double-jump accounting might be entertaining."},
+        {"speaker": "Night Ledger", "text": "INTERACT AGAIN WHEN READY. I WILL REMAIN CASUALLY OMINOUS.", "portrait": "res://assets/art/portraits/night_ledger/night_ledger_grin.png"}
+      ]
+    ],
+    "quest_hint": [
+      [
+        {"speaker": "Night Ledger", "text": "AUDIT READY. STAMPS 1-12. THREE KEYS. VERTICAL ROUTE.", "portrait": "res://assets/art/portraits/night_ledger/night_ledger_panic.png"},
+        {"speaker": "Night Ledger", "text": "Receipt ghosts reset your position, not your collected records."},
+        {"speaker": "Player", "text": "Good. I prefer my bureaucracy difficult but merciful."}
+      ]
+    ],
+    "token_return_player": [
+      [
+        {"speaker": "Player", "text": "This token has two rings around one center. I am not sure whether that is a design choice or a warning."},
+        {"speaker": "Player", "text": "Night Ledger minted it. I should ask that strange cabinet what it thinks I just found."}
+      ]
+    ],
+    "token_debrief": [
+      [
+        {"speaker": "Night Ledger", "text": "DUPLEX TOKEN ACCEPTED. One owner signature. Two authorization traces.", "portrait": "res://assets/art/portraits/night_ledger/night_ledger_delighted.png"},
+        {"speaker": "Player", "text": "Two traces from me?"},
+        {"speaker": "Night Ledger", "text": "Early entries paid for birthday lights and free plays. Later margins carried rent, payroll, and repairs.", "portrait": "res://assets/art/portraits/night_ledger/night_ledger_neutral.png"},
+        {"speaker": "Night Ledger", "text": "The handwriting stayed the same. The two margins stopped sharing a line.", "portrait": "res://assets/art/portraits/night_ledger/night_ledger_grave.png"},
+        {"speaker": "Player", "text": "That sounds less like two people and more like one person being pulled apart."},
+        {"speaker": "Night Ledger", "text": "CORRECTION UNAVAILABLE. POWER RESERVE CRITICAL.", "portrait": "res://assets/art/portraits/night_ledger/night_ledger_panic.png"},
+        {"speaker": "Night Ledger", "text": "ARCHIVE... CLOSING...", "portrait": "res://assets/art/portraits/night_ledger/night_ledger_grave.png"},
+        {"speaker": "Player", "text": "It spent its last charge on that answer. I may have learned enough to be more careful, not enough to be certain."}
+      ]
+    ],
+    "offline_until_postgame": [
+      [
+        {"speaker": "Player", "text": "Night Ledger is dark. It does not look like it will power on again tonight."}
+      ]
+    ],
+    "post_reveal_reboot": [
+      [
+        {"speaker": "Night Ledger", "text": "POST-CLOSING RESERVE ONLINE. OWNER SIGNATURE RECONCILED.", "portrait": "res://assets/art/portraits/night_ledger/night_ledger_delighted.png"},
+        {"speaker": "Night Ledger", "text": "The two margins can occupy one page again.", "portrait": "res://assets/art/portraits/night_ledger/night_ledger_neutral.png"},
+        {"speaker": "Player", "text": "Not neatly. But together is enough for tonight."}
+      ]
+    ]
+  }
+}

@@ -40,6 +40,18 @@ use_placeholder_visual = false
 [node name="Spawn_Default" type="Marker2D" parent="."]
 position = Vector2(320, 312)
 
+[node name="Spawn_FromStaffCorridor" type="Marker2D" parent="."]
+position = Vector2(320, 312)
+
+[node name="Spawn_FromSecurityTape" type="Marker2D" parent="."]
+position = Vector2(176, 246)
+
+[node name="Spawn_FromFinalNightWalk" type="Marker2D" parent="."]
+position = Vector2(176, 246)
+
+[node name="Spawn_FromMemoryEcho" type="Marker2D" parent="."]
+position = Vector2(244, 246)
+
 [node name="Player" parent="." instance=ExtResource("2")]
 position = Vector2(320, 312)
 
@@ -61,6 +73,7 @@ offset_bottom = 28.0
 text = "STAFF ROOM"
 
 [node name="Body" type="Label" parent="Panel"]
+visible = false
 offset_left = 12.0
 offset_top = 32.0
 offset_right = 320.0
@@ -79,4 +92,11 @@ position = Vector2(320, 182)
 interact_extents = Vector2(120, 120)
 interactable_kind = "reveal_terminal"
 label_text = "TERMINAL"
+use_placeholder_visual = false
+
+[node name="SecurityTapeDesk" parent="." instance=ExtResource("3")]
+position = Vector2(148, 190)
+interact_extents = Vector2(74, 66)
+interactable_kind = "security_tape_desk"
+label_text = "ARCHIVE DESK"
 use_placeholder_visual = false

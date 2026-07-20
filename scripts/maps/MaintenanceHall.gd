@@ -13,6 +13,7 @@ const BACKGROUND_ART_PATH := "res://assets/art/maps/maintenance_hall/maintenance
 @onready var prompt_background: ColorRect = $UILayer/InteractionPromptBackground
 @onready var sync_door_glow: Polygon2D = $SyncDoorGlow
 @onready var quest_notice: CanvasLayer = $QuestNotice
+@onready var gus: Area2D = $InteractableLayer/Gus
 
 var pending_after_dialogue: Callable = Callable()
 var route_cue: Control = null
@@ -26,15 +27,12 @@ func _ready() -> void:
 	_setup_route_cue()
 	_apply_spawn_position()
 	_on_prompt_changed("")
+	_refresh_gus_presence()
 	_refresh_sync_state()
-	call_deferred("_maybe_start_conscience_encounter")
 	call_deferred("_maybe_play_completion_anecdote")
 
 func can_open_pause_menu() -> bool:
 	return not _dialogue_is_active() and not ConscienceEncounterDirector.is_encounter_active()
-
-func _maybe_start_conscience_encounter() -> void:
-	ConscienceEncounterDirector.maybe_start_encounter(self, "after_lost_shift_file")
 
 func _apply_spawn_position() -> void:
 	var spawn_id := GameState.consume_pending_spawn_id()
@@ -104,6 +102,7 @@ func _on_dialogue_finished() -> void:
 	if player and player.has_method("set_control_enabled"):
 		player.set_control_enabled(true)
 	_refresh_sync_state()
+	_refresh_gus_presence()
 	_refresh_route_cue()
 
 func _dialogue_is_active() -> bool:
@@ -117,10 +116,6 @@ func handle_hub_interaction(interactable: Node, _player_node: Node = null) -> vo
 			_handle_gus()
 		"maintenance_sync":
 			_handle_maintenance_sync()
-		"maintenance_note":
-			_handle_maintenance_note()
-		"staff_record_02":
-			_handle_staff_record_02()
 		_:
 			start_dialogue([{"speaker": "System", "text": "Nothing happens."}])
 
@@ -149,51 +144,38 @@ func _handle_gus() -> void:
 		])
 		return
 	if not GameState.lost_shift_file_completed and not GameState.maintenance_sync_completed and not GameState.story_puzzle_completed:
-		GameState.start_lost_shift_file()
-		start_dialogue([
-			{"speaker": "Gus", "text": "I can help with the door."},
-			{"speaker": "Gus", "text": "But not until you know what shift you are standing in."},
-			{"speaker": "Gus", "text": "Find the Lost Shift File first."},
-		])
+		if not GameState.lost_shift_file_started:
+			start_dialogue([
+				{"speaker": "Gus", "text": "I do not have a service lead yet."},
+				{"speaker": "Gus", "text": "If Pip found anything in Prize Corner, bring it to me on the Arcade Hub floor."},
+			])
+		else:
+			start_dialogue([
+				{"speaker": "Gus", "text": "I am still sorting the shift files upstairs."},
+				{"speaker": "Gus", "text": "Finish the Closing Shift Echoes route, then report to me in the Arcade Hub."},
+			])
 		return
 	if GameState.lost_shift_file_completed and not GameState.static_service_run_completed and not GameState.maintenance_sync_completed and not GameState.story_puzzle_completed:
-		GameState.gus_lost_shift_comment_seen = true
-		var lost_shift_lines := _get_gus_lines("lost_shift_file_phase", [
-			{"speaker": "Gus", "text": "The maintenance note is ugly."},
-			{"speaker": "Gus", "text": "I saw the Staff Door log the last night wrong. Read it three times."},
-			{"speaker": "Gus", "text": "I pretended that was routine work."},
-		])
-		var static_intro_lines := _get_gus_lines("static_service_run_intro", [
+		start_dialogue(_get_gus_lines("static_service_full_intro", [
 			{"speaker": "Gus", "text": "The file gives me enough to work with."},
-			{"speaker": "Gus", "text": "But the maintenance route is dead."},
-			{"speaker": "Gus", "text": "Go wake the service power before I ask the door anything important."},
-		])
-		start_dialogue(_combine_dialogue_lines(lost_shift_lines, static_intro_lines), Callable(self, "_go_to_static_service_run"))
-		return
-	if GameState.static_service_run_completed and not GameState.gus_static_run_anecdote_seen:
-		GameState.gus_static_run_anecdote_seen = true
-		start_dialogue(_get_gus_lines("static_service_run_anecdote", [
-			{"speaker": "Gus", "text": "Power's back."},
-			{"speaker": "Gus", "text": "Door's awake."},
-			{"speaker": "Gus", "text": "Now the hard part: making it listen without letting it answer too much."},
+			{"speaker": "Gus", "text": "The maintenance route is still dead, but the Sync can run a diagnostic."},
+			{"speaker": "Gus", "text": "Use the Maintenance Sync when you are ready. I will keep the door from developing more opinions."},
 		]))
 		return
-	if not GameState.maintenance_sync_completed and not GameState.story_puzzle_completed:
-		GameState.increment_npc_dialogue_count("gus_sync_explained")
-		start_dialogue(_get_gus_lines("maintenance_sync_intro", [
-			{"speaker": "Gus", "text": "Power's back. Door's listening."},
-			{"speaker": "Gus", "text": "I still hate that sentence."},
-			{"speaker": "Gus", "text": "The door is arguing with its own lock."},
-		]), Callable(self, "_go_to_maintenance_sync"))
+	if GameState.static_service_run_completed and not GameState.maintenance_sync_completed:
+		start_dialogue(_get_gus_lines("maintenance_sync_completion_anecdote", [
+			{"speaker": "Gus", "text": "The Sync read your signal cleanly. That is more than I expected."},
+			{"speaker": "Gus", "text": "I opened Staff Access. It is off-limits to everyone except you."},
+			{"speaker": "Player", "text": "Why me?"},
+			{"speaker": "Gus", "text": "I do not know yet. Just take it slowly in there, okay?"},
+		]), Callable(self, "_complete_sync_and_send_gus_back_to_hub"))
 		return
 	if not GameState.gus_sync_anecdote_seen:
-		GameState.gus_sync_anecdote_seen = true
 		start_dialogue(_get_gus_lines("maintenance_sync_completion_anecdote", [
-			{"speaker": "Gus", "text": "Door's listening now."},
-			{"speaker": "Gus", "text": "I do not like doors that listen."},
-			{"speaker": "Gus", "text": "But if it opens, it matched you against something in its log."},
-			{"speaker": "Gus", "text": "I did not read the log. On purpose."},
-		]))
+			{"speaker": "Gus", "text": "The Sync accepted you. Staff Access is off-limits to everyone except you."},
+			{"speaker": "Player", "text": "Why me?"},
+			{"speaker": "Gus", "text": "You will find out soon enough."},
+		]), Callable(self, "_send_gus_back_to_hub"))
 		return
 	if GameState.memory_echo_completed and not GameState.twist_reveal_seen:
 		start_dialogue([
@@ -217,14 +199,14 @@ func _handle_maintenance_sync() -> void:
 	if not GameState.lost_shift_file_completed and not GameState.maintenance_sync_completed and not GameState.story_puzzle_completed:
 		start_dialogue(_get_environment_lines("maintenance_sync_machine_lost_shift_required", [
 			{"speaker": "Maintenance Sync", "text": "MAINTENANCE SYNC LOCKED."},
-			{"speaker": "Maintenance Sync", "text": "LOST SHIFT FILE REQUIRED."},
+			{"speaker": "Maintenance Sync", "text": "CLOSING SHIFT ECHOES REQUIRED."},
 		]))
 		return
 	if not GameState.static_service_run_completed and not GameState.maintenance_sync_completed and not GameState.story_puzzle_completed:
 		start_dialogue(_get_environment_lines("maintenance_sync_machine_static_service_required", [
-			{"speaker": "Maintenance Sync", "text": "MAINTENANCE SYNC LOCKED."},
-			{"speaker": "Maintenance Sync", "text": "STATIC SERVICE REQUIRED."},
-		]))
+			{"speaker": "Maintenance Sync", "text": "STATIC SERVICE ROUTE READY."},
+			{"speaker": "Maintenance Sync", "text": "RUN DIAGNOSTIC?"},
+		]), Callable(self, "_go_to_static_service_run"))
 		return
 	if GameState.post_reveal_roam_unlocked and GameState.maintenance_sync_completed:
 		start_dialogue(_get_environment_lines("maintenance_sync_machine_replay_offer", [
@@ -232,22 +214,21 @@ func _handle_maintenance_sync() -> void:
 			{"speaker": "Maintenance Sync", "text": "RECREATIONAL SYNC AVAILABLE."},
 		]), Callable(self, "_offer_maintenance_sync_replay"))
 		return
+	if GameState.static_service_run_completed and not GameState.maintenance_sync_completed and not GameState.story_puzzle_completed:
+		start_dialogue([
+			{"speaker": "Maintenance Sync", "text": "SERVICE CURRENT NORMAL. STAFF ACCESS READY."},
+			{"speaker": "Player", "text": "(It finally sounds calm. I should report to Gus.)"},
+		])
+		return
 	if GameState.maintenance_sync_completed or GameState.story_puzzle_completed:
 		start_dialogue(_get_environment_state_lines("maintenance_sync_machine", [
 			{"speaker": "Maintenance Sync", "text": "ACCESS GRANTED."},
 			{"speaker": "Maintenance Sync", "text": "EMPLOYEE SIGNAL ACCEPTED."},
 		]))
 		return
-	if GameState.get_npc_dialogue_count("gus_sync_explained") == 0:
-		start_dialogue([
-			{"speaker": "Player", "text": "This panel is basically Gus's whole personality."},
-			{"speaker": "Player", "text": "He would want to run me through it first."},
-		])
-		return
-	start_dialogue(_get_environment_lines("maintenance_sync_machine_fractured", [
-		{"speaker": "Maintenance Sync", "text": "TWO SIGNALS DETECTED."},
-		{"speaker": "Maintenance Sync", "text": "SYNC REQUIRED."},
-	]), Callable(self, "_go_to_maintenance_sync"))
+	start_dialogue(_get_environment_lines("maintenance_sync_machine_static_service_required", [
+		{"speaker": "Maintenance Sync", "text": "STATIC SERVICE ROUTE READY."},
+	]))
 
 func _go_to_static_service_run() -> void:
 	GameState.start_static_service_run()
@@ -259,92 +240,16 @@ func _go_to_maintenance_sync() -> void:
 	GameState.set_pending_spawn_id("Spawn_FromMaintenanceSync")
 	SceneChanger.go_to_maintenance_sync()
 
-func _handle_maintenance_note() -> void:
-	if not GameState.circuit_soda_completed:
-		start_dialogue(_get_environment_lines("maintenance_note_grounded", [
-			{"speaker": "Maintenance Note", "text": "Most of the note is routine cleaning nonsense."},
-		]))
-		return
-	var was_completed := GameState.lost_shift_file_completed
-	GameState.read_maintenance_note()
-	var lines := _get_environment_state_lines("maintenance_note", [
-		{"speaker": "Maintenance Note", "text": "MAINTENANCE NOTE"},
-		{"speaker": "Maintenance Note", "text": "Staff Door reported two signals after closing."},
-		{"speaker": "Maintenance Note", "text": "One signal entered."},
-		{"speaker": "Maintenance Note", "text": "One signal remained."},
-		{"speaker": "Maintenance Note", "text": "Gus note: I do not get paid enough for doors with opinions."},
-	])
-	lines.append_array(_get_lost_shift_completion_lines())
-	var after_dialogue := Callable(self, "_after_lost_shift_file_completed") if not was_completed and GameState.lost_shift_file_completed else Callable()
-	start_dialogue(lines, after_dialogue)
-
-func _handle_staff_record_02() -> void:
-	if not GameState.lying_cabinets_completed:
-		start_dialogue(_get_environment_lines("staff_records_locked", [
-			{"speaker": "Staff Record", "text": "The maintenance record is still sealed."},
-		]))
-		return
-	var was_completed := GameState.staff_records_chain_completed
-	GameState.read_staff_record_02()
-	var lines := _get_environment_state_lines("staff_records", [
-		{"speaker": "Staff Record", "text": "MAINTENANCE WARNING"},
-		{"speaker": "Staff Record", "text": "Door responds to two signatures."},
-		{"speaker": "Staff Record", "text": "One physical. One stored."},
-	])
-	lines.append_array(_get_staff_records_completion_lines())
-	var after_dialogue := Callable(self, "_show_staff_records_complete_notice") if not was_completed and GameState.staff_records_chain_completed else Callable()
-	start_dialogue(lines, after_dialogue)
-
-func _get_lost_shift_completion_lines() -> Array:
-	if not GameState.lost_shift_file_completed:
-		return []
-	return [
-		{"speaker": "Quest", "text": "LOST SHIFT FILE COMPLETE"},
-		{"speaker": "Quest", "text": "A redacted staff number was assigned to Cabinet shutdown."},
-	]
-
-func _show_lost_shift_complete_notice() -> void:
-	if quest_notice and quest_notice.has_method("show_custom_notification"):
-		quest_notice.call(
-			"show_custom_notification",
-			"QUEST COMPLETE",
-			"LOST SHIFT FILE COMPLETE",
-			"A redacted staff number was assigned to Cabinet shutdown."
-		)
-
-func _after_lost_shift_file_completed() -> void:
-	_show_lost_shift_complete_notice()
-	call_deferred("_maybe_play_midpoint_turn")
-
-func _maybe_play_midpoint_turn() -> void:
-	if not GameState.lost_shift_file_completed or GameState.midpoint_turn_seen:
-		return
-	GameState.midpoint_turn_seen = true
-	start_dialogue([
-		{"speaker": "Player", "text": "Three records. One shift folded shut and never filed."},
-		{"speaker": "Player", "text": "I keep telling myself I am looking for the way out of here."},
-		{"speaker": "Player", "text": "But the front door was never the locked one."},
-		{"speaker": "Player", "text": "Whatever stayed behind on the last night is waiting past the Staff Door."},
-		{"speaker": "Player", "text": "I am done trying to leave. I want to look at it."},
-		{"speaker": "Player", "text": "Mira is still at her counter. She deserves to hear what I found... or I can carry it alone and keep working."},
-	])
-
-func _get_staff_records_completion_lines() -> Array:
-	if not GameState.staff_records_chain_completed:
-		return []
-	return [
-		{"speaker": "Quest", "text": "STAFF RECORDS CHAIN COMPLETE"},
-		{"speaker": "Quest", "text": "The arcade knew the number before it knew the name."},
-	]
-
-func _show_staff_records_complete_notice() -> void:
-	if quest_notice and quest_notice.has_method("show_custom_notification"):
-		quest_notice.call(
-			"show_custom_notification",
-			"QUEST COMPLETE",
-			"STAFF RECORDS CHAIN COMPLETE",
-			"The arcade knew the number before it knew the name."
-		)
+func _refresh_gus_presence() -> void:
+	# Gus moves here only for the service sequence. Once the Sync accepts the
+	# player, he returns to the hub and leaves the Staff Access discovery alone.
+	var available := GameState.lost_shift_file_completed and (not GameState.maintenance_sync_completed or not GameState.gus_sync_anecdote_seen) and not (GameState.twist_reveal_seen or GameState.post_reveal_roam_unlocked)
+	gus.visible = available
+	gus.monitoring = available
+	gus.monitorable = available
+	var collision := gus.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if collision != null:
+		collision.set_deferred("disabled", not available)
 
 func _was_witness_route_completed() -> bool:
 	return GameState.witness_route_completed or GameState.post_reveal_witness_route_completed
@@ -457,19 +362,21 @@ func _maybe_play_completion_anecdote() -> void:
 			{"speaker": "Gus", "text": "That is not forgetting. That is the good version of remembering."},
 		]))
 		return
-	if GameState.maintenance_sync_completed and not GameState.gus_sync_anecdote_seen:
-		GameState.gus_sync_anecdote_seen = true
-		start_dialogue(_get_gus_lines("maintenance_sync_completion_anecdote", [
-			{"speaker": "Gus", "text": "Door's listening now."},
-			{"speaker": "Gus", "text": "It matched you against something in its log. I did not read it. On purpose."},
-		]))
-		return
-	if GameState.static_service_run_completed and not GameState.gus_static_run_anecdote_seen:
-		GameState.gus_static_run_anecdote_seen = true
-		start_dialogue(_get_gus_lines("static_service_run_anecdote", [
-			{"speaker": "Gus", "text": "Power's back. Door's awake."},
-			{"speaker": "Gus", "text": "Still, you did good. The hum is cleaner now."},
-		]))
+	if GameState.static_service_run_completed and not GameState.maintenance_sync_completed and GameState.get_npc_dialogue_count("maintenance_sync_restored_notice") == 0:
+		GameState.increment_npc_dialogue_count("maintenance_sync_restored_notice")
+		start_dialogue([
+			{"speaker": "Maintenance Sync", "text": "SERVICE CURRENT NORMAL. STAFF ACCESS READY."},
+			{"speaker": "Player", "text": "(The signal settled down. I should report to Gus.)"},
+		])
+
+func _send_gus_back_to_hub() -> void:
+	await SceneChanger.play_brief_fade()
+	GameState.gus_sync_anecdote_seen = true
+	_refresh_gus_presence()
+
+func _complete_sync_and_send_gus_back_to_hub() -> void:
+	GameState.complete_maintenance_sync()
+	_send_gus_back_to_hub()
 
 func _offer_maintenance_sync_replay() -> void:
 	PostGameReplay.open_offer(ui_layer, player, "Sync the door again?", "maintenance_sync", Callable(self, "_go_to_maintenance_sync"))

@@ -3,6 +3,9 @@ class_name RouteCue
 
 const DEFAULT_SIZE := Vector2(340, 48)
 const TILE_SIZE := 16
+const CLOSE_BUTTON_SIZE := Vector2(22, 22)
+const DISMISS_TIP_HOLD_SECONDS := 3.2
+const DISMISS_TIP_TEXT := "TIP: Quest info is still available from Esc > Quest."
 const PANEL_COLOR := Color(0.015, 0.018, 0.028, 0.9)
 const BORDER_COLOR := Color(0.25, 0.9, 1.0, 0.82)
 const TEXT_COLOR := Color(0.86, 0.96, 1.0, 1.0)
@@ -11,36 +14,57 @@ const LOCAL_COLOR := Color(0.64, 1.0, 0.72, 1.0)
 var location_id := ""
 var background_panel: Panel = null
 var route_label: Label = null
+var close_button: Button = null
+var dismissed := false
+var dismissed_quest_id := ""
+var showing_dismiss_tip := false
+var dismiss_tip_tween: Tween = null
 
 func setup(new_location_id: String, new_position: Vector2 = Vector2(24, 86), new_width: float = DEFAULT_SIZE.x) -> void:
 	location_id = new_location_id
 	position = new_position
 	size = Vector2(new_width, DEFAULT_SIZE.y)
 	custom_minimum_size = size
+	dismissed = false
+	showing_dismiss_tip = false
 	if is_node_ready():
 		_apply_layout()
 		refresh()
 
 func _ready() -> void:
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mouse_filter = Control.MOUSE_FILTER_PASS
 	z_index = 100
 	_build_nodes()
 	_apply_layout()
+	_connect_dialogue_boxes()
+	call_deferred("_connect_dialogue_boxes")
 	refresh()
 
 func refresh() -> void:
+	var current_quest_id := _get_current_quest_id()
+	# Dismissal belongs to the objective that opened the target dialogue. When
+	# that conversation advances the story, the next objective gets a fresh cue.
+	if dismissed and not dismissed_quest_id.is_empty() and current_quest_id != dismissed_quest_id:
+		dismissed = false
+		dismissed_quest_id = ""
+	if dismissed:
+		visible = showing_dismiss_tip
+		return
 	var hint := get_current_hint(location_id)
 	visible = not hint.is_empty()
 	if route_label == null:
 		return
 	route_label.text = hint
 	route_label.modulate = LOCAL_COLOR if hint.begins_with("LOCAL") else TEXT_COLOR
+	if close_button != null:
+		close_button.visible = visible
 	_fit_to_text()
 
 func _fit_to_text() -> void:
 	if route_label == null or background_panel == null:
 		return
-	var inner_width := maxf(size.x - 20.0, 80.0)
+	var right_reserve := 34.0 if close_button != null and close_button.visible else 10.0
+	var inner_width := maxf(size.x - 10.0 - right_reserve, 80.0)
 	var text_height := 16.0
 	var font := route_label.get_theme_font("font")
 	if font != null:
@@ -52,6 +76,9 @@ func _fit_to_text() -> void:
 	background_panel.size = Vector2(size.x, box_height)
 	route_label.position = Vector2(10, 5)
 	route_label.size = Vector2(inner_width, box_height - 10.0)
+	if close_button != null:
+		close_button.position = Vector2(size.x - CLOSE_BUTTON_SIZE.x - 4.0, 3.0)
+		close_button.size = CLOSE_BUTTON_SIZE
 
 static func get_current_hint(current_location_id: String) -> String:
 	var state := _get_game_state()
@@ -71,10 +98,18 @@ static func get_current_hint(current_location_id: String) -> String:
 			if not bool(state.get("roxy_met")):
 				return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Talk to Roxy by the score cabinet.")
 			return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Use the BROKEN SCORE cabinet.")
+		"vendo_circuit_debrief":
+			return _local_or_route(current_location_id, "snack_alcove", "LOCAL: Talk to Vendo after Circuit Soda.")
+		"ask_vendo_about_unknown":
+			return _local_or_route(current_location_id, "snack_alcove", "LOCAL: Ask Vendo about the unknown voice.")
 		"prize_sort":
+			if bool(state.get("prize_sort_completed")) and not bool(state.get("pip_prize_anecdote_seen")):
+				return _local_or_route(current_location_id, "prize_corner", "LOCAL: Take the Echo Token to Pip.")
 			if not bool(state.get("pip_met")):
+				if current_location_id == "snack_alcove":
+					return "LOCAL: Take the right passage between the two machines."
 				return _local_or_route(current_location_id, "prize_corner", "LOCAL: Talk to Pip by the prize counter.")
-			return _local_or_route(current_location_id, "prize_corner", "LOCAL: Use the PRIZE COUNTER.")
+			return _local_or_route(current_location_id, "prize_corner", "LOCAL: Use the shelf beside Pip.")
 		"truth_filter":
 			if int(state.call("get_npc_dialogue_count", "mr_byte_tf_explained")) == 0:
 				return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Talk to Mr. Byte about the Truth Filter.")
@@ -94,17 +129,17 @@ static func get_current_hint(current_location_id: String) -> String:
 		"static_service_run":
 			return _local_or_route(current_location_id, "maintenance_hall", "LOCAL: Talk to Gus, then run Static Service.")
 		"maintenance_sync":
-			return _local_or_route(current_location_id, "maintenance_hall", "LOCAL: Use Maintenance Sync by Gus.")
+			return _local_or_route(current_location_id, "maintenance_hall", "LOCAL: Report to Gus in Maintenance Hall.")
 		"staff_corridor":
-			return _local_or_route(current_location_id, "staff_corridor", "LOCAL: Follow the Staff Door signal deeper.")
+			return _local_or_route(current_location_id, "staff_corridor", "LOCAL: Take the NORTH exit to the Final Room.")
 		"security_tape_assembly":
-			return _local_or_route(current_location_id, "staff_corridor", "LOCAL: Restore the Security Tape.")
+			return _local_or_route(current_location_id, "staff_room", "LOCAL: Inspect the archive desk for the Security Tape.")
 		"final_night_walk":
-			return _local_or_route(current_location_id, "staff_corridor", "LOCAL: Walk the Final Night route.")
+			return _local_or_route(current_location_id, "staff_room", "LOCAL: Use the archive desk to trace the Final Night.")
 		"stabilize_memory_echo":
-			return _local_or_route(current_location_id, "staff_corridor", "LOCAL: Stabilize the Memory Echo.")
+			return _local_or_route(current_location_id, "staff_room", "LOCAL: Use the archive desk to open Memory Echo.")
 		"enter_staff_room":
-			return _local_or_route(current_location_id, "staff_corridor", "LOCAL: Enter the Staff Room.")
+			return _local_or_route(current_location_id, "staff_room", "LOCAL: Inspect the restore terminal.")
 		"finish_memory":
 			return _local_or_route(current_location_id, "staff_room", "LOCAL: Let the memory finish.")
 		"talk_to_witnesses":
@@ -126,14 +161,128 @@ func _build_nodes() -> void:
 	route_label.text = ""
 	add_child(route_label)
 
+	close_button = Button.new()
+	close_button.name = "CloseButton"
+	close_button.text = "X"
+	close_button.tooltip_text = "Close navigation"
+	close_button.focus_mode = Control.FOCUS_NONE
+	close_button.custom_minimum_size = CLOSE_BUTTON_SIZE
+	close_button.add_theme_font_size_override("font_size", 14)
+	close_button.pressed.connect(_on_close_pressed)
+	add_child(close_button)
+
 func _apply_layout() -> void:
-	if background_panel == null or route_label == null:
+	if background_panel == null or route_label == null or close_button == null:
 		return
 	background_panel.position = Vector2.ZERO
 	background_panel.size = size
 	background_panel.add_theme_stylebox_override("panel", _make_panel_style())
 	route_label.position = Vector2(10, 4)
-	route_label.size = Vector2(maxf(size.x - 20, 80.0), maxf(size.y - 8, 20.0))
+	route_label.size = Vector2(maxf(size.x - 44, 80.0), maxf(size.y - 8, 20.0))
+	close_button.position = Vector2(size.x - CLOSE_BUTTON_SIZE.x - 4.0, 3.0)
+	close_button.size = CLOSE_BUTTON_SIZE
+
+
+func _connect_dialogue_boxes() -> void:
+	for dialogue_box in get_tree().get_nodes_in_group("dialogue_boxes"):
+		if not dialogue_box.has_signal("dialogue_started"):
+			continue
+		var callback := Callable(self, "_on_dialogue_started")
+		if not dialogue_box.is_connected("dialogue_started", callback):
+			dialogue_box.connect("dialogue_started", callback)
+
+
+func _on_dialogue_started(lines: Array) -> void:
+	if showing_dismiss_tip:
+		_finish_dismiss_tip()
+	if dismissed or route_label == null:
+		return
+	var displayed_hint := route_label.text.strip_edges()
+	if not displayed_hint.begins_with("LOCAL:"):
+		return
+	if _dialogue_matches_displayed_target(displayed_hint, lines):
+		dismiss_for_target_dialogue()
+
+
+func dismiss_for_target_dialogue() -> void:
+	dismissed = true
+	dismissed_quest_id = _get_current_quest_id()
+	showing_dismiss_tip = false
+	if dismiss_tip_tween and dismiss_tip_tween.is_valid():
+		dismiss_tip_tween.kill()
+	if close_button != null:
+		close_button.visible = false
+	visible = false
+
+
+func _on_close_pressed() -> void:
+	_play_audio("play_ui_cancel")
+	dismissed = true
+	dismissed_quest_id = _get_current_quest_id()
+	var state := _get_game_state()
+	if state != null and not bool(state.get("route_cue_close_tip_seen")):
+		state.set("route_cue_close_tip_seen", true)
+		_show_dismiss_tip()
+		return
+	visible = false
+
+
+func _show_dismiss_tip() -> void:
+	showing_dismiss_tip = true
+	visible = true
+	modulate.a = 1.0
+	close_button.visible = false
+	route_label.text = DISMISS_TIP_TEXT
+	route_label.modulate = TEXT_COLOR
+	_fit_to_text()
+	if dismiss_tip_tween and dismiss_tip_tween.is_valid():
+		dismiss_tip_tween.kill()
+	dismiss_tip_tween = create_tween()
+	dismiss_tip_tween.tween_interval(DISMISS_TIP_HOLD_SECONDS)
+	dismiss_tip_tween.tween_property(self, "modulate:a", 0.0, 0.35)
+	dismiss_tip_tween.tween_callback(_finish_dismiss_tip)
+
+
+func _finish_dismiss_tip() -> void:
+	if dismiss_tip_tween and dismiss_tip_tween.is_valid():
+		dismiss_tip_tween.kill()
+	showing_dismiss_tip = false
+	visible = false
+	modulate.a = 1.0
+
+
+static func _dialogue_matches_displayed_target(hint: String, lines: Array) -> bool:
+	var lowered_hint := hint.to_lower()
+	var expected_speakers: Array[String] = []
+	if lowered_hint.contains("mr. byte"):
+		expected_speakers = ["mr. byte"]
+	elif lowered_hint.contains("mira"):
+		expected_speakers = ["mira"]
+	elif lowered_hint.contains("roxy"):
+		expected_speakers = ["roxy"]
+	elif lowered_hint.contains("vendo"):
+		expected_speakers = ["vendo"]
+	elif lowered_hint.contains("pip"):
+		expected_speakers = ["pip"]
+	elif lowered_hint.contains("gus"):
+		expected_speakers = ["gus"]
+	elif lowered_hint.contains("whoever is still here"):
+		expected_speakers = ["mira", "gus", "roxy", "pip"]
+	if expected_speakers.is_empty():
+		return false
+	for line_value in lines:
+		if not line_value is Dictionary:
+			continue
+		var speaker := str((line_value as Dictionary).get("speaker", "")).to_lower()
+		if speaker in expected_speakers:
+			return true
+	return false
+
+
+func _play_audio(method_name: String) -> void:
+	var audio_manager := get_node_or_null("/root/AudioManager")
+	if audio_manager and audio_manager.has_method(method_name):
+		audio_manager.call(method_name)
 
 static func _make_panel_style() -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
@@ -154,13 +303,13 @@ static func _make_panel_style() -> StyleBoxFlat:
 	return style
 
 static func _get_lost_shift_hint(current_location_id: String, state: Node) -> String:
-	if not bool(state.get("closing_checklist_read")):
-		return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Read the Closing Checklist near the counter.")
-	if not bool(state.get("staff_schedule_read")):
-		return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Read the Staff Schedule by Mr. Byte.")
-	if not bool(state.get("maintenance_note_read")):
-		return _local_or_route(current_location_id, "maintenance_hall", "LOCAL: Read Gus's Maintenance Note.")
-	return _local_or_route(current_location_id, "maintenance_hall", "LOCAL: Tell Gus the Lost Shift File is complete.")
+	if not bool(state.get("closing_shift_mira_clue_found")):
+		return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Ask Mira about the closing shift.")
+	if not bool(state.get("closing_shift_score_clue_found")):
+		return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Inspect BROKEN SCORE.")
+	if not bool(state.get("closing_shift_service_clue_found")):
+		return _local_or_route(current_location_id, "snack_alcove", "LOCAL: Inspect SERVICE DASH.")
+	return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Report the echoes to Gus.")
 
 static func _get_witness_hint(current_location_id: String, state: Node) -> String:
 	if not bool(state.get("witness_mira_heard")):
@@ -216,7 +365,7 @@ static func _get_next_step(current_location_id: String, target_location_id: Stri
 			if target_location_id == "prize_corner":
 				return "Take the PRIZE SERVICE HALL at the right end."
 			if target_location_id == "arcade_hub":
-				return "Take the SNACK HALLWAY at the bottom."
+				return "Left to CABINET ROW, then take CABINET HALLWAY to ARCADE HUB."
 			return "Back to ARCADE HUB, then %s." % _get_target_label(target_location_id)
 		"prize_corner":
 			if target_location_id == "snack_alcove":
@@ -243,7 +392,7 @@ static func _get_next_step(current_location_id: String, target_location_id: Stri
 		"cabinet_hallway":
 			return "Take CABINET ROW exit." if target_location_id == "cabinet_row" else "Take ARCADE HUB exit."
 		"snack_hallway":
-			return "Take SNACK ALCOVE exit." if target_location_id == "snack_alcove" else "Take ARCADE HUB exit."
+			return "Take the NORTH EXIT back to SNACK ALCOVE."
 		"maintenance_hallway":
 			return "Take MAINTENANCE exit." if target_location_id == "maintenance_hall" else "Take ARCADE HUB exit."
 		"prize_hallway":
@@ -281,3 +430,10 @@ static func _get_game_state() -> Node:
 	if main_loop is SceneTree:
 		return (main_loop as SceneTree).root.get_node_or_null("GameState")
 	return null
+
+
+static func _get_current_quest_id() -> String:
+	var state := _get_game_state()
+	if state == null or not state.has_method("get_current_quest_id"):
+		return ""
+	return str(state.call("get_current_quest_id"))

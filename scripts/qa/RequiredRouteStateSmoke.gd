@@ -33,18 +33,31 @@ func _init() -> void:
 	_check_state("04b Gus check-in heard", "circuit_soda", "Truth Filter Cleared", "Fractured", 3)
 
 	game_state.complete_circuit_soda()
-	_check_state("05 Circuit Soda complete", "prize_sort", "Prize Sort", "Fractured", 4)
+	_check_state("05 Circuit Soda complete", "vendo_circuit_debrief", "Circuit Soda Debrief", "Fractured", 4)
+
+	game_state.vendo_circuit_anecdote_seen = true
+	game_state.mark_conscience_encounter_seen("after_circuit_soda")
+	_check_state("05a Unknown voice heard", "ask_vendo_about_unknown", "Ask About the Voice", "Fractured", 4)
+
+	game_state.vendo_unknown_clue_seen = true
+	_check_state("05b Vendo clue heard", "prize_sort", "Prize Echo Ascent", "Fractured", 4)
 
 	game_state.complete_pip_secret()
-	_check_state("05b Prize Sort complete", "gus_checkin_prize_sort", "Lost Shift File", "Fractured", 5)
+	_check_state("05c Prize Echo Ascent complete", "prize_sort", "Prize Echo Ascent", "Fractured", 5)
+
+	game_state.pip_prize_anecdote_seen = true
+	_check_state("05d Pip examines Echo Token", "gus_checkin_prize_sort", "Gus Has a Lead", "Fractured", 5)
 
 	game_state.gus_hub_checkin_prize_sort_done = true
-	_check_state("05c Gus lead heard", "lost_shift_file", "Lost Shift File", "Fractured", 5)
+	game_state.start_lost_shift_file()
+	_check_state("05e Gus lead heard", "lost_shift_file", "Closing Shift Echoes", "Fractured", 5)
 
-	game_state.read_closing_checklist()
-	game_state.read_maintenance_note()
-	game_state.read_staff_schedule()
-	_check_state("06 Lost Shift File complete", "static_service_run", "Static Service Run", "Fractured", 6)
+	game_state.find_closing_shift_mira_clue()
+	game_state.find_closing_shift_score_clue()
+	game_state.find_closing_shift_service_clue()
+	_check_state("05f Evidence sequence complete", "lost_shift_file", "Closing Shift Echoes", "Fractured", 5)
+	game_state.complete_closing_shift_echoes()
+	_check_state("06 Closing Shift Echoes complete", "static_service_run", "Static Service Run", "Fractured", 6)
 
 	game_state.complete_static_service_run()
 	_check_state("07 Static Service Run complete", "maintenance_sync", "Maintenance Sync", "Fractured", 7)

@@ -1,7 +1,11 @@
 extends CanvasLayer
 
 const SAVE_SLOT_MENU_SCENE := preload("res://scenes/ui/SaveSlotMenu.tscn")
+const MINIGAME_LAYOUT_GUARD_SCRIPT := preload("res://scripts/ui/MinigameUILayoutGuard.gd")
 const TITLE_FADE_SECONDS := 0.28
+const ROOM_PANEL_HEIGHT := 330.0
+const MINIGAME_PANEL_HEIGHT := 368.0
+const PANEL_VERTICAL_PADDING := 18.0
 
 @export var is_minigame_context := false
 
@@ -11,9 +15,10 @@ const TITLE_FADE_SECONDS := 0.28
 @onready var save_button: Button = $Panel/VBox/SaveButton
 @onready var load_button: Button = $Panel/VBox/LoadButton
 @onready var settings_button: Button = $Panel/VBox/SettingsButton
+@onready var controls_button: Button = $Panel/VBox/ControlsButton
 @onready var exit_minigame_button: Button = $Panel/VBox/ExitMinigameButton
 @onready var title_button: Button = $Panel/VBox/TitleButton
-@onready var status_label: Label = $Panel/VBox/StatusLabel
+@onready var menu_vbox: VBoxContainer = $Panel/VBox
 @onready var fade_overlay: ColorRect = $FadeOverlay
 @onready var settings_menu: CanvasLayer = $SettingsMenu
 @onready var quest_notice: CanvasLayer = $QuestNotice
@@ -22,13 +27,13 @@ const CONTROLS_TEXT := """Move - WASD or Arrow Keys
 Interact / Advance dialogue - E, Space, or Enter
 Menu / Back - Esc
 Adventure stages - R restarts the run
+Scrolling stages - hold E or Space for jump height; press again in air
 
 Walk close to a glowing arrow to see where a doorway leads.
 Walk up to people and machines and press E to talk."""
 
 var save_slot_menu: Control = null
 var transition_in_progress := false
-var controls_button: Button = null
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -38,20 +43,25 @@ func _ready() -> void:
 	save_button.pressed.connect(_on_save_pressed)
 	load_button.pressed.connect(_on_load_pressed)
 	settings_button.pressed.connect(_on_settings_pressed)
+	controls_button.pressed.connect(_on_controls_pressed)
 	exit_minigame_button.pressed.connect(_on_exit_minigame_pressed)
 	title_button.pressed.connect(_on_title_pressed)
-	controls_button = Button.new()
-	controls_button.name = "ControlsButton"
-	controls_button.text = "Controls"
-	controls_button.pressed.connect(_on_controls_pressed)
-	var vbox := settings_button.get_parent()
-	vbox.add_child(controls_button)
-	vbox.move_child(controls_button, settings_button.get_index() + 1)
 	if settings_menu.has_signal("settings_closed"):
 		settings_menu.settings_closed.connect(_on_settings_closed)
 	if quest_notice.has_signal("quest_closed"):
 		quest_notice.connect("quest_closed", _on_quest_closed)
 	exit_minigame_button.visible = is_minigame_context
+	_fit_panel_to_context()
+	if is_minigame_context:
+		call_deferred("_install_minigame_layout_guard")
+
+func _install_minigame_layout_guard() -> void:
+	var host := get_parent()
+	if host == null or host.get_node_or_null("MinigameUILayoutGuard") != null:
+		return
+	var guard := MINIGAME_LAYOUT_GUARD_SCRIPT.new()
+	guard.name = "MinigameUILayoutGuard"
+	host.add_child(guard)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if transition_in_progress:
@@ -84,7 +94,6 @@ func open_menu() -> void:
 		return
 	visible = true
 	panel.visible = true
-	status_label.text = ""
 	get_tree().paused = true
 	_play_audio("play_ui_confirm")
 	continue_button.grab_focus()
@@ -173,8 +182,13 @@ func _on_save_slot_menu_closed() -> void:
 	if not visible:
 		return
 	panel.visible = true
-	status_label.text = "Save menu closed."
 	continue_button.grab_focus()
+
+func _fit_panel_to_context() -> void:
+	var panel_height := MINIGAME_PANEL_HEIGHT if is_minigame_context else ROOM_PANEL_HEIGHT
+	panel.offset_top = -panel_height * 0.5
+	panel.offset_bottom = panel_height * 0.5
+	menu_vbox.offset_bottom = panel_height - PANEL_VERTICAL_PADDING
 
 func _fade_out() -> void:
 	transition_in_progress = true

@@ -14,7 +14,7 @@ var _inst: Node = null
 var _frame := 0
 
 func _initialize() -> void:
-	DirAccess.make_dir_recursive_absolute("user://captures")
+	DirAccess.make_dir_recursive_absolute("res://tmp/captures")
 
 func _process(_d: float) -> bool:
 	if _inst == null:
@@ -31,7 +31,7 @@ func _process(_d: float) -> bool:
 	_frame += 1
 	if _frame >= 16:
 		var img := root.get_texture().get_image()
-		img.save_png("user://captures/room_%s.png" % _targets[_i][0])
+		img.save_png("res://tmp/captures/room_%s.png" % _targets[_i][0])
 		print("saved room_%s" % _targets[_i][0])
 		_inst.free()
 		_inst = null

@@ -21,6 +21,7 @@ config/icon="res://assets/art/ui/icon.svg"
 
 [autoload]
 
+DebugLog="*res://scripts/DebugLog.gd"
 GameState="*res://scripts/GameState.gd"
 SceneChanger="*res://scripts/SceneChanger.gd"
 SaveManager="*res://scripts/SaveManager.gd"

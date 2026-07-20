@@ -3,7 +3,7 @@ extends SceneTree
 # (m5x7 @16 across 282px, single line).
 
 const CANDIDATES := [
-	"Look around. Talk to whoever is here.",
+	"Look around. Talk to whoever is still here.",
 	"Talk to Mira at the ticket counter.",
 	"Win your token back from Cabinet 07.",
 	"Bring the Lost Token back to Mira.",

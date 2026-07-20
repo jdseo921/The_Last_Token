@@ -12,32 +12,33 @@ extends Control
 @onready var frame_texture: TextureRect = $CabinetFrameLayer/FrameTexture
 @onready var frame_placeholder: Panel = $CabinetFrameLayer/FramePlaceholder
 @onready var title_label: Label = $TitleLabel
-@onready var instruction_label: Label = $InstructionPanel/InstructionLabel
-@onready var status_label: Label = $StatusPanel/StatusLabel
-@onready var result_panel: Panel = $ResultPanel
-@onready var result_label: Label = $ResultPanel/ResultLabel
+@onready var instruction_panel: MinigameTextBox = $InstructionPanel
+@onready var status_panel: MinigameTextBox = $StatusPanel
+@onready var result_panel: MinigameTextBox = $ResultPanel
+@onready var instruction_label: Label = instruction_panel.get_label()
+@onready var status_label: Label = status_panel.get_label()
+@onready var result_label: Label = result_panel.get_label()
 @onready var exit_button: Button = $ExitButton
 
 func _ready() -> void:
 	_apply_optional_texture(background_texture_path, background_texture, background_placeholder)
 	_apply_optional_texture(frame_texture_path, frame_texture, frame_placeholder)
 	title_label.text = title_text
-	instruction_label.text = instruction_text
-	status_label.text = status_text
+	instruction_panel.set_text(instruction_text)
+	status_panel.set_text(status_text)
 	set_result_text(result_text)
 	exit_button.pressed.connect(_on_exit_pressed)
 
 func set_status_text(text: String) -> void:
 	status_text = text
-	if status_label:
-		status_label.text = status_text
+	if status_panel:
+		status_panel.set_text(status_text)
 
 func set_result_text(text: String) -> void:
 	result_text = text
-	if result_label:
-		result_label.text = result_text
 	if result_panel:
 		result_panel.visible = not result_text.is_empty()
+		result_panel.set_text(result_text)
 
 func _apply_optional_texture(path: String, texture_rect: TextureRect, placeholder: CanvasItem) -> void:
 	texture_rect.visible = false

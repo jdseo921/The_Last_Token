@@ -1,10 +1,10 @@
 [gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/MapTransition.gd" id="1"]
-[ext_resource type="FontFile" path="res://assets/fonts/m3x6.ttf" id="fpx_micro"]
+[ext_resource type="FontFile" path="res://assets/fonts/m6x11.ttf" id="fpx_micro"]
 
 [sub_resource type="RectangleShape2D" id="1"]
-size = Vector2(72, 40)
+size = Vector2(94, 52)
 
 [node name="MapTransition" type="Area2D"]
 script = ExtResource("1")

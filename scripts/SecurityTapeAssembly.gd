@@ -62,7 +62,7 @@ func _ready() -> void:
 	for index in range(fragment_buttons.size()):
 		var button: Button = fragment_buttons[index]
 		button.text = STATIC_TEXT
-		button.add_theme_font_size_override("font_size", 16)
+		button.add_theme_font_size_override("font_size", 14)
 		if not button.pressed.is_connected(_on_fragment_pressed):
 			button.pressed.connect(_on_fragment_pressed.bind(index))
 	submit_button.pressed.connect(_on_submit_pressed)
@@ -153,7 +153,7 @@ func _refresh_view() -> void:
 		if index < selected_fragments.size():
 			slot_text = selected_fragments[index]
 		lines.append("%d. %s" % [index + 1, slot_text])
-	selected_label.text = "\n".join(lines)
+	selected_label.text = "RESTORED ORDER\n%s" % "\n".join(lines)
 	for index in range(fragment_buttons.size()):
 		var button: Button = fragment_buttons[index]
 		var fragment: String = display_fragments[index]
@@ -170,7 +170,7 @@ func _return_to_staff_corridor() -> void:
 	ARCADE_JUICE.pulse_control(self, return_button)
 	_play_audio("play_button_pulse")
 	GameState.set_pending_spawn_id("Spawn_FromSecurityTape")
-	SceneChanger.go_to_staff_corridor()
+	SceneChanger.go_to_staff_room()
 
 func _flash_feedback(color: Color, peak_alpha: float) -> void:
 	ARCADE_JUICE.flash_overlay(self, feedback_flash, color, peak_alpha)

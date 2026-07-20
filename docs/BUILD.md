@@ -10,16 +10,13 @@ Templates live in `%APPDATA%\Godot\export_templates\4.7.stable\`; `windows_relea
 
 ## Validate before building
 
-From the repo root (console build recommended for CLI output):
+From the repo root, run the maintained regression entry point:
 
-```
-$godot = "C:\Tools\Godot\Godot_v4.7-stable_win64_console.exe"
-& $godot --headless --import --path .                                   # import assets
-& $godot --headless --script res://tools/validate_project.gd --path .   # parse/load/JSON + unit test
-& $godot --headless --path . --quit-after 150                           # boot smoke (Main -> TitleMenu)
+```powershell
+pwsh tools/RunRegressionSuite.ps1
 ```
 
-`validate_project.gd` should print `RESULT: NO ERRORS`. Optional runtime checks: `tools/smoke_minigames.gd`, `tools/smoke_adventure.gd`.
+The runner performs an editor-wide parse, boots the main scene, treats silent script compile failures as failures, and executes all focused QA scripts. Logs are written under `tmp/qa/<timestamp>/`. See [`DEBUGGING.md`](../DEBUGGING.md) for runtime tracing.
 
 ## Build
 

@@ -4,6 +4,7 @@
     "pre_truth_filter_locked": [
       [
         {"speaker": "Mr. Byte", "text": "TRUTH FILTER LOCKED.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_error.png"},
+        {"speaker": "Mr. Byte", "text": "Employee geometry recognized. Memory response absent."},
         {"speaker": "Mr. Byte", "text": "Memory signal below readable threshold."},
         {"speaker": "Mr. Byte", "text": "Recovered token required."},
         {"speaker": "Mr. Byte", "text": "Emotion detected: confusion.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_diagnostic.png"},
@@ -11,6 +12,7 @@
       ],
       [
         {"speaker": "Mr. Byte", "text": "Input rejected.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_error.png"},
+        {"speaker": "Mr. Byte", "text": "Known operator signal. Unfamiliar response pattern."},
         {"speaker": "Mr. Byte", "text": "Contradiction scan cannot initialize."},
         {"speaker": "Mr. Byte", "text": "Retrieve Lost Token."},
         {"speaker": "Mr. Byte", "text": "Return when the arcade recognizes more of you."}
@@ -35,40 +37,32 @@
     "truth_filter_completion_anecdote": [
       [
         {"speaker": "Mr. Byte", "text": "Truth Filter passed.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_stable.png"},
-        {"speaker": "Mr. Byte", "text": "Lie density reduced."},
-        {"speaker": "Mr. Byte", "text": "Note: a correct answer is not the same as a settled one."},
-        {"speaker": "Mr. Byte", "text": "Identity conflict remains.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_error.png"},
-        {"speaker": "Mr. Byte", "text": "Diagnostic: your response timing will not resolve. The signal answers, then hesitates, then answers again."},
-        {"speaker": "Mr. Byte", "text": "Registered as one user. Reading as unstable. I cannot close this file."},
-        {"speaker": "Mr. Byte", "text": "Emotion registered as heat with no source."},
-        {"speaker": "Mr. Byte", "text": "Further stabilization required."}
+        {"speaker": "Mr. Byte", "text": "Broken Score, your token, and the shift log identify operator STAFF 04. The owner name is missing."},
+        {"speaker": "Mr. Byte", "text": "The same operator was split between keeping the arcade alive and weighing the cost of leaving. One correct answer cannot settle a life.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_error.png"}
       ]
     ],
     "truth_filter_voice_debrief": [
       [
-        {"speaker": "Mr. Byte", "text": "Unrelated administrative matter.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_diagnostic.png"},
-        {"speaker": "Mr. Byte", "text": "Earlier tonight, the hallway audio channel carried a broadcast."},
-        {"speaker": "Mr. Byte", "text": "Source field: empty. No machine on this floor requested that channel."},
-        {"speaker": "Mr. Byte", "text": "I asked all of them. They were offended."},
-        {"speaker": "Mr. Byte", "text": "There is no form for audio without a speaker. I checked twice. Then I built one."},
-        {"speaker": "Mr. Byte", "text": "Field one: WHAT SPOKE. Field two: PLEASE."},
-        {"speaker": "Mr. Byte", "text": "I have filed it under ambient noise and I would like to stop thinking about it."}
+        {"speaker": "Mr. Byte", "text": "Additional finding: the hallway broadcast had no registered speaker.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_diagnostic.png"},
+        {"speaker": "Mr. Byte", "text": "Every cabinet denied sending it. Ask Gus whether he heard it."}
       ]
     ],
-    "lost_shift_file_support": [
+    "closing_shift_echoes_support": [
       [
-        {"speaker": "Mr. Byte", "text": "Lost Shift File access opened.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_diagnostic.png"},
-        {"speaker": "Mr. Byte", "text": "Staff schedule damaged but readable."},
-        {"speaker": "Mr. Byte", "text": "Read the schedule near this kiosk."},
-        {"speaker": "Mr. Byte", "text": "Records retain assignment."},
-        {"speaker": "Mr. Byte", "text": "Name field remains protected."},
-        {"speaker": "Mr. Byte", "text": "Protection lifts when the signal reads clean."}
+        {"speaker": "Mr. Byte", "text": "Closing-shift evidence route detected.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_diagnostic.png"},
+        {"speaker": "Mr. Byte", "text": "Gus is sorting the files. Begin with Mira; recovered connections may supply the rest."},
+        {"speaker": "Mr. Byte", "text": "The Logs beside this kiosk remain available for Truth Filter reference."}
       ],
       [
-        {"speaker": "Mr. Byte", "text": "Final night records are waking.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_error.png"},
-        {"speaker": "Mr. Byte", "text": "Memory gaps align around staff access."},
-        {"speaker": "Mr. Byte", "text": "Read available files."},
-        {"speaker": "Mr. Byte", "text": "Do not request the missing name yet."}
+        {"speaker": "Mr. Byte", "text": "Closing-shift echoes remain active.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_error.png"},
+        {"speaker": "Mr. Byte", "text": "Sequence order is part of the evidence."},
+        {"speaker": "Mr. Byte", "text": "Do not skip ahead."}
+      ]
+    ],
+    "closing_shift_echoes_complete_support": [
+      [
+        {"speaker": "Mr. Byte", "text": "Closing-shift sequence reconstructed.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_diagnostic.png"},
+        {"speaker": "Mr. Byte", "text": "Service-line continuation authorized."}
       ]
     ],
     "security_tape_support": [
@@ -89,7 +83,8 @@
       [
         {"speaker": "Mr. Byte", "text": "Tape order restored.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_stable.png"},
         {"speaker": "Mr. Byte", "text": "Sequence now describes a route."},
-        {"speaker": "Mr. Byte", "text": "It does not yet describe the cause."}
+        {"speaker": "Mr. Byte", "text": "It does not yet describe the cause."},
+        {"speaker": "Mr. Byte", "text": "A reconstructed route is evidence, not a verdict on the life that walked it."}
       ]
     ],
     "staff_records_chain": [
@@ -118,13 +113,13 @@
         {"speaker": "Mr. Byte", "text": "Employee 04.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_stable.png"},
         {"speaker": "Mr. Byte", "text": "Identity conflict resolved.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_stable.png"},
         {"speaker": "Mr. Byte", "text": "For the record: your signal never once read as stable this whole session. It answered, then corrected itself, like part of it refused to hold still."},
-        {"speaker": "Mr. Byte", "text": "It reads quiet now. Whatever would not settle in you has stopped moving."},
-        {"speaker": "Mr. Byte", "text": "The part of it I could never parse was never mine to parse. It closed when you did."},
-        {"speaker": "Mr. Byte", "text": "Resolution is not repair."},
+        {"speaker": "Mr. Byte", "text": "It reads integrated now. The disagreement remains, but both responses share one timing."},
+        {"speaker": "Mr. Byte", "text": "The instability was not corruption. It was two survival strategies refusing to exchange data."},
+        {"speaker": "Mr. Byte", "text": "Resolution is not repair. Integration remains ongoing."},
         {"speaker": "Mr. Byte", "text": "Emotional cache remains unstable."},
         {"speaker": "Mr. Byte", "text": "You were recorded as staff."},
-        {"speaker": "Mr. Byte", "text": "You were restored as memory."},
-        {"speaker": "Mr. Byte", "text": "Both statements now pass."},
+        {"speaker": "Mr. Byte", "text": "You returned as the same person without access to the same memories."},
+        {"speaker": "Mr. Byte", "text": "Both statements now pass. Neither makes the other false."},
         {"speaker": "Mr. Byte", "text": "Conflict thread archived."},
         {"speaker": "Mr. Byte", "text": "Witness route recommended."},
         {"speaker": "Mr. Byte", "text": "No further denial required."}

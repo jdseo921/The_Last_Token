@@ -4,11 +4,12 @@ extends SceneTree
 # Loads each stage scene, waits for _ready + a few drawn frames, saves a PNG of
 # the actual composited viewport, then quits. Output dir: user://captures/.
 
-const SETTLE_FRAMES := 14
+const SETTLE_FRAMES := 75
 
 var _targets := [
 	["title_main", "res://scenes/main/Main.tscn"],
 	["rockbyte_duel", "res://scenes/minigames/RockbyteDuel.tscn"],
+	["broken_high_score", "res://scenes/minigames/BrokenHighScore.tscn"],
 	["truth_filter", "res://scenes/minigames/TruthFilter.tscn"],
 	["circuit_soda", "res://scenes/minigames/CircuitSoda.tscn"],
 	["sync_door", "res://scenes/arcade/SyncDoorPuzzle.tscn"],

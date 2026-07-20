@@ -52,26 +52,28 @@ func _maybe_build_objective_hud() -> void:
 	hud_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hud_layer.add_child(hud_root)
 	var backing := ColorRect.new()
+	backing.name = "ObjectiveBacking"
 	backing.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	backing.position = Vector2(340, 6)
-	backing.size = Vector2(294, 44)
+	backing.position = Vector2(340, 0)
+	backing.size = Vector2(294, 40)
 	backing.color = Color(0.012, 0.016, 0.026, 0.78)
 	hud_root.add_child(backing)
 	var edge := ColorRect.new()
+	edge.name = "ObjectiveEdge"
 	edge.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	edge.position = Vector2(340, 6)
-	edge.size = Vector2(2, 44)
+	edge.position = Vector2(340, 0)
+	edge.size = Vector2(2, 40)
 	edge.color = Color(0.3, 0.9, 1.0, 0.85)
 	hud_root.add_child(edge)
 	hud_title = Label.new()
-	hud_title.position = Vector2(348, 10)
+	hud_title.position = Vector2(348, 2)
 	hud_title.size = Vector2(282, 18)
 	hud_title.add_theme_font_override("font", preload("res://assets/fonts/m5x7.ttf"))
 	hud_title.add_theme_font_size_override("font_size", 16)
 	hud_title.add_theme_color_override("font_color", Color(0.5, 0.95, 1.0, 1.0))
 	hud_root.add_child(hud_title)
 	hud_action = Label.new()
-	hud_action.position = Vector2(348, 28)
+	hud_action.position = Vector2(348, 20)
 	hud_action.size = Vector2(282, 16)
 	hud_action.add_theme_font_override("font", preload("res://assets/fonts/m5x7.ttf"))
 	hud_action.add_theme_font_size_override("font_size", 16)
@@ -104,6 +106,12 @@ func _update_objective_hud(pulse: bool) -> void:
 		hud_tween = create_tween()
 		hud_tween.tween_property(hud_root, "modulate", Color.WHITE, 0.9)
 		_play_audio("play_quest_update")
+
+
+func refresh_objective_hud(pulse := false) -> void:
+	# Map scripts call this at exact story handoffs instead of waiting for the
+	# half-second polling fallback.
+	_update_objective_hud(pulse)
 
 func _process(delta: float) -> void:
 	# Announce whenever the active quest changes so the player always sees the
@@ -139,7 +147,6 @@ func _process(delta: float) -> void:
 		return
 	if ConscienceEncounterDirector.is_encounter_active():
 		return
-	GameState.last_announced_quest_id = quest_id
 	last_announced_signature = signature
 	_update_objective_hud(true)
 
@@ -164,39 +171,18 @@ func _finish_notification() -> void:
 	GameState.ui_notice_blocking = false
 
 func show_notification(quest_data: Dictionary) -> void:
-	GameState.ui_notice_blocking = true
-	notification_token += 1
-	_configure_window(
-		"NEW QUEST",
-		str(quest_data.get("title", "Quest Updated")),
-		_format_quest_body(quest_data, false),
-		false
-	)
-	visible = true
-	panel.modulate.a = 0.0
-	_play_audio("play_quest_update")
-	if hide_tween and hide_tween.is_valid():
-		hide_tween.kill()
-	hide_tween = create_tween()
-	hide_tween.tween_property(panel, "modulate:a", 1.0, NOTIFICATION_FADE_IN_SECONDS)
-	hide_tween.tween_interval(NOTIFICATION_HOLD_SECONDS)
-	hide_tween.tween_property(panel, "modulate:a", 0.0, NOTIFICATION_FADE_OUT_SECONDS)
-	hide_tween.tween_callback(_finish_notification)
+	# Quest changes belong in the persistent corner HUD. The large window is
+	# reserved for explicit Esc > Quest details and must never interrupt play.
+	GameState.ui_notice_blocking = false
+	visible = false
+	refresh_objective_hud(true)
 
 func show_custom_notification(eyebrow: String, title: String, body: String) -> void:
-	GameState.ui_notice_blocking = true
-	notification_token += 1
-	_configure_window(eyebrow, title, body, false)
-	visible = true
-	panel.modulate.a = 0.0
-	_play_audio("play_quest_update")
-	if hide_tween and hide_tween.is_valid():
-		hide_tween.kill()
-	hide_tween = create_tween()
-	hide_tween.tween_property(panel, "modulate:a", 1.0, NOTIFICATION_FADE_IN_SECONDS)
-	hide_tween.tween_interval(NOTIFICATION_HOLD_SECONDS)
-	hide_tween.tween_property(panel, "modulate:a", 0.0, NOTIFICATION_FADE_OUT_SECONDS)
-	hide_tween.tween_callback(_finish_notification)
+	# Compatibility entry point for older map callbacks. Automatic quest-card
+	# popups were retired; keep the HUD current without blocking interaction.
+	GameState.ui_notice_blocking = false
+	visible = false
+	refresh_objective_hud(true)
 
 func show_custom_details(eyebrow: String, title: String, body: String) -> void:
 	# Details-mode custom window (Close button, no auto-fade) - used for Controls.

@@ -23,7 +23,6 @@ static func flash_overlay(owner: Node, overlay: CanvasItem, color: Color = FLASH
 	var tween := owner.create_tween()
 	tween.tween_property(overlay, "modulate:a", peak_alpha, 0.04)
 	tween.tween_property(overlay, "modulate:a", 0.0, 0.12)
-	tween.tween_callback(_hide_canvas_item.bind(overlay))
 
 static func shake_control(owner: Node, item: Control, pixels: int = 4) -> void:
 	if owner == null or item == null:
@@ -34,6 +33,6 @@ static func shake_control(owner: Node, item: Control, pixels: int = 4) -> void:
 	tween.tween_property(item, "position", start_position + Vector2(pixels, 0), 0.035)
 	tween.tween_property(item, "position", start_position, 0.045)
 
-static func _hide_canvas_item(item: CanvasItem) -> void:
-	if item != null:
-		item.visible = false
+static func _hide_canvas_item(item: Object) -> void:
+	if item != null and is_instance_valid(item) and item is CanvasItem:
+		(item as CanvasItem).visible = false

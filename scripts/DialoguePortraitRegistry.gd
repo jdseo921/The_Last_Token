@@ -9,10 +9,12 @@ const DEFAULT_PORTRAITS := {
 	"Mira": "res://assets/art/portraits/mira/mira_neutral.png",
 	"Gus": "res://assets/art/portraits/gus/gus_neutral.png",
 	"Vendo": "res://assets/art/portraits/vendo/vendo_neutral.png",
+	"SIP-2": "res://assets/art/portraits/vendo/vendo_neutral.png",
 	"Mr. Byte": "res://assets/art/portraits/mr_byte/mr_byte_neutral.png",
 	"Cabinet 07": "res://assets/art/portraits/mr_byte/cabinet_07_screen.png",
 	"Roxy": "res://assets/art/portraits/roxy/roxy_smug.png",
 	"Pip": "res://assets/art/portraits/pip/pip_warm.png",
+	"Night Ledger": "res://assets/art/portraits/night_ledger/night_ledger_neutral.png",
 	"\"Player\"": PLAYER_CONSCIENCE_REVEALED_PORTRAIT,
 }
 

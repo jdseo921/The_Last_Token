@@ -17,18 +17,14 @@
     ],
     "rockbyte_completion": [
       [
-        {"speaker": "Cabinet 07", "text": "TOKEN RECOVERED.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_stable.png"},
-        {"speaker": "Cabinet 07", "text": "SIGNAL RECOGNITION IMPROVED."},
-        {"speaker": "Cabinet 07", "text": "ONE WIN LOGGED."},
-        {"speaker": "Cabinet 07", "text": "IDENTITY: STILL MISSING."},
-        {"speaker": "Cabinet 07", "text": "DUEL RESULT VERIFIED OLD TOKEN MATCH."},
-        {"speaker": "Cabinet 07", "text": "RETURN TO MIRA."}
+        {"speaker": "Player", "text": "The cabinet knew my timing. I still do not remember touching it before."},
+        {"speaker": "Player", "text": "I have the Lost Token."},
+        {"speaker": "Player", "text": "Mira is waiting at the counter. I should take it back to her."}
       ],
       [
-        {"speaker": "Cabinet 07", "text": "ROCKBYTE COMPLETE.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_stable.png"},
-        {"speaker": "Cabinet 07", "text": "LOST TOKEN: FOUND."},
-        {"speaker": "Cabinet 07", "text": "SESSION SIGNAL: ACCEPTED."},
-        {"speaker": "Cabinet 07", "text": "HANDOFF REQUIRED: MIRA."}
+        {"speaker": "Player", "text": "It recognized me before I recognized it."},
+        {"speaker": "Player", "text": "The token is finally mine."},
+        {"speaker": "Player", "text": "Time to bring it back to Mira."}
       ]
     ],
     "truth_filter_phase_echo": [
@@ -47,7 +43,7 @@
     "fractured_echo": [
       [
         {"speaker": "Cabinet 07", "text": "CABINET STATUS: RESTLESS.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_alert.png"},
-        {"speaker": "Cabinet 07", "text": "SECOND FRAGMENT ACCEPTED."},
+        {"speaker": "Cabinet 07", "text": "SECOND TOKEN ACCEPTED."},
         {"speaker": "Cabinet 07", "text": "STAFF DOOR TARGET READY."},
         {"speaker": "Cabinet 07", "text": "IDENTITY STILL MISALIGNED."}
       ],
@@ -92,11 +88,11 @@
     ],
     "post_reveal_status": [
       [
-        {"speaker": "Cabinet 07", "text": "EMPLOYEE 04 RESTORE STATUS: STABLE.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_stable.png"},
+        {"speaker": "Cabinet 07", "text": "EMPLOYEE 04 IDENTITY STATUS: INTEGRATED.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_stable.png"},
         {"speaker": "Cabinet 07", "text": "WELCOME BACK, EMPLOYEE 04."},
         {"speaker": "Cabinet 07", "text": "IDENTITY CONFLICT: CLOSED."},
         {"speaker": "Cabinet 07", "text": "ONE WIN DID NOT COMPLETE YOU."},
-        {"speaker": "Cabinet 07", "text": "THE WHOLE PLAYER DID."},
+        {"speaker": "Cabinet 07", "text": "THE WHOLE PLAYER CHOSE ANOTHER TURN."},
         {"speaker": "Cabinet 07", "text": "PREVIOUS SESSION: CLOSED."},
         {"speaker": "Cabinet 07", "text": "CURRENT SESSION: YOURS."},
         {"speaker": "Cabinet 07", "text": "PLAYER SIGNAL ACCEPTED."}

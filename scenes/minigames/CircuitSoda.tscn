@@ -46,9 +46,9 @@ horizontal_alignment = 1
 [node name="InfoPanel" type="Panel" parent="MainPanel"]
 layout_mode = 0
 offset_left = 24.0
-offset_top = 54.0
+offset_top = 44.0
 offset_right = 532.0
-offset_bottom = 142.0
+offset_bottom = 132.0
 
 [node name="RoundLabel" type="Label" parent="MainPanel/InfoPanel"]
 layout_mode = 0
@@ -57,57 +57,46 @@ offset_top = 6.0
 offset_right = 496.0
 offset_bottom = 24.0
 theme_override_font_sizes/font_size = 16
-text = "Round 1 / 3"
+text = "Round 1 / 4"
 horizontal_alignment = 1
 
 [node name="InstructionLabel" type="Label" parent="MainPanel/InfoPanel"]
 layout_mode = 0
 offset_left = 12.0
 offset_top = 26.0
-offset_right = 318.0
+offset_right = 496.0
 offset_bottom = 82.0
 theme_override_font_sizes/font_size = 16
 text = "Rotate the pipes.
 Connect Memory Input to Restore Output.
 Do not spill identity."
-vertical_alignment = 1
-autowrap_mode = 3
-
-[node name="MemorySignalLabel" type="Label" parent="MainPanel/InfoPanel"]
-layout_mode = 0
-offset_left = 330.0
-offset_top = 28.0
-offset_right = 496.0
-offset_bottom = 62.0
-theme_override_font_sizes/font_size = 16
-text = "Line Pressure: Nominal"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="GridPanel" type="Panel" parent="MainPanel"]
 layout_mode = 0
-offset_left = 134.0
-offset_top = 146.0
-offset_right = 422.0
-offset_bottom = 338.0
+offset_left = 82.0
+offset_top = 136.0
+offset_right = 474.0
+offset_bottom = 320.0
 
 [node name="Grid" type="GridContainer" parent="MainPanel/GridPanel"]
 layout_mode = 0
 offset_left = 8.0
 offset_top = 8.0
-offset_right = 280.0
-offset_bottom = 184.0
-columns = 3
+offset_right = 384.0
+offset_bottom = 176.0
+columns = 4
 theme_override_constants/h_separation = 4
 theme_override_constants/v_separation = 4
 
 [node name="StatusPanel" type="Panel" parent="MainPanel"]
 layout_mode = 0
 offset_left = 24.0
-offset_top = 344.0
+offset_top = 334.0
 offset_right = 532.0
-offset_bottom = 372.0
+offset_bottom = 362.0
 
 [node name="StatusLabel" type="Label" parent="MainPanel/StatusPanel"]
 layout_mode = 0
@@ -124,9 +113,9 @@ autowrap_mode = 3
 [node name="ButtonRow" type="HBoxContainer" parent="MainPanel"]
 layout_mode = 0
 offset_left = 104.0
-offset_top = 376.0
+offset_top = 366.0
 offset_right = 452.0
-offset_bottom = 406.0
+offset_bottom = 396.0
 theme_override_constants/separation = 12
 alignment = 1
 

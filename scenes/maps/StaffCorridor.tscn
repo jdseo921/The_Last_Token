@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/maps/StaffCorridor.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
@@ -6,11 +6,10 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="5"]
 [ext_resource type="PackedScene" path="res://scenes/arcade/HubInteractable.tscn" id="6"]
-[ext_resource type="PackedScene" path="res://scenes/ui/ReadableNote.tscn" id="7"]
 [ext_resource type="PackedScene" path="res://scenes/ui/QuestNotice.tscn" id="8"]
 [ext_resource type="Script" path="res://scripts/MapCollisionBounds.gd" id="9"]
 [ext_resource type="FontFile" path="res://assets/fonts/PressStart2P-Regular.ttf" id="fpx_title"]
-[ext_resource type="FontFile" path="res://assets/fonts/m3x6.ttf" id="fpx_micro"]
+[ext_resource type="FontFile" path="res://assets/fonts/m6x11.ttf" id="fpx_micro"]
 
 [node name="StaffCorridor" type="Node2D"]
 script = ExtResource("1")
@@ -41,8 +40,8 @@ polygon = PackedVector2Array(286, 40, 354, 40, 354, 126, 286, 126)
 
 [node name="CollisionBounds" type="Node2D" parent="."]
 script = ExtResource("9")
-rectangles = Array[Vector4]([Vector4(0, 0, 176, 330), Vector4(0, 392, 176, 48), Vector4(552, 0, 88, 200), Vector4(552, 280, 88, 160), Vector4(176, 424, 376, 16)])
-visual_node_paths = Array[NodePath]([NodePath("../StaffRoomDoorPlaceholder"), NodePath("../SecurityTapePlaceholder"), NodePath("../FinalNightWalkPlaceholder")])
+rectangles = Array[Vector4]([Vector4(0, 0, 640, 110), Vector4(0, 110, 250, 314), Vector4(365, 110, 275, 314), Vector4(0, 424, 640, 16)])
+visual_node_paths = Array[NodePath]([])
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
 position = Vector2(320, 360)
@@ -59,52 +58,10 @@ position = Vector2(320, 348)
 [node name="Spawn_FromFinalNightWalk" type="Marker2D" parent="."]
 position = Vector2(492, 348)
 
-[node name="Spawn_FromMemoryCore" type="Marker2D" parent="."]
-position = Vector2(500, 240)
-
 [node name="Player" parent="." instance=ExtResource("2")]
 position = Vector2(320, 360)
 
 [node name="InteractableLayer" type="Node2D" parent="."]
-
-[node name="MemoryEcho" parent="InteractableLayer" instance=ExtResource("6")]
-position = Vector2(320, 226)
-interactable_kind = "memory_echo"
-label_text = "MEMORY ECHO"
-show_label = false
-use_placeholder_visual = false
-flicker_enabled = true
-
-[node name="SecurityTape" parent="InteractableLayer" instance=ExtResource("6")]
-position = Vector2(200, 322)
-interact_extents = Vector2(104, 116)
-interactable_kind = "security_tape"
-label_text = "SECURITY TAPE"
-show_label = false
-use_placeholder_visual = false
-flicker_enabled = true
-
-[node name="FinalNightWalk" parent="InteractableLayer" instance=ExtResource("6")]
-position = Vector2(492, 322)
-interact_extents = Vector2(104, 116)
-interactable_kind = "final_night_walk"
-label_text = "FINAL NIGHT"
-show_label = false
-use_placeholder_visual = false
-flicker_enabled = true
-
-[node name="StaffRoomDoor" parent="InteractableLayer" instance=ExtResource("6")]
-position = Vector2(320, 84)
-interact_extents = Vector2(120, 140)
-interactable_kind = "staff_room_door"
-label_text = "STAFF ROOM"
-show_label = false
-use_placeholder_visual = false
-
-[node name="StaffRecord03" parent="InteractableLayer" instance=ExtResource("7")]
-position = Vector2(440, 226)
-interactable_kind = "staff_record_03"
-label_text = "RECORD 03"
 
 [node name="ReturnToMaintenanceHall" parent="." instance=ExtResource("3")]
 position = Vector2(320, 412)
@@ -112,17 +69,14 @@ target_scene_path = "res://scenes/maps/hallways/MaintenanceStaffHallway.tscn"
 target_spawn_id = "Spawn_FromStaffCorridor"
 destination_name = "STAFF ACCESS HALL"
 
-[node name="ReturnToArcadeHub" parent="." instance=ExtResource("3")]
-position = Vector2(34, 360)
-target_scene_path = "res://scenes/maps/hallways/BackHallway.tscn"
+[node name="StaffRouteExit" parent="." instance=ExtResource("3")]
+position = Vector2(320, 140)
+target_scene_path = "res://scenes/arcade/StaffRoom.tscn"
 target_spawn_id = "Spawn_FromStaffCorridor"
-destination_name = "BACK HALLWAY"
-
-[node name="ToMemoryCore" parent="." instance=ExtResource("3")]
-position = Vector2(596, 240)
-target_scene_path = "res://scenes/maps/MemoryCore.tscn"
-target_spawn_id = "Spawn_FromStaffCorridor"
-destination_name = "MEMORY CORE"
+destination_name = "FINAL ROOM"
+arrow_direction = "up"
+label_offset_override = Vector2(-75, 28)
+required_flag = "maintenance_sync_completed"
 
 [node name="UILayer" type="Node2D" parent="."]
 
@@ -136,11 +90,12 @@ theme_override_font_sizes/font_size = 16
 text = "STAFF CORRIDOR"
 
 [node name="HintLabel" type="Label" parent="UILayer"]
+visible = false
 position = Vector2(24, 48)
 size = Vector2(430, 42)
 theme_override_fonts/font = ExtResource("fpx_micro")
 theme_override_font_sizes/font_size = 16
-text = "Follow the Overloaded signal. Restore the Security Tape, then walk the Final Night route before Memory Echo."
+text = "Follow the staff route. The exit advances the next recorded sequence."
 autowrap_mode = 3
 
 [node name="InteractionPromptBackground" type="ColorRect" parent="UILayer"]

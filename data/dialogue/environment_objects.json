@@ -101,36 +101,6 @@
         {"speaker": "Broken Cabinet", "text": "Not better. Just earlier."}
       ]
     ],
-    "closing_checklist_grounded": [
-      [
-        {"speaker": "Closing Checklist", "text": "Sweep floors."},
-        {"speaker": "Closing Checklist", "text": "Count tickets."},
-        {"speaker": "Closing Checklist", "text": "Lock Staff Room."}
-      ]
-    ],
-    "closing_checklist_fractured": [
-      [
-        {"speaker": "Closing Checklist", "text": "CLOSING CHECKLIST"},
-        {"speaker": "Closing Checklist", "text": "Counter locked."},
-        {"speaker": "Closing Checklist", "text": "Cabinet Row dimmed."},
-        {"speaker": "Closing Checklist", "text": "Staff Door checked twice."},
-        {"speaker": "Closing Checklist", "text": "Final item scratched out."},
-        {"speaker": "Closing Checklist", "text": "The closing shift is signed by one name, over and over, as if no one else could be asked to be here."}
-      ]
-    ],
-    "closing_checklist_overloaded": [
-      [
-        {"speaker": "Closing Checklist", "text": "CLOSING CHECKLIST"},
-        {"speaker": "Closing Checklist", "text": "Two closing signatures detected."},
-        {"speaker": "Closing Checklist", "text": "One hand wrote both badly."}
-      ]
-    ],
-    "closing_checklist_restored": [
-      [
-        {"speaker": "Closing Checklist", "text": "The checklist is only paper now."},
-        {"speaker": "Closing Checklist", "text": "It stops pretending a routine can hold a night together."}
-      ]
-    ],
     "maintenance_note_grounded": [
       [
         {"speaker": "Maintenance Note", "text": "Most of the note is routine cleaning nonsense."},
@@ -159,48 +129,20 @@
         {"speaker": "Maintenance Note", "text": "He was scared and did the job anyway."}
       ]
     ],
-    "staff_schedule_grounded": [
-      [
-        {"speaker": "Staff Schedule", "text": "The schedule screen is scrambled."},
-        {"speaker": "Staff Schedule", "text": "Mr. Byte has not unlocked staff records yet."}
-      ]
-    ],
-    "staff_schedule_fractured": [
-      [
-        {"speaker": "Staff Schedule", "text": "STAFF SCHEDULE"},
-        {"speaker": "Staff Schedule", "text": "Final Night"},
-        {"speaker": "Staff Schedule", "text": "Mira - Counter"},
-        {"speaker": "Staff Schedule", "text": "Gus - Maintenance"},
-        {"speaker": "Staff Schedule", "text": "Employee ## - Cabinet shutdown"},
-        {"speaker": "Player", "text": "Cabinet shutdown."},
-        {"speaker": "Player", "text": "Why does reading that make my hands cold?"},
-        {"speaker": "Staff Schedule", "text": "The redacted name is scratched hardest, as if someone could not stand to be on this list."},
-        {"speaker": "Staff Schedule", "text": "Status: unresolved"}
-      ]
-    ],
-    "staff_schedule_overloaded": [
-      [
-        {"speaker": "Staff Schedule", "text": "The schedule repeats the final shift."},
-        {"speaker": "Staff Schedule", "text": "The last assignment is still redacted."},
-        {"speaker": "Staff Schedule", "text": "The Staff Door disagrees."}
-      ]
-    ],
-    "staff_schedule_restored": [
-      [
-        {"speaker": "Staff Schedule", "text": "The final shift no longer hides its shape."},
-        {"speaker": "Staff Schedule", "text": "Everyone was where they said they were."},
-        {"speaker": "Staff Schedule", "text": "Including you."}
-      ]
-    ],
     "staff_record_01_shift_log": [
       [
-        {"speaker": "Staff Record", "text": "SHIFT LOG - FINAL NIGHT (RECOVERED EXCERPT)"},
-        {"speaker": "Staff Record", "text": "23:41 - Mira signed the register and left. Last name on the page."},
-        {"speaker": "Staff Record", "text": "23:50 - Gus clocked out. Mop returned wet."},
-        {"speaker": "Staff Record", "text": "00:05 - One staff member stayed to run the closing checklist alone."},
-        {"speaker": "Staff Record", "text": "00:19 - Cabinet 07 kept one token in the return tray. Flagged: do not empty."},
-        {"speaker": "Staff Record", "text": "00:33 - Backup started. Backup did not finish."},
-        {"speaker": "Staff Record", "text": "Entry ends. No sign-out recorded for the last shift."}
+        {"speaker": "Logs", "text": "FINAL SHIFT EXCERPT"},
+        {"speaker": "Logs", "text": "23:41 - Mira signed out last on the register."},
+        {"speaker": "Logs", "text": "23:50 - Gus clocked out after mopping."},
+        {"speaker": "Logs", "text": "00:05 - One worker remained. No sign-out followed."},
+        {"speaker": "Player", "text": "Three clean facts. The Truth Filter probably wants the record that fits all of them."}
+      ]
+    ],
+    "broken_score_closing_shift_clue": [
+      [
+        {"speaker": "Broken Score", "text": "RESTORED ENTRY: 00:17 / FINAL INPUT"},
+        {"speaker": "Player", "text": "That is a time, not a score. The final input happened at 00:17."},
+        {"speaker": "Player", "text": "Service Dash comes next. I cannot remember learning that route, but the connection feels clear."}
       ]
     ],
     "staff_records_locked": [
@@ -211,9 +153,9 @@
     ],
     "staff_records_fractured": [
       [
-        {"speaker": "Staff Record", "text": "RESTORE SYSTEM NOTE"},
-        {"speaker": "Staff Record", "text": "Subject memory incomplete."},
-        {"speaker": "Staff Record", "text": "Do not repeat name until signal stabilizes."}
+        {"speaker": "Logs", "text": "RESTORE SYSTEM NOTE"},
+        {"speaker": "Logs", "text": "Subject memory incomplete."},
+        {"speaker": "Logs", "text": "Do not repeat name until signal stabilizes."}
       ]
     ],
     "staff_records_overloaded": [
@@ -294,7 +236,7 @@
     "maintenance_sync_machine_lost_shift_required": [
       [
         {"speaker": "Maintenance Sync", "text": "MAINTENANCE SYNC LOCKED."},
-        {"speaker": "Maintenance Sync", "text": "LOST SHIFT FILE REQUIRED."}
+        {"speaker": "Maintenance Sync", "text": "CLOSING SHIFT ECHOES REQUIRED."}
       ]
     ],
     "maintenance_sync_machine_static_service_required": [
@@ -434,7 +376,7 @@
     "test_cabinet_memories": [
       [
         {"speaker": "Test Cabinet", "text": "TEST LOG 114: difficulty lowered again."},
-        {"speaker": "Test Cabinet", "text": "Note attached: 'kids should win on allowance money.'"},
+        {"speaker": "Test Cabinet", "text": "Note attached: 'a kid's allowance should buy more than one try.'"},
         {"speaker": "Test Cabinet", "text": "The handwriting on those notes got worse every year. The kindness never did."}
       ],
       [
@@ -483,33 +425,33 @@
     "staff_room_terminal_available": [
       [
         {"speaker": "Terminal", "text": "Employee file recovered."},
-        {"speaker": "Terminal", "text": "Restoration subject found."},
+        {"speaker": "Terminal", "text": "Identity signal matched."},
         {"speaker": "Terminal", "text": "Name: Employee 04."}
       ]
     ],
     "staff_room_terminal_restored": [
       [
-        {"speaker": "Terminal", "text": "EMPLOYEE 04 RESTORE STATUS: STABLE."},
-        {"speaker": "Terminal", "text": "CONSCIENCE ECHO INTEGRATED."},
+        {"speaker": "Terminal", "text": "EMPLOYEE 04 IDENTITY STATUS: INTEGRATED."},
+        {"speaker": "Terminal", "text": "SEPARATED SIGNALS: SHARING MEMORY."},
         {"speaker": "Terminal", "text": "MEMORY LOOP CLOSED."}
       ]
     ],
     "employee_04_file_archived": [
       [
-        {"speaker": "Employee File", "text": "EMPLOYEE 04 // STATUS: ARCHIVED RESTORE PROFILE."},
+        {"speaker": "Employee File", "text": "EMPLOYEE 04 // MEMORY ACCESS: SEALED."},
         {"speaker": "Employee File", "text": "The photo is corrupted beyond recognition."}
       ]
     ],
     "employee_04_file_restored": [
       [
-        {"speaker": "Employee File", "text": "EMPLOYEE 04 // RESTORED MEMORY ACTIVE."},
+        {"speaker": "Employee File", "text": "EMPLOYEE 04 // MEMORY ACCESS: RECOVERED."},
         {"speaker": "Employee File", "text": "The photo is yours."},
         {"speaker": "Employee File", "text": "The file was never about someone else."}
       ]
     ],
     "employee_04_file_integrated": [
       [
-        {"speaker": "Employee File", "text": "EMPLOYEE 04 // RESTORED MEMORY ACTIVE."},
+        {"speaker": "Employee File", "text": "EMPLOYEE 04 // IDENTITY STATUS: INTEGRATED."},
         {"speaker": "Employee File", "text": "The photo is yours."},
         {"speaker": "Employee File", "text": "The regret field is no longer sealed."}
       ]
@@ -533,7 +475,7 @@
     ],
     "prize_counter_restored": [
       [
-        {"speaker": "Prize Counter", "text": "The prize labels are neatly sorted."},
+        {"speaker": "Prize Counter", "text": "The loose labels rest quietly under the glass."},
         {"speaker": "Prize Counter", "text": "The badge no longer looks blank to you."}
       ]
     ],
@@ -598,7 +540,7 @@
       [
         {"speaker": "Birthday Cabinet", "text": "PARTY HIGH SCORE - a cheerful, forgiving little game."},
         {"speaker": "Birthday Cabinet", "text": "The target score is set absurdly low."},
-        {"speaker": "Birthday Cabinet", "text": "Someone wanted every kid to walk away a winner."}
+        {"speaker": "Birthday Cabinet", "text": "Someone wanted every kid to walk away taller, whether they won or lost."}
       ]
     ],
     "workshop_bench": [

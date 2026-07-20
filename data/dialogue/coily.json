@@ -129,6 +129,10 @@
         {
           "speaker": "Coily",
           "text": "I do not like this tape. But you needed to see it, and a good host does not lie to a guest."
+        },
+        {
+          "speaker": "Coily",
+          "text": "A camera can prove one night happened. It cannot decide what every night after it has to mean."
         }
       ]
     ],
@@ -145,7 +149,7 @@
         },
         {
           "speaker": "Coily",
-          "text": "Whatever the game told you that night, it was wrong about you."
+          "text": "Whatever the game-over voice told you that night, it mistook a hard ending for the end of you."
         },
         {
           "speaker": "Coily",

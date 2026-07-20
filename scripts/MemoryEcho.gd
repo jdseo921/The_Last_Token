@@ -7,8 +7,8 @@ extends Control
 const MODE_NEXT_QUESTION := "next_question"
 const MODE_COMPLETE := "complete"
 
-const PLAY_MIN := Vector2(84, 152)
-const PLAY_MAX := Vector2(398, 290)
+const PLAY_MIN := Vector2(84, 208)
+const PLAY_MAX := Vector2(398, 294)
 const FRAGMENT_SIZE := Vector2(156, 38)
 const DRIFT_MIN := 20.0
 const DRIFT_MAX := 38.0
@@ -41,11 +41,11 @@ const QUESTIONS := [
 		],
 	},
 	{
-		"prompt": "One signal entered. One signal remained.",
+		"prompt": "One life carried a dream and its cost.",
 		"choices": [
-			"The original.",
-			"The restored.",
-			"Both. I carry both now.",
+			"Only the dream is mine.",
+			"Only the cost is mine.",
+			"Both truths are mine now.",
 		],
 		"preferred_index": 2,
 		"accepted": [
@@ -93,6 +93,7 @@ func _ready() -> void:
 	_show_question()
 
 func _show_question() -> void:
+	_set_unknown_voice_music_dim(false)
 	continue_button.visible = false
 	response_label.text = ""
 	question_timer = 0.0
@@ -104,6 +105,7 @@ func _show_question() -> void:
 	elif current_question_index == 2 and not hijack_done:
 		hijack_done = true
 		speaker_label.text = "???"
+		_set_unknown_voice_music_dim(true)
 		echo_label.text = "The playback seizes. Something else holds the reel.\n\n%s" % str(question.get("prompt", ""))
 		_play_audio("play_error_buzz")
 	else:
@@ -128,6 +130,8 @@ func _spawn_fragment(text: String, index: int) -> void:
 	frag.custom_minimum_size = FRAGMENT_SIZE
 	frag.size = FRAGMENT_SIZE
 	frag.clip_text = true
+	frag.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	frag.tooltip_text = text
 	frag.add_theme_font_size_override("font_size", 16)
 	frag.position = Vector2(randf_range(PLAY_MIN.x, PLAY_MAX.x), randf_range(PLAY_MIN.y, PLAY_MAX.y))
 	frag.pressed.connect(_on_fragment_clicked.bind(index))
@@ -178,11 +182,14 @@ func _on_fragment_clicked(index: int) -> void:
 	_play_audio("play_error")
 	if index == DECOY_INDEX:
 		speaker_label.text = "???: That one is mine. Put it down."
+		_set_unknown_voice_music_dim(true)
 	else:
 		speaker_label.text = "That memory is not yours. It drifts away."
+		_set_unknown_voice_music_dim(false)
 	_scatter()
 
 func _slip_question() -> void:
+	_set_unknown_voice_music_dim(false)
 	catching = false
 	_play_audio("play_error")
 	_clear_fragments()
@@ -209,6 +216,7 @@ func _clear_fragments() -> void:
 	fragment_indices.clear()
 
 func _show_accepted(question: Dictionary) -> void:
+	_set_unknown_voice_music_dim(false)
 	_play_audio("play_memory_accept")
 	speaker_label.text = "Memory Echo"
 	var accepted_value: Variant = question.get("accepted", [])
@@ -236,17 +244,19 @@ func _on_continue_pressed() -> void:
 			_show_question()
 
 func _show_completion() -> void:
+	_set_unknown_voice_music_dim(false)
 	GameState.complete_memory_echo()
 	_play_audio("play_quest_update")
 	speaker_label.text = "Reel"
 	echo_label.text = "MEMORY ECHO STABILIZED."
-	response_label.text = "REEL: That is your setlist. Rough, honest, yours.\nHold onto it. The next room will test the tune.\nRESTORE PLAYBACK AVAILABLE."
+	response_label.text = "REEL: Bright melody and low notes. One honest track.\nHold onto both. The next room will test the tune.\nRESTORE PLAYBACK AVAILABLE."
 	continue_mode = MODE_COMPLETE
 	continue_button.text = "Return"
 	continue_button.visible = true
 	continue_button.grab_focus()
 
 func _show_repeat_complete() -> void:
+	_set_unknown_voice_music_dim(false)
 	echo_label.text = "MEMORY ECHO STABILIZED."
 	response_label.text = "RESTORE PLAYBACK AVAILABLE."
 	continue_mode = MODE_COMPLETE
@@ -255,10 +265,11 @@ func _show_repeat_complete() -> void:
 	continue_button.grab_focus()
 
 func _return_to_staff_corridor() -> void:
+	_set_unknown_voice_music_dim(false)
 	finished = true
 	catching = false
 	GameState.set_pending_spawn_id("Spawn_FromMemoryEcho")
-	SceneChanger.go_to_staff_corridor()
+	SceneChanger.go_to_staff_room()
 
 func _start_glitch_effect() -> void:
 	if glitch_tween and glitch_tween.is_valid():
@@ -284,3 +295,11 @@ func _play_audio(method_name: String) -> void:
 	var audio_manager := get_node_or_null("/root/AudioManager")
 	if audio_manager and audio_manager.has_method(method_name):
 		audio_manager.call(method_name)
+
+func _set_unknown_voice_music_dim(enabled: bool) -> void:
+	var audio_manager := get_node_or_null("/root/AudioManager")
+	if audio_manager and audio_manager.has_method("set_unknown_voice_music_dimmed"):
+		audio_manager.call("set_unknown_voice_music_dimmed", enabled)
+
+func _exit_tree() -> void:
+	_set_unknown_voice_music_dim(false)

@@ -8,7 +8,9 @@
         {"speaker": "Pip", "text": "I am filled with cotton and confidential information.", "portrait": "res://assets/art/portraits/pip/pip_eerie.png"},
         {"speaker": "Pip", "text": "Mostly cotton."},
         {"speaker": "Pip", "text": "The confidential part gets itchy when someone familiar walks in."},
-        {"speaker": "Pip", "text": "You are making my stitches think."}
+        {"speaker": "Pip", "text": "You are making my stitches think."},
+        {"speaker": "Player", "text": "Do you know me too?"},
+        {"speaker": "Pip", "text": "Enough to be worried that you had to ask.", "portrait": "res://assets/art/portraits/pip/pip_eerie.png"}
       ]
     ],
     "after_lost_token": [
@@ -20,57 +22,60 @@
         {"speaker": "Pip", "text": "Old routines leave lint everywhere.", "portrait": "res://assets/art/portraits/pip/pip_eerie.png"}
       ]
     ],
-    "prize_sort_intro": [
+    "first_meeting_after_lost_token": [
       [
-        {"speaker": "Pip", "text": "Prize Sort is ready.", "portrait": "res://assets/art/portraits/pip/pip_warm.png"},
-        {"speaker": "Pip", "text": "This is like archaeology, but fluffier."},
-        {"speaker": "Pip", "text": "The labels remember an order."},
-        {"speaker": "Pip", "text": "Ticket Stub first. That is where wanting starts."},
-        {"speaker": "Pip", "text": "Lost Token next. That is where returning starts."},
-        {"speaker": "Pip", "text": "Blank Employee Badge last. That one is shy.", "portrait": "res://assets/art/portraits/pip/pip_eerie.png"},
-        {"speaker": "Pip", "text": "Please sort gently. Some prizes bruise on the inside."}
+        {"speaker": "Pip", "text": "Hi. I am a legally distinct prize animal, mostly filled with cotton.", "portrait": "res://assets/art/portraits/pip/pip_warm.png"},
+        {"speaker": "Pip", "text": "The confidential part gets itchy around familiar people.", "portrait": "res://assets/art/portraits/pip/pip_eerie.png"},
+        {"speaker": "Player", "text": "Do you recognize me too?"},
+        {"speaker": "Pip", "text": "Enough to recognize the Lost Token in your hand."},
+        {"speaker": "Pip", "text": "You used to want the blue prize and never had enough tickets."},
+        {"speaker": "Player", "text": "I wish that felt familiar."},
+        {"speaker": "Pip", "text": "It may. Old routines leave lint everywhere.", "portrait": "res://assets/art/portraits/pip/pip_warm.png"}
       ]
     ],
-    "prize_sort_wrong": [
+    "prize_sort_first_meeting": [
       [
-        {"speaker": "Pip", "text": "Those memories are wearing each other's hats.", "portrait": "res://assets/art/portraits/pip/pip_eerie.png"},
-        {"speaker": "Pip", "text": "Try oldest to newest."}
-      ],
+        {"speaker": "Pip", "text": "Hi. I am a legally distinct prize animal with a small amount of confidential information.", "portrait": "res://assets/art/portraits/pip/pip_warm.png"},
+        {"speaker": "Pip", "text": "That information gets itchy around someone familiar.", "portrait": "res://assets/art/portraits/pip/pip_eerie.png"},
+        {"speaker": "Player", "text": "Do you know me too?"},
+        {"speaker": "Pip", "text": "Enough to be concerned that you had to ask."},
+        {"speaker": "Pip", "text": "If you want something practical to hold onto, Prize Echo Ascent is awake."},
+        {"speaker": "Pip", "text": "Collect eighteen tags in order across both rails and open all three locks."},
+        {"speaker": "Pip", "text": "They remember wanting, returning, and working. The route may show which memories answer to you."},
+        {"speaker": "Player", "text": "I am still getting used to taking directions from a plush, but I will try it."},
+        {"speaker": "Pip", "text": "A healthy adjustment period. Start from the shelf when you are ready.", "portrait": "res://assets/art/portraits/pip/pip_warm.png"}
+      ]
+    ],
+    "prize_sort_intro": [
       [
-        {"speaker": "Pip", "text": "That order makes the cotton nervous.", "portrait": "res://assets/art/portraits/pip/pip_eerie.png"},
-        {"speaker": "Pip", "text": "Start with the smallest want."}
-      ],
-      [
-        {"speaker": "Pip", "text": "Nope. The badge is trying to cut in line."},
-        {"speaker": "Pip", "text": "Bad badge. Patient badge."}
-      ],
-      [
-        {"speaker": "Pip", "text": "The prizes bonked together wrong."},
-        {"speaker": "Pip", "text": "Ticket. Token. Badge."}
+        {"speaker": "Pip", "text": "If you want something practical to hold onto, Prize Echo Ascent is awake.", "portrait": "res://assets/art/portraits/pip/pip_warm.png"},
+        {"speaker": "Pip", "text": "The shelf beside me holds eighteen numbered echoes across two rails."},
+        {"speaker": "Pip", "text": "Collect them in order and open all three rail locks."},
+        {"speaker": "Pip", "text": "The old tags remember wanting, returning, and working. They do not agree on which came first.", "portrait": "res://assets/art/portraits/pip/pip_eerie.png"},
+        {"speaker": "Player", "text": "I am still getting used to taking directions from a plush, but I will try it."},
+        {"speaker": "Pip", "text": "A healthy adjustment period. Use the shelf when you are ready.", "portrait": "res://assets/art/portraits/pip/pip_warm.png"}
       ]
     ],
     "prize_sort_completion": [
       [
-        {"speaker": "Pip", "text": "Prizes sorted.", "portrait": "res://assets/art/portraits/pip/pip_warm.png"},
-        {"speaker": "Pip", "text": "See? The shelf sighed."},
-        {"speaker": "Pip", "text": "Some rewards remember their owners before the owners remember them."},
-        {"speaker": "Pip", "text": "The Ticket Stub remembers wanting."},
-        {"speaker": "Pip", "text": "The Lost Token remembers coming back."},
-        {"speaker": "Pip", "text": "The Blank Employee Badge remembers being hidden.", "portrait": "res://assets/art/portraits/pip/pip_eerie.png"},
-        {"speaker": "Pip", "text": "It is okay if you do not know why that matters yet."},
-        {"speaker": "Pip", "text": "Cotton keeps secrets until the seams are ready."}
+        {"speaker": "Pip", "text": "You brought the Echo Token back. Let me see the rim.", "portrait": "res://assets/art/portraits/pip/pip_warm.png"},
+        {"speaker": "Pip", "text": "The prize paint still answers to the same signal the eighteen tags followed. That connects their hopeful memories to you.", "portrait": "res://assets/art/portraits/pip/pip_eerie.png"},
+        {"speaker": "Pip", "text": "Under it is an old service mark: closing inventory, a shift code, and a maintenance copy."},
+        {"speaker": "Pip", "text": "The paint remembers wanting this arcade. The mark remembers returning prizes after closing and counting what it owed. Neither remembers a whole owner alone.", "portrait": "res://assets/art/portraits/pip/pip_warm.png"},
+        {"speaker": "Player", "text": "Then the token may tell me who I was, while the shift code gives Gus something real to trace."},
+        {"speaker": "Pip", "text": "Exactly. Take it to him. His maintenance copies may tell you what happened while that hope was being kept alive."}
       ]
     ],
     "prize_sort_replay_offer": [
       [
-        {"speaker": "Pip", "text": "Hi, 04. The prizes remember their order now. They like being remembered."},
-        {"speaker": "Pip", "text": "Want to shuffle them and put them right again?"},
-        {"speaker": "Pip", "text": "They think it is a game. It is. That is the nice part."}
+        {"speaker": "Pip", "text": "Hi, 04. The prize rails remember your route now."},
+        {"speaker": "Pip", "text": "Want to climb the echoes again?"},
+        {"speaker": "Pip", "text": "The hooks think it is a game. It is. That is the nice part."}
       ]
     ],
     "prize_sort_replay_return": [
       [
-        {"speaker": "Pip", "text": "All sorted. Again. You did not have to."},
+        {"speaker": "Pip", "text": "All eighteen echoes. Again. You did not have to."},
         {"speaker": "Pip", "text": "Which is exactly why it counts."},
         {"speaker": "Pip", "text": "The badge stays on the shelf this time. It earned the rest."}
       ]
@@ -78,13 +83,13 @@
     "post_reveal": [
       [
         {"speaker": "Pip", "text": "There you are.", "portrait": "res://assets/art/portraits/pip/pip_warm.png"},
-        {"speaker": "Pip", "text": "Yep. Still not the original.", "portrait": "res://assets/art/portraits/pip/pip_eerie.png"},
-        {"speaker": "Pip", "text": "That is not mean. I checked."},
-        {"speaker": "Pip", "text": "Original things can be gone and still leave kindness-shaped dents."},
-        {"speaker": "Pip", "text": "You have the dent."},
+        {"speaker": "Pip", "text": "Yep. Same person. Different seams.", "portrait": "res://assets/art/portraits/pip/pip_eerie.png"},
+        {"speaker": "Pip", "text": "One seam held the soft dream. One held the sharp truths."},
+        {"speaker": "Pip", "text": "You did not defeat the sharp half. You stopped calling it the bad half."},
+        {"speaker": "Pip", "text": "Now the stuffing can reach both sides."},
         {"speaker": "Pip", "text": "You also have better waving."},
-        {"speaker": "Pip", "text": "Employee 04 made the arcade remember wrong."},
-        {"speaker": "Pip", "text": "You are helping it remember softly."},
+        {"speaker": "Pip", "text": "Employee 04 taught the arcade to keep every try, not only the winning ones."},
+        {"speaker": "Pip", "text": "You are helping it remember the whole player softly."},
         {"speaker": "Pip", "text": "That counts in plush court.", "portrait": "res://assets/art/portraits/pip/pip_warm.png"}
       ]
     ]

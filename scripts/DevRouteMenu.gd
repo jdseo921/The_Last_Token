@@ -9,7 +9,7 @@ const CHECKPOINTS := [
 	{"id": "after_lost_token", "label": "After Lost Token"},
 	{"id": "after_truth_filter", "label": "After Truth Filter"},
 	{"id": "after_circuit_soda", "label": "After Circuit Soda"},
-	{"id": "after_lost_shift_file", "label": "After Lost Shift File"},
+	{"id": "after_closing_shift_echoes", "label": "After Closing Shift Echoes"},
 	{"id": "after_static_service_run", "label": "After Static Service Run"},
 	{"id": "after_maintenance_sync", "label": "After Maintenance Sync"},
 	{"id": "after_security_tape_assembly", "label": "After Security Tape Assembly"},
@@ -158,9 +158,9 @@ func _apply_checkpoint(checkpoint_id: String) -> void:
 		"after_circuit_soda":
 			_apply_after_circuit_soda()
 			_finish_checkpoint(SceneChanger.ARCADE_HUB_SCENE, "Spawn_Default", "After Circuit Soda")
-		"after_lost_shift_file":
-			_apply_after_lost_shift_file()
-			_finish_checkpoint(SceneChanger.MAINTENANCE_HALL_SCENE, "Spawn_Default", "After Lost Shift File")
+		"after_closing_shift_echoes":
+			_apply_after_closing_shift_echoes()
+			_finish_checkpoint(SceneChanger.MAINTENANCE_HALL_SCENE, "Spawn_Default", "After Closing Shift Echoes")
 		"after_static_service_run":
 			_apply_after_static_service_run()
 			_finish_checkpoint(SceneChanger.MAINTENANCE_HALL_SCENE, "Spawn_FromMaintenanceSync", "After Static Service Run")
@@ -205,14 +205,21 @@ func _apply_after_circuit_soda() -> void:
 	_apply_after_truth_filter()
 	GameState.complete_circuit_soda()
 
-func _apply_after_lost_shift_file() -> void:
+func _apply_after_closing_shift_echoes() -> void:
 	_apply_after_circuit_soda()
-	GameState.read_closing_checklist()
-	GameState.read_staff_schedule()
-	GameState.read_maintenance_note()
+	GameState.mark_conscience_encounter_seen("after_circuit_soda")
+	GameState.vendo_unknown_clue_seen = true
+	GameState.complete_pip_secret()
+	GameState.pip_prize_anecdote_seen = true
+	GameState.gus_hub_checkin_prize_sort_done = true
+	GameState.start_lost_shift_file()
+	GameState.find_closing_shift_mira_clue()
+	GameState.find_closing_shift_score_clue()
+	GameState.find_closing_shift_service_clue()
+	GameState.complete_closing_shift_echoes()
 
 func _apply_after_static_service_run() -> void:
-	_apply_after_lost_shift_file()
+	_apply_after_closing_shift_echoes()
 	GameState.complete_static_service_run()
 
 func _apply_after_maintenance_sync() -> void:
@@ -240,7 +247,6 @@ func _apply_post_reveal_roam() -> void:
 
 func _finish_checkpoint(scene_path: String, spawn_id: String, label: String) -> void:
 	GameState.clear_arcade_return_position()
-	GameState.last_announced_quest_id = ""
 	GameState.save_progress_stage = GameState.get_story_phase_label()
 	GameState.set_pending_spawn_id(spawn_id)
 	if status_label != null:

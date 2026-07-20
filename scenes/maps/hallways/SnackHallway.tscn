@@ -1,19 +1,24 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=12 format=3]
 
-[ext_resource type="Script" path="res://scripts/maps/HallwayMap.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/maps/SnackArchiveHallway.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/common/MapTransition.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="5"]
 [ext_resource type="Script" path="res://scripts/MapCollisionBounds.gd" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/arcade/HubInteractable.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://scenes/ui/QuestNotice.tscn" id="8"]
 [ext_resource type="FontFile" path="res://assets/fonts/PressStart2P-Regular.ttf" id="fpx_title"]
-[ext_resource type="FontFile" path="res://assets/fonts/m3x6.ttf" id="fpx_micro"]
+[ext_resource type="FontFile" path="res://assets/fonts/m6x11.ttf" id="fpx_micro"]
+
+[sub_resource type="RectangleShape2D" id="LedgerBodyShape"]
+size = Vector2(72, 88)
 
 [node name="SnackHallway" type="Node2D"]
 script = ExtResource("1")
 hallway_id = "snack_hallway"
-title_text = "SNACK HALLWAY"
-hint_text = "The air smells like dust, sugar, and warm wiring."
+title_text = "AFTER-HOURS ARCHIVE"
+hint_text = ""
 
 [node name="Background" type="Polygon2D" parent="."]
 color = Color(0.04, 0.035, 0.055, 1)
@@ -29,29 +34,70 @@ polygon = PackedVector2Array(0, 214, 640, 214, 640, 226, 0, 226)
 
 [node name="CollisionBounds" type="Node2D" parent="."]
 script = ExtResource("6")
-rectangles = Array[Vector4]([Vector4(0, 0, 640, 196), Vector4(0, 376, 640, 64)])
+rectangles = Array[Vector4]([Vector4(0, 0, 286, 216), Vector4(354, 0, 286, 216), Vector4(0, 216, 42, 224), Vector4(598, 216, 42, 224), Vector4(0, 388, 640, 52)])
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
-position = Vector2(92, 284)
+position = Vector2(238, 340)
 
 [node name="Spawn_FromArcadeHub" type="Marker2D" parent="."]
-position = Vector2(92, 284)
+position = Vector2(320, 112)
 
 [node name="Spawn_FromSnackAlcove" type="Marker2D" parent="."]
-position = Vector2(548, 284)
+position = Vector2(320, 112)
+
+[node name="Spawn_FromNightLedger" type="Marker2D" parent="."]
+position = Vector2(238, 340)
 
 [node name="Player" parent="." instance=ExtResource("2")]
-position = Vector2(92, 284)
+position = Vector2(238, 340)
 
-[node name="ToArcadeHub" parent="." instance=ExtResource("3")]
-position = Vector2(24, 284)
-target_scene_path = "res://scenes/arcade/ArcadeHub.tscn"
-target_spawn_id = "Spawn_FromSnackAlcove"
+[node name="InteractableLayer" type="Node2D" parent="."]
+
+[node name="NightLedgerCabinet" parent="InteractableLayer" instance=ExtResource("7")]
+position = Vector2(320, 316)
+interact_extents = Vector2(116, 132)
+interactable_kind = "night_ledger"
+label_text = "NIGHT LEDGER"
+sprite_texture_path = "res://assets/art/minigames/night_ledger/night_ledger_cabinet.png"
+idle_animation_enabled = false
+visual_scale = 0.82
+use_placeholder_visual = false
+label_font_size = 12
+label_offset = Vector2(0, 9)
+flicker_enabled = true
+
+[node name="CrumpledBills" parent="InteractableLayer" instance=ExtResource("7")]
+position = Vector2(96, 210)
+interact_extents = Vector2(142, 62)
+interactable_kind = "archive_bills"
+label_text = "CRUMPLED PAPERS"
+idle_animation_enabled = false
+use_placeholder_visual = false
+label_font_size = 11
+label_offset = Vector2(0, -8)
+
+[node name="OldTelevision" parent="InteractableLayer" instance=ExtResource("7")]
+position = Vector2(548, 210)
+interact_extents = Vector2(126, 68)
+interactable_kind = "archive_tv"
+label_text = "OLD TELEVISION"
+idle_animation_enabled = false
+use_placeholder_visual = false
+label_font_size = 11
+label_offset = Vector2(-4, -6)
+
+[node name="NightLedgerBody" type="StaticBody2D" parent="."]
+position = Vector2(320, 326)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="NightLedgerBody"]
+shape = SubResource("LedgerBodyShape")
 
 [node name="ToSnackAlcove" parent="." instance=ExtResource("3")]
-position = Vector2(616, 284)
+position = Vector2(320, 30)
 target_scene_path = "res://scenes/maps/SnackAlcove.tscn"
 target_spawn_id = "Spawn_FromArcadeHub"
+destination_name = "SNACK ALCOVE"
+arrow_direction = "up"
 
 [node name="UILayer" type="Node2D" parent="."]
 
@@ -59,12 +105,13 @@ target_spawn_id = "Spawn_FromArcadeHub"
 
 [node name="TitleLabel" type="Label" parent="UILayer"]
 position = Vector2(24, 20)
-size = Vector2(260, 28)
+size = Vector2(360, 28)
 theme_override_fonts/font = ExtResource("fpx_title")
-theme_override_font_sizes/font_size = 16
-text = "SNACK HALLWAY"
+theme_override_font_sizes/font_size = 14
+text = "AFTER-HOURS ARCHIVE"
 
 [node name="HintLabel" type="Label" parent="UILayer"]
+visible = false
 position = Vector2(24, 48)
 size = Vector2(392, 34)
 theme_override_fonts/font = ExtResource("fpx_micro")
@@ -85,3 +132,5 @@ text = ""
 horizontal_alignment = 1
 
 [node name="PauseMenu" parent="." instance=ExtResource("5")]
+
+[node name="QuestNotice" parent="." instance=ExtResource("8")]

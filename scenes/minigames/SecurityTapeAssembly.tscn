@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/SecurityTapeAssembly.gd" id="1"]
 [ext_resource type="FontFile" path="res://assets/fonts/PressStart2P-Regular.ttf" id="fpx_title"]
+[ext_resource type="FontFile" path="res://assets/fonts/m6x11.ttf" id="fpx_body"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="pause_menu"]
 
 [node name="SecurityTapeAssembly" type="Control"]
 layout_mode = 3
@@ -11,6 +13,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
+
+[node name="PauseMenu" parent="." instance=ExtResource("pause_menu")]
+is_minigame_context = true
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
@@ -49,15 +54,16 @@ theme_override_font_sizes/font_size = 16
 text = "Arrange the fragments in the order they happened.
 The tape is damaged, but not silent."
 horizontal_alignment = 1
+vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="Fragments" type="VBoxContainer" parent="Panel"]
 layout_mode = 0
 offset_left = 28.0
 offset_top = 104.0
-offset_right = 258.0
-offset_bottom = 264.0
-theme_override_constants/separation = 8
+offset_right = 282.0
+offset_bottom = 294.0
+theme_override_constants/separation = 4
 
 [node name="FragmentA" type="Button" parent="Panel/Fragments"]
 layout_mode = 2
@@ -75,43 +81,43 @@ text = "Fragment"
 layout_mode = 2
 text = "Fragment"
 
-[node name="SelectedTitle" type="Label" parent="Panel"]
-layout_mode = 0
-offset_left = 372.0
-offset_top = 104.0
-offset_right = 532.0
-offset_bottom = 124.0
-theme_override_font_sizes/font_size = 16
-text = "RESTORED ORDER"
-horizontal_alignment = 1
-
 [node name="SelectedLabel" type="Label" parent="Panel"]
 layout_mode = 0
-offset_left = 372.0
-offset_top = 130.0
+offset_left = 292.0
+offset_top = 104.0
 offset_right = 532.0
 offset_bottom = 250.0
-theme_override_font_sizes/font_size = 16
-text = "1. [empty]"
+theme_override_fonts/font = ExtResource("fpx_body")
+theme_override_font_sizes/font_size = 13
+text = "RESTORED ORDER
+1. [empty]
+2. [empty]
+3. [empty]
+4. [empty]"
+horizontal_alignment = 1
+vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="HintLabel" type="Label" parent="Panel"]
 visible = false
 layout_mode = 0
-offset_left = 372.0
+offset_left = 292.0
 offset_top = 254.0
 offset_right = 532.0
 offset_bottom = 306.0
-theme_override_font_sizes/font_size = 16
+theme_override_fonts/font = ExtResource("fpx_body")
+theme_override_font_sizes/font_size = 14
 text = "Hint: The counter went dark before Cabinet 07 stayed awake."
+horizontal_alignment = 1
+vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="Controls" type="HBoxContainer" parent="Panel"]
 layout_mode = 0
 offset_left = 124.0
-offset_top = 312.0
+offset_top = 304.0
 offset_right = 420.0
-offset_bottom = 348.0
+offset_bottom = 340.0
 theme_override_constants/separation = 14
 alignment = 1
 
@@ -126,19 +132,21 @@ text = "Submit"
 [node name="StatusLabel" type="Label" parent="Panel"]
 layout_mode = 0
 offset_left = 48.0
-offset_top = 354.0
+offset_top = 344.0
 offset_right = 496.0
-offset_bottom = 394.0
-theme_override_font_sizes/font_size = 16
+offset_bottom = 396.0
+theme_override_fonts/font = ExtResource("fpx_body")
+theme_override_font_sizes/font_size = 13
 text = ""
 horizontal_alignment = 1
+vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="ReturnButton" type="Button" parent="Panel"]
 visible = false
 layout_mode = 0
 offset_left = 436.0
-offset_top = 314.0
+offset_top = 306.0
 offset_right = 532.0
-offset_bottom = 346.0
+offset_bottom = 338.0
 text = "Return"

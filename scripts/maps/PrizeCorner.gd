@@ -5,12 +5,6 @@ const AMBIENT_EFFECTS := preload("res://scripts/AmbientSpriteEffects.gd")
 const BACKGROUND_ART_PATH := "res://assets/art/maps/prize_corner/prize_corner_background_640x440.png"
 const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
 
-const PRIZE_SORT_ORDER := [
-	"Ticket Stub",
-	"Lost Token",
-	"Blank Employee Badge",
-]
-
 @onready var player: CharacterBody2D = $Player
 @onready var background_art: Sprite2D = $BackgroundArt
 @onready var ui_layer: Node2D = $UILayer
@@ -20,9 +14,6 @@ const PRIZE_SORT_ORDER := [
 @onready var quest_notice: CanvasLayer = $QuestNotice
 
 var pending_after_dialogue: Callable = Callable()
-var choice_box: CanvasLayer = null
-var prize_sort_selected: Array = []
-var prize_sort_remaining: Array = []
 var route_cue: Control = null
 
 func _ready() -> void:
@@ -34,9 +25,10 @@ func _ready() -> void:
 	_setup_route_cue()
 	_apply_spawn_position()
 	_on_prompt_changed("")
+	call_deferred("_maybe_show_pip_minigame_return")
 
 func can_open_pause_menu() -> bool:
-	return not _dialogue_is_active() and not _choice_box_is_open()
+	return not _dialogue_is_active()
 
 func _apply_spawn_position() -> void:
 	var spawn_id := GameState.consume_pending_spawn_id()
@@ -73,7 +65,7 @@ func _on_dialogue_finished() -> void:
 	if pending_after_dialogue.is_valid():
 		pending_after_dialogue.call()
 		pending_after_dialogue = Callable()
-	if player and player.has_method("set_control_enabled") and not _choice_box_is_open():
+	if player and player.has_method("set_control_enabled"):
 		player.set_control_enabled(true)
 	_refresh_route_cue()
 
@@ -82,14 +74,8 @@ func _dialogue_is_active() -> bool:
 		return false
 	return dialogue_box.get("active") == true
 
-func _choice_box_is_open() -> bool:
-	return choice_box != null and is_instance_valid(choice_box) and choice_box.visible
-
 func _get_pip_lines(key: String, fallback: Array) -> Array:
 	return DIALOGUE_POOL.get_lines("pip", key, fallback)
-
-func _get_pip_sequential_lines(key: String, fallback: Array) -> Array:
-	return DIALOGUE_POOL.get_sequential_set("pip", key, key, fallback)
 
 func _get_environment_lines(key: String, fallback: Array) -> Array:
 	return DIALOGUE_POOL.get_lines("environment_objects", key, fallback)
@@ -130,29 +116,44 @@ func _handle_pip() -> void:
 		GameState.mark_witness_pip_heard()
 		start_dialogue(_get_pip_lines("post_reveal", [
 			{"speaker": "Pip", "text": "There you are."},
-			{"speaker": "Pip", "text": "Yep. Still not the original."},
+			{"speaker": "Pip", "text": "Yep. Same person. Different seams."},
 			{"speaker": "Pip", "text": "But you wave nicer now."},
 		]), _get_witness_completion_callback(was_completed))
 		return
+	if GameState.prize_echo_unlocked and not _is_prize_sort_completed():
+		var ready_lines := _get_optional_first_meeting_lines(was_pip_met)
+		ready_lines.append_array([
+			{"speaker": "Pip", "text": "The shelf beside me is holding Prize Echo Ascent."},
+			{"speaker": "Pip", "text": "Start it from the shelf when you are ready."},
+		])
+		start_dialogue(ready_lines)
+		return
 	if not _is_prize_sort_completed() and _prize_sort_unlocked():
-		var lines := _get_optional_first_meeting_lines(was_pip_met)
-		lines.append_array(_get_pip_lines("prize_sort_intro", [
-			{"speaker": "Pip", "text": "Prize Sort is ready."},
-			{"speaker": "Pip", "text": "The labels remember an order."},
-			{"speaker": "Pip", "text": "Ticket Stub. Lost Token. Blank Employee Badge."},
-		]))
-		start_dialogue(lines, Callable(self, "_start_prize_sort"))
+		GameState.pip_secret_started = true
+		GameState.prize_echo_unlocked = true
+		var lines := _get_pip_lines("prize_sort_intro", [
+			{"speaker": "Pip", "text": "Prize Echo Ascent is awake. Use the shelf beside me to begin."},
+		])
+		if not was_pip_met:
+			lines = _get_pip_lines("prize_sort_first_meeting", lines)
+		start_dialogue(lines)
 		return
 	if _is_prize_sort_completed():
 		_show_pip_prize_completion_dialogue()
 		return
+	if GameState.prize_echo_unlocked:
+		start_dialogue([
+			{"speaker": "Prize Counter", "text": "PRIZE ECHO ASCENT READY AT THE SHELF."},
+		])
+		return
 	if GameState.lost_token_quest_completed:
-		var lines := _get_optional_first_meeting_lines(was_pip_met)
-		lines.append_array(_get_pip_lines("after_lost_token", [
+		var lines := _get_pip_lines("after_lost_token", [
 			{"speaker": "Pip", "text": "You brought the Lost Token back."},
 			{"speaker": "Pip", "text": "You used to want the blue one."},
 			{"speaker": "Pip", "text": "You never had enough tickets."},
-		]))
+		])
+		if not was_pip_met:
+			lines = _get_pip_lines("first_meeting_after_lost_token", lines)
 		start_dialogue(lines)
 		return
 	start_dialogue(_get_first_meeting_lines())
@@ -169,16 +170,10 @@ func _get_optional_first_meeting_lines(was_pip_met: bool) -> Array:
 	return _get_first_meeting_lines()
 
 func _handle_prize_counter() -> void:
-	if GameState.post_reveal_roam_unlocked and _is_prize_sort_completed():
-		start_dialogue(_get_pip_lines("prize_sort_replay_offer", [
-			{"speaker": "Pip", "text": "The prizes remember their order now. They like being remembered."},
-			{"speaker": "Pip", "text": "Want to shuffle them and put them right again?"},
-		]), Callable(self, "_offer_prize_sort_replay"))
-		return
 	if _is_prize_sort_completed():
 		start_dialogue(_get_environment_lines("prize_counter_restored", [
-			{"speaker": "Prize Counter", "text": "The prize labels are neatly sorted."},
-			{"speaker": "Prize Counter", "text": "Ticket Stub. Lost Token. Blank Employee Badge."},
+			{"speaker": "Prize Counter", "text": "The loose labels rest under the glass."},
+			{"speaker": "Prize Counter", "text": "The shelf route beside Pip is stable."},
 		]))
 		return
 	if _prize_sort_unlocked() and not GameState.pip_met:
@@ -188,21 +183,27 @@ func _handle_prize_counter() -> void:
 		])
 		return
 	if _prize_sort_unlocked():
-		var lines := _get_environment_state_lines("prize_counter", [
+		start_dialogue(_get_environment_state_lines("prize_counter", [
 			{"speaker": "Prize Counter", "text": "Three labels sit loose under the glass."},
-			{"speaker": "Prize Counter", "text": "Pip seems very proud of not explaining why."},
-		])
-		lines.append_array(_get_pip_lines("prize_sort_intro", [
-			{"speaker": "Pip", "text": "Prize Sort is ready."},
-			{"speaker": "Pip", "text": "The labels remember an order."},
+			{"speaker": "Player", "text": "Pip pointed me to the shelf, not this counter."},
 		]))
-		start_dialogue(lines, Callable(self, "_start_prize_sort"))
 		return
 	start_dialogue(_get_environment_state_lines("prize_counter", [
 		{"speaker": "Prize Counter", "text": "Cheap prizes watch from behind dusty glass."},
 	]))
 
 func _handle_prize_shelf_adventure() -> void:
+	if GameState.post_reveal_roam_unlocked and _is_prize_sort_completed():
+		start_dialogue([
+			{"speaker": "Prize Shelf", "text": "PRIZE ECHO ROUTE READY FOR REPLAY."},
+		], Callable(self, "_offer_prize_echo_replay"))
+		return
+	if GameState.prize_echo_unlocked and not _is_prize_sort_completed():
+		start_dialogue([
+			{"speaker": "Prize Shelf", "text": "EIGHTEEN ECHO TAGS LOADED ACROSS TWO RAILS."},
+			{"speaker": "Prize Shelf", "text": "HOOK CONTACT RESETS THE CURRENT ROUTE."},
+		], Callable(self, "_go_to_prize_shelf_run"))
+		return
 	start_dialogue([
 		{"speaker": "Prize Shelf", "text": "The shelf-run rail is unplugged. Loose tags rest where they fell."},
 		{"speaker": "Prize Shelf", "text": "Pip says the good prizes were never on the rail anyway."},
@@ -212,107 +213,52 @@ func _go_to_prize_shelf_run() -> void:
 	GameState.set_pending_spawn_id("Spawn_FromPrizeAdventure")
 	SceneChanger.go_to_prize_shelf_run()
 
-func _start_prize_sort() -> void:
-	GameState.pip_secret_started = true
-	prize_sort_selected = []
-	prize_sort_remaining = PRIZE_SORT_ORDER.duplicate()
-	_open_prize_sort_choice()
+func _offer_prize_echo_replay() -> void:
+	PostGameReplay.open_offer(
+		ui_layer,
+		player,
+		"Run Prize Echo Ascent again?",
+		"prize_sort",
+		Callable(self, "_go_to_prize_shelf_run")
+	)
 
-func _open_prize_sort_choice() -> void:
-	if choice_box and is_instance_valid(choice_box):
-		choice_box.queue_free()
-	choice_box = load("res://scenes/ui/ChoiceBox.tscn").instantiate()
-	ui_layer.add_child(choice_box)
-	if player and player.has_method("set_control_enabled"):
-		player.set_control_enabled(false)
-	if choice_box.has_signal("choice_selected"):
-		choice_box.connect("choice_selected", _on_prize_sort_choice_selected, CONNECT_ONE_SHOT)
-	if choice_box.has_signal("choice_cancelled"):
-		choice_box.connect("choice_cancelled", _on_prize_sort_choice_cancelled, CONNECT_ONE_SHOT)
-	var slot := prize_sort_selected.size() + 1
-	var question := "PRIZE SORT\nArrange the prizes from oldest memory to newest memory.\nChoose item %d." % slot
-	if not prize_sort_selected.is_empty():
-		var last_item: String = str(prize_sort_selected[prize_sort_selected.size() - 1])
-		var reaction := _get_pip_item_reaction(last_item)
-		if not reaction.is_empty():
-			question = "%s\n\n%s" % [reaction, question]
-	# Show every prize each round: placed ones stay visible, numbered by pick order.
-	var options: Array = []
-	for item in PRIZE_SORT_ORDER:
-		var pick_index := prize_sort_selected.find(item)
-		if pick_index >= 0:
-			options.append("%d. %s  [placed]" % [pick_index + 1, item])
-		else:
-			options.append(str(item))
-	choice_box.open_choice(question, options)
-
-func _get_pip_item_reaction(item: String) -> String:
-	match item:
-		"Ticket Stub":
-			return "Pip hugs the Ticket Stub: \"Where wanting starts. It is still warm.\""
-		"Lost Token":
-			return "Pip taps the Lost Token: \"It hums. It remembers coming back.\""
-		"Blank Employee Badge":
-			return "Pip whispers at the badge: \"It pretends to sleep. It is listening.\""
-	return ""
-
-func _on_prize_sort_choice_selected(index: int) -> void:
-	if choice_box and is_instance_valid(choice_box):
-		choice_box.queue_free()
-	choice_box = null
-	if index < 0 or index >= PRIZE_SORT_ORDER.size():
-		_finish_failed_prize_sort()
+func _maybe_show_pip_minigame_return() -> void:
+	if _dialogue_is_active() or not _is_prize_sort_completed():
 		return
-	var selected_item: String = str(PRIZE_SORT_ORDER[index])
-	if prize_sort_selected.has(selected_item):
-		# Already placed; keep the board up and let the player pick again.
-		_open_prize_sort_choice()
-		return
-	prize_sort_selected.append(selected_item)
-	prize_sort_remaining.erase(selected_item)
-	if prize_sort_selected.size() < PRIZE_SORT_ORDER.size():
-		_open_prize_sort_choice()
-		return
-	if prize_sort_selected == PRIZE_SORT_ORDER:
-		GameState.complete_pip_secret()
+	# Story completion waits for an explicit Pip interaction so the player
+	# actually delivers the Echo Token. Replay acknowledgements may stay eager.
+	var replay_return := GameState.postgame_replay_pending == "prize_sort" and GameState.postgame_replay_won
+	if replay_return:
 		_show_pip_prize_completion_dialogue()
-		return
-	_finish_failed_prize_sort()
 
 func _show_pip_prize_completion_dialogue() -> void:
 	if GameState.consume_postgame_replay_return("prize_sort"):
 		start_dialogue(_get_pip_lines("prize_sort_replay_return", [
-			{"speaker": "Pip", "text": "All sorted. Again. You did not have to."},
+			{"speaker": "Pip", "text": "All eighteen echoes. Again. You did not have to."},
 			{"speaker": "Pip", "text": "Which is exactly why it counts."},
 		]))
 		return
 	if not GameState.pip_prize_anecdote_seen:
-		GameState.pip_prize_anecdote_seen = true
 		start_dialogue(_get_pip_lines("prize_sort_completion", [
-			{"speaker": "Pip", "text": "Prizes sorted."},
-			{"speaker": "Pip", "text": "Some rewards remember their owner before the owner remembers them."},
-		]))
+			{"speaker": "Pip", "text": "You brought the Echo Token back. Let me see the rim."},
+			{"speaker": "Pip", "text": "The prize paint connects its hopeful memories to you. The service mark gives Gus a closing shift he can trace."},
+			{"speaker": "Player", "text": "Then it may help with both questions: who I was, and what happened that night."},
+			{"speaker": "Pip", "text": "Exactly. Take it to Gus and let both sides of the token speak."},
+		]), Callable(self, "_finish_pip_echo_token_handoff"))
 		return
 	start_dialogue([
-		{"speaker": "Pip", "text": "Prizes sorted."},
-		{"speaker": "Pip", "text": "Ticket Stub. Lost Token. Blank Employee Badge."},
+		{"speaker": "Pip", "text": "Prize Echo Ascent is stable."},
+		{"speaker": "Pip", "text": "Eighteen echoes. Three locks. No loose seams."},
 	])
 
-func _finish_failed_prize_sort() -> void:
-	start_dialogue(_get_pip_sequential_lines("prize_sort_wrong", [
-		{"speaker": "Pip", "text": "Those memories are wearing each other's hats."},
-		{"speaker": "Pip", "text": "Try oldest to newest."},
-	]), Callable(self, "_start_prize_sort"))
-
-func _on_prize_sort_choice_cancelled() -> void:
-	if choice_box and is_instance_valid(choice_box):
-		choice_box.queue_free()
-	choice_box = null
-	if player and player.has_method("set_control_enabled"):
-		player.set_control_enabled(true)
+func _finish_pip_echo_token_handoff() -> void:
+	GameState.pip_prize_anecdote_seen = true
+	_refresh_route_cue()
+	if quest_notice and quest_notice.has_method("refresh_objective_hud"):
+		quest_notice.call("refresh_objective_hud", true)
 
 func _prize_sort_unlocked() -> bool:
-	return GameState.lying_cabinets_completed or _is_post_reveal()
+	return (GameState.circuit_soda_completed and GameState.vendo_unknown_clue_seen) or _is_post_reveal()
 
 func _is_prize_sort_completed() -> bool:
 	return GameState.prize_sort_completed or GameState.pip_secret_completed
@@ -402,14 +348,29 @@ func _apply_sprite_texture(sprite_node: Sprite2D, path: String) -> bool:
 		return false
 	sprite_node.visible = false
 	sprite_node.texture = null
-	if path.is_empty() or not ResourceLoader.exists(path):
+	if path.is_empty():
 		return false
-	var resource := load(path)
-	if not resource is Texture2D:
+	var texture := _load_texture(path)
+	if texture == null:
 		return false
-	sprite_node.texture = resource
+	sprite_node.texture = texture
 	sprite_node.visible = true
 	return true
 
-func _offer_prize_sort_replay() -> void:
-	PostGameReplay.open_offer(ui_layer, player, "Sort the prizes again?", "prize_sort", Callable(self, "_start_prize_sort"))
+func _load_texture(path: String) -> Texture2D:
+	if ResourceLoader.exists(path):
+		var resource := load(path)
+		if resource is Texture2D:
+			return resource
+	return _load_raw_png_texture(path)
+
+func _load_raw_png_texture(path: String) -> Texture2D:
+	if not path.ends_with(".png"):
+		return null
+	var image := Image.new()
+	var error := image.load(path)
+	if error != OK and path.begins_with("res://"):
+		error = image.load(ProjectSettings.globalize_path(path))
+	if error != OK:
+		return null
+	return ImageTexture.create_from_image(image)

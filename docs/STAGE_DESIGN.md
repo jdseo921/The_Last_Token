@@ -1,5 +1,7 @@
 # The Last Token — Stage Design (Canonical)
 
+> **Historical planning document:** the shipped scenes and current QA catalog supersede retired stage/framework names in this file. See [`README.md`](README.md) for current implementation sources.
+
 > Companion to [`DESIGN_BIBLE.md`](DESIGN_BIBLE.md). Defines every playable stage: its **distinct verb**, its **own entertainment**, its **story connection**, its **dialogue beats** (one lore beat + one breather beat, per Bible §6), and its **coded difficulty**. Design principle: **reuse the two existing frameworks so richness does not become bloat.**
 
 ## 0. Two frameworks to build on (bloat control)

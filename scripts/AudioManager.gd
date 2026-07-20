@@ -1,8 +1,12 @@
 extends Node
 
+const DEBUG := preload("res://scripts/Debug.gd")
+
 const SFX_DIR := "res://assets/audio/sfx/"
 const MUSIC_DIR := "res://assets/audio/music/"
 const AUDIO_EXTENSIONS := [".wav", ".ogg", ".mp3"]
+const UNKNOWN_VOICE_MUSIC_SCALE := 0.1
+const UNKNOWN_VOICE_FADE_SECONDS := 0.28
 const SFX_NAMES := {
 	"ui_confirm": "ui_confirm",
 	"ui_cancel": "ui_cancel",
@@ -52,6 +56,8 @@ var music_loop_enabled := true
 var music_fade_tween: Tween = null
 var pending_fade_stop_player: AudioStreamPlayer = null
 var music_context_volume_scale := 1.0
+var unknown_voice_music_dimmed := false
+var unknown_voice_tween: Tween = null
 
 func _ready() -> void:
 	for index in range(4):
@@ -60,6 +66,9 @@ func _ready() -> void:
 		sfx_players.append(player)
 	music_player_a = AudioStreamPlayer.new()
 	music_player_b = AudioStreamPlayer.new()
+	# Pausing freezes gameplay, but the current room track should keep playing.
+	music_player_a.process_mode = Node.PROCESS_MODE_ALWAYS
+	music_player_b.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(music_player_a)
 	add_child(music_player_b)
 	music_player_a.finished.connect(_on_music_player_a_finished)
@@ -73,6 +82,7 @@ func _ready() -> void:
 		settings.settings_changed.connect(_on_settings_changed)
 
 func _exit_tree() -> void:
+	_stop_unknown_voice_tween()
 	_stop_music_fade_tween()
 	_stop_all_music_players()
 	for player in sfx_players:
@@ -137,6 +147,7 @@ func stop_arcade_ambience() -> void:
 	stop_music()
 
 func play_music(track_id: String, fade_seconds: float = 0.75) -> void:
+	_stop_unknown_voice_tween()
 	if track_id.is_empty():
 		stop_music(fade_seconds)
 		return
@@ -146,7 +157,7 @@ func play_music(track_id: String, fade_seconds: float = 0.75) -> void:
 		return
 	var stream := _load_audio(MUSIC_DIR, base_name)
 	if stream == null:
-		print("AudioManager: missing music track '%s'." % track_id)
+		DEBUG.warning(self, "audio", "music_track_missing", {"track": track_id, "base_name": base_name})
 		return
 	if active_music_player == null or inactive_music_player == null:
 		return
@@ -172,7 +183,11 @@ func play_music(track_id: String, fade_seconds: float = 0.75) -> void:
 		music_fade_tween.tween_property(fade_in_player, "volume_db", _get_music_volume_db(), fade_seconds)
 		music_fade_tween.tween_property(fade_out_player, "volume_db", _silent_volume_db(), fade_seconds)
 		music_fade_tween.finished.connect(_on_music_fade_finished)
-	print("AudioManager: playing music '%s'." % track_id)
+	DEBUG.info(self, "audio", "music_started", {
+		"track": track_id,
+		"fade_seconds": fade_seconds,
+		"context_scale": music_context_volume_scale,
+	})
 
 func fade_in_active_music(seconds: float) -> void:
 	# Game-open polish: bring the current track up from silence.
@@ -184,6 +199,7 @@ func fade_in_active_music(seconds: float) -> void:
 	music_fade_tween.tween_property(active_music_player, "volume_db", _get_music_volume_db(), maxf(seconds, 0.05))
 
 func stop_music(fade_seconds: float = 0.5) -> void:
+	_stop_unknown_voice_tween()
 	_stop_music_fade_tween()
 	current_music_id = ""
 	current_music_stream = null
@@ -201,9 +217,35 @@ func stop_music(fade_seconds: float = 0.5) -> void:
 func get_current_music_id() -> String:
 	return current_music_id
 
+func set_unknown_voice_music_dimmed(dimmed: bool, fade_seconds: float = UNKNOWN_VOICE_FADE_SECONDS) -> void:
+	if unknown_voice_music_dimmed == dimmed:
+		return
+	unknown_voice_music_dimmed = dimmed
+	DEBUG.info(self, "audio", "unknown_voice_duck_changed", {
+		"dimmed": dimmed,
+		"track": current_music_id,
+		"fade_seconds": fade_seconds,
+	})
+	_stop_music_fade_tween()
+	_stop_unknown_voice_tween()
+	if active_music_player == null or not active_music_player.playing:
+		return
+	unknown_voice_tween = create_tween()
+	unknown_voice_tween.tween_property(
+		active_music_player,
+		"volume_db",
+		_get_music_volume_db(),
+		maxf(fade_seconds, 0.05)
+	)
+	unknown_voice_tween.finished.connect(_on_unknown_voice_tween_finished)
+
+func is_unknown_voice_music_dimmed() -> bool:
+	return unknown_voice_music_dimmed
+
 func play_music_for_context(context_id: String) -> void:
 	var track_id := _get_track_id_for_context(context_id)
 	if track_id.is_empty():
+		DEBUG.warning(self, "audio", "music_context_unmapped", {"context": context_id})
 		return
 	music_context_volume_scale = _get_volume_scale_for_context(context_id)
 	play_music(track_id)
@@ -217,9 +259,9 @@ func _get_track_id_for_context(context_id: String) -> String:
 		"cabinet_row":
 			return _room_track_for_story("cabinet_row_records")
 		"snack_alcove":
-			return _room_track_for_story("snack_alcove_vendo")
+			return "snack_alcove_vendo"
 		"prize_corner":
-			return _get_arcade_hub_music_id()
+			return "circuit_soda_game"
 		"maintenance_hall":
 			return _room_track_for_story("maintenance_hall_static")
 		"staff_corridor":
@@ -231,7 +273,11 @@ func _get_track_id_for_context(context_id: String) -> String:
 		"truth_filter":
 			return "truth_filter_game"
 		"circuit_soda":
-			return "circuit_soda_game"
+			return "snack_alcove_vendo"
+		"night_ledger":
+			return "static_service_run_game"
+		"after_hours_archive":
+			return "static_service_run_game"
 		"static_service_run":
 			return "static_service_run_game"
 		"maintenance_sync":
@@ -285,7 +331,7 @@ func _load_audio(folder_path: String, base_name: String) -> AudioStream:
 			var stream := load(file_path)
 			if stream is AudioStream:
 				return stream
-			print("AudioManager: failed to load audio '%s'." % file_path)
+			DEBUG.warning(self, "audio", "audio_resource_invalid", {"path": file_path})
 	return null
 
 func _on_music_player_a_finished() -> void:
@@ -313,6 +359,7 @@ func _on_music_fade_finished() -> void:
 	music_fade_tween = null
 
 func _on_settings_changed() -> void:
+	_stop_unknown_voice_tween()
 	for player in [music_player_a, music_player_b]:
 		if player == null:
 			continue
@@ -320,6 +367,14 @@ func _on_settings_changed() -> void:
 			player.volume_db = _get_music_volume_db()
 		else:
 			player.volume_db = _silent_volume_db()
+
+func _on_unknown_voice_tween_finished() -> void:
+	unknown_voice_tween = null
+
+func _stop_unknown_voice_tween() -> void:
+	if unknown_voice_tween != null and unknown_voice_tween.is_valid():
+		unknown_voice_tween.kill()
+	unknown_voice_tween = null
 
 func _stop_music_fade_tween() -> void:
 	if music_fade_tween != null and music_fade_tween.is_valid():
@@ -349,6 +404,8 @@ func _get_music_volume_db() -> float:
 	if has_node("/root/GameSettings"):
 		volume = float(get_node("/root/GameSettings").get("music_volume"))
 	volume *= music_context_volume_scale
+	if unknown_voice_music_dimmed:
+		volume *= UNKNOWN_VOICE_MUSIC_SCALE
 	return linear_to_db(maxf(volume, 0.001))
 
 func _silent_volume_db() -> float:

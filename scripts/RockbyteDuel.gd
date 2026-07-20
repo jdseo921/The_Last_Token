@@ -299,7 +299,7 @@ func _finish_duel(player_won: bool) -> void:
 		_play_audio("play_success_jingle")
 		_play_audio("play_token_get")
 		exit_button.text = "Return to Arcade"
-		status_label.text = "Lost Token recovered.\nReturn to Mira."
+		status_label.text = "Lost Token recovered.\nExit when ready."
 		_show_result_popup("TOKEN SIGNAL MATCHED.\nPREVIOUS SESSION FOUND.\nLost Token recovered.")
 		exit_button.grab_focus()
 		return
@@ -447,11 +447,14 @@ func _setup_staged_visuals() -> void:
 		for participant_data in _get_participant_data():
 			stage.call("add_actor", participant_data)
 	if stage.has_method("add_prop"):
+		var left_rock_texture := str(minigame_config.get("left_rock_texture", ""))
+		var right_rock_texture := str(minigame_config.get("right_rock_texture", ""))
 		left_pile_prop = stage.call("add_prop", ROCK_PILE_PROP_SCENE, {
 			"prop_id": "left_pile",
 			"pile_id": "left_pile",
 			"max_rocks": START_ROCKS_PER_PILE,
 			"current_rocks": left_pile,
+			"rock_texture_path": left_rock_texture,
 			"position": Vector2(250, 230),
 		}) as Node
 		right_pile_prop = stage.call("add_prop", ROCK_PILE_PROP_SCENE, {
@@ -459,6 +462,7 @@ func _setup_staged_visuals() -> void:
 			"pile_id": "right_pile",
 			"max_rocks": START_ROCKS_PER_PILE,
 			"current_rocks": right_pile,
+			"rock_texture_path": right_rock_texture,
 			"position": Vector2(390, 230),
 		}) as Node
 	if action_queue != null and action_queue.has_method("clear"):

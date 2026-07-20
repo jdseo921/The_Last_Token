@@ -4,9 +4,10 @@ const ASSET_PATHS := preload("res://scripts/AssetPaths.gd")
 const ROUTE_CUE_SCRIPT := preload("res://scripts/RouteCue.gd")
 const AMBIENT_EFFECTS := preload("res://scripts/AmbientSpriteEffects.gd")
 const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
-const MIRA_IDLE_SHEET_PATH := "res://assets/art/characters/mira/mira_idle_sheet.png"
-const GUS_IDLE_SHEET_PATH := "res://assets/art/characters/gus/gus_idle_sheet.png"
+const MIRA_IDLE_SHEET_PATH := "res://assets/art/characters/mira/mira_idle_sheet_v2.png"
+const GUS_IDLE_SHEET_PATH := "res://assets/art/characters/gus/gus_idle_sheet_v2.png"
 const VENDO_IDLE_SHEET_PATH := "res://assets/art/characters/vendo/vendo_idle_sheet.png"
+const HUB_VENDING_UNIT_NAME := "SIP-2"
 const MR_BYTE_IDLE_SHEET_PATH := "res://assets/art/characters/mr_byte/mr_byte_idle_sheet.png"
 const PORTRAIT_MIRA_WORRIED := "res://assets/art/portraits/mira/mira_worried.png"
 const PORTRAIT_GUS_ANNOYED := "res://assets/art/portraits/gus/gus_annoyed.png"
@@ -40,6 +41,7 @@ var route_cue: Control = null
 @onready var pause_menu: CanvasLayer = $PauseMenu
 @onready var effects_layer: Node2D = $EffectsLayer
 @onready var truth_filter_glow: Polygon2D = $EffectsLayer/TruthFilterGlow
+@onready var gus_interactable: Area2D = $InteractableLayer/Gus
 
 var save_slot_menu: Control = null
 var choice_box: CanvasLayer = null
@@ -62,10 +64,9 @@ func _ready() -> void:
 	_refresh_hint()
 	_refresh_objective_hint()
 	_refresh_hub_art_states()
+	_refresh_gus_presence()
 	if _should_play_opening_intro():
 		call_deferred("_play_opening_intro")
-	else:
-		call_deferred("_maybe_show_quest_notification")
 	_maybe_show_controls_hint()
 	call_deferred("_maybe_play_rockbyte_anecdote")
 
@@ -87,8 +88,8 @@ func _maybe_play_rockbyte_anecdote() -> void:
 		return
 	GameState.increment_npc_dialogue_count("cabinet07_rockbyte_auto")
 	start_dialogue(_get_cabinet07_sequential_lines("rockbyte_completion", [
-		{"speaker": "Cabinet 07", "text": "TOKEN RECOVERED."},
-		{"speaker": "Cabinet 07", "text": "RETURN TO MIRA."},
+		{"speaker": "Player", "text": "I have the Lost Token."},
+		{"speaker": "Player", "text": "Mira is waiting at the counter. I should take it back to her."},
 	]))
 
 func _maybe_show_controls_hint() -> void:
@@ -107,7 +108,7 @@ func _maybe_show_controls_hint() -> void:
 	var hint := Label.new()
 	hint.position = Vector2(16, 373)
 	hint.size = Vector2(320, 16)
-	hint.add_theme_font_override("font", preload("res://assets/fonts/m3x6.ttf"))
+	hint.add_theme_font_override("font", preload("res://assets/fonts/m6x11.ttf"))
 	hint.add_theme_font_size_override("font_size", 16)
 	hint.text = "MOVE: WASD / Arrows    INTERACT: E    MENU: Esc"
 	layer.add_child(hint)
@@ -156,6 +157,7 @@ func start_dialogue(lines: Array, after_dialogue: Callable = Callable()) -> void
 	_refresh_hint()
 	_refresh_objective_hint()
 	_refresh_hub_art_states()
+	_refresh_gus_presence()
 
 func _select_repeat_dialogue(npc_id: String, early_sets: Array, redirect_sets: Array) -> Array:
 	var phase := _get_npc_dialogue_phase()
@@ -187,6 +189,26 @@ func _get_vendo_lines(key: String, fallback: Array) -> Array:
 
 func _get_vendo_sequential_lines(key: String, fallback: Array) -> Array:
 	return DIALOGUE_POOL.get_sequential_set("vendo", key, key, fallback)
+
+func _get_hub_vending_lines(key: String, fallback: Array) -> Array:
+	return _rename_hub_vending_speaker(_get_vendo_lines(key, fallback))
+
+func _get_hub_vending_sequential_lines(key: String, fallback: Array) -> Array:
+	return _rename_hub_vending_speaker(_get_vendo_sequential_lines(key, fallback))
+
+func _get_hub_vending_random_lines(key: String, fallback: Array) -> Array:
+	return _rename_hub_vending_speaker(DIALOGUE_POOL.get_random_set("vendo", key, fallback))
+
+func _rename_hub_vending_speaker(lines: Array) -> Array:
+	var renamed: Array = []
+	for line_value in lines:
+		if not line_value is Dictionary:
+			continue
+		var line := (line_value as Dictionary).duplicate(true)
+		if str(line.get("speaker", "")) == "Vendo":
+			line["speaker"] = HUB_VENDING_UNIT_NAME
+		renamed.append(line)
+	return renamed
 
 func _get_mr_byte_lines(key: String, fallback: Array) -> Array:
 	return DIALOGUE_POOL.get_lines("mr_byte", key, fallback)
@@ -252,7 +274,6 @@ func _on_dialogue_finished() -> void:
 	_refresh_hint()
 	_refresh_objective_hint()
 	_refresh_hub_art_states()
-	_maybe_show_quest_notification()
 	_maybe_play_opening_monologue()
 
 func _maybe_play_opening_monologue() -> void:
@@ -330,13 +351,13 @@ func _get_objective_hint_text() -> String:
 		"circuit_soda":
 			return "Objective: Snack Alcove -> Vendo and Circuit Soda."
 		"lost_shift_file":
-			if not GameState.closing_checklist_read:
-				return "Objective: ArcadeHub -> read the Closing Checklist."
-			if not GameState.staff_schedule_read:
-				return "Objective: Cabinet Row -> read the Staff Schedule by Mr. Byte."
-			if not GameState.maintenance_note_read:
-				return "Objective: Maintenance Hall -> read Gus's Maintenance Note."
-			return "Objective: Maintenance Hall -> tell Gus the Lost Shift File is complete."
+			if not GameState.closing_shift_mira_clue_found:
+				return "Objective: Arcade Hub -> ask Mira about the closing shift."
+			if not GameState.closing_shift_score_clue_found:
+				return "Objective: Cabinet Row -> follow the thread you remembered."
+			if not GameState.closing_shift_service_clue_found:
+				return "Objective: Snack Alcove -> follow the next memory thread."
+			return "Objective: Arcade Hub -> report the echoes to Gus."
 		"static_service_run":
 			return "Objective: Maintenance Hall -> Gus and Static Service Run."
 		"maintenance_sync":
@@ -378,19 +399,27 @@ func _play_opening_intro() -> void:
 	intro_fade_overlay.visible = true
 	intro_fade_overlay.modulate.a = 1.0
 	await _fade_intro_to_dialogue()
-	dialogue_box.start_dialogue([
-		{"speaker": "Player", "text": "Pixel Haven. The name is already in my head. My own name is not."},
-		{"speaker": "Player", "text": "I remember carpet patterns, machine hum, and the smell of old tickets. I do not remember walking in."},
-		{"speaker": "Player", "text": "I think I used to like it here after everyone left. The quiet always felt earned."},
-		{"speaker": "Player", "text": "Something is missing from my pocket. A token, maybe. Or the reason I came back."},
-	])
+	dialogue_box.start_dialogue(_get_opening_intro_lines())
 	await dialogue_box.dialogue_finished
 	GameState.mark_opening_intro_seen()
 	await _fade_intro_from_black()
 	intro_active = false
 	if player and player.has_method("set_control_enabled"):
 		player.set_control_enabled(true)
-	_maybe_show_quest_notification()
+	# Both navigation surfaces were hidden while the intro owned the screen.
+	# Refresh them synchronously so the first objective appears immediately.
+	_refresh_objective_hint()
+	if quest_notice != null and quest_notice.has_method("refresh_objective_hud"):
+		quest_notice.call("refresh_objective_hud", true)
+
+
+func _get_opening_intro_lines() -> Array:
+	return [
+		{"speaker": "Player", "text": "The door was not locked. Curiosity did the rest."},
+		{"speaker": "Player", "text": "Pixel Haven, according to the sign. A closed arcade with all its lights still on."},
+		{"speaker": "Player", "text": "I do not recognize the machines, the carpet, or anyone who might still be inside."},
+		{"speaker": "Player", "text": "Something is missing from my pocket. Maybe a token. I should look around before good sense catches up."},
+	]
 
 func _fade_intro_to_dialogue() -> void:
 	if intro_fade_tween and intro_fade_tween.is_valid():
@@ -413,22 +442,13 @@ func _fade_intro_from_black() -> void:
 func _hide_intro_fade_overlay() -> void:
 	intro_fade_overlay.visible = false
 
-func _maybe_show_quest_notification() -> void:
-	# Quest guidance now lives in the persistent top-right HUD (QuestNotice
-	# announces changes there); the center popup is retired for quest changes.
-	pass
-
 func handle_hub_interaction(interactable: Node, player_node: Node = null) -> void:
 	var kind := str(interactable.interactable_kind)
-	if GameState.opening_look_around_active() and kind in ["mira", "gus", "vendo", "hub_directory", "test_cabinet", "cabinet07", "owner_portrait", "broken_cabinet", "closing_checklist", "staff_door"]:
+	if GameState.opening_look_around_active() and kind in ["mira", "gus", "vendo", "hub_directory", "test_cabinet", "cabinet07", "owner_portrait", "broken_cabinet", "staff_door"]:
 		GameState.register_opening_talk()
 	match kind:
 		"mira":
 			_handle_mira()
-		"ticket_counter":
-			_handle_ticket_counter()
-		"closing_checklist":
-			_handle_closing_checklist()
 		"gus":
 			_handle_gus()
 		"vendo":
@@ -484,14 +504,6 @@ func _push_player_back_from(transition: Node) -> void:
 func _can_show_act2_echo() -> bool:
 	return GameState.lying_cabinets_completed and not GameState.twist_reveal_seen
 
-func _get_ticket_counter_echo_lines() -> Array:
-	GameState.echo_ticket_counter_seen = true
-	return _get_environment_lines("ticket_counter_fractured", [
-		{"speaker": "Narrator", "text": "The ticket counter glass catches your reflection half a beat late."},
-		{"speaker": "Narrator", "text": "For a moment it does not move when you move."},
-		{"speaker": "Narrator", "text": "Then it catches up, like nothing happened."},
-	])
-
 func _get_cabinet07_echo_lines() -> Array:
 	GameState.echo_cabinet07_seen = true
 	return [
@@ -533,9 +545,6 @@ func _handle_mira() -> void:
 			post_reveal_lines.append({"speaker": "Mira", "text": "You carried the shift file to the door alone. Let it be the last thing you ever carry that way."})
 		start_dialogue(post_reveal_lines, _get_witness_completion_callback(was_completed))
 		return
-	if _can_show_act2_echo() and not GameState.echo_ticket_counter_seen:
-		start_dialogue(_get_ticket_counter_echo_lines())
-		return
 	if GameState.midpoint_turn_seen and not GameState.midpoint_told_mira and GameState.lost_shift_file_completed and not GameState.staff_corridor_unlocked:
 		GameState.midpoint_told_mira = true
 		start_dialogue([
@@ -553,13 +562,14 @@ func _handle_mira() -> void:
 	if not GameState.lost_token_quest_started:
 		GameState.mira_intro_seen = true
 		var opening_lines := _get_mira_lines("opening_first_meeting", [
-			{"speaker": "Mira", "text": "You made it back."},
-			{"speaker": "Mira", "text": "I was starting to think the door had forgotten how to let you in."},
-			{"speaker": "Player", "text": "I know this place, but I do not know why. Do you know me?"},
+			{"speaker": "Mira", "text": "You came in. It really is you."},
+			{"speaker": "Mira", "text": "But you are looking at me like we have never met."},
+			{"speaker": "Player", "text": "I only stepped inside because the lights were on. I do not recognize this place. Do I know you?"},
 			{"speaker": "Mira", "text": "A little. More than you do right now, I think."},
 		])
 		var quest_instruction_lines := _get_mira_lines("lost_token_quest_instruction", [
 			{"speaker": "Mira", "text": "Cabinet 07 has your Lost Token."},
+			{"speaker": "Player", "text": "(I walk into a closed arcade, get recognized by strangers, and immediately receive an errand. Curiosity has consequences.)"},
 			{"speaker": "Mira", "text": "Please bring it back to me."},
 		])
 		var first_meeting_lines := _combine_dialogue_lines(opening_lines, _get_memory_signal_explainer_lines())
@@ -570,7 +580,7 @@ func _handle_mira() -> void:
 		start_dialogue(_get_mira_sequential_lines("lost_token_active_repeat", [
 			{"speaker": "Mira", "text": "Cabinet 07 is waiting."},
 			{"speaker": "Mira", "text": "It only opens for signals it almost remembers."},
-			{"speaker": "Player", "text": "That sounds like a terrible way to recognize someone."},
+			{"speaker": "Player", "text": "That sounds like a difficult way to recognize someone."},
 			{"speaker": "Mira", "text": "Around here, it counts as friendly."},
 		]))
 		return
@@ -605,15 +615,63 @@ func _handle_mira() -> void:
 			{"speaker": "Mira", "text": "Snack Alcove is the next stop."},
 		]))
 		return
-	if GameState.circuit_soda_completed and not GameState.lost_shift_file_completed:
-		start_dialogue(_get_mira_lines("lost_shift_file_dialogue", [
-			{"speaker": "Mira", "text": "The records are waking up now."},
-			{"speaker": "Mira", "text": "I remember locking the counter."},
-			{"speaker": "Mira", "text": "But the last part is still missing.", "portrait": PORTRAIT_MIRA_WORRIED},
-			{"speaker": "Mira", "text": "Gus and Mr. Byte may remember the edges."},
-		]))
+	if GameState.lost_shift_file_started and not GameState.lost_shift_file_completed:
+		if not GameState.closing_shift_mira_clue_found:
+			GameState.find_closing_shift_mira_clue()
+			start_dialogue(_get_mira_lines("closing_shift_echoes_clue", [
+				{"speaker": "Mira", "text": "The final shift? I locked this counter before midnight."},
+				{"speaker": "Mira", "text": "After that, the night turns into noise. I wish I could tell you where to look.", "portrait": PORTRAIT_MIRA_WORRIED},
+				{"speaker": "Player", "text": "Something in Cabinet Row keeps pulling at me. I will start with the score board."},
+				{"speaker": "Mira", "text": "I do not know if it means anything. Just be gentle with yourself while you find out.", "portrait": PORTRAIT_MIRA_WORRIED},
+			]))
+			return
+		if not GameState.closing_shift_score_clue_found:
+			start_dialogue(_get_mira_lines("closing_shift_echoes_hint", [
+				{"speaker": "Mira", "text": "I am sorry. I still do not know what happened after I locked up."},
+				{"speaker": "Player", "text": "The score board is the only thread I have. I will follow that first.", "portrait": PORTRAIT_MIRA_WORRIED},
+			]))
+			return
+		if not GameState.closing_shift_service_clue_found:
+			start_dialogue([
+				{"speaker": "Player", "text": "The score was a timestamp. I keep thinking about the service cabinet in Snack Alcove. I want to see why."},
+				{"speaker": "Mira", "text": "I cannot explain that pull. I will be here when you come back.", "portrait": PORTRAIT_MIRA_WORRIED},
+			])
+			return
+		start_dialogue([
+			{"speaker": "Mira", "text": "You found all three edges. Tell Gus what came back.", "portrait": PORTRAIT_MIRA_WORRIED},
+		])
 		return
-	if GameState.lying_cabinets_completed and not GameState.story_puzzle_completed:
+	if GameState.circuit_soda_completed and not GameState.prize_sort_completed:
+		start_dialogue([
+			{"speaker": "Mira", "text": "The prize lights have been blinking all evening. I think they are trying to look cheerful."},
+			{"speaker": "Player", "text": "(That is a strange amount of effort for a light.)"},
+		])
+		return
+	if GameState.prize_sort_completed and not GameState.pip_prize_anecdote_seen:
+		start_dialogue([
+			{"speaker": "Mira", "text": "I keep finding ticket stubs where there should be dust."},
+			{"speaker": "Mira", "text": "This place has always been better at keeping little things than cleaning them."},
+		])
+		return
+	if GameState.pip_prize_anecdote_seen and not GameState.gus_hub_checkin_prize_sort_done:
+		start_dialogue([
+			{"speaker": "Mira", "text": "The floor feels less lonely when you are walking around it."},
+			{"speaker": "Mira", "text": "That may be the nicest strange thing I can say tonight."},
+		])
+		return
+	if GameState.lost_shift_file_completed and not GameState.static_service_run_completed:
+		start_dialogue([
+			{"speaker": "Mira", "text": "Gus unlocked the Maintenance Hallway for you."},
+			{"speaker": "Mira", "text": "The service line is the next thing to check.", "portrait": PORTRAIT_MIRA_WORRIED},
+		])
+		return
+	if GameState.static_service_run_completed and not GameState.maintenance_sync_completed:
+		start_dialogue([
+			{"speaker": "Mira", "text": "The service line is awake. Gus is still in Maintenance Hall."},
+			{"speaker": "Mira", "text": "He wants your help with the lock before either of you trusts the Staff Door.", "portrait": PORTRAIT_MIRA_WORRIED},
+		])
+		return
+	if GameState.maintenance_sync_completed and not GameState.story_puzzle_completed:
 		start_dialogue(_select_repeat_dialogue("mira", [
 			[
 				{"speaker": "Mira", "text": "You heard the contradictions and came back anyway.", "portrait": PORTRAIT_MIRA_WORRIED},
@@ -646,37 +704,6 @@ func _complete_lost_token_with_mira_anecdote() -> void:
 	GameState.mira_rockbyte_anecdote_seen = true
 	GameState.complete_lost_token_quest()
 
-func _get_lost_shift_completion_lines() -> Array:
-	if not GameState.lost_shift_file_completed:
-		return []
-	return [
-		{"speaker": "Quest", "text": "LOST SHIFT FILE COMPLETE"},
-		{"speaker": "Quest", "text": "A redacted staff number was assigned to Cabinet shutdown."},
-	]
-
-func _show_lost_shift_complete_notice() -> void:
-	if quest_notice and quest_notice.has_method("show_custom_notification"):
-		quest_notice.call(
-			"show_custom_notification",
-			"QUEST COMPLETE",
-			"LOST SHIFT FILE COMPLETE",
-			"A redacted staff number was assigned to Cabinet shutdown."
-		)
-	call_deferred("_maybe_play_midpoint_turn")
-
-func _maybe_play_midpoint_turn() -> void:
-	if not GameState.lost_shift_file_completed or GameState.midpoint_turn_seen:
-		return
-	GameState.midpoint_turn_seen = true
-	start_dialogue([
-		{"speaker": "Player", "text": "Three records. One shift folded shut and never filed."},
-		{"speaker": "Player", "text": "I keep telling myself I am looking for the way out of here."},
-		{"speaker": "Player", "text": "But the front door was never the locked one."},
-		{"speaker": "Player", "text": "Whatever stayed behind on the last night is waiting past the Staff Door."},
-		{"speaker": "Player", "text": "I am done trying to leave. I want to look at it."},
-		{"speaker": "Player", "text": "Mira is still at her counter. She deserves to hear what I found... or I can carry it alone and keep working."},
-	])
-
 func _was_witness_route_completed() -> bool:
 	return GameState.witness_route_completed or GameState.post_reveal_witness_route_completed
 
@@ -694,33 +721,6 @@ func _show_witness_route_complete_notice() -> void:
 			"Pixel Haven remembers you in pieces.\nTogether, they almost make a person."
 		)
 
-func _handle_ticket_counter() -> void:
-	if _can_show_act2_echo() and not GameState.echo_ticket_counter_seen:
-		start_dialogue(_get_ticket_counter_echo_lines())
-		return
-	start_dialogue(_get_environment_state_lines("ticket_counter", [
-		{"speaker": "Narrator", "text": "The ticket counter glass is dark and dusty."},
-	]))
-
-func _handle_closing_checklist() -> void:
-	if not GameState.circuit_soda_completed:
-		start_dialogue(_get_environment_state_lines("closing_checklist", [
-			{"speaker": "Closing Checklist", "text": "Sweep floors."},
-			{"speaker": "Closing Checklist", "text": "Count tickets."},
-			{"speaker": "Closing Checklist", "text": "Lock Staff Room."},
-		]))
-		return
-	var was_completed := GameState.lost_shift_file_completed
-	GameState.read_closing_checklist()
-	var lines := _get_environment_state_lines("closing_checklist", [
-		{"speaker": "Closing Checklist", "text": "CLOSING CHECKLIST"},
-		{"speaker": "Closing Checklist", "text": "Staff Door checked twice."},
-		{"speaker": "Closing Checklist", "text": "Final item scratched out."},
-	])
-	lines.append_array(_get_lost_shift_completion_lines())
-	var after_dialogue := Callable(self, "_show_lost_shift_complete_notice") if not was_completed and GameState.lost_shift_file_completed else Callable()
-	start_dialogue(lines, after_dialogue)
-
 func _handle_gus() -> void:
 	if _is_post_reveal():
 		GameState.gus_post_reveal_seen = true
@@ -733,6 +733,12 @@ func _handle_gus() -> void:
 		])
 		start_dialogue(post_reveal_lines, _get_witness_completion_callback(was_completed))
 		return
+	if GameState.gus_sync_anecdote_seen and GameState.maintenance_sync_completed and not GameState.story_puzzle_completed:
+		start_dialogue(_get_gus_lines("returned_to_hub_anecdote", [
+			{"speaker": "Gus", "text": "Back in the hub already? I thought the staff hall might send you running."},
+			{"speaker": "Gus", "text": "If it gets hard, take it easy. You do not have to force every answer tonight."},
+		]))
+		return
 	if GameState.lying_cabinets_completed and GameState.mr_byte_truth_filter_debriefed and not GameState.circuit_soda_completed and not GameState.gus_hub_checkin_truth_filter_done:
 		GameState.gus_hub_checkin_truth_filter_done = true
 		start_dialogue(_get_gus_lines("hub_checkin_truth_filter", [
@@ -740,12 +746,31 @@ func _handle_gus() -> void:
 			{"speaker": "Gus", "text": "Vendo is next. Snack Alcove. Do not tip the machine."},
 		]))
 		return
-	if GameState.circuit_soda_completed and GameState.prize_sort_completed and not GameState.lost_shift_file_completed and not GameState.gus_hub_checkin_prize_sort_done:
-		GameState.gus_hub_checkin_prize_sort_done = true
+	if GameState.lost_shift_file_started and GameState.closing_shift_clues_complete() and not GameState.lost_shift_file_completed:
+		start_dialogue(_get_gus_lines("closing_shift_echoes_debrief", [
+			{"speaker": "Gus", "text": "You found all three? I only knew to send you to Mira."},
+			{"speaker": "Player", "text": "The rest felt familiar. I followed it and found a one-minute shutdown sequence."},
+			{"speaker": "Gus", "text": "You may remember how to move through this place before you remember why."},
+			{"speaker": "Gus", "text": "I unlocked the Maintenance Hallway. The service line is ready when you are."},
+		]), Callable(self, "_complete_closing_shift_echoes"))
+		return
+	if GameState.circuit_soda_completed and GameState.prize_sort_completed and GameState.pip_prize_anecdote_seen and not GameState.lost_shift_file_completed and not GameState.gus_hub_checkin_prize_sort_done:
 		start_dialogue(_get_gus_lines("hub_checkin_prize_sort", [
-			{"speaker": "Gus", "text": "Pip talked. Now we do this my way: paperwork.", "portrait": PORTRAIT_GUS_ANNOYED},
-			{"speaker": "Gus", "text": "Checklist by the counter. Schedule in Cabinet Row. My note in the hall."},
-		]))
+			{"speaker": "Gus", "text": "The token gives me a shift to trace, but not a clean witness list."},
+			{"speaker": "Gus", "text": "I am not sure who saw which part. Ask Mira first while I sort the files."},
+			{"speaker": "Player", "text": "Mira first. I will take anything familiar slowly."},
+		]), Callable(self, "_start_closing_shift_echoes"))
+		return
+	if GameState.lost_shift_file_started and not GameState.lost_shift_file_completed:
+		var investigation_hint := "Ask Mira about the closing shift first."
+		if GameState.closing_shift_mira_clue_found and not GameState.closing_shift_score_clue_found:
+			investigation_hint = "Mira does not remember the rest. Follow the thread that feels familiar."
+		elif GameState.closing_shift_score_clue_found and not GameState.closing_shift_service_clue_found:
+			investigation_hint = "The timestamp changed something. Follow the next connection that surfaces."
+		start_dialogue([
+			{"speaker": "Gus", "text": "I am still sorting the files."},
+			{"speaker": "Gus", "text": investigation_hint},
+		])
 		return
 	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
 		start_dialogue(_get_gus_sequential_lines("truth_filter_active", [
@@ -762,7 +787,30 @@ func _handle_gus() -> void:
 			{"speaker": "Gus", "text": "Snack Alcove first."},
 		]))
 		return
-	if GameState.lying_cabinets_completed and not GameState.story_puzzle_completed:
+	if GameState.circuit_soda_completed and not GameState.prize_sort_completed:
+		start_dialogue([
+			{"speaker": "Gus", "text": "Prize machines always sound happiest right before they eat a coin."},
+			{"speaker": "Gus", "text": "I respect their consistency, if nothing else."},
+		])
+		return
+	if GameState.prize_sort_completed and not GameState.pip_prize_anecdote_seen:
+		start_dialogue([
+			{"speaker": "Gus", "text": "I once repaired a crane by asking it nicely. It did not help, but I felt better."},
+		])
+		return
+	if GameState.lost_shift_file_completed and not GameState.static_service_run_completed:
+		start_dialogue([
+			{"speaker": "Gus", "text": "I unlocked the Maintenance Hallway."},
+			{"speaker": "Gus", "text": "The service line is ready when you are."},
+		])
+		return
+	if GameState.static_service_run_completed and not GameState.maintenance_sync_completed:
+		start_dialogue([
+			{"speaker": "Gus", "text": "The service line is back. Meet me in Maintenance Hall."},
+			{"speaker": "Gus", "text": "We still have to make the lock agree with itself."},
+		])
+		return
+	if GameState.maintenance_sync_completed and not GameState.story_puzzle_completed:
 		start_dialogue(_select_repeat_dialogue("gus", [
 			[
 				{"speaker": "Gus", "text": "If your memories start arguing, do not pick the loudest one."},
@@ -779,40 +827,47 @@ func _handle_gus() -> void:
 		]))
 		return
 	if GameState.lost_token_quest_completed:
-		start_dialogue(_select_repeat_dialogue("gus", [
-			[
-				{"speaker": "Gus", "text": "Staff Door is humming again."},
-				{"speaker": "Gus", "text": "Practical advice: do not ignore humming doors.", "portrait": PORTRAIT_GUS_ANNOYED},
-			],
-			[
-				{"speaker": "Gus", "text": "Mira looks less sad. That usually means trouble upgraded to specific trouble."},
-				{"speaker": "Gus", "text": "Staff Door is your specific trouble."},
-			],
-		], [
-			[
-				{"speaker": "Gus", "text": "Door. Staff. Go."},
-				{"speaker": "Gus", "text": "I would draw arrows, but then I would have to mop around them.", "portrait": PORTRAIT_GUS_ANNOYED},
-			],
-		]))
+		start_dialogue([
+			{"speaker": "Gus", "text": "Follow the lead you have now. We can name the next problem when it arrives."},
+		])
 		return
 	GameState.gus_intro_seen = true
 	start_dialogue(_get_gus_sequential_lines("pre_lost_token_flavor", [
-		{"speaker": "Gus", "text": "You again. Great.", "portrait": PORTRAIT_GUS_ANNOYED},
+		{"speaker": "Gus", "text": "You again. Great. Except you are looking at me like a stranger.", "portrait": PORTRAIT_GUS_ANNOYED},
+		{"speaker": "Player", "text": "Are we not strangers?"},
+		{"speaker": "Gus", "text": "...Ask Mira. I fix machines, not missing years."},
 		{"speaker": "Gus", "text": "I just finished cleaning up the previous session."},
 		{"speaker": "Player", "text": "Previous session?"},
 		{"speaker": "Gus", "text": "Arcade talk. Means I found tickets in places tickets should fear."},
 	]))
 
+func _start_closing_shift_echoes() -> void:
+	GameState.gus_hub_checkin_prize_sort_done = true
+	GameState.start_lost_shift_file()
+	_refresh_objective_hint()
+	if quest_notice and quest_notice.has_method("refresh_objective_hud"):
+		quest_notice.call("refresh_objective_hud", true)
+
+func _complete_closing_shift_echoes() -> void:
+	if not GameState.complete_closing_shift_echoes():
+		return
+	# This debrief replaces the retired three-note midpoint monologue.
+	GameState.midpoint_turn_seen = true
+	GameState.midpoint_told_mira = true
+	_refresh_objective_hint()
+	if quest_notice and quest_notice.has_method("refresh_objective_hud"):
+		quest_notice.call("refresh_objective_hud", true)
+
 func _handle_vendo() -> void:
-	# Second Vendo unit: the hub soda machine. Flavor and the Memory Cola
+	# SIP-2 is the hub soda unit. Flavor and the Memory Cola
 	# riddle only - guidance and the witness beat belong to the Snack Alcove unit.
 	if not GameState.vendo_memory_riddle_secret_found and GameState.lost_token_quest_completed and not _is_post_reveal():
-		start_dialogue(_get_vendo_lines("memory_cola_riddle_setup", [
+		start_dialogue(_get_hub_vending_lines("memory_cola_riddle_setup", [
 			{"speaker": "Vendo", "text": "Limited offer: one Memory Cola. Payment accepted in answers."},
 			{"speaker": "Vendo", "text": "Answer the house riddle and the can is yours."},
 		]), Callable(self, "_open_vendo_memory_riddle"))
 		return
-	start_dialogue(DIALOGUE_POOL.get_random_set("vendo", "early_flavor", [
+	start_dialogue(_get_hub_vending_random_lines("early_flavor", [
 		{"speaker": "Vendo", "text": "Second unit status: humming."},
 		{"speaker": "Vendo", "text": "The alcove unit gets the customers. I get the acoustics."},
 	]))
@@ -846,14 +901,14 @@ func _on_vendo_riddle_choice_selected(index: int) -> void:
 	choice_box = null
 	if index == 1:
 		GameState.vendo_memory_riddle_secret_found = true
-		start_dialogue(_get_vendo_lines("memory_cola_correct", [
+		start_dialogue(_get_hub_vending_lines("memory_cola_correct", [
 			{"speaker": "Vendo", "text": "Correct."},
 			{"speaker": "Vendo", "text": "You lose memory."},
 			{"speaker": "Vendo", "text": "I lose coins."},
 			{"speaker": "Vendo", "text": "We all suffer in our own branded containers."},
 		]))
 		return
-	start_dialogue(_get_vendo_sequential_lines("memory_cola_wrong_answers", [
+	start_dialogue(_get_hub_vending_sequential_lines("memory_cola_wrong_answers", [
 		{"speaker": "Vendo", "text": "Incorrect."},
 		{"speaker": "Vendo", "text": "But emotionally marketable."},
 		{"speaker": "Vendo", "text": "Try again after your next identity crisis."},
@@ -887,7 +942,7 @@ func _handle_cabinet_07() -> void:
 		var was_completed := _was_witness_route_completed()
 		GameState.mark_witness_cabinet07_heard()
 		var post_reveal_lines := _get_cabinet07_lines("post_reveal_status", [
-			{"speaker": "Cabinet 07", "text": "EMPLOYEE 04 RESTORE STATUS: STABLE.", "portrait": PORTRAIT_CABINET_07_SCREEN},
+			{"speaker": "Cabinet 07", "text": "EMPLOYEE 04 IDENTITY STATUS: INTEGRATED.", "portrait": PORTRAIT_CABINET_07_SCREEN},
 			{"speaker": "Cabinet 07", "text": "WELCOME BACK, EMPLOYEE 04.", "portrait": PORTRAIT_CABINET_07_SCREEN},
 			{"speaker": "Cabinet 07", "text": "PREVIOUS SESSION: CLOSED.", "portrait": PORTRAIT_CABINET_07_SCREEN},
 			{"speaker": "Cabinet 07", "text": "CURRENT SESSION: YOURS.", "portrait": PORTRAIT_CABINET_07_SCREEN},
@@ -915,8 +970,8 @@ func _handle_cabinet_07() -> void:
 		return
 	if GameState.rockbyte_duel_completed and not GameState.lost_token_quest_completed:
 		start_dialogue(_get_cabinet07_sequential_lines("rockbyte_completion", [
-			{"speaker": "Cabinet 07", "text": "TOKEN RECOVERED."},
-			{"speaker": "Cabinet 07", "text": "RETURN TO MIRA."},
+			{"speaker": "Player", "text": "I have the Lost Token."},
+			{"speaker": "Player", "text": "Mira is waiting at the counter. I should take it back to her."},
 		]))
 		return
 	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
@@ -926,12 +981,20 @@ func _handle_cabinet_07() -> void:
 			{"speaker": "Cabinet 07", "text": "TRUTH FILTER REQUIRED."},
 		]))
 		return
-	var cabinet_key := "overloaded_echo" if GameState.maintenance_sync_completed or GameState.security_tape_assembly_completed or GameState.final_night_walk_completed or GameState.memory_echo_completed or GameState.story_puzzle_completed else "fractured_echo"
-	var cabinet_lines := _get_cabinet07_sequential_lines(cabinet_key, [
-		{"speaker": "Cabinet 07", "text": "CABINET STATUS: RESTLESS."},
-		{"speaker": "Cabinet 07", "text": "STAFF DOOR TARGET READY."},
-		{"speaker": "Cabinet 07", "text": "CHECK STAFF DOOR."},
-	])
+	var cabinet_key := "overloaded_echo" if GameState.maintenance_sync_completed else "fractured_echo"
+	var cabinet_lines: Array = []
+	if GameState.maintenance_sync_completed:
+		cabinet_lines = _get_cabinet07_sequential_lines(cabinet_key, [
+			{"speaker": "Cabinet 07", "text": "CABINET STATUS: RESTLESS."},
+			{"speaker": "Cabinet 07", "text": "STAFF DOOR TARGET READY."},
+			{"speaker": "Cabinet 07", "text": "CHECK STAFF DOOR."},
+		])
+	else:
+		cabinet_lines = [
+			{"speaker": "Cabinet 07", "text": "CABINET STATUS: RESTLESS."},
+			{"speaker": "Cabinet 07", "text": "CURRENT ROUTE INCOMPLETE."},
+			{"speaker": "Player", "text": "It cannot add anything useful yet. I should follow the lead I already have."},
+		]
 	if _can_show_act2_echo() and not GameState.echo_cabinet07_seen:
 		cabinet_lines.append_array(_get_cabinet07_echo_lines())
 	start_dialogue(cabinet_lines)
@@ -965,31 +1028,10 @@ func _handle_staff_door() -> void:
 			{"speaker": "Staff Door", "text": "ENTER STAFF ROOM?"},
 		]), Callable(SceneChanger, "go_to_staff_room"))
 		return
-	if GameState.lying_cabinets_completed and not GameState.circuit_soda_completed:
-		start_dialogue(_get_staff_door_lines("maintenance_required", [
-			{"speaker": "Staff Door", "text": "STAFF ACCESS LOCKED."},
-			{"speaker": "Staff Door", "text": "CIRCUIT SODA ROUTE REQUIRED."},
-			{"speaker": "Staff Door", "text": "FRACTURED SIGNAL UNSTABILIZED."},
-		]))
-		return
-	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
-		start_dialogue(_get_staff_door_sequential_lines("truth_filter_required", [
-			{"speaker": "Staff Door", "text": "STAFF ACCESS LOCKED."},
-			{"speaker": "Staff Door", "text": "TRUTH FILTER REQUIRED."},
-			{"speaker": "Staff Door", "text": "EMPLOYEE SIGNAL UNSTABLE."},
-		]))
-		return
-	if GameState.lost_token_quest_completed and GameState.rockbyte_duel_completed and GameState.lying_cabinets_completed and GameState.circuit_soda_completed:
-		start_dialogue(_get_staff_door_sequential_lines("maintenance_required", [
-			{"speaker": "Staff Door", "text": "FRACTURED SIGNAL ACCEPTED."},
-			{"speaker": "Staff Door", "text": "MAINTENANCE SYNC REQUIRED."},
-			{"speaker": "Staff Door", "text": "GUS AUTHORIZATION REQUIRED."},
-		]))
-		return
-	start_dialogue(_get_staff_door_sequential_lines("locked_grounded", [
+	start_dialogue([
 		{"speaker": "Staff Door", "text": "STAFF ACCESS LOCKED."},
-		{"speaker": "Staff Door", "text": "MEMORY TOKEN SIGNAL MISSING."},
-	]))
+		{"speaker": "Staff Door", "text": "COMPLETE THE REQUIRED TASKS FIRST."},
+	])
 
 func _handle_owner_portrait() -> void:
 	if _is_post_reveal():
@@ -1204,6 +1246,17 @@ func _refresh_hub_art_states() -> void:
 		var glow_alpha := 0.2 if GameState.memory_signal_level >= GameState.MEMORY_SIGNAL_FRACTURED else 0.12
 		truth_filter_glow.color = Color(0.8, 0.2, 1.0, glow_alpha)
 	_update_act2_aftermath_pulse()
+
+func _refresh_gus_presence() -> void:
+	# During the service sequence Gus is physically in Maintenance Hall. Do not
+	# leave a second interaction copy in the hub.
+	var available := not GameState.lost_shift_file_completed or GameState.maintenance_sync_completed or GameState.twist_reveal_seen or GameState.post_reveal_roam_unlocked
+	gus_interactable.visible = available
+	gus_interactable.monitoring = available
+	gus_interactable.monitorable = available
+	var collision := gus_interactable.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if collision != null:
+		collision.set_deferred("disabled", not available)
 
 func _update_act2_aftermath_pulse() -> void:
 	if aftermath_pulse_tween and aftermath_pulse_tween.is_valid():

@@ -98,9 +98,9 @@ offset_bottom = 282.0
 
 [node name="CountLabel" type="Label" parent="GameArea"]
 layout_mode = 0
-offset_left = 16.0
+offset_left = 20.0
 offset_top = 8.0
-offset_right = 508.0
+offset_right = 512.0
 offset_bottom = 34.0
 theme_override_font_sizes/font_size = 16
 text = "LEFT PILE: 6        RIGHT PILE: 6"
@@ -236,6 +236,7 @@ theme_override_font_sizes/font_size = 16
 custom_minimum_size = Vector2(0, 32)
 text = "Choose your move."
 horizontal_alignment = 1
+vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="ButtonArea" type="Control" parent="."]
