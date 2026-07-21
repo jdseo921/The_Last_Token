@@ -37,6 +37,7 @@ func _run() -> void:
 	dialogue_box.call("start_dialogue", [{"speaker": "Roxy", "text": "Finally."}])
 	_expect(not automatic_cue.visible, "target NPC dialogue closes the navigation cue")
 	_expect(bool(automatic_cue.get("dismissed")), "target NPC closure remains dismissed in the room")
+	dialogue_box.call("_accept_current_line")
 	_expect(bool(automatic_cue.call("_dialogue_matches_displayed_target", "LOCAL: Talk to Mr.\nByte about the Truth Filter.", [{"speaker": "Mr. Byte", "text": "Ready."}])), "balanced route-cue line breaks do not prevent destination matching")
 	var object_cue := ROUTE_CUE.new()
 	host.add_child(object_cue)
@@ -51,6 +52,7 @@ func _run() -> void:
 	late_dialogue_box.call("start_dialogue", [{"speaker": "Terminal", "text": "RESTORED TAPE ACCEPTED."}])
 	_expect(not object_cue.visible, "destination dialogue closes navigation for a dynamically added terminal box")
 	_expect(bool(object_cue.get("dismissed")), "terminal destination navigation remains expired")
+	late_dialogue_box.call("_accept_current_line")
 	game_state.set("story_started", true)
 	game_state.set("lost_token_quest_completed", true)
 	game_state.set("broken_high_score_completed", true)
@@ -102,9 +104,10 @@ func _run() -> void:
 	_expect(backing != null, "top-right quest HUD builds")
 	if backing != null:
 		_expect(is_zero_approx(backing.position.y), "quest HUD touches the top edge")
-		_expect(backing.size.y <= 60.0, "quest HUD stays compact while reserving two readable action lines")
+		_expect(backing.size.y <= 60.0, "quest HUD stays compact")
 		var action_label := host.get_node("ObjectiveHudLayer/ObjectiveHud/ObjectiveAction") as Label
-		_expect(action_label.size.y >= 32.0, "quest HUD does not clip the second action line")
+		_expect(action_label.size.y >= 16.0, "quest HUD keeps a full action line")
+		_expect(backing.size.y + 0.5 >= action_label.position.y + action_label.size.y, "quest HUD backing ends at its content, without clipping it")
 
 	game_state.set("circuit_soda_completed", true)
 	game_state.set("prize_sort_completed", true)

@@ -297,20 +297,13 @@ position = Vector2(32, 404)
 theme_override_font_sizes/font_size = 16
 text = ""
 
-[node name="PostRevealHintLabel" type="Label" parent="UILayer"]
-position = Vector2(176, 14)
-size = Vector2(174, 50)
-theme_override_font_sizes/font_size = 16
-text = "The arcade is quiet now.
-But some machines are still awake."
-autowrap_mode = 3
-
 [node name="Mira" parent="InteractableLayer" instance=ExtResource("5")]
 position = Vector2(120, 158)
 interactable_kind = "mira"
 label_text = "MIRA"
 idle_sheet_path = "res://assets/art/characters/mira/mira_idle_sheet_v2.png"
 facing_sheet_path = "res://assets/art/characters/mira/mira_turn_diagonal_sheet_v2.png"
+facing_frame_order = PackedInt32Array(1, 0, 3, 2)
 idle_animation_enabled = true
 visual_scale = 1.1
 label_font_size = 12
@@ -403,7 +396,7 @@ target_scene_path = "res://scenes/maps/hallways/MaintenanceHallway.tscn"
 target_spawn_id = "Spawn_FromArcadeHub"
 destination_name = "MAINTENANCE HALLWAY"
 required_flag = "lost_shift_file_completed"
-locked_dialogue = Array[String](["MAINTENANCE HALLWAY LOCKED.", "COMPLETE THE REQUIRED TASKS FIRST."])
+locked_dialogue = Array[String](["The maintenance hallway is chained off.", "Whatever opens it, I have not done it yet."])
 
 [node name="ToFrontEntrance" parent="InteractableLayer" instance=ExtResource("8")]
 position = Vector2(19, 245)

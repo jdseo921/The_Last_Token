@@ -190,10 +190,10 @@ func _show_locked_dialogue() -> void:
 	var lines: Array = []
 	var message_lines := locked_dialogue if not locked_dialogue.is_empty() else locked_message
 	if message_lines.is_empty():
-		lines.append({"speaker": "System", "text": "The path is locked."})
+		lines.append({"speaker": "Player", "text": "Not this way. Not yet."})
 	else:
 		for text in message_lines:
-			lines.append({"speaker": "System", "text": text})
+			lines.append({"speaker": "Player", "text": text})
 	var host := _find_dialogue_host()
 	if host != null and host.has_method("start_dialogue"):
 		host.call("start_dialogue", lines)

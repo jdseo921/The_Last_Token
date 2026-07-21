@@ -7,6 +7,11 @@ const DEBUG := preload("res://scripts/Debug.gd")
 @export var sprite_texture_path: String = ""
 @export var idle_sheet_path: String = ""
 @export var facing_sheet_path: String = ""
+# Maps the logical facing (up-right, up-left, down-right, down-left) to a
+# column in the facing sheet. The generated sheets do not all share one frame
+# order, so a sheet whose art runs mirrored or shuffled is corrected here
+# per instance instead of in code shared by every character.
+@export var facing_frame_order := PackedInt32Array([0, 1, 2, 3])
 @export var idle_animation_enabled := true
 @export var idle_animation_name: String = "idle"
 @export var idle_frame_count: int = 2
@@ -193,6 +198,8 @@ func face_target(target_position: Vector2) -> void:
 	var frame_width := maxi(int(texture.get_width() / 4), 1)
 	var frame_height := maxi(texture.get_height(), 1)
 	var direction_index := _get_diagonal_facing_index(target_position - global_position)
+	if direction_index < facing_frame_order.size():
+		direction_index = clampi(facing_frame_order[direction_index], 0, 3)
 	var atlas := AtlasTexture.new()
 	atlas.atlas = texture
 	atlas.region = Rect2(direction_index * frame_width, 0, frame_width, frame_height)

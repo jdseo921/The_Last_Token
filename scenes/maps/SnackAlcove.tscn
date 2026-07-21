@@ -126,7 +126,7 @@ target_scene_path = "res://scenes/maps/hallways/CabinetSnackHallway.tscn"
 target_spawn_id = "Spawn_FromSnackAlcove"
 destination_name = "SERVICE HALLWAY"
 required_flag = "gus_hub_checkin_truth_filter_done"
-locked_dialogue = Array[String](["SERVICE HALLWAY LOCKED.", "CATCH UP WITH GUS IN THE ARCADE HUB FIRST."])
+locked_dialogue = Array[String](["The way back to the row is dark.", "Gus wanted a word first. The hub is the other way."])
 
 [node name="ToPrizeCorner" parent="." instance=ExtResource("3")]
 position = Vector2(612, 222)

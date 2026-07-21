@@ -7,7 +7,7 @@ var failure_count := 0
 func _init() -> void:
 	print("DialoguePoolSmoke: checking reusable dialogue pool")
 	_expect_first_text("mira first set", DIALOGUE_POOL.get_lines("mira", "opening_first_meeting"), "You came in. It really is you.")
-	_expect_first_text("mira quest instruction", DIALOGUE_POOL.get_lines("mira", "lost_token_quest_instruction"), "Cabinet 07 has been holding your Lost Token.")
+	_expect_first_text("mira quest instruction", DIALOGUE_POOL.get_lines("mira", "lost_token_quest_instruction"), "Cabinet 07 has been holding your Lost Token. It keeps things the way this place keeps everything: a little too long, and a little too tightly.")
 	_expect_player_text("mira quest comedy", DIALOGUE_POOL.get_lines("mira", "lost_token_quest_instruction"), "(I walk into a closed arcade, get recognized by someone I have never met, and immediately receive an errand. Curiosity has consequences.)")
 	_expect_first_text("mira token anecdote", DIALOGUE_POOL.get_lines("mira", "lost_token_return_anecdote"), "You brought it back.")
 	_expect_first_text("mira truth filter transition", DIALOGUE_POOL.get_lines("mira", "truth_filter_transition"), "The token woke something.")

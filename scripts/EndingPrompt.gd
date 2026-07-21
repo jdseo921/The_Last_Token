@@ -37,7 +37,7 @@ func _on_save_and_continue_pressed() -> void:
 	_mark_post_reveal_state()
 	if SaveManager.active_slot_id > 0:
 		SaveManager.save_game(SaveManager.active_slot_id)
-		_continue_to_arcade_hub()
+		_continue_in_place()
 		return
 	_open_save_menu_before_continue()
 
@@ -73,13 +73,20 @@ func _on_save_slot_menu_closed() -> void:
 		save_slot_menu.queue_free()
 	save_slot_menu = null
 	if SaveManager.active_slot_id > 0:
-		_continue_to_arcade_hub()
+		_continue_in_place()
 		return
 	save_and_continue_button.disabled = false
 	return_to_title_button.disabled = false
 	save_and_continue_button.grab_focus()
 
-func _continue_to_arcade_hub() -> void:
+func _continue_in_place() -> void:
+	# The witness walk starts where the story ended: at the terminal, not
+	# after a teleport back to the hub.
+	var staff_room := get_parent()
+	if staff_room != null and staff_room.has_method("begin_post_reveal_roam_in_place"):
+		queue_free()
+		staff_room.call("begin_post_reveal_roam_in_place")
+		return
 	SceneChanger.go_to_arcade_hub()
 
 func _build_return_to_title_confirm() -> void:

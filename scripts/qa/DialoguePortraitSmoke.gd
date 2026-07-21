@@ -21,8 +21,9 @@ const REFRESHED_PORTRAITS := [
 	"res://assets/art/portraits/night_ledger/night_ledger_grin.png",
 ]
 const SIDE_SAFETY_MARGIN := 4
-# DialogueBox draws portraits into an 80x104 rect with KEEP_ASPECT_CENTERED,
-# so a square source is displayed at 80x80.
+# DialogueBox draws portraits into a 64x83 rect with KEEP_ASPECT_CENTERED,
+# so a square source is displayed at 64x64. The canvas floor stays at 80 so
+# every portrait is still only ever downscaled.
 const PORTRAIT_RENDER_SIZE := 80
 
 var failed := false

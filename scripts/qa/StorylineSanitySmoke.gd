@@ -172,7 +172,7 @@ func _check_access_and_dialogue_gates() -> void:
 	var hub := (load("res://scenes/arcade/ArcadeHub.tscn") as PackedScene).instantiate()
 	var maintenance_exit := hub.get_node("InteractableLayer/ToMaintenanceHall")
 	_expect(str(maintenance_exit.get("required_flag")) == "lost_shift_file_completed", "Maintenance Hallway opens exactly when Closing Shift Echoes is debriefed")
-	_expect("COMPLETE THE REQUIRED TASKS FIRST." in maintenance_exit.get("locked_dialogue"), "locked Maintenance Hallway avoids premature requirement spoilers")
+	_expect("Whatever opens it, I have not done it yet." in maintenance_exit.get("locked_dialogue"), "locked Maintenance Hallway stays in the player's voice without requirement spoilers")
 	_expect(not hub.has_node("InteractableLayer/TicketCounter"), "Mira has no overlapping invisible ticket-counter interaction")
 	hub.free()
 	var gus_debrief := _dialogue_text("gus", "closing_shift_echoes_debrief")

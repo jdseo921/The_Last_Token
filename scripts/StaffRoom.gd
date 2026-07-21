@@ -228,7 +228,7 @@ func _on_final_self_conflict_finished() -> void:
 
 func _show_ending_prompt() -> void:
 	reveal_in_progress = false
-	# The prompt always leaves via a scene change, so this never needs unsetting.
+	# Unset again by begin_post_reveal_roam_in_place when the player continues.
 	ending_prompt_active = true
 	var ending_prompt := ENDING_PROMPT_SCENE.instantiate()
 	add_child(ending_prompt)
@@ -306,6 +306,37 @@ func _get_run_reprise_lines() -> Array:
 	if GameState.tape_anomaly_frame_seen:
 		reprise.append({"speaker": "\"Player\"", "text": "And the frame with no hour on it. Two of us at that door, and the recorder only had room for one."})
 	return reprise
+
+func begin_post_reveal_roam_in_place() -> void:
+	# Reached from the ending prompt's Save and Continue: the player stays at
+	# the terminal, the room fades back in, and a short monologue points the
+	# way toward the witness walk.
+	ending_prompt_active = false
+	reveal_in_progress = false
+	if player and player.has_method("refresh_visual_state"):
+		player.call("refresh_visual_state")
+	AudioManager.play_music_for_context("staff_room")
+	_refresh_route_cue()
+	var fade := ColorRect.new()
+	fade.name = "PostRevealFadeIn"
+	fade.color = Color(0.0, 0.0, 0.0, 1.0)
+	fade.size = Vector2(640, 440)
+	fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var fade_layer := CanvasLayer.new()
+	fade_layer.layer = 90
+	fade_layer.add_child(fade)
+	add_child(fade_layer)
+	var tween := create_tween()
+	tween.tween_property(fade, "modulate:a", 0.0, 1.1)
+	tween.tween_callback(fade_layer.queue_free)
+	tween.tween_callback(_play_post_reveal_roam_monologue)
+
+func _play_post_reveal_roam_monologue() -> void:
+	_start_terminal_dialogue([
+		{"speaker": "Player", "text": "The terminal is quiet. So is the other voice. We fit inside one breath now."},
+		{"speaker": "Player", "text": "Everyone out there kept a piece of me through the missing years."},
+		{"speaker": "Player", "text": "They should hear the ending from the person it happened to. I will walk the floor and find them all."},
+	], Callable(self, "_restore_player_control"))
 
 func _restore_player_control() -> void:
 	if player and player.has_method("set_control_enabled"):

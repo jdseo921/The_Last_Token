@@ -250,14 +250,24 @@ func play_music_for_context(context_id: String) -> void:
 	music_context_volume_scale = _get_volume_scale_for_context(context_id)
 	play_music(track_id)
 
+const POST_GAME_ROOM_CONTEXTS := [
+	"arcade_hub", "cabinet_row", "snack_alcove", "prize_corner",
+	"maintenance_hall", "staff_corridor", "staff_room",
+]
+
 func _get_track_id_for_context(context_id: String) -> String:
+	# After the ending, every room shares one calm roam track. Minigame scenes
+	# request music from outside the room scene folders, so replays keep their
+	# own game tracks even when a stage reuses a room context id.
+	if _is_post_game_room_request(context_id):
+		return "cabinet_row_records"
 	match context_id:
 		"title":
 			return "title_attract_loop"
 		"arcade_hub":
 			return _get_arcade_hub_music_id()
 		"cabinet_row":
-			return _room_track_for_story("cabinet_row_records")
+			return _room_track_for_story("rockbyte_duel_game")
 		"snack_alcove":
 			return "snack_alcove_vendo"
 		"prize_corner":
@@ -269,9 +279,9 @@ func _get_track_id_for_context(context_id: String) -> String:
 		"staff_room":
 			return "staff_room_reveal_bed"
 		"rockbyte_duel":
-			return "rockbyte_duel_game"
+			return _get_arcade_hub_music_id()
 		"truth_filter":
-			return "truth_filter_game"
+			return "rockbyte_duel_game"
 		"circuit_soda":
 			return "snack_alcove_vendo"
 		"night_ledger":
@@ -299,6 +309,18 @@ func _get_volume_scale_for_context(context_id: String) -> float:
 		"staff_room", "ending":
 			return 0.58
 	return 1.0
+
+func _is_post_game_room_request(context_id: String) -> bool:
+	if not POST_GAME_ROOM_CONTEXTS.has(context_id):
+		return false
+	var game_state := get_node_or_null("/root/GameState")
+	if game_state == null or not bool(game_state.get("post_reveal_roam_unlocked")):
+		return false
+	var scene := get_tree().current_scene
+	if scene == null:
+		return true
+	var scene_path := str(scene.scene_file_path)
+	return scene_path.begins_with("res://scenes/arcade/") or scene_path.begins_with("res://scenes/maps/")
 
 func _room_track_for_story(base_track: String) -> String:
 	# One signature track per room, independent of story progress.

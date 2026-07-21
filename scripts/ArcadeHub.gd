@@ -33,7 +33,6 @@ var route_cue: Control = null
 @onready var prompt_label: Label = $UILayer/InteractionPrompt
 @onready var prompt_background: ColorRect = $UILayer/InteractionPromptBackground
 @onready var hint_label: Label = $UILayer/HintLabel
-@onready var post_reveal_hint_label: Label = $UILayer/PostRevealHintLabel
 @onready var objective_hint_background: ColorRect = $UILayer/ObjectiveHintBackground
 @onready var objective_hint_label: Label = $UILayer/ObjectiveHintLabel
 @onready var quest_notice: CanvasLayer = $QuestNotice
@@ -290,7 +289,6 @@ func _choice_box_is_open() -> bool:
 
 func _refresh_hint() -> void:
 	hint_label.visible = false
-	post_reveal_hint_label.visible = GameState.post_reveal_roam_unlocked and not _dialogue_is_active() and not _choice_box_is_open() and not _save_slot_menu_is_open()
 
 func _setup_route_cue() -> void:
 	if route_cue != null and is_instance_valid(route_cue):
@@ -502,12 +500,9 @@ func _get_memory_signal_explainer_lines() -> Array:
 	if GameState.memory_signal_explainer_seen:
 		return []
 	return [
-		{"speaker": "Mira", "text": "But there is one part I am allowed to say, and you should hear it before I ask you for anything."},
-		{"speaker": "Mira", "text": "The machines still hold pieces of the last night. Locked scores. Jammed reels. Dead circuits."},
-		{"speaker": "Mira", "text": "Every game you win back and every thing you fix, the arcade remembers a little more."},
-		{"speaker": "Mira", "text": "Remember enough, and the Staff Room at the back will finally open."},
-		{"speaker": "Mira", "text": "That is where the last of it is waiting."},
-		{"speaker": "Mira", "text": "It starts small. One thing at a time, and I will point you onward from there."},
+		{"speaker": "Mira", "text": "One part I am allowed to say: the machines still hold pieces of the last night."},
+		{"speaker": "Mira", "text": "Every game you win back, the arcade remembers a little more. Remember enough, and the Staff Room at the back will open."},
+		{"speaker": "Mira", "text": "It starts small. I will point you onward from there."},
 	]
 
 func _handle_mira() -> void:
@@ -771,17 +766,39 @@ func _handle_gus() -> void:
 		])
 		return
 	if GameState.lost_token_quest_completed and not GameState.broken_high_score_completed:
-		start_dialogue([
-			{"speaker": "Gus", "text": "Roxy first. Her score cabinet is louder about being wrong than I am."},
-			{"speaker": "Gus", "text": "Cabinet Row. She will not bite. The cabinet might.", "portrait": PORTRAIT_GUS_ANNOYED},
-		])
+		start_dialogue(_select_repeat_dialogue("gus", [
+			[
+				{"speaker": "Gus", "text": "Floor is clean for once. Do not track drama on it.", "portrait": PORTRAIT_GUS_ANNOYED},
+				{"speaker": "Gus", "text": "...Do you not have somewhere to be?"},
+			],
+			[
+				{"speaker": "Gus", "text": "I mop around problems. You walk straight into them."},
+				{"speaker": "Gus", "text": "Whatever is blinking at you tonight, it can tell when you stall."},
+			],
+		], [
+			[
+				{"speaker": "Gus", "text": "Fine. Roxy first. Her score cabinet is louder about being wrong than I am."},
+				{"speaker": "Gus", "text": "Cabinet Row. She will not bite. The cabinet might.", "portrait": PORTRAIT_GUS_ANNOYED},
+			],
+		]))
 		return
 	if GameState.lost_token_quest_completed and not GameState.lying_cabinets_completed:
-		start_dialogue(_get_gus_sequential_lines("truth_filter_active", [
-			{"speaker": "Gus", "text": "Careful now."},
-			{"speaker": "Gus", "text": "Once the machines start correcting memories, they get picky."},
-			{"speaker": "Gus", "text": "Truth Filter cabinet is over in Cabinet Row."},
-			{"speaker": "Gus", "text": "Mr. Byte is the one acting like he grades homework."},
+		# Gus has not handed out a quest of his own yet, so he only nudges
+		# sideways until the player keeps pressing him.
+		start_dialogue(_select_repeat_dialogue("gus", [
+			[
+				{"speaker": "Gus", "text": "Careful now."},
+				{"speaker": "Gus", "text": "Once the machines start correcting memories, they get picky.", "portrait": PORTRAIT_GUS_ANNOYED},
+			],
+			[
+				{"speaker": "Gus", "text": "You have that look again. The one with unfinished business attached."},
+				{"speaker": "Gus", "text": "I am not going to say it for you."},
+			],
+		], [
+			_get_gus_lines("truth_filter_active", [
+				{"speaker": "Gus", "text": "Truth Filter is in Cabinet Row."},
+				{"speaker": "Gus", "text": "Mr. Byte is the one acting like he grades homework."},
+			]),
 		]))
 		return
 	if GameState.lying_cabinets_completed and not GameState.mr_byte_truth_filter_debriefed and not GameState.circuit_soda_completed:
@@ -832,9 +849,16 @@ func _handle_gus() -> void:
 		])
 		return
 	if GameState.lost_token_quest_started and not GameState.lost_token_quest_completed:
-		start_dialogue(_get_gus_sequential_lines("lost_token_active", [
-			{"speaker": "Gus", "text": "Cabinet 07 has your token. It will not hand it over out of politeness.", "portrait": PORTRAIT_GUS_ANNOYED},
-			{"speaker": "Gus", "text": "Beat it, then walk it back to Mira. That is the entire job."},
+		start_dialogue(_select_repeat_dialogue("gus", [
+			[
+				{"speaker": "Gus", "text": "Cabinet 07 has been howling since you walked in.", "portrait": PORTRAIT_GUS_ANNOYED},
+				{"speaker": "Gus", "text": "Not my department."},
+			],
+		], [
+			[
+				{"speaker": "Gus", "text": "Cabinet 07 has your token. It will not hand it over out of politeness.", "portrait": PORTRAIT_GUS_ANNOYED},
+				{"speaker": "Gus", "text": "Beat it, then walk it back to Mira. That is the entire job."},
+			],
 		]))
 		return
 	GameState.gus_intro_seen = true

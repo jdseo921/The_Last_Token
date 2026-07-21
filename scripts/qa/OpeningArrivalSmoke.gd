@@ -46,7 +46,7 @@ func _run() -> void:
 	var hub: Node = (load(ARCADE_HUB_SCRIPT_PATH) as Script).new()
 	var opening_lines: Array = hub.call("_get_opening_intro_lines")
 	var opening_text := _flatten_dialogue(opening_lines)
-	_expect(opening_text.contains("Curiosity") and opening_text.contains("closed arcade"), "opening establishes a curious walk-in")
+	_expect(opening_text.contains("token in my pocket") and opening_text.contains("Pixel Haven"), "opening walks in because of the stamped token")
 	_expect(opening_text.contains("do not recognize"), "opening establishes that the player does not recognize the arcade")
 	_expect(not opening_text.contains("familiar") and not opening_text.contains("came back"), "opening does not imply prior knowledge")
 	var dialogue_pool := load(DIALOGUE_POOL_PATH) as Script

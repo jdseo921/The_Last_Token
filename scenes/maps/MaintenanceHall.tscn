@@ -116,7 +116,7 @@ destination_name = "STAFF ACCESS HALL"
 arrow_direction = "up"
 label_offset_override = Vector2(-75, 30)
 required_flag = "staff_corridor_unlocked"
-locked_dialogue = Array[String](["STAFF CORRIDOR LOCKED.", "SERVICE POWER REQUIRED."])
+locked_dialogue = Array[String](["The corridor behind this door is dead dark.", "The service line comes first. I can feel that much."])
 
 [node name="UILayer" type="Node2D" parent="."]
 

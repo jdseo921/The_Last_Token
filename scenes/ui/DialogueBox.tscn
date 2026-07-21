@@ -15,10 +15,10 @@ offset_bottom = 360.0
 
 [node name="Portrait" type="TextureRect" parent="Panel"]
 visible = false
-offset_left = 20.0
-offset_top = 18.0
-offset_right = 100.0
-offset_bottom = 122.0
+offset_left = 28.0
+offset_top = 28.0
+offset_right = 92.0
+offset_bottom = 111.0
 expand_mode = 1
 stretch_mode = 5
 

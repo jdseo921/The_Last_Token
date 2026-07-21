@@ -110,9 +110,9 @@ func _beat(label: String, advance: Callable) -> void:
 	# 2. routing guidance from every room
 	for loc in LOCATIONS:
 		var hint: String = ROUTE_CUE.get_current_hint(loc)
-		if quest_id == "finish_memory":
+		if quest_id == "finish_memory" or quest_id == "talk_to_witnesses":
 			if not hint.is_empty():
-				print("  FAIL [%s] finish_memory should not show a route cue in %s" % [label, loc])
+				print("  FAIL [%s] %s should not show a route cue in %s" % [label, quest_id, loc])
 				fails += 1
 			continue
 		if hint.is_empty():

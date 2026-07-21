@@ -19,6 +19,8 @@ var route_label: Label = null
 var close_button: Button = null
 var dismissed := false
 var dismissed_quest_id := ""
+var displayed_quest_id := ""
+var suppressed_by_dialogue := false
 var showing_dismiss_tip := false
 var dismiss_tip_tween: Tween = null
 
@@ -49,6 +51,12 @@ func _exit_tree() -> void:
 		get_tree().node_added.disconnect(_on_tree_node_added)
 
 func refresh() -> void:
+	# While a conversation is on screen the cue stays hidden; the room calls
+	# refresh again from dialogue_finished, so the new objective's navigation
+	# only appears once the initiating dialogue is over.
+	if suppressed_by_dialogue:
+		visible = showing_dismiss_tip
+		return
 	var current_quest_id := _get_current_quest_id()
 	# Dismissal belongs to the objective that opened the target dialogue. When
 	# that conversation advances the story, the next objective gets a fresh cue.
@@ -59,6 +67,7 @@ func refresh() -> void:
 		visible = showing_dismiss_tip
 		return
 	var hint := get_current_hint(location_id)
+	displayed_quest_id = current_quest_id
 	visible = not hint.is_empty()
 	if route_label == null:
 		return
@@ -147,7 +156,8 @@ static func get_current_hint(current_location_id: String) -> String:
 		"finish_memory":
 			return ""
 		"talk_to_witnesses":
-			return _get_witness_hint(current_location_id, state)
+			# The post-game is a free roam: no navigation, the player wanders.
+			return ""
 	return ""
 
 func _build_nodes() -> void:
@@ -202,23 +212,33 @@ func _connect_dialogue_box(dialogue_box: Node) -> void:
 	var callback := Callable(self, "_on_dialogue_started")
 	if not dialogue_box.is_connected("dialogue_started", callback):
 		dialogue_box.connect("dialogue_started", callback)
+	if dialogue_box.has_signal("dialogue_finished"):
+		var finished_callback := Callable(self, "_on_dialogue_finished_for_cue")
+		if not dialogue_box.is_connected("dialogue_finished", finished_callback):
+			dialogue_box.connect("dialogue_finished", finished_callback)
 
 
 func _on_dialogue_started(lines: Array) -> void:
 	if showing_dismiss_tip:
 		_finish_dismiss_tip()
-	if dismissed or route_label == null:
-		return
-	var displayed_hint := route_label.text.strip_edges()
-	if not displayed_hint.begins_with("LOCAL:"):
-		return
-	if _dialogue_matches_displayed_target(displayed_hint, lines):
-		dismiss_for_target_dialogue()
+	suppressed_by_dialogue = true
+	if not dismissed and route_label != null:
+		var displayed_hint := route_label.text.strip_edges()
+		if displayed_hint.begins_with("LOCAL:") and _dialogue_matches_displayed_target(displayed_hint, lines):
+			dismiss_for_target_dialogue()
+	visible = false
+
+func _on_dialogue_finished_for_cue() -> void:
+	suppressed_by_dialogue = false
+	refresh()
 
 
 func dismiss_for_target_dialogue() -> void:
 	dismissed = true
-	dismissed_quest_id = _get_current_quest_id()
+	# Stamp the quest the displayed hint belonged to, not the live quest: story
+	# flags often advance right before the dialogue opens, and stamping the new
+	# quest would suppress the next objective's cue as well.
+	dismissed_quest_id = displayed_quest_id if not displayed_quest_id.is_empty() else _get_current_quest_id()
 	showing_dismiss_tip = false
 	if dismiss_tip_tween and dismiss_tip_tween.is_valid():
 		dismiss_tip_tween.kill()
@@ -336,23 +356,6 @@ static func _get_lost_shift_hint(current_location_id: String, state: Node) -> St
 	if not bool(state.get("closing_shift_service_clue_found")):
 		return _local_or_route(current_location_id, "snack_alcove", "LOCAL: Inspect SERVICE DASH.")
 	return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Report the echoes to Gus.")
-
-static func _get_witness_hint(current_location_id: String, state: Node) -> String:
-	if not bool(state.get("witness_mira_heard")):
-		return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Talk to Mira.")
-	if not bool(state.get("witness_cabinet07_heard")):
-		return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Check Cabinet 07.")
-	if not bool(state.get("witness_mr_byte_heard")):
-		return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Talk to Mr. Byte.")
-	if bool(state.get("roxy_met")) and not bool(state.get("witness_roxy_heard")):
-		return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Talk to Roxy.")
-	if not bool(state.get("witness_vendo_heard")):
-		return _local_or_route(current_location_id, "snack_alcove", "LOCAL: Talk to Vendo.")
-	if bool(state.get("pip_met")) and not bool(state.get("witness_pip_heard")):
-		return _local_or_route(current_location_id, "prize_corner", "LOCAL: Talk to Pip.")
-	if not bool(state.get("witness_gus_heard")):
-		return _local_or_route(current_location_id, "maintenance_hall", "LOCAL: Talk to Gus.")
-	return "LOCAL: Witness route complete."
 
 static func _local_or_route(current_location_id: String, target_location_id: String, local_text: String) -> String:
 	if current_location_id == target_location_id:

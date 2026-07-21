@@ -26,6 +26,8 @@ var hide_tween: Tween = null
 var notification_token := 0
 var announce_accum := 0.0
 var hud_root: Control = null
+var hud_backing: ColorRect = null
+var hud_edge: ColorRect = null
 var hud_title: Label = null
 var hud_action: Label = null
 var hud_tween: Tween = null
@@ -54,20 +56,20 @@ func _maybe_build_objective_hud() -> void:
 	hud_root.name = "ObjectiveHud"
 	hud_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hud_layer.add_child(hud_root)
-	var backing := ColorRect.new()
-	backing.name = "ObjectiveBacking"
-	backing.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	backing.position = Vector2(340, 0)
-	backing.size = Vector2(294, 58)
-	backing.color = Color(0.012, 0.016, 0.026, 0.78)
-	hud_root.add_child(backing)
-	var edge := ColorRect.new()
-	edge.name = "ObjectiveEdge"
-	edge.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	edge.position = Vector2(340, 0)
-	edge.size = Vector2(2, 58)
-	edge.color = Color(0.3, 0.9, 1.0, 0.85)
-	hud_root.add_child(edge)
+	hud_backing = ColorRect.new()
+	hud_backing.name = "ObjectiveBacking"
+	hud_backing.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud_backing.position = Vector2(340, 0)
+	hud_backing.size = Vector2(294, 44)
+	hud_backing.color = Color(0.012, 0.016, 0.026, 0.78)
+	hud_root.add_child(hud_backing)
+	hud_edge = ColorRect.new()
+	hud_edge.name = "ObjectiveEdge"
+	hud_edge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hud_edge.position = Vector2(340, 0)
+	hud_edge.size = Vector2(2, 44)
+	hud_edge.color = Color(0.3, 0.9, 1.0, 0.85)
+	hud_root.add_child(hud_edge)
 	hud_title = Label.new()
 	hud_title.name = "ObjectiveTitle"
 	hud_title.position = Vector2(348, 2)
@@ -89,6 +91,11 @@ func _maybe_build_objective_hud() -> void:
 func _update_objective_hud(pulse: bool) -> void:
 	if hud_root == null:
 		return
+	# Freeze the tip while a conversation is on screen: story flags flip at the
+	# start of the initiating dialogue, and the new objective should only
+	# surface once that conversation is over.
+	if hud_root.visible and _any_dialogue_active():
+		return
 	var quest_id: String = GameState.get_current_quest_id()
 	if quest_id.is_empty():
 		hud_root.visible = false
@@ -104,14 +111,35 @@ func _update_objective_hud(pulse: bool) -> void:
 	if action.is_empty():
 		action = str(data.get("location", ""))
 	hud_action.text = action
+	_fit_hud_to_content()
 	if pulse:
 		if hud_tween and hud_tween.is_valid():
 			hud_tween.kill()
 		hud_root.modulate = Color(1.7, 1.7, 1.7, 1.0)
 		hud_tween = create_tween()
 		hud_tween.tween_property(hud_root, "modulate", Color.WHITE, 0.9)
-		_play_audio("play_quest_update")
 
+
+func _fit_hud_to_content() -> void:
+	# The backing and edge end exactly where the tip text ends, so the box
+	# never extends below its own content.
+	if hud_backing == null or hud_edge == null or hud_action == null:
+		return
+	var font: Font = hud_action.get_theme_font("font")
+	if font == null:
+		return
+	var text_height: float = font.get_multiline_string_size(
+		hud_action.text, HORIZONTAL_ALIGNMENT_LEFT, hud_action.size.x, 16).y
+	hud_action.size.y = maxf(text_height + 2.0, 18.0)
+	var box_height: float = hud_action.position.y + hud_action.size.y + 4.0
+	hud_backing.size.y = box_height
+	hud_edge.size.y = box_height
+
+func _any_dialogue_active() -> bool:
+	for dialogue_box in get_tree().get_nodes_in_group("dialogue_boxes"):
+		if is_instance_valid(dialogue_box) and dialogue_box.get("active") == true:
+			return true
+	return false
 
 func refresh_objective_hud(pulse := false) -> void:
 	# Map scripts call this at exact story handoffs instead of waiting for the
