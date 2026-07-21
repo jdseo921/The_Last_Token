@@ -23,10 +23,10 @@
         {"speaker": "Vendo", "text": "Previous sessions left residue in slot B."},
         {"speaker": "Vendo", "text": "Mostly dust. Some regret. One gum wrapper with leadership potential."},
         {"speaker": "Vendo", "text": "Old staff used to buy grape soda after closing.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
-        {"speaker": "Vendo", "text": "One of them wired me to remember faces instead of coins."},
-        {"speaker": "Vendo", "text": "Your face matches theirs. You do not appear pleased by this promotion."},
+        {"speaker": "Vendo", "text": "The alcove unit got wired to remember faces. I got the acoustics and the spills."},
+        {"speaker": "Vendo", "text": "Even so, my scanner insists your face is on file. You do not appear pleased by this promotion."},
         {"speaker": "Vendo", "text": "Terrible for margins. He never seemed to care about margins."},
-        {"speaker": "Vendo", "text": "Now the grape soda buys time by pretending not to remember them."},
+        {"speaker": "Vendo", "text": "The grape soda is still stocked. Nobody has come for it in some time."},
         {"speaker": "Vendo", "text": "Questionable customer service remains available."},
         {"speaker": "Vendo", "text": "For non-carbonated answers, consult Mira at the counter."}
       ],
@@ -99,7 +99,7 @@
     "circuit_soda_intro": [
       [
         {"speaker": "Vendo", "text": "Welcome back to the only machine that missed you.", "portrait": "res://assets/art/portraits/vendo/vendo_smug.png"},
-        {"speaker": "Player", "text": "(A vending machine missed me. I do not understand any of this. Questioning it can wait; I should keep moving.)"},
+        {"speaker": "Player", "text": "(A vending machine missed me. I am filing that under things to panic about later.)"},
         {"speaker": "Vendo", "text": "Complimentary trivia, no purchase required: this arcade used to close at a reasonable hour."},
         {"speaker": "Vendo", "text": "Then someone started staying past close to keep it breathing."},
         {"speaker": "Vendo", "text": "Their tab with this building only ever ran one direction. Out of them."},
@@ -136,7 +136,7 @@
         {"speaker": "Player", "text": "It recognized me without knowing what I am."},
         {"speaker": "Vendo", "text": "Correct. Machines call that a successful scan. People usually call it concerning."},
         {"speaker": "Vendo", "text": "One route moved toward the bright display. Another kept checking the cutoff valve."},
-        {"speaker": "Vendo", "text": "Both currents came from your input. Neither accepted the other's destination.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
+        {"speaker": "Vendo", "text": "The route closed and the machine filed a complaint anyway. I did not authorize the complaint.", "portrait": "res://assets/art/portraits/vendo/vendo_uneasy.png"},
         {"speaker": "Player", "text": "So the machine fixed a route, not me."},
         {"speaker": "Vendo", "text": "Correct. Success dispenses one clue at a time."}
       ]
@@ -148,9 +148,9 @@
         {"speaker": "Vendo", "text": "It sounded like a warning that forgot to introduce itself."},
         {"speaker": "Player", "text": "So it may be protecting me. Or hiding something."},
         {"speaker": "Vendo", "text": "Correct. Extremely unhelpful.", "portrait": "res://assets/art/portraits/vendo/vendo_smug.png"},
-        {"speaker": "Vendo", "text": "Prize Service Hall is the passage on the right, between Circuit Soda and me."},
+        {"speaker": "Vendo", "text": "Prize Service Hall is the passage in the right wall, just past Circuit Soda."},
         {"speaker": "Vendo", "text": "Ask Pip about the loose labels. Shelves overhear what machines miss.", "portrait": "res://assets/art/portraits/vendo/vendo_sincere.png"},
-        {"speaker": "Player", "text": "(Mystery voice, talking vending machine, suspicious plush. Finally, a normal errand.)"}
+        {"speaker": "Player", "text": "(Mystery voice, talking vending machine, and now a shelf that gossips. Finally, a normal errand.)"}
       ]
     ],
     "overloaded_phase": [

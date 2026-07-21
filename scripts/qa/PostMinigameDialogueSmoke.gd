@@ -26,7 +26,7 @@ func _initialize() -> void:
 		"first Circuit Soda debrief is a Vendo and player conversation"
 	)
 	_expect(
-		_sets_contain_text(vendo_sets.get("unknown_voice_clue", []), "BETWEEN CIRCUIT SODA AND ME"),
+		_sets_contain_text(vendo_sets.get("unknown_voice_clue", []), "PASSAGE IN THE RIGHT WALL"),
 		"Vendo gives the exact Prize Service Hall landmark after the unknown voice"
 	)
 

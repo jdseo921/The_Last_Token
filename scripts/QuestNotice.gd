@@ -103,7 +103,7 @@ func _update_objective_hud(pulse: bool) -> void:
 	var action := _get_contextual_action(data)
 	if action.is_empty():
 		action = str(data.get("location", ""))
-	hud_action.text = BALANCED_TEXT.split_balanced(action, 32)
+	hud_action.text = action
 	if pulse:
 		if hud_tween and hud_tween.is_valid():
 			hud_tween.kill()

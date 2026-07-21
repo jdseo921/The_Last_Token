@@ -11,7 +11,6 @@ const PLAYABLE_SCENES := [
 	"res://scenes/minigames/CircuitSoda.tscn",
 	"res://scenes/minigames/SecurityTapeAssembly.tscn",
 	"res://scenes/cutscenes/MemoryEcho.tscn",
-	"res://scenes/minigames/FinalNightWalk.tscn",
 	"res://scenes/minigames/StaticServiceRun.tscn",
 	"res://scenes/minigames/SnackServiceDash.tscn",
 	"res://scenes/minigames/PrizeShelfRun.tscn",

@@ -203,7 +203,7 @@ func _get_safe_resume_scene(scene_path: String) -> String:
 			return SceneChanger.SNACK_HALLWAY_SCENE
 		SceneChanger.STATIC_SERVICE_RUN_SCENE, SceneChanger.SYNC_DOOR_PUZZLE_SCENE:
 			return SceneChanger.MAINTENANCE_HALL_SCENE
-		SceneChanger.SECURITY_TAPE_ASSEMBLY_SCENE, SceneChanger.FINAL_NIGHT_WALK_SCENE, SceneChanger.MEMORY_ECHO_SCENE:
+		SceneChanger.SECURITY_TAPE_ASSEMBLY_SCENE, SceneChanger.MEMORY_ECHO_SCENE:
 			return SceneChanger.STAFF_CORRIDOR_SCENE
 		SceneChanger.STAFF_ROOM_SCENE:
 			return scene_path if GameState.memory_echo_completed and not GameState.twist_reveal_seen else SceneChanger.ARCADE_HUB_SCENE

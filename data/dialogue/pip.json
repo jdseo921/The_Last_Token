@@ -66,13 +66,6 @@
         {"speaker": "Pip", "text": "Exactly. Take it to him. His maintenance copies may tell you what happened while that hope was being kept alive."}
       ]
     ],
-    "prize_sort_replay_offer": [
-      [
-        {"speaker": "Pip", "text": "Hi, 04. The prize rails remember your route now."},
-        {"speaker": "Pip", "text": "Want to climb the echoes again?"},
-        {"speaker": "Pip", "text": "The hooks think it is a game. It is. That is the nice part."}
-      ]
-    ],
     "prize_sort_replay_return": [
       [
         {"speaker": "Pip", "text": "All eighteen echoes. Again. You did not have to."},
@@ -84,8 +77,8 @@
       [
         {"speaker": "Pip", "text": "There you are.", "portrait": "res://assets/art/portraits/pip/pip_warm.png"},
         {"speaker": "Pip", "text": "Yep. Same person. Different seams.", "portrait": "res://assets/art/portraits/pip/pip_eerie.png"},
-        {"speaker": "Pip", "text": "One seam held the soft dream. One held the sharp truths."},
-        {"speaker": "Pip", "text": "You did not defeat the sharp half. You stopped calling it the bad half."},
+        {"speaker": "Pip", "text": "Some of the stitches went tight and quiet for a while."},
+        {"speaker": "Pip", "text": "They are loose again. You feel like one whole plush from here."},
         {"speaker": "Pip", "text": "Now the stuffing can reach both sides."},
         {"speaker": "Pip", "text": "You also have better waving."},
         {"speaker": "Pip", "text": "Employee 04 taught the arcade to keep every try, not only the winning ones."},

@@ -10,7 +10,6 @@ const HALLWAY_EXIT_ANCHORS := {
 	"cabinet_hallway": [Vector2(58, 233), Vector2(581, 233)],
 	"prize_hallway": [Vector2(73, 227), Vector2(566, 227)],
 	"maintenance_hallway": [Vector2(59, 233), Vector2(579, 233)],
-	"back_hallway": [Vector2(62, 231), Vector2(576, 231)],
 	"cabinet_snack_hallway": [Vector2(61, 298), Vector2(578, 298)],
 	"snack_prize_hallway": [Vector2(59, 233), Vector2(579, 232)],
 	"maintenance_staff_hallway": [Vector2(77, 233), Vector2(562, 233)],
@@ -112,8 +111,6 @@ func _get_music_context() -> String:
 			return "prize_corner"
 		"maintenance_hallway", "maintenance_staff_hallway":
 			return "maintenance_hall"
-		"back_hallway":
-			return "staff_corridor"
 	return "arcade_hub"
 
 func start_dialogue(lines: Array, after_dialogue: Callable = Callable()) -> void:
@@ -170,9 +167,6 @@ func _get_hallway_ambient_entries() -> Array[Dictionary]:
 		"maintenance_hallway", "maintenance_staff_hallway":
 			accent = Color(1.0, 0.58, 0.38, 1.0)
 			secondary = Color(0.62, 1.0, 0.82, 1.0)
-		"back_hallway":
-			accent = Color(0.62, 0.82, 1.0, 1.0)
-			secondary = Color(1.0, 0.72, 1.0, 1.0)
 	var entries: Array[Dictionary] = [
 		{
 			"name": "HallScanlineCenter",
@@ -216,6 +210,39 @@ func _get_hallway_ambient_entries() -> Array[Dictionary]:
 			"sprite_alpha": 0.54,
 			"sprite_modulate": accent,
 		},
+		{
+			"name": "HallExitNeonFlickerLeft",
+			"position": Vector2(110, 262),
+			"scale": Vector2(1.05, 1.05),
+			"effect_type": "flicker",
+			"speed": 0.85,
+			"intensity": 0.07,
+			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
+			"sprite_alpha": 0.46,
+			"sprite_modulate": accent,
+		},
+		{
+			"name": "HallExitNeonFlickerRight",
+			"position": Vector2(530, 262),
+			"scale": Vector2(1.05, 1.05),
+			"effect_type": "flicker",
+			"speed": 0.72,
+			"intensity": 0.07,
+			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
+			"sprite_alpha": 0.46,
+			"sprite_modulate": secondary,
+		},
+		{
+			"name": "HallDustDrift",
+			"position": Vector2(320, 240),
+			"scale": Vector2(0.9, 0.9),
+			"effect_type": "dust_mote_drift",
+			"speed": 0.4,
+			"intensity": 0.16,
+			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
+			"sprite_alpha": 0.24,
+			"sprite_modulate": accent,
+		},
 	]
 	if hallway_id.find("snack") >= 0:
 		entries.append({
@@ -249,7 +276,7 @@ func _get_hallway_ambient_entries() -> Array[Dictionary]:
 			"sprite_sheet_path": AMBIENT_EFFECTS.WARNING_LIGHT,
 			"sprite_alpha": 0.58,
 		})
-	if hallway_id.find("staff") >= 0 or hallway_id == "back_hallway":
+	if hallway_id.find("staff") >= 0:
 		entries.append({
 			"name": "HallMemoryWisp",
 			"position": Vector2(318, 268),
@@ -310,25 +337,11 @@ func _get_hallway_message_lines() -> Array:
 				{"speaker": "???", "text": "Something on the shelf remembers those hands wanting and working.", "effect": "glitch"},
 			]
 		"maintenance_hallway":
-			if GameState.lost_shift_file_completed and not GameState.static_service_run_completed:
-				return [
-					{"speaker": "???", "text": "The file opened a service route.", "effect": "glitch"},
-					{"speaker": "???", "text": "Service routes are where arcades hide their bad wiring."},
-				]
+			# The hallway door only opens once the shift file is complete, so
+			# this is the sole reachable whisper for the location.
 			return [
-				{"speaker": "???", "text": "Maintenance is a tidy word for old damage.", "effect": "glitch"},
-				{"speaker": "???", "text": "Ask Gus why one access code answered with two priorities."},
-			]
-		"back_hallway":
-			if GameState.final_night_walk_completed and not GameState.memory_echo_completed:
-				return [
-					{"speaker": "???", "text": "The route played back clean."},
-					{"speaker": "???", "text": "Clean playback does not mean a clean ending.", "effect": "glitch"},
-					{"speaker": "???", "text": "The one walking behind you is carrying what you set down.", "effect": "shake"},
-				]
-			return [
-				{"speaker": "???", "text": "Back halls count footsteps after the tokens stop falling."},
-				{"speaker": "???", "text": "One set keeps landing half a beat behind yours.", "effect": "shake"},
+				{"speaker": "???", "text": "The file opened a service route.", "effect": "glitch"},
+				{"speaker": "???", "text": "Service routes are where arcades hide their bad wiring."},
 			]
 		"cabinet_snack_hallway":
 			return [
@@ -367,10 +380,6 @@ func _hallway_message_story_gate_is_open() -> bool:
 				and GameState.prize_sort_completed \
 				and GameState.gus_hub_checkin_prize_sort_done \
 				and not GameState.static_service_run_completed
-		"back_hallway":
-			var final_walk_window := GameState.final_night_walk_completed and not GameState.memory_echo_completed
-			var security_tape_window := GameState.maintenance_sync_completed and not GameState.security_tape_assembly_completed
-			return final_walk_window or security_tape_window
 		"maintenance_staff_hallway":
 			return GameState.maintenance_sync_completed and not GameState.security_tape_assembly_completed
 	return false

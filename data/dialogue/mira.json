@@ -5,7 +5,7 @@
       [
         {"speaker": "Mira", "text": "You came in. It really is you.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
         {"speaker": "Mira", "text": "But you are looking at me like we have never met.", "portrait": "res://assets/art/portraits/mira/mira_afraid.png"},
-        {"speaker": "Player", "text": "I only stepped inside because the lights were on."},
+        {"speaker": "Player", "text": "I came in because I am carrying a token with this place stamped on it."},
         {"speaker": "Player", "text": "I do not recognize this place."},
         {"speaker": "Player", "text": "Do I know you?"},
         {"speaker": "Mira", "text": "Yes."},
@@ -21,8 +21,8 @@
         {"speaker": "Mira", "text": "Cabinet 07 has been holding your Lost Token."},
         {"speaker": "Mira", "text": "It kept it the way this place keeps everything."},
         {"speaker": "Mira", "text": "A little too long, and a little too tightly."},
-        {"speaker": "Mira", "text": "Go to Cabinet Row. Win it back from the machine."},
-        {"speaker": "Player", "text": "(I walk into a closed arcade, get recognized by strangers, and immediately receive an errand. Curiosity has consequences.)"},
+        {"speaker": "Mira", "text": "Cabinet 07 is right here on the main floor. Win it back from the machine."},
+        {"speaker": "Player", "text": "(I walk into a closed arcade, get recognized by someone I have never met, and immediately receive an errand. Curiosity has consequences.)"},
         {"speaker": "Mira", "text": "Then bring it to me."},
         {"speaker": "Mira", "text": "I would like to watch you hold something that is yours."}
       ]
@@ -58,8 +58,8 @@
         {"speaker": "Mira", "text": "You challenged Rockbyte Duel with it and demanded a best-of-five after the cabinet won."},
         {"speaker": "Mira", "text": "You lost that too. Then you laughed until I did.", "portrait": "res://assets/art/portraits/mira/mira_relieved.png"},
         {"speaker": "Player", "text": "That sounds like someone I would like to remember."},
-        {"speaker": "Mira", "text": "The cabinet returned the token because it recognized your signal. One win did not prove a whole person."},
-        {"speaker": "Mira", "text": "It is a clue, not an answer. The others remember different pieces."},
+        {"speaker": "Mira", "text": "The cabinet gave it back because something in the way you played still matched what it kept."},
+        {"speaker": "Mira", "text": "That is one machine memory. The others hold different pieces of you."},
         {"speaker": "Mira", "text": "Start with Roxy in Cabinet Row. Her score cabinet is lying about a record.", "portrait": "res://assets/art/portraits/mira/mira_sad.png"},
         {"speaker": "Mira", "text": "She has been waiting for someone worth arguing with. Help her set it straight."}
       ]
@@ -99,7 +99,7 @@
     "closing_shift_echoes_hint": [
       [
         {"speaker": "Mira", "text": "I am sorry. I still do not know what happened after I locked up."},
-        {"speaker": "Player", "text": "The score board is the only thread I have. I will follow that first.", "portrait": "res://assets/art/portraits/mira/mira_worried.png"}
+        {"speaker": "Player", "text": "The score board is the only thread I have. I will follow that first."}
       ]
     ],
     "overloaded_pre_staff_room": [

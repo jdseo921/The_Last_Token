@@ -66,13 +66,13 @@ func _init() -> void:
 	_check_state("08 Maintenance Sync complete", "security_tape_assembly", "Security Tape Assembly", "Overloaded", 8)
 
 	game_state.complete_security_tape_assembly()
-	_check_state("09 Security Tape complete", "enter_staff_room", "Final Night Walk", "Overloaded", 9)
+	_check_state("09 Security Tape complete", "enter_staff_room", "Staff Room Terminal", "Overloaded", 9)
 
 	# The Staff Room terminal consumes the repaired tape directly. Keep these
 	# compatibility flags exercised without exposing retired player objectives.
 	game_state.complete_final_night_walk()
 	_check_state("10 Legacy Final Night complete", "enter_staff_room", "Memory Echo", "Overloaded", 10)
-	game_state.mark_conscience_encounter_seen("after_final_night_walk")
+	game_state.mark_conscience_encounter_seen("staff_corridor_approach")
 	_expect("10b Conscience 4", "conscience_encounter_4_seen", game_state.conscience_encounter_4_seen, true)
 
 	game_state.complete_memory_echo()

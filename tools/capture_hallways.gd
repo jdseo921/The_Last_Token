@@ -7,7 +7,6 @@ var _targets := [
 	["snack", "res://scenes/maps/hallways/SnackHallway.tscn"],
 	["prize", "res://scenes/maps/hallways/PrizeHallway.tscn"],
 	["maintenance", "res://scenes/maps/hallways/MaintenanceHallway.tscn"],
-	["back", "res://scenes/maps/hallways/BackHallway.tscn"],
 	["cabinet_snack", "res://scenes/maps/hallways/CabinetSnackHallway.tscn"],
 	["snack_prize", "res://scenes/maps/hallways/SnackPrizeHallway.tscn"],
 	["maintenance_staff", "res://scenes/maps/hallways/MaintenanceStaffHallway.tscn"],

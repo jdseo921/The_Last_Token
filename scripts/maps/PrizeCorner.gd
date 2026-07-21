@@ -28,7 +28,15 @@ func _ready() -> void:
 	call_deferred("_maybe_show_pip_minigame_return")
 
 func can_open_pause_menu() -> bool:
-	return not _dialogue_is_active()
+	return not _dialogue_is_active() and not _choice_box_is_open()
+
+func _choice_box_is_open() -> bool:
+	if ui_layer == null:
+		return false
+	for child in ui_layer.get_children():
+		if child.has_method("open_choice") and child is CanvasItem and (child as CanvasItem).visible:
+			return true
+	return false
 
 func _apply_spawn_position() -> void:
 	var spawn_id := GameState.consume_pending_spawn_id()
@@ -141,11 +149,6 @@ func _handle_pip() -> void:
 	if _is_prize_sort_completed():
 		_show_pip_prize_completion_dialogue()
 		return
-	if GameState.prize_echo_unlocked:
-		start_dialogue([
-			{"speaker": "Prize Counter", "text": "PRIZE ECHO ASCENT READY AT THE SHELF."},
-		])
-		return
 	if GameState.lost_token_quest_completed:
 		var lines := _get_pip_lines("after_lost_token", [
 			{"speaker": "Pip", "text": "You brought the Lost Token back."},
@@ -171,10 +174,16 @@ func _get_optional_first_meeting_lines(was_pip_met: bool) -> Array:
 
 func _handle_prize_counter() -> void:
 	if _is_prize_sort_completed():
-		start_dialogue(_get_environment_lines("prize_counter_restored", [
+		if _is_post_reveal():
+			start_dialogue(_get_environment_lines("prize_counter_restored", [
+				{"speaker": "Prize Counter", "text": "The loose labels rest under the glass."},
+				{"speaker": "Prize Counter", "text": "The shelf route beside Pip is stable."},
+			]))
+			return
+		start_dialogue([
 			{"speaker": "Prize Counter", "text": "The loose labels rest under the glass."},
 			{"speaker": "Prize Counter", "text": "The shelf route beside Pip is stable."},
-		]))
+		])
 		return
 	if _prize_sort_unlocked() and not GameState.pip_met:
 		start_dialogue([
@@ -204,9 +213,15 @@ func _handle_prize_shelf_adventure() -> void:
 			{"speaker": "Prize Shelf", "text": "HOOK CONTACT RESETS THE CURRENT ROUTE."},
 		], Callable(self, "_go_to_prize_shelf_run"))
 		return
+	if _is_prize_sort_completed():
+		start_dialogue([
+			{"speaker": "Prize Shelf", "text": "RAIL STABLE. EIGHTEEN ECHOES SEATED."},
+			{"speaker": "Prize Shelf", "text": "THREE LOCKS HOLDING."},
+		])
+		return
 	start_dialogue([
-		{"speaker": "Prize Shelf", "text": "The shelf-run rail is unplugged. Loose tags rest where they fell."},
-		{"speaker": "Prize Shelf", "text": "Pip says the good prizes were never on the rail anyway."},
+		{"speaker": "Prize Shelf", "text": "RAIL UNPLUGGED. LOOSE TAGS UNSORTED."},
+		{"speaker": "Player", "text": "Pip says the good prizes were never on the rail anyway."},
 	])
 
 func _go_to_prize_shelf_run() -> void:
@@ -340,6 +355,47 @@ func _setup_ambient_sprite_effects() -> void:
 			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
 			"sprite_alpha": 0.56,
 			"sprite_modulate": Color(1.0, 0.9, 0.52, 1.0),
+		},
+		{
+			"name": "PrizeTwinkleC",
+			"position": Vector2(318, 108),
+			"scale": Vector2(1.2, 1.2),
+			"effect_type": "blink",
+			"speed": 0.62,
+			"sprite_sheet_path": AMBIENT_EFFECTS.PRIZE_TWINKLE,
+			"sprite_alpha": 0.6,
+			"sprite_modulate": Color(1.0, 0.86, 0.42, 1.0),
+		},
+		{
+			"name": "ShelfRunGlint",
+			"position": Vector2(466, 204),
+			"scale": Vector2(1.15, 1.15),
+			"effect_type": "random_screen_flash",
+			"speed": 0.58,
+			"intensity": 0.05,
+			"sprite_sheet_path": AMBIENT_EFFECTS.TICKET_GLINT,
+			"sprite_alpha": 0.6,
+		},
+		{
+			"name": "CounterTicketGlintC",
+			"position": Vector2(206, 156),
+			"scale": Vector2(1.05, 1.05),
+			"effect_type": "random_screen_flash",
+			"speed": 0.62,
+			"intensity": 0.05,
+			"sprite_sheet_path": AMBIENT_EFFECTS.TICKET_GLINT,
+			"sprite_alpha": 0.55,
+		},
+		{
+			"name": "PrizeFloorDustDrift",
+			"position": Vector2(280, 300),
+			"scale": Vector2(0.9, 0.9),
+			"effect_type": "dust_mote_drift",
+			"speed": 0.42,
+			"intensity": 0.15,
+			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
+			"sprite_alpha": 0.28,
+			"sprite_modulate": Color(1.0, 0.9, 0.6, 1.0),
 		},
 	])
 

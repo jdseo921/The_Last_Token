@@ -71,6 +71,8 @@ func _ready() -> void:
 	completion_overlay.visible = false
 	status_label.text = "Clear the static, then put the night back in order.\nOne frame will not fit. Watch the timestamps."
 	_refresh_view()
+	if not fragment_buttons.is_empty():
+		fragment_buttons[0].grab_focus()
 
 func _looks_presolved() -> bool:
 	for i in range(CORRECT_ORDER.size()):
@@ -121,6 +123,10 @@ func _on_submit_pressed() -> void:
 		ARCADE_JUICE.pulse_control(self, submit_button, ARCADE_JUICE.PULSE_GREEN)
 		_play_audio("play_success_jingle")
 		_flash_feedback(ARCADE_JUICE.FLASH_CYAN, 0.32)
+		if anomaly_acknowledged:
+			# The timestampless frame becomes a private memory the reveal can
+			# reprise: the player looked at it and the recorder refused it.
+			GameState.tape_anomaly_frame_seen = true
 		GameState.complete_security_tape_assembly()
 		var closing := "THE STAFF DOOR DID NOT RECORD A CUSTOMER."
 		if anomaly_acknowledged:
@@ -162,6 +168,22 @@ func _refresh_view() -> void:
 	hint_label.visible = GameState.security_tape_wrong_order_count >= 2 and not GameState.security_tape_assembly_completed
 	submit_button.disabled = GameState.security_tape_assembly_completed
 	reset_button.disabled = GameState.security_tape_assembly_completed
+	_ensure_focus()
+
+func _ensure_focus() -> void:
+	# Keep keyboard focus alive when the focused button gets disabled
+	# (selecting a fragment disables it).
+	if completion_overlay.visible:
+		return
+	var owner := get_viewport().gui_get_focus_owner()
+	if owner is Button and not (owner as Button).disabled and (owner as Button).is_visible_in_tree():
+		return
+	for button in fragment_buttons:
+		if not button.disabled:
+			button.grab_focus()
+			return
+	if not submit_button.disabled:
+		submit_button.grab_focus()
 
 func _set_fragment_buttons_disabled(disabled: bool) -> void:
 	for button in fragment_buttons:

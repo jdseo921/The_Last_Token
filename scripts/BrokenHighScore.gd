@@ -174,7 +174,7 @@ func _complete_game() -> void:
 		light.color = COLOR_SIGNAL_STABLE
 	glitch_stripe_a.visible = false
 	glitch_stripe_b.visible = false
-	status_label.text = "RECORD RESTORED // NAME STILL BLANK.\nOne win returned a clue, not the whole player."
+	status_label.text = "RECORD RESTORED // NAME STILL BLANK.\nThe board remembers the score and nothing else."
 	_play_display_flash(COLOR_SIGNAL_STABLE)
 	_play_audio("play_success_jingle")
 	exit_button.grab_focus()

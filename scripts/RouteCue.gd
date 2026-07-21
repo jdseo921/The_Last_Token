@@ -62,7 +62,7 @@ func refresh() -> void:
 	visible = not hint.is_empty()
 	if route_label == null:
 		return
-	route_label.text = BALANCED_TEXT.split_balanced(hint, 50)
+	route_label.text = hint
 	route_label.modulate = LOCAL_COLOR if hint.begins_with("LOCAL") else TEXT_COLOR
 	if close_button != null:
 		close_button.visible = visible
@@ -103,7 +103,7 @@ static func get_current_hint(current_location_id: String) -> String:
 		"return_lost_token":
 			return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Return the Lost Token to Mira.")
 		"broken_high_score":
-			if not bool(state.get("roxy_met")):
+			if int(state.call("get_npc_dialogue_count", "roxy:broken_high_score_intro")) == 0:
 				return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Talk to Roxy by the score cabinet.")
 			return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Use the BROKEN SCORE cabinet.")
 		"vendo_circuit_debrief":
@@ -371,7 +371,7 @@ static func _get_next_step(current_location_id: String, target_location_id: Stri
 				"snack_alcove":
 					return "Right to CABINET ROW, then the SERVICE HALLWAY."
 				"prize_corner":
-					return "Right to CABINET ROW, SNACK ALCOVE, then the PRIZE SERVICE HALL."
+					return "Right to CABINET ROW, then on to SNACK ALCOVE."
 				"maintenance_hall":
 					return "Take the MAINTENANCE HALLWAY exit at the bottom."
 				"staff_corridor", "staff_room":
@@ -391,7 +391,7 @@ static func _get_next_step(current_location_id: String, target_location_id: Stri
 			if target_location_id == "prize_corner":
 				return "Take the PRIZE SERVICE HALL at the right end."
 			if target_location_id == "arcade_hub":
-				return "Left to CABINET ROW, then take CABINET HALLWAY to ARCADE HUB."
+				return "Left to CABINET ROW, then the CABINET HALLWAY."
 			return "Back to ARCADE HUB, then %s." % _get_target_label(target_location_id)
 		"prize_corner":
 			if target_location_id == "snack_alcove":
@@ -413,8 +413,8 @@ static func _get_next_step(current_location_id: String, target_location_id: Stri
 			if target_location_id == "maintenance_hall":
 				return "Take the STAFF ACCESS HALL at the bottom."
 			if target_location_id == "arcade_hub":
-				return "Take the BACK HALLWAY on the left."
-			return "Back to ARCADE HUB, then %s." % _get_target_label(target_location_id)
+				return "Take the STAFF ACCESS HALL at the bottom, then MAINTENANCE."
+			return "Take the STAFF ACCESS HALL at the bottom, then %s." % _get_target_label(target_location_id)
 		"cabinet_hallway":
 			return "Take CABINET ROW exit." if target_location_id == "cabinet_row" else "Take ARCADE HUB exit."
 		"snack_hallway":
@@ -423,8 +423,6 @@ static func _get_next_step(current_location_id: String, target_location_id: Stri
 			return "Take MAINTENANCE exit." if target_location_id == "maintenance_hall" else "Take ARCADE HUB exit."
 		"prize_hallway":
 			return "Take PRIZE CORNER exit." if target_location_id == "prize_corner" else "Take ARCADE HUB exit."
-		"back_hallway":
-			return "Take STAFF CORRIDOR exit." if target_location_id == "staff_corridor" or target_location_id == "staff_room" else "Take ARCADE HUB exit."
 		"cabinet_snack_hallway":
 			return "Take SNACK ALCOVE exit." if target_location_id == "snack_alcove" else "Take CABINET ROW exit."
 		"snack_prize_hallway":

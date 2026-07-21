@@ -24,9 +24,9 @@ const PANEL_VERTICAL_PADDING := 18.0
 @onready var quest_notice: CanvasLayer = $QuestNotice
 
 const CONTROLS_TEXT := """Move - WASD or Arrow Keys
-Interact / Advance dialogue - E, Space, or Enter
+Interact / Advance dialogue - E or Space
 Menu / Back - Esc
-Adventure stages - R restarts the run
+Adventure stages - R returns you to the last checkpoint
 Scrolling stages - hold E or Space for jump height; press again in air
 
 Walk close to a glowing arrow to see where a doorway leads.
@@ -34,6 +34,7 @@ Walk up to people and machines and press E to talk."""
 
 var save_slot_menu: Control = null
 var transition_in_progress := false
+var focus_owner_before_menu: Control = null
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -92,6 +93,7 @@ func open_menu() -> void:
 	var host := get_parent()
 	if host != null and host.has_method("can_open_pause_menu") and not bool(host.call("can_open_pause_menu")):
 		return
+	focus_owner_before_menu = get_viewport().gui_get_focus_owner()
 	visible = true
 	panel.visible = true
 	get_tree().paused = true
@@ -108,6 +110,10 @@ func close_menu() -> void:
 	panel.visible = true
 	get_tree().paused = false
 	_play_audio("play_ui_cancel")
+	if focus_owner_before_menu != null and is_instance_valid(focus_owner_before_menu) \
+			and focus_owner_before_menu.is_visible_in_tree():
+		focus_owner_before_menu.grab_focus()
+	focus_owner_before_menu = null
 
 func _on_continue_pressed() -> void:
 	close_menu()

@@ -15,7 +15,6 @@ const REQUIRED_REGISTRY_ORDER := [
 	"maintenance_sync",
 	"staff_corridor",
 	"security_tape_assembly",
-	"final_night_walk",
 	"memory_echo",
 ]
 
@@ -30,8 +29,7 @@ const EXPECTED_PREREQUISITES := {
 	"maintenance_sync": "static_service_run_completed",
 	"staff_corridor": "maintenance_sync_completed",
 	"security_tape_assembly": "maintenance_sync_completed",
-	"final_night_walk": "security_tape_assembly_completed",
-	"memory_echo": "final_night_walk_completed",
+	"memory_echo": "security_tape_assembly_completed",
 }
 
 var state: Node
@@ -134,7 +132,6 @@ func _check_required_route_handoffs() -> void:
 	_expect_quest("enter_staff_room", "the assembled tape hands directly to the Staff Room terminal")
 	# The Staff Room owns the direct tape-to-terminal handoff. These flags remain
 	# for compatibility with pre-handoff saves and archival replay scenes.
-	state.complete_final_night_walk()
 	state.complete_memory_echo()
 	_expect_quest("enter_staff_room", "Memory Echo opens the Staff Room reveal")
 	state.mark_twist_reveal_seen()
@@ -184,7 +181,7 @@ func _check_access_and_dialogue_gates() -> void:
 	var staff_start := hub_source.find("func _handle_staff_door()")
 	var staff_end := hub_source.find("func _handle_owner_portrait()", staff_start)
 	var staff_handler := hub_source.substr(staff_start, staff_end - staff_start)
-	_expect(staff_handler.contains("COMPLETE THE REQUIRED TASKS FIRST") and not staff_handler.contains("CIRCUIT SODA ROUTE REQUIRED"), "early Staff Door dialogue stays generic until prerequisites are complete")
+	_expect(staff_handler.contains("EMPLOYEE SIGNAL TOO WEAK TO READ") and not staff_handler.contains("CIRCUIT SODA ROUTE REQUIRED"), "early Staff Door dialogue stays generic until prerequisites are complete")
 	_expect(not hub_source.contains("if GameState.lying_cabinets_completed and not GameState.story_puzzle_completed"), "NPC repeats cannot jump from Truth Filter directly to Staff Door guidance")
 	_expect(not hub_source.contains("_get_ticket_counter_echo_lines"), "Mira dialogue cannot be diverted into the removed narrator echo")
 

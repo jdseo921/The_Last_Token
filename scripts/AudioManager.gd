@@ -284,8 +284,6 @@ func _get_track_id_for_context(context_id: String) -> String:
 			return "maintenance_sync_game"
 		"security_tape_assembly":
 			return "security_tape_final_night_game"
-		"final_night_walk":
-			return "security_tape_final_night_game"
 		"memory_echo":
 			return "memory_echo_conscience"
 		"ending":

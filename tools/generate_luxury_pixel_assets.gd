@@ -161,7 +161,6 @@ func _generate_prize_corner_background() -> void:
 
 func _generate_adventure_backgrounds() -> void:
 	_save_png(_adventure_stage_background("POWER THE DARK ROUTE", CYAN, GOLD, "SERVICE GRID", "static"), ADVENTURE_BG_DIR + "static_service_run_bg_640x440.png")
-	_save_png(_adventure_stage_background("MEMORY RETRACE", VIOLET, CYAN, "FINAL NIGHT", "memory"), ADVENTURE_BG_DIR + "final_night_walk_bg_640x440.png")
 	_save_png(_adventure_stage_background("TICKET SWEEP", GOLD, CYAN, "FLOOR ROUTE", "ticket"), ADVENTURE_BG_DIR + "ticket_sweep_bg_640x440.png")
 	_save_png(_adventure_stage_background("CABINET TRACE", CYAN, VIOLET, "TRACE SPARKS", "cabinet"), ADVENTURE_BG_DIR + "cabinet_trace_bg_640x440.png")
 	_save_png(_adventure_stage_background("SNACK SERVICE", GREEN, AMBER, "FIZZ ROUTE", "snack"), ADVENTURE_BG_DIR + "snack_service_bg_640x440.png")

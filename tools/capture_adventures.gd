@@ -5,7 +5,6 @@ extends SceneTree
 
 var _targets := [
 	["static_service_run", "res://scenes/minigames/StaticServiceRun.tscn"],
-	["final_night_walk", "res://scenes/minigames/FinalNightWalk.tscn"],
 ]
 var _i := 0
 var _inst: Node = null

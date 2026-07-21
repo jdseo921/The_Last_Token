@@ -7,8 +7,8 @@
         {"speaker": "Roxy", "text": "Except you are looking at this room like you have never seen it.", "portrait": "res://assets/art/portraits/roxy/roxy_uneasy.png"},
         {"speaker": "Player", "text": "I have not."},
         {"speaker": "Roxy", "text": "That answer was supposed to make this less weird.", "portrait": "res://assets/art/portraits/roxy/roxy_uneasy.png"},
-        {"speaker": "Roxy", "text": "The good cabinet is still pretending it has standards."},
-        {"speaker": "Roxy", "text": "Come back when you have beaten something louder than the carpet.", "portrait": "res://assets/art/portraits/roxy/roxy_focused.png"},
+        {"speaker": "Roxy", "text": "This board stays dead until somebody wins something worth bragging about."},
+        {"speaker": "Roxy", "text": "Go beat the big cabinet out on the main floor. Then come back and I will make it interesting.", "portrait": "res://assets/art/portraits/roxy/roxy_focused.png"},
         {"speaker": "Roxy", "text": "I will be here, defending my undefeated record against boredom.", "portrait": "res://assets/art/portraits/roxy/roxy_smug.png"}
       ]
     ],
@@ -58,7 +58,7 @@
         {"speaker": "Roxy", "text": "Now go see Mr. Byte before his Truth Filter starts grading on a curve.", "portrait": "res://assets/art/portraits/roxy/roxy_focused.png"},
         {"speaker": "Roxy", "text": "He has been itching to sort somebody's contradictions all night."},
         {"speaker": "Roxy", "text": "Free tip, since you earned it: his filter quizzes you on the last night.", "portrait": "res://assets/art/portraits/roxy/roxy_respectful.png"},
-        {"speaker": "Roxy", "text": "The staff record terminal across the row just unlocked the shift log. Read it first.", "portrait": "res://assets/art/portraits/roxy/roxy_focused.png"}
+        {"speaker": "Roxy", "text": "The LOGS stack across the row just unlocked the shift record. Read it first.", "portrait": "res://assets/art/portraits/roxy/roxy_focused.png"}
       ]
     ],
     "truth_filter_completion_nudge": [

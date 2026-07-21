@@ -6,6 +6,7 @@ extends Node2D
 
 const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
 const ROUTE_CUE_SCRIPT := preload("res://scripts/RouteCue.gd")
+const AMBIENT_EFFECTS := preload("res://scripts/AmbientSpriteEffects.gd")
 
 @onready var player: CharacterBody2D = $Player
 @onready var dialogue_box: CanvasLayer = $UILayer/DialogueBox
@@ -20,6 +21,7 @@ func _ready() -> void:
 	AudioManager.play_music_for_context("arcade_hub")
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
+	_setup_ambient_sprite_effects()
 	_setup_route_cue()
 	_apply_spawn_position()
 	_on_prompt_changed("")
@@ -94,3 +96,49 @@ func _get_env_state(key: String, fallback: Array) -> Array:
 		if not restored.is_empty():
 			return restored
 	return DIALOGUE_POOL.get_lines("environment_objects", key, fallback)
+
+
+func _setup_ambient_sprite_effects() -> void:
+	AMBIENT_EFFECTS.create_layer(self, $UILayer, [
+		{
+			"name": "FrontDoorsWarningLight",
+			"position": Vector2(320, 330),
+			"scale": Vector2(1.25, 1.25),
+			"effect_type": "blink",
+			"speed": 0.5,
+			"intensity": 0.07,
+			"sprite_sheet_path": AMBIENT_EFFECTS.WARNING_LIGHT,
+			"sprite_alpha": 0.68,
+		},
+		{
+			"name": "HistoryBoardTwinkle",
+			"position": Vector2(130, 122),
+			"scale": Vector2(1.1, 1.1),
+			"effect_type": "random_screen_flash",
+			"speed": 0.5,
+			"intensity": 0.05,
+			"sprite_sheet_path": AMBIENT_EFFECTS.PRIZE_TWINKLE,
+			"sprite_alpha": 0.5,
+		},
+		{
+			"name": "ClosingNoticeBlink",
+			"position": Vector2(430, 332),
+			"scale": Vector2(1.05, 1.05),
+			"effect_type": "blink",
+			"speed": 0.55,
+			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
+			"sprite_alpha": 0.6,
+			"sprite_modulate": Color(1.0, 0.88, 0.45, 1.0),
+		},
+		{
+			"name": "EntranceFloorDustDrift",
+			"position": Vector2(240, 260),
+			"scale": Vector2(0.9, 0.9),
+			"effect_type": "dust_mote_drift",
+			"speed": 0.4,
+			"intensity": 0.16,
+			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
+			"sprite_alpha": 0.28,
+			"sprite_modulate": Color(0.7, 0.78, 1.0, 1.0),
+		},
+	])

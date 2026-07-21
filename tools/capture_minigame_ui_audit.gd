@@ -13,7 +13,6 @@ const TARGETS := [
 	["snack_service", "res://scenes/minigames/SnackServiceDash.tscn"],
 	["prize_echo", "res://scenes/minigames/PrizeShelfRun.tscn"],
 	["static_service", "res://scenes/minigames/StaticServiceRun.tscn"],
-	["final_night", "res://scenes/minigames/FinalNightWalk.tscn"],
 	["template", "res://scenes/minigames/MinigameScreenTemplate.tscn"],
 ]
 

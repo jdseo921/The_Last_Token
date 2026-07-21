@@ -40,20 +40,6 @@
         {"speaker": "Cabinet 07", "text": "TRUTH FILTER TARGET ACTIVE."}
       ]
     ],
-    "fractured_echo": [
-      [
-        {"speaker": "Cabinet 07", "text": "CABINET STATUS: RESTLESS.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_alert.png"},
-        {"speaker": "Cabinet 07", "text": "SECOND TOKEN ACCEPTED."},
-        {"speaker": "Cabinet 07", "text": "STAFF DOOR TARGET READY."},
-        {"speaker": "Cabinet 07", "text": "IDENTITY STILL MISALIGNED."}
-      ],
-      [
-        {"speaker": "Cabinet 07", "text": "PREVIOUS SCORE: DAMAGED."},
-        {"speaker": "Cabinet 07", "text": "PREVIOUS STAFF FILE: DAMAGED."},
-        {"speaker": "Cabinet 07", "text": "SIGNAL LESS WRONG.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_stable.png"},
-        {"speaker": "Cabinet 07", "text": "CHECK STAFF DOOR."}
-      ]
-    ],
     "overloaded_echo": [
       [
         {"speaker": "Cabinet 07", "text": "CABINET STATUS: LOUD.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_alert.png"},
@@ -91,8 +77,8 @@
         {"speaker": "Cabinet 07", "text": "EMPLOYEE 04 IDENTITY STATUS: INTEGRATED.", "portrait": "res://assets/art/portraits/mr_byte/cabinet_07_stable.png"},
         {"speaker": "Cabinet 07", "text": "WELCOME BACK, EMPLOYEE 04."},
         {"speaker": "Cabinet 07", "text": "IDENTITY CONFLICT: CLOSED."},
-        {"speaker": "Cabinet 07", "text": "ONE WIN DID NOT COMPLETE YOU."},
-        {"speaker": "Cabinet 07", "text": "THE WHOLE PLAYER CHOSE ANOTHER TURN."},
+        {"speaker": "Cabinet 07", "text": "TOKEN RETURNED. RECORD CORRECTED. NAME RESTORED."},
+        {"speaker": "Cabinet 07", "text": "NO SCORE FIELD FITS THAT."},
         {"speaker": "Cabinet 07", "text": "PREVIOUS SESSION: CLOSED."},
         {"speaker": "Cabinet 07", "text": "CURRENT SESSION: YOURS."},
         {"speaker": "Cabinet 07", "text": "PLAYER SIGNAL ACCEPTED."}

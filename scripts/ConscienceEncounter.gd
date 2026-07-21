@@ -112,7 +112,7 @@ func _refresh_line() -> void:
 		return
 	var line: Dictionary = dialogue_lines[current_index]
 	var speaker := str(line.get("speaker", "???"))
-	var text := BALANCED_TEXT.split_balanced(str(line.get("text", "")), 56)
+	var text := str(line.get("text", "")).strip_edges()
 	var effect := str(line.get("effect", "normal"))
 	var pause_seconds := float(line.get("pause", 0.0))
 	speaker_label.text = speaker

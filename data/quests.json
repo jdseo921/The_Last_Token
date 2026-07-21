@@ -90,7 +90,7 @@
       "owner": "Gus",
       "location": "Maintenance Hall",
       "summary": "Run Maintenance Sync with Gus in Maintenance.",
-      "details": "Service power is restored. Talk to Gus in Maintenance Hall, then use Maintenance Sync to line up the Staff Door signals.",
+      "details": "Service power is restored. Meet Gus at the Staff Door in Maintenance Hall - he runs the sync with you on the spot.",
       "minigame": "Maintenance Sync",
       "required": true,
       "starts_after": "static_service_run_completed",
@@ -114,22 +114,10 @@
       "owner": "Staff Door / Mr. Byte",
       "location": "Staff Room",
       "summary": "Inspect the archive desk for the Security Tape.",
-      "details": "The archive desk holds the damaged tape. Assemble it before retracing the Final Night.",
+      "details": "The archive desk holds the damaged tape. Restore its four recorded frames, then carry it to the terminal.",
       "minigame": "Security Tape Assembly",
       "required": true,
       "starts_after": "maintenance_sync_completed",
-      "memory_signal_after": "Overloaded"
-    },
-    "final_night_walk": {
-      "id": "final_night_walk",
-      "title": "Final Night Walk",
-      "owner": "Staff Door / Memory System",
-      "location": "Staff Room",
-      "summary": "Use the archive desk to trace the Final Night.",
-      "details": "The security tape is assembled, but the memory remains unstable. Trace the closing route from the archive desk before confronting the Memory Echo.",
-      "minigame": "Final Night Walk",
-      "required": true,
-      "starts_after": "security_tape_assembly_completed",
       "memory_signal_after": "Overloaded"
     },
     "memory_echo": {
@@ -138,10 +126,10 @@
       "owner": "Memory Echo",
       "location": "Staff Room",
       "summary": "Use the archive desk to open Memory Echo.",
-      "details": "The Final Night route is stable. Open Memory Echo from the archive desk to hold both signals long enough for the terminal to respond.",
+      "details": "The security tape is assembled. Open Memory Echo from the archive desk to hold both signals long enough for the terminal to respond.",
       "minigame": "Memory Echo",
       "required": true,
-      "starts_after": "final_night_walk_completed",
+      "starts_after": "security_tape_assembly_completed",
       "memory_signal_after": "Overloaded"
     },
     "after_hours_archive": {

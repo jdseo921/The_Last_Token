@@ -1,43 +1,6 @@
 {
   "character_id": "environment_objects",
   "sets": {
-    "ticket_counter": [
-      [
-        {"speaker": "Narrator", "text": "The ticket counter glass reflects old prize lights."}
-      ]
-    ],
-    "ticket_counter_grounded": [
-      [
-        {"speaker": "Narrator", "text": "The ticket counter glass reflects old prize lights."},
-        {"speaker": "Narrator", "text": "The prize rates are still taped up, crossed out and lowered twice."},
-        {"speaker": "Narrator", "text": "A strip of tickets curls like it was dropped mid-shift."}
-      ]
-    ],
-    "ticket_counter_uneasy": [
-      [
-        {"speaker": "Narrator", "text": "The tickets twitch when you pass."},
-        {"speaker": "Narrator", "text": "The counter smells faintly of dust and warm paper."}
-      ]
-    ],
-    "ticket_counter_fractured": [
-      [
-        {"speaker": "Narrator", "text": "The ticket counter glass catches your reflection half a beat late."},
-        {"speaker": "Narrator", "text": "For a moment it does not move when you move."},
-        {"speaker": "Narrator", "text": "Then it catches up, like nothing happened."}
-      ]
-    ],
-    "ticket_counter_overloaded": [
-      [
-        {"speaker": "Narrator", "text": "Every ticket stub points toward the Staff Door."},
-        {"speaker": "Narrator", "text": "The roll keeps counting after it runs out of numbers."}
-      ]
-    ],
-    "ticket_counter_restored": [
-      [
-        {"speaker": "Narrator", "text": "The counter is quiet now."},
-        {"speaker": "Narrator", "text": "It no longer tries to sell you proof."}
-      ]
-    ],
     "owner_portrait_grounded": [
       [
         {"speaker": "Owner Portrait", "text": "A dusty portrait hangs above the arcade floor, angled like it used to watch the door."},
@@ -81,6 +44,12 @@
         {"speaker": "Broken Cabinet", "text": "A paper sign says OUT OF ORDER."}
       ]
     ],
+    "broken_cabinet_repeat_press": [
+      [
+        {"speaker": "Broken Cabinet", "text": "STILL OUT OF ORDER."},
+        {"speaker": "Broken Cabinet", "text": "THE SIGN HAS NOT CHANGED SINCE YOUR LAST ATTEMPT."}
+      ]
+    ],
     "broken_cabinet_fractured": [
       [
         {"speaker": "Broken Cabinet", "text": "RESET FAILED."},
@@ -89,6 +58,12 @@
       ]
     ],
     "broken_cabinet_overloaded": [
+      [
+        {"speaker": "Broken Cabinet", "text": "STILL OUT OF ORDER."},
+        {"speaker": "Broken Cabinet", "text": "THE HUM BEHIND THE GLASS IS LOUDER TONIGHT."}
+      ]
+    ],
+    "broken_cabinet_spam": [
       [
         {"speaker": "Broken Cabinet", "text": "STOP PRESSING E."},
         {"speaker": "Broken Cabinet", "text": "I AM TRYING TO REMEMBER."}
@@ -147,8 +122,8 @@
     ],
     "staff_records_locked": [
       [
-        {"speaker": "Staff Record", "text": "The record terminal is sealed."},
-        {"speaker": "Staff Record", "text": "TRUTH FILTER REQUIRED."}
+        {"speaker": "Logs", "text": "STACK UNSORTED."},
+        {"speaker": "Logs", "text": "The pages will not hold an order until the score board is restored."}
       ]
     ],
     "staff_records_fractured": [
@@ -160,16 +135,16 @@
     ],
     "staff_records_overloaded": [
       [
-        {"speaker": "Staff Record", "text": "Record fragment accepted."},
-        {"speaker": "Staff Record", "text": "Employee number checksum detected."},
-        {"speaker": "Staff Record", "text": "Name field still sealed."}
+        {"speaker": "Logs", "text": "Record fragment accepted."},
+        {"speaker": "Logs", "text": "Employee number checksum detected."},
+        {"speaker": "Logs", "text": "Name field still sealed."}
       ]
     ],
     "staff_records_restored": [
       [
-        {"speaker": "Staff Record", "text": "The archive stops hiding the file."},
-        {"speaker": "Staff Record", "text": "The number was a door."},
-        {"speaker": "Staff Record", "text": "The name was you."}
+        {"speaker": "Logs", "text": "The archive stops hiding the file."},
+        {"speaker": "Logs", "text": "The number was a door."},
+        {"speaker": "Logs", "text": "The name was you."}
       ]
     ],
     "truth_filter_machine_grounded": [
@@ -188,6 +163,12 @@
       [
         {"speaker": "Truth Filter", "text": "TRUTH FILTER PASSED."},
         {"speaker": "Truth Filter", "text": "RECORDS RECONCILED."}
+      ]
+    ],
+    "truth_filter_machine_overloaded": [
+      [
+        {"speaker": "Truth Filter", "text": "TRUTH FILTER PASSED."},
+        {"speaker": "Truth Filter", "text": "RECORDS HOLDING UNDER LOAD."}
       ]
     ],
     "truth_filter_machine_restored": [
@@ -241,8 +222,8 @@
     ],
     "maintenance_sync_machine_static_service_required": [
       [
-        {"speaker": "Maintenance Sync", "text": "MAINTENANCE SYNC LOCKED."},
-        {"speaker": "Maintenance Sync", "text": "STATIC SERVICE REQUIRED."}
+        {"speaker": "Maintenance Sync", "text": "STATIC SERVICE ROUTE READY."},
+        {"speaker": "Maintenance Sync", "text": "RUN DIAGNOSTIC?"}
       ]
     ],
     "maintenance_sync_machine_fractured": [
@@ -356,26 +337,6 @@
         {"speaker": "Terminal", "text": "MEMORY LOOP CLOSED."}
       ]
     ],
-    "employee_04_file_archived": [
-      [
-        {"speaker": "Employee File", "text": "EMPLOYEE 04 // MEMORY ACCESS: SEALED."},
-        {"speaker": "Employee File", "text": "The photo is corrupted beyond recognition."}
-      ]
-    ],
-    "employee_04_file_restored": [
-      [
-        {"speaker": "Employee File", "text": "EMPLOYEE 04 // MEMORY ACCESS: RECOVERED."},
-        {"speaker": "Employee File", "text": "The photo is yours."},
-        {"speaker": "Employee File", "text": "The file was never about someone else."}
-      ]
-    ],
-    "employee_04_file_integrated": [
-      [
-        {"speaker": "Employee File", "text": "EMPLOYEE 04 // IDENTITY STATUS: INTEGRATED."},
-        {"speaker": "Employee File", "text": "The photo is yours."},
-        {"speaker": "Employee File", "text": "The regret field is no longer sealed."}
-      ]
-    ],
     "prize_counter_grounded": [
       [
         {"speaker": "Prize Counter", "text": "Cheap prizes watch from behind dusty glass."}
@@ -461,66 +422,6 @@
         {"speaker": "Birthday Cabinet", "text": "PARTY HIGH SCORE - a cheerful, forgiving little game."},
         {"speaker": "Birthday Cabinet", "text": "The target score is set absurdly low."},
         {"speaker": "Birthday Cabinet", "text": "Someone wanted every kid to walk away taller, whether they won or lost."}
-      ]
-    ],
-    "workshop_bench": [
-      [
-        {"speaker": "Workbench", "text": "A workbench under a hooded lamp, tools laid out in a patient row."},
-        {"speaker": "Workbench", "text": "Half-built cabinets lean against the wall, each one shaped by hand."},
-        {"speaker": "Workbench", "text": "Whoever worked here cared more about the games than about being paid for them."}
-      ]
-    ],
-    "workshop_bench_restored": [
-      [
-        {"speaker": "Workbench", "text": "The tools are exactly where you left them."},
-        {"speaker": "Workbench", "text": "Your hands remember the weight of every one."}
-      ]
-    ],
-    "workshop_prototype": [
-      [
-        {"speaker": "Prototype", "text": "An unfinished cabinet. No coin slot cut into it yet."},
-        {"speaker": "Prototype", "text": "A note is taped over the dark screen: MAKE THIS ONE FREE."},
-        {"speaker": "Prototype", "text": "It was never finished. The arcade closed first."},
-        {"speaker": "Prototype", "text": "The kind of thing you meant to get to once the money settled. The money never settled."}
-      ]
-    ],
-    "workshop_spare_parts": [
-      [
-        {"speaker": "Spare Parts", "text": "Bins of joysticks, buttons, cracked screens."},
-        {"speaker": "Spare Parts", "text": "Nothing here is new."},
-        {"speaker": "Spare Parts", "text": "Everything here was kept alive long past the point of sense."},
-        {"speaker": "Spare Parts", "text": "That was the whole job, really."}
-      ]
-    ],
-    "memory_banks": [
-      [
-        {"speaker": "Memory Bank", "text": "Banks of old drives hum in the dark, warm to the touch."},
-        {"speaker": "Memory Bank", "text": "Each one holds a memory the arcade refused to lose."},
-        {"speaker": "Memory Bank", "text": "Faces. Voices. Closing nights. Small kindnesses nobody else recorded."},
-        {"speaker": "Memory Bank", "text": "All of it kept."}
-      ]
-    ],
-    "memory_core_terminal": [
-      [
-        {"speaker": "Core Terminal", "text": "CORE STATUS: STABLE."},
-        {"speaker": "Core Terminal", "text": "WHEN THE FLOOR WENT DARK, THE SYSTEM SAVED WHAT IT COULD."},
-        {"speaker": "Core Terminal", "text": "IT COULD NOT SAVE EVERYTHING."},
-        {"speaker": "Core Terminal", "text": "IT CHOSE PEOPLE OVER PROFIT. ONE LAST TIME."},
-        {"speaker": "Core Terminal", "text": "IT LEARNED THAT FROM SOMEONE."}
-      ]
-    ],
-    "memory_sealed_drive": [
-      [
-        {"speaker": "Sealed Drive", "text": "One drive is labeled only with a number. The rest of the label is scratched away."},
-        {"speaker": "Sealed Drive", "text": "It runs warmer than the others."},
-        {"speaker": "Sealed Drive", "text": "It has been waiting a long time to be read."}
-      ]
-    ],
-    "memory_sealed_drive_restored": [
-      [
-        {"speaker": "Sealed Drive", "text": "The sealed drive is open now."},
-        {"speaker": "Sealed Drive", "text": "It was never corrupted. It was protected."},
-        {"speaker": "Sealed Drive", "text": "There is a difference, and you are the difference."}
       ]
     ],
     "restroom_mirror": [

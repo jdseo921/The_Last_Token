@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/common/MapTransition.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="5"]
 [ext_resource type="PackedScene" path="res://scenes/ui/QuestNotice.tscn" id="8"]
 [ext_resource type="Script" path="res://scripts/MapCollisionBounds.gd" id="9"]
 [ext_resource type="FontFile" path="res://assets/fonts/PressStart2P-Regular.ttf" id="fpx_title"]
@@ -27,10 +28,6 @@ polygon = PackedVector2Array(240, 126, 400, 126, 424, 220, 400, 314, 240, 314, 2
 [node name="SecurityTapePlaceholder" type="Polygon2D" parent="."]
 color = Color(0.14, 0.22, 0.3, 1)
 polygon = PackedVector2Array(224, 286, 416, 286, 416, 334, 224, 334)
-
-[node name="FinalNightWalkPlaceholder" type="Polygon2D" parent="."]
-color = Color(0.24, 0.18, 0.34, 1)
-polygon = PackedVector2Array(438, 276, 548, 276, 548, 334, 438, 334)
 
 [node name="StaffRoomDoorPlaceholder" type="Polygon2D" parent="."]
 color = Color(0.36, 0.08, 0.1, 1)
@@ -56,9 +53,6 @@ position = Vector2(320, 282)
 [node name="Spawn_FromSecurityTape" type="Marker2D" parent="."]
 position = Vector2(320, 348)
 
-[node name="Spawn_FromFinalNightWalk" type="Marker2D" parent="."]
-position = Vector2(492, 348)
-
 [node name="Player" parent="." instance=ExtResource("2")]
 position = Vector2(320, 360)
 
@@ -78,6 +72,7 @@ destination_name = "STAFF ROOM"
 arrow_direction = "up"
 label_offset_override = Vector2(-75, 28)
 required_flag = "maintenance_sync_completed"
+locked_dialogue = Array[String](["STAFF ROOM SEALED.", "The lock is still arguing with itself. Gus is waiting in Maintenance Hall."])
 
 [node name="UILayer" type="Node2D" parent="."]
 
@@ -108,6 +103,8 @@ position = Vector2(200, 404)
 size = Vector2(240, 24)
 text = ""
 horizontal_alignment = 1
+
+[node name="DialogueBox" parent="." instance=ExtResource("5")]
 
 [node name="PauseMenu" parent="." instance=ExtResource("4")]
 

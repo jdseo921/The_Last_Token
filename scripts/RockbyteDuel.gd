@@ -157,7 +157,7 @@ func _cabinet_turn(player_message: String) -> void:
 	if duel_finished:
 		return
 	turn_label.text = "Cabinet turn"
-	await get_tree().create_timer(CABINET_TURN_DELAY_SECONDS).timeout
+	await get_tree().create_timer(CABINET_TURN_DELAY_SECONDS, false).timeout
 	if duel_finished:
 		return
 	if left_pile == 0 and right_pile == 0:

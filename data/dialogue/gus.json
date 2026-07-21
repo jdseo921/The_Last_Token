@@ -53,7 +53,7 @@
         {"speaker": "Gus", "text": "Signal's fractured.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"},
         {"speaker": "Gus", "text": "Vendo has a machine for that, because of course he does.", "portrait": "res://assets/art/portraits/gus/gus_annoyed.png"},
         {"speaker": "Gus", "text": "Snack Alcove first."},
-        {"speaker": "Gus", "text": "Try not to let him sell you confidence in a can."}
+        {"speaker": "Gus", "text": "Do not stand in front of it too long. It starts diagnosing people."}
       ],
       [
         {"speaker": "Gus", "text": "Vending machines should vend.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
@@ -78,7 +78,7 @@
     ],
     "static_service_full_intro": [
       [
-        {"speaker": "Gus", "text": "You made it. Broken Score and Service Dash agree that the shutdown ended here.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
+        {"speaker": "Gus", "text": "You made it. Panel is already open, so we can skip the part where I repeat myself.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
         {"speaker": "Player", "text": "So the route I followed leads to this service line."},
         {"speaker": "Gus", "text": "Yes. The recovered sequence gives me context, but the line itself is still dead."},
         {"speaker": "Gus", "text": "Restore its breaker cells and relays before we ask the Staff Door anything important.", "portrait": "res://assets/art/portraits/gus/gus_alarmed.png"},
@@ -159,7 +159,7 @@
     "hub_checkin_prize_sort": [
       [
         {"speaker": "Player", "text": "Pip found a closing-shift code beneath the prize paint. They thought you might recognize it."},
-        {"speaker": "Gus", "text": "I do. It belongs to an inventory pass with a matching maintenance copy.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
+        {"speaker": "Gus", "text": "I do. Same closing night as that note I never had the guts to file. Fine. I am brave now.", "portrait": "res://assets/art/portraits/gus/gus_deadpan.png"},
         {"speaker": "Gus", "text": "That gives me a shift to trace, but the witness list is damaged. I am not certain who saw which part."},
         {"speaker": "Gus", "text": "Start with Mira. She closed the front counter and usually noticed who stayed behind.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
         {"speaker": "Player", "text": "Mira first. If anything else feels familiar, I will take it slowly."},
@@ -204,10 +204,10 @@
         {"speaker": "Gus", "text": "Still are, in the ways that matter.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
         {"speaker": "Gus", "text": "You always said routine was easier to carry than fear."},
         {"speaker": "Gus", "text": "Whole time you were the most scared one here, still sweeping up."},
-        {"speaker": "Gus", "text": "You walked in with the part that still noticed strange lights and wanted to see what was inside."},
-        {"speaker": "Gus", "text": "The other part remembered every exit, every unpaid repair, and every person depending on you."},
-        {"speaker": "Gus", "text": "I recognize both. Same stubborn person. Different loads."},
-        {"speaker": "Gus", "text": "A young heart does not mean being young enough to ignore bills. It means the bills do not get to decide what you are allowed to love.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
+        {"speaker": "Gus", "text": "You used to look at a broken cabinet like it was a good time and a bad invoice at once."},
+        {"speaker": "Gus", "text": "Never met anyone else who could hold both and keep sweeping."},
+        {"speaker": "Gus", "text": "Same stubborn person. Different load, is all."},
+        {"speaker": "Gus", "text": "The bills got loud. You kept liking this place anyway. Never figured out how you managed that.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"},
         {"speaker": "Gus", "text": "I do not want to clean around another absence.", "portrait": "res://assets/art/portraits/gus/gus_caring.png"}
       ]
     ]

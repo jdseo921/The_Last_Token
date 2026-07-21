@@ -32,7 +32,15 @@ func _ready() -> void:
 	call_deferred("_maybe_play_completion_anecdote")
 
 func can_open_pause_menu() -> bool:
-	return not _dialogue_is_active() and not ConscienceEncounterDirector.is_encounter_active()
+	return not _dialogue_is_active() and not ConscienceEncounterDirector.is_encounter_active() and not _choice_box_is_open()
+
+func _choice_box_is_open() -> bool:
+	if ui_layer == null:
+		return false
+	for child in ui_layer.get_children():
+		if child.has_method("open_choice") and child is CanvasItem and (child as CanvasItem).visible:
+			return true
+	return false
 
 func _apply_spawn_position() -> void:
 	var spawn_id := GameState.consume_pending_spawn_id()
@@ -243,7 +251,9 @@ func _go_to_maintenance_sync() -> void:
 func _refresh_gus_presence() -> void:
 	# Gus moves here only for the service sequence. Once the Sync accepts the
 	# player, he returns to the hub and leaves the Staff Access discovery alone.
-	var available := GameState.lost_shift_file_completed and (not GameState.maintenance_sync_completed or not GameState.gus_sync_anecdote_seen) and not (GameState.twist_reveal_seen or GameState.post_reveal_roam_unlocked)
+	# Post-reveal he drifts back so the Static Service Run replay stays reachable.
+	var post_reveal := GameState.twist_reveal_seen or GameState.post_reveal_roam_unlocked
+	var available := (GameState.lost_shift_file_completed and (not GameState.maintenance_sync_completed or not GameState.gus_sync_anecdote_seen) and not post_reveal) or GameState.post_reveal_roam_unlocked
 	gus.visible = available
 	gus.monitoring = available
 	gus.monitorable = available
@@ -325,6 +335,47 @@ func _setup_ambient_sprite_effects() -> void:
 			"speed": 0.82,
 			"sprite_sheet_path": AMBIENT_EFFECTS.STATIC_SPARK,
 			"sprite_alpha": 0.64,
+		},
+		{
+			"name": "StaffPassageWarningLight",
+			"position": Vector2(346, 132),
+			"scale": Vector2(1.25, 1.25),
+			"effect_type": "blink",
+			"speed": 0.4,
+			"intensity": 0.07,
+			"sprite_sheet_path": AMBIENT_EFFECTS.WARNING_LIGHT,
+			"sprite_alpha": 0.7,
+		},
+		{
+			"name": "GusWorkbenchSpark",
+			"position": Vector2(138, 226),
+			"scale": Vector2(1.15, 1.15),
+			"effect_type": "random_screen_flash",
+			"speed": 0.78,
+			"intensity": 0.07,
+			"sprite_sheet_path": AMBIENT_EFFECTS.STATIC_SPARK,
+			"sprite_alpha": 0.6,
+		},
+		{
+			"name": "SyncDoorSparkB",
+			"position": Vector2(500, 172),
+			"scale": Vector2(1.1, 1.1),
+			"effect_type": "random_screen_flash",
+			"speed": 0.9,
+			"intensity": 0.06,
+			"sprite_sheet_path": AMBIENT_EFFECTS.STATIC_SPARK,
+			"sprite_alpha": 0.55,
+		},
+		{
+			"name": "HallFloorDustDrift",
+			"position": Vector2(280, 300),
+			"scale": Vector2(0.9, 0.9),
+			"effect_type": "dust_mote_drift",
+			"speed": 0.4,
+			"intensity": 0.16,
+			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
+			"sprite_alpha": 0.26,
+			"sprite_modulate": Color(1.0, 0.72, 0.55, 1.0),
 		},
 	])
 

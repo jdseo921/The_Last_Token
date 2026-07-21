@@ -50,15 +50,15 @@ func get_encounter_lines(encounter_id: String) -> Array:
 			]
 		"after_lost_shift_file":
 			return []
-		"after_final_night_walk":
+		"staff_corridor_approach":
 			return [
-				{"speaker": "???", "text": "You walked the route. Counter dark. Cabinet awake. Back hall open."},
-				{"speaker": "???", "text": "Two signals in one door. One kept the dream. One kept the cost."},
+				{"speaker": "???", "text": "You found the access hall. The last door in this building that still knows your name."},
+				{"speaker": "???", "text": "You know what that door heard. You walked up the hall anyway."},
 				{"speaker": "???", "text": "You have spent this whole night asking which one you are."},
 				{"speaker": "???", "text": "The staff never stopped seeing one person. They only saw that you no longer knew what they knew.", "effect": "glitch"},
 				{"speaker": "???", "text": "I did not appear in one instant. Every bill you hid, every fear you swallowed, taught me how to speak."},
 				{"speaker": "???", "text": "The last night only made the separation impossible to ignore."},
-				{"speaker": "???", "text": "One more echo, and you will have to look at who.", "effect": "shake"},
+				{"speaker": "???", "text": "One restored tape, and you will have to look at who is on it.", "effect": "shake"},
 				{"speaker": "???", "text": "I am not going to make it easy.", "effect": "silent", "pause": 0.2},
 			]
 		_:
@@ -74,8 +74,10 @@ func _should_trigger(encounter_id: String) -> bool:
 			return GameState.circuit_soda_completed and not GameState.twist_reveal_seen
 		"after_lost_shift_file":
 			return false
-		"after_final_night_walk":
-			return GameState.final_night_walk_completed and not GameState.twist_reveal_seen
+		"staff_corridor_approach":
+			# Fires the first time the player reaches the Staff Corridor, once
+			# the sync has opened the staff route and before the reveal.
+			return GameState.maintenance_sync_completed and not GameState.twist_reveal_seen
 		_:
 			return false
 

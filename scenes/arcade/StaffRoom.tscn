@@ -45,9 +45,6 @@ position = Vector2(320, 312)
 [node name="Spawn_FromSecurityTape" type="Marker2D" parent="."]
 position = Vector2(176, 246)
 
-[node name="Spawn_FromFinalNightWalk" type="Marker2D" parent="."]
-position = Vector2(176, 246)
-
 [node name="Spawn_FromMemoryEcho" type="Marker2D" parent="."]
 position = Vector2(244, 246)
 
@@ -63,7 +60,7 @@ label_offset = Vector2(9, 38)
 use_placeholder_visual = false
 
 [node name="SecurityTapeDesk" parent="." instance=ExtResource("3")]
-position = Vector2(126, 249)
+position = Vector2(140, 249)
 interact_extents = Vector2(67.2, 120)
 interactable_kind = "security_tape_desk"
 label_text = "ARCHIVE DESK"

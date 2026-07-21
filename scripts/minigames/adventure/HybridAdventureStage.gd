@@ -739,8 +739,6 @@ func _on_stage_completed() -> void:
 			GameState.complete_pip_secret()
 		"static_service_run":
 			GameState.complete_static_service_run()
-		"final_night_walk":
-			GameState.complete_final_night_walk()
 		"night_ledger_run":
 			GameState.complete_night_ledger_run()
 
@@ -760,9 +758,6 @@ func _on_return_pressed() -> void:
 		"static_service_run":
 			GameState.set_pending_spawn_id("Spawn_FromMaintenanceSync")
 			SceneChanger.go_to_maintenance_hall()
-		"final_night_walk":
-			GameState.set_pending_spawn_id("Spawn_FromFinalNightWalk")
-			SceneChanger.go_to_staff_room()
 		"night_ledger_run":
 			if not SceneChanger.go_to_return_point():
 				SceneChanger.go_to_snack_hallway()

@@ -24,7 +24,6 @@ var scenes := [
 	"res://scenes/maps/hallways/SnackHallway.tscn",
 	"res://scenes/maps/hallways/PrizeHallway.tscn",
 	"res://scenes/maps/hallways/MaintenanceHallway.tscn",
-	"res://scenes/maps/hallways/BackHallway.tscn",
 	"res://scenes/maps/hallways/CabinetSnackHallway.tscn",
 	"res://scenes/maps/hallways/SnackPrizeHallway.tscn",
 	"res://scenes/maps/hallways/MaintenanceStaffHallway.tscn",

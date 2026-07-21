@@ -106,7 +106,7 @@ var owner_portrait_secret_found := false
 var employee_04_file_found := false
 var vendo_memory_riddle_secret_found := false
 var ssr_secret_cache_found := false
-var fnw_secret_echo_found := false
+var tape_anomaly_frame_seen := false
 var post_reveal_witness_route_completed := false
 var staff_record_01_read := false
 var staff_record_02_read := false
@@ -120,7 +120,6 @@ var witness_cabinet07_heard := false
 var witness_roxy_heard := false
 var witness_pip_heard := false
 var witness_route_completed := false
-var echo_ticket_counter_seen := false
 var echo_cabinet07_seen := false
 var echo_owner_portrait_04_seen := false
 
@@ -354,7 +353,7 @@ func get_secrets_found_count_from_data(data: Dictionary) -> int:
 		found += 1
 	if bool(data.get("ssr_secret_cache_found", false)):
 		found += 1
-	if bool(data.get("fnw_secret_echo_found", false)):
+	if bool(data.get("tape_anomaly_frame_seen", data.get("fnw_secret_echo_found", false))):
 		found += 1
 	if bool(data.get("witness_route_completed", false)) or bool(data.get("post_reveal_witness_route_completed", false)):
 		found += 1
@@ -379,7 +378,7 @@ func get_story_phase_label_from_data(data: Dictionary) -> String:
 	if bool(data.get("final_night_walk_completed", false)):
 		return "Memory Echo"
 	if bool(data.get("security_tape_assembly_completed", false)):
-		return "Final Night Walk"
+		return "Staff Room Terminal"
 	# The Staff Access latch opens early so players are not blocked after Gus's
 	# briefing. It is a route permission, not a story-phase advance.
 	if bool(data.get("maintenance_sync_completed", false)) or bool(data.get("story_puzzle_completed", false)):
@@ -524,7 +523,7 @@ func reset_for_new_game() -> void:
 	employee_04_file_found = false
 	vendo_memory_riddle_secret_found = false
 	ssr_secret_cache_found = false
-	fnw_secret_echo_found = false
+	tape_anomaly_frame_seen = false
 	post_reveal_witness_route_completed = false
 	staff_record_01_read = false
 	staff_record_02_read = false
@@ -538,7 +537,6 @@ func reset_for_new_game() -> void:
 	witness_roxy_heard = false
 	witness_pip_heard = false
 	witness_route_completed = false
-	echo_ticket_counter_seen = false
 	echo_cabinet07_seen = false
 	echo_owner_portrait_04_seen = false
 	save_slot_index = 0
@@ -692,10 +690,9 @@ func complete_security_tape_assembly() -> void:
 	security_tape_assembly_completed = true
 	update_memory_signal_from_progress()
 
-func start_final_night_walk() -> void:
-	final_night_walk_started = true
-	update_memory_signal_from_progress()
-
+# The Final Night Walk stage was cut. These flags stay only so existing saves
+# keep loading and the late-game progression checks read the same as before;
+# nothing in the shipped route launches a stage for them.
 func complete_final_night_walk() -> void:
 	flag_postgame_replay_win()
 	final_night_walk_started = true
@@ -723,7 +720,7 @@ func mark_conscience_encounter_seen(encounter_id: String) -> void:
 			conscience_encounter_2_seen = true
 		"after_lost_shift_file":
 			conscience_encounter_3_seen = true
-		"after_final_night_walk":
+		"staff_corridor_approach":
 			conscience_encounter_4_seen = true
 		"final_conscience":
 			conscience_final_encounter_seen = true
@@ -744,7 +741,7 @@ func is_conscience_encounter_seen(encounter_id: String) -> bool:
 			return conscience_encounter_2_seen
 		"after_lost_shift_file":
 			return conscience_encounter_3_seen
-		"after_final_night_walk":
+		"staff_corridor_approach":
 			return conscience_encounter_4_seen
 		"final_conscience":
 			return conscience_final_encounter_seen or conscience_final_room_seen
@@ -989,7 +986,7 @@ func get_current_quest_data() -> Dictionary:
 				"required": true,
 			}
 		"broken_high_score":
-			if not roxy_met:
+			if get_npc_dialogue_count("roxy:broken_high_score_intro") == 0:
 				return _with_registry_quest_data({
 					"id": "broken_high_score",
 					"title": "Broken High Score",
@@ -1076,7 +1073,7 @@ func get_current_quest_data() -> Dictionary:
 				"id": "maintenance_sync",
 				"title": "Maintenance Sync",
 				"summary": "Run Maintenance Sync with Gus in Maintenance.",
-				"details": "Service power is restored. Talk to Gus in Maintenance Hall, then use Maintenance Sync to line up the Staff Door signals.",
+				"details": "Service power is restored. Meet Gus at the Staff Door in Maintenance Hall - he runs the sync with you on the spot.",
 			}, "maintenance_sync")
 		"static_service_run":
 			return _with_registry_quest_data({
@@ -1155,7 +1152,7 @@ func get_current_quest_data() -> Dictionary:
 				"id": "truth_filter",
 				"title": "Open the Truth Filter",
 				"summary": "Run the Truth Filter in Cabinet Row.",
-				"details": "Mr. Byte opened the Truth Filter. Sort the lying cabinets. Roxy says the staff record terminal across the row holds the shift log the filter quizzes you on.",
+				"details": "Mr. Byte opened the Truth Filter. Sort the lying cabinets. Roxy says the LOGS stack across the row holds the shift record the filter quizzes you on.",
 			}, "truth_filter")
 		"mr_byte_debrief":
 			return {
@@ -1337,7 +1334,7 @@ func to_save_data() -> Dictionary:
 		"employee_04_file_found": employee_04_file_found,
 		"vendo_memory_riddle_secret_found": vendo_memory_riddle_secret_found,
 		"ssr_secret_cache_found": ssr_secret_cache_found,
-		"fnw_secret_echo_found": fnw_secret_echo_found,
+		"tape_anomaly_frame_seen": tape_anomaly_frame_seen,
 		"post_reveal_witness_route_completed": post_reveal_witness_route_completed,
 		"staff_record_01_read": staff_record_01_read,
 		"staff_record_02_read": staff_record_02_read,
@@ -1351,7 +1348,6 @@ func to_save_data() -> Dictionary:
 		"witness_roxy_heard": witness_roxy_heard,
 		"witness_pip_heard": witness_pip_heard,
 		"witness_route_completed": witness_route_completed,
-		"echo_ticket_counter_seen": echo_ticket_counter_seen,
 		"echo_cabinet07_seen": echo_cabinet07_seen,
 		"echo_owner_portrait_04_seen": echo_owner_portrait_04_seen,
 		"opening_intro_seen": opening_intro_seen,
@@ -1547,7 +1543,8 @@ func apply_save_data(data: Dictionary) -> void:
 	employee_04_file_found = data.get("employee_04_file_found", employee_04_file_found)
 	vendo_memory_riddle_secret_found = data.get("vendo_memory_riddle_secret_found", vendo_memory_riddle_secret_found)
 	ssr_secret_cache_found = bool(data.get("ssr_secret_cache_found", ssr_secret_cache_found))
-	fnw_secret_echo_found = bool(data.get("fnw_secret_echo_found", fnw_secret_echo_found))
+	# Older saves stored this under the retired Final Night Walk name.
+	tape_anomaly_frame_seen = bool(data.get("tape_anomaly_frame_seen", data.get("fnw_secret_echo_found", tape_anomaly_frame_seen)))
 	post_reveal_witness_route_completed = bool(data.get("post_reveal_witness_route_completed", false))
 	staff_record_01_read = bool(data.get("staff_record_01_read", false))
 	staff_record_02_read = bool(data.get("staff_record_02_read", false))
@@ -1568,7 +1565,6 @@ func apply_save_data(data: Dictionary) -> void:
 	_complete_witness_route_if_ready()
 	if witness_route_completed:
 		post_reveal_witness_route_completed = true
-	echo_ticket_counter_seen = bool(data.get("echo_ticket_counter_seen", echo_ticket_counter_seen))
 	echo_cabinet07_seen = bool(data.get("echo_cabinet07_seen", echo_cabinet07_seen))
 	echo_owner_portrait_04_seen = bool(data.get("echo_owner_portrait_04_seen", echo_owner_portrait_04_seen))
 	opening_intro_seen = data.get("opening_intro_seen", opening_intro_seen)

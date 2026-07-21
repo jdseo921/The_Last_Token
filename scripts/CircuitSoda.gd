@@ -165,7 +165,21 @@ func _start_round(round_index: int) -> void:
 	instruction_label.text = "CIRCUIT SODA\nLink visible hoses from INPUT to OUTPUT.\nAmber-bolted pipes are fixed.\nSome hoses lead to dead ends."
 	status_label.text = "Route the soda from INPUT to OUTPUT."
 	_refresh_grid()
+	_seed_tile_focus()
 	_check_win()
+
+func _seed_tile_focus() -> void:
+	# Keyboard players need a focused control to start arrow-key navigation.
+	for index in range(tile_buttons.size()):
+		var tile := tiles[index]
+		if bool(tile.get("locked", false)) or str(tile.get("shape", "")) == "cross":
+			continue
+		var button := tile_buttons[index]
+		if not button.disabled:
+			button.grab_focus()
+			return
+	if reset_button.visible and not reset_button.disabled:
+		reset_button.grab_focus()
 
 func _on_tile_pressed(index: int) -> void:
 	if completed or round_input_locked or index < 0 or index >= tiles.size():
@@ -221,7 +235,7 @@ func _check_win() -> void:
 		button.disabled = true
 	reset_button.disabled = true
 	hint_button.disabled = true
-	await get_tree().create_timer(0.25).timeout
+	await get_tree().create_timer(0.25, false).timeout
 	if completed:
 		return
 	if current_round + 1 >= ROUNDS.size():
@@ -230,7 +244,7 @@ func _check_win() -> void:
 	_play_audio("play_score_blip")
 	ARCADE_JUICE.flash_overlay(self, feedback_flash, ARCADE_JUICE.FLASH_CYAN, 0.22)
 	status_label.text = "MEMORY FLOW ACCEPTED."
-	await get_tree().create_timer(0.75).timeout
+	await get_tree().create_timer(0.75, false).timeout
 	_start_round(current_round + 1)
 
 func _complete_puzzle() -> void:

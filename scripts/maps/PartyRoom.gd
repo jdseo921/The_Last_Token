@@ -6,6 +6,7 @@ extends Node2D
 
 const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
 const ROUTE_CUE_SCRIPT := preload("res://scripts/RouteCue.gd")
+const AMBIENT_EFFECTS := preload("res://scripts/AmbientSpriteEffects.gd")
 
 @onready var player: CharacterBody2D = $Player
 @onready var dialogue_box: CanvasLayer = $UILayer/DialogueBox
@@ -20,6 +21,7 @@ func _ready() -> void:
 	AudioManager.play_music_for_context("prize_corner")
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
+	_setup_ambient_sprite_effects()
 	_setup_route_cue()
 	_apply_spawn_position()
 	_on_prompt_changed("")
@@ -94,3 +96,51 @@ func _get_env_state(key: String, fallback: Array) -> Array:
 		if not restored.is_empty():
 			return restored
 	return DIALOGUE_POOL.get_lines("environment_objects", key, fallback)
+
+
+func _setup_ambient_sprite_effects() -> void:
+	AMBIENT_EFFECTS.create_layer(self, $UILayer, [
+		{
+			"name": "StageNeonFlickerA",
+			"position": Vector2(250, 84),
+			"scale": Vector2(1.15, 1.15),
+			"effect_type": "flicker",
+			"speed": 0.85,
+			"intensity": 0.07,
+			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
+			"sprite_alpha": 0.55,
+			"sprite_modulate": Color(1.0, 0.62, 0.92, 1.0),
+		},
+		{
+			"name": "StageNeonFlickerB",
+			"position": Vector2(390, 84),
+			"scale": Vector2(1.15, 1.15),
+			"effect_type": "flicker",
+			"speed": 0.68,
+			"intensity": 0.07,
+			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
+			"sprite_alpha": 0.55,
+			"sprite_modulate": Color(0.62, 0.9, 1.0, 1.0),
+		},
+		{
+			"name": "PhotoWallTwinkle",
+			"position": Vector2(170, 262),
+			"scale": Vector2(1.1, 1.1),
+			"effect_type": "random_screen_flash",
+			"speed": 0.5,
+			"intensity": 0.05,
+			"sprite_sheet_path": AMBIENT_EFFECTS.PRIZE_TWINKLE,
+			"sprite_alpha": 0.5,
+		},
+		{
+			"name": "BirthdayCabinetScanline",
+			"position": Vector2(475, 268),
+			"scale": Vector2(1.5, 1.5),
+			"effect_type": "scanline_pulse",
+			"speed": 0.7,
+			"sprite_sheet_path": AMBIENT_EFFECTS.SCANLINE_BAR,
+			"sprite_frame_size": Vector2i(32, 8),
+			"sprite_alpha": 0.6,
+			"sprite_modulate": Color(0.65, 0.85, 1.0, 1.0),
+		},
+	])

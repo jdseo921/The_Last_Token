@@ -16,7 +16,6 @@ var _targets := [
 	["security_tape", "res://scenes/minigames/SecurityTapeAssembly.tscn"],
 	["memory_echo", "res://scenes/cutscenes/MemoryEcho.tscn"],
 	["static_service_run", "res://scenes/minigames/StaticServiceRun.tscn"],
-	["final_night_walk", "res://scenes/minigames/FinalNightWalk.tscn"],
 ]
 var _i := 0
 var _inst: Node = null

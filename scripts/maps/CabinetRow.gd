@@ -30,7 +30,15 @@ func _ready() -> void:
 	call_deferred("_maybe_start_conscience_encounter")
 
 func can_open_pause_menu() -> bool:
-	return not _dialogue_is_active() and not ConscienceEncounterDirector.is_encounter_active()
+	return not _dialogue_is_active() and not ConscienceEncounterDirector.is_encounter_active() and not _choice_box_is_open()
+
+func _choice_box_is_open() -> bool:
+	if ui_layer == null:
+		return false
+	for child in ui_layer.get_children():
+		if child.has_method("open_choice") and child is CanvasItem and (child as CanvasItem).visible:
+			return true
+	return false
 
 func _maybe_start_conscience_encounter() -> void:
 	# The ??? encounter no longer ambushes the doorway: it lands inside the
@@ -210,8 +218,8 @@ func _handle_mr_byte() -> void:
 	if GameState.lost_shift_file_started and not GameState.lost_shift_file_completed and not GameState.story_puzzle_completed:
 		start_dialogue(_get_mr_byte_sequential_lines("closing_shift_echoes_support", [
 			{"speaker": "Mr. Byte", "text": "Closing-shift evidence route detected."},
-			{"speaker": "Mr. Byte", "text": "Gus is sorting the files. Begin with Mira; recovered connections may supply the rest."},
-			{"speaker": "Mr. Byte", "text": "The Logs beside this kiosk remain available for Truth Filter reference."},
+			{"speaker": "Mr. Byte", "text": "Gus is sorting the files. Continue from the last connection you recovered."},
+			{"speaker": "Mr. Byte", "text": "The Logs beside this kiosk still hold the closing-shift excerpt."},
 		]))
 		return
 	if GameState.lost_shift_file_completed and not GameState.maintenance_sync_completed and not GameState.story_puzzle_completed:
@@ -220,16 +228,22 @@ func _handle_mr_byte() -> void:
 			{"speaker": "Mr. Byte", "text": "Service-line continuation authorized."},
 		]))
 		return
-	if GameState.maintenance_sync_completed and not GameState.security_tape_assembly_completed and not GameState.story_puzzle_completed:
+	if GameState.maintenance_sync_completed and not GameState.security_tape_assembly_completed:
 		start_dialogue(_get_mr_byte_sequential_lines("security_tape_support", [
 			{"speaker": "Mr. Byte", "text": "Security tape fragments detected."},
 			{"speaker": "Mr. Byte", "text": "Recommended action: Security Tape Assembly."},
 		]))
 		return
-	start_dialogue(_get_mr_byte_lines("truth_filter_completion_anecdote", [
-		{"speaker": "Mr. Byte", "text": "Truth Filter passed."},
-		{"speaker": "Mr. Byte", "text": "Identity conflict remains."},
-	]))
+	if not GameState.gus_hub_checkin_truth_filter_done:
+		start_dialogue([
+			{"speaker": "Mr. Byte", "text": "Findings filed. STAFF 04 flagged."},
+			{"speaker": "Mr. Byte", "text": "Gus holds the floor report. Ask him about the broadcast."},
+		])
+		return
+	start_dialogue([
+		{"speaker": "Mr. Byte", "text": "Truth Filter archives stable."},
+		{"speaker": "Mr. Byte", "text": "Follow the active lead. My queue is mercifully empty."},
+	])
 
 func _handle_truth_filter() -> void:
 	if not GameState.lost_token_quest_completed:
@@ -317,10 +331,10 @@ func _announce_optional_quest(_quest_id: String) -> void:
 
 func _handle_broken_high_score() -> void:
 	if not _broken_high_score_unlocked():
-		start_dialogue(_get_roxy_lines("first_meeting_locked", [
-			{"speaker": "Roxy", "text": "The score cabinet is not ready yet."},
-			{"speaker": "Roxy", "text": "Come back after you beat something louder."},
-		]))
+		start_dialogue([
+			{"speaker": "Broken Score", "text": "SCORE BOARD DORMANT."},
+			{"speaker": "Player", "text": "Dead screen. The regular parked next to it looks like she knows why."},
+		])
 		return
 	if GameState.post_reveal_roam_unlocked and GameState.broken_high_score_completed:
 		start_dialogue(_get_roxy_lines("broken_high_score_replay_offer", [
@@ -349,13 +363,13 @@ func _handle_broken_high_score() -> void:
 				])
 				return
 		start_dialogue([
-			{"speaker": "Broken High Score", "text": "PREVIOUS SCORE FOUND."},
-			{"speaker": "Broken High Score", "text": "RECORD RESTORED."},
+			{"speaker": "Broken Score", "text": "RESTORED ENTRY: 00:17 / FINAL INPUT"},
+			{"speaker": "Broken Score", "text": "ENTRY CLASSIFIED AS TIME. NOT SCORE."},
 		])
 		return
-	if not GameState.roxy_met:
+	if GameState.get_npc_dialogue_count("roxy:broken_high_score_intro") == 0:
 		start_dialogue([
-			{"speaker": "Player", "text": "The woman beside that score cabinet keeps watching it."},
+			{"speaker": "Player", "text": "The regular parked beside that score cabinet has not looked away from it once."},
 			{"speaker": "Player", "text": "I should ask her before touching anything."},
 		])
 		return
@@ -387,11 +401,12 @@ func _handle_truth_filter_logs() -> void:
 		{"speaker": "Logs", "text": "Subject memory incomplete."},
 		{"speaker": "Logs", "text": "Do not repeat name until signal stabilizes."},
 	])
-	lines.append_array(_get_mr_byte_lines("staff_records_chain", [
-		{"speaker": "Mr. Byte", "text": "Staff record chain active."},
-		{"speaker": "Mr. Byte", "text": "Names withheld until signal stabilizes."},
-		{"speaker": "Mr. Byte", "text": "Additional staff records required."},
-	]))
+	if not GameState.staff_records_chain_completed and not _is_post_reveal():
+		lines.append_array(_get_mr_byte_lines("staff_records_chain", [
+			{"speaker": "Mr. Byte", "text": "Staff record chain active."},
+			{"speaker": "Mr. Byte", "text": "Names withheld until signal stabilizes."},
+			{"speaker": "Mr. Byte", "text": "Additional staff records required."},
+		]))
 	lines.append_array(_get_staff_records_completion_lines())
 	var after_dialogue := Callable(self, "_show_staff_records_complete_notice") if not was_completed and GameState.staff_records_chain_completed else Callable()
 	start_dialogue(lines, after_dialogue)
@@ -488,6 +503,49 @@ func _setup_ambient_sprite_effects() -> void:
 			"sprite_alpha": 0.62,
 			"sprite_modulate": Color(1.0, 0.88, 0.45, 1.0),
 		},
+		{
+			"name": "RoxyCabinetGlow",
+			"position": Vector2(472, 266),
+			"scale": Vector2(1.15, 1.15),
+			"effect_type": "glow_pulse",
+			"speed": 0.5,
+			"intensity": 0.07,
+			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
+			"sprite_alpha": 0.55,
+			"sprite_modulate": Color(1.0, 0.62, 0.92, 1.0),
+		},
+		{
+			"name": "CabinetMarqueeFlicker",
+			"position": Vector2(410, 120),
+			"scale": Vector2(1.1, 1.1),
+			"effect_type": "flicker",
+			"speed": 0.9,
+			"intensity": 0.07,
+			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
+			"sprite_alpha": 0.5,
+			"sprite_modulate": Color(0.84, 0.72, 1.0, 1.0),
+		},
+		{
+			"name": "BrokenScoreScanline",
+			"position": Vector2(500, 148),
+			"scale": Vector2(1.4, 1.4),
+			"effect_type": "scanline_pulse",
+			"speed": 0.66,
+			"sprite_sheet_path": AMBIENT_EFFECTS.SCANLINE_BAR,
+			"sprite_frame_size": Vector2i(32, 8),
+			"sprite_alpha": 0.5,
+		},
+		{
+			"name": "RowFloorDustDrift",
+			"position": Vector2(240, 262),
+			"scale": Vector2(0.9, 0.9),
+			"effect_type": "dust_mote_drift",
+			"speed": 0.42,
+			"intensity": 0.15,
+			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
+			"sprite_alpha": 0.28,
+			"sprite_modulate": Color(0.84, 0.78, 1.0, 1.0),
+		},
 	])
 
 func _refresh_truth_filter_state() -> void:
@@ -525,13 +583,17 @@ func _launch_high_score_replay() -> void:
 
 func _after_byte_debrief() -> void:
 	# ??? answers Mr. Byte's "there is no form for this" - then the protagonist
-	# reacts to having heard it.
+	# reacts to having heard it. Deferred so the encounter captures the player's
+	# control state only after _on_dialogue_finished has re-enabled it.
+	call_deferred("_start_byte_debrief_encounter")
+
+func _start_byte_debrief_encounter() -> void:
 	if not ConscienceEncounterDirector.maybe_start_encounter(self, "after_truth_filter", Callable(self, "_play_byte_debrief_monologue")):
 		_play_byte_debrief_monologue()
 
 func _play_byte_debrief_monologue() -> void:
 	start_dialogue([
-		{"speaker": "Player", "text": "That was not ambient noise. It spoke to me and knew my next move."},
-		{"speaker": "Player", "text": "Mr. Byte could not trace it. The man in the hub looks like he has spent too many nights keeping this place alive."},
+		{"speaker": "Player", "text": "That was not ambient noise. It spoke to me and named something I have not said out loud."},
+		{"speaker": "Player", "text": "Mr. Byte could not trace it. Gus has kept these speakers running longer than anyone here."},
 		{"speaker": "Player", "text": "He might know what that voice was. It is worth asking."},
 	])

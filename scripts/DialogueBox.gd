@@ -180,7 +180,7 @@ func _refresh_line() -> void:
 		return
 	var line: Dictionary = dialogue_lines[current_index]
 	var speaker := str(line.get("speaker", ""))
-	var text := BALANCED_TEXT.split_balanced(str(line.get("text", "")), 56)
+	var text := str(line.get("text", "")).strip_edges()
 	speaker_name_label.text = speaker
 	_apply_speaker_font(speaker)
 	current_line_is_antagonist = _is_antagonist_speaker(speaker)

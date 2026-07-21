@@ -13,7 +13,6 @@ const CHECKPOINTS := [
 	{"id": "after_static_service_run", "label": "After Static Service Run"},
 	{"id": "after_maintenance_sync", "label": "After Maintenance Sync"},
 	{"id": "after_security_tape_assembly", "label": "After Security Tape Assembly"},
-	{"id": "after_final_night_walk", "label": "After Final Night Walk"},
 	{"id": "after_memory_echo", "label": "After Memory Echo"},
 	{"id": "post_reveal_roam", "label": "Post-Reveal Roam"},
 ]
@@ -170,9 +169,6 @@ func _apply_checkpoint(checkpoint_id: String) -> void:
 		"after_security_tape_assembly":
 			_apply_after_security_tape_assembly()
 			_finish_checkpoint(SceneChanger.STAFF_CORRIDOR_SCENE, "Spawn_FromSecurityTape", "After Security Tape Assembly")
-		"after_final_night_walk":
-			_apply_after_final_night_walk()
-			_finish_checkpoint(SceneChanger.STAFF_CORRIDOR_SCENE, "Spawn_FromFinalNightWalk", "After Final Night Walk")
 		"after_memory_echo":
 			_apply_after_memory_echo()
 			_finish_checkpoint(SceneChanger.STAFF_CORRIDOR_SCENE, "Spawn_FromMemoryEcho", "After Memory Echo")
@@ -230,12 +226,8 @@ func _apply_after_security_tape_assembly() -> void:
 	_apply_after_maintenance_sync()
 	GameState.complete_security_tape_assembly()
 
-func _apply_after_final_night_walk() -> void:
-	_apply_after_security_tape_assembly()
-	GameState.complete_final_night_walk()
-
 func _apply_after_memory_echo() -> void:
-	_apply_after_final_night_walk()
+	_apply_after_security_tape_assembly()
 	GameState.complete_memory_echo()
 
 func _apply_post_reveal_roam() -> void:

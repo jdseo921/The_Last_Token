@@ -40,7 +40,6 @@ func _run() -> void:
 		SceneChanger.STATIC_SERVICE_RUN_SCENE: SceneChanger.MAINTENANCE_HALL_SCENE,
 		SceneChanger.SYNC_DOOR_PUZZLE_SCENE: SceneChanger.MAINTENANCE_HALL_SCENE,
 		SceneChanger.SECURITY_TAPE_ASSEMBLY_SCENE: SceneChanger.STAFF_CORRIDOR_SCENE,
-		SceneChanger.FINAL_NIGHT_WALK_SCENE: SceneChanger.STAFF_CORRIDOR_SCENE,
 		SceneChanger.MEMORY_ECHO_SCENE: SceneChanger.STAFF_CORRIDOR_SCENE,
 	}
 	for minigame_path in resume_cases:

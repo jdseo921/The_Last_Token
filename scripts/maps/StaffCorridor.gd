@@ -3,29 +3,58 @@ extends Node2D
 const ROUTE_CUE_SCRIPT := preload("res://scripts/RouteCue.gd")
 const AMBIENT_EFFECTS := preload("res://scripts/AmbientSpriteEffects.gd")
 const BACKGROUND_ART_PATH := "res://assets/art/maps/staff_corridor/staff_corridor_background_640x440.png"
-const BACKGROUND_PLACEHOLDERS := ["Background", "CorridorPath", "MemoryEchoPlaceholder", "SecurityTapePlaceholder", "FinalNightWalkPlaceholder", "StaffRoomDoorPlaceholder"]
+const BACKGROUND_PLACEHOLDERS := ["Background", "CorridorPath", "MemoryEchoPlaceholder", "SecurityTapePlaceholder", "StaffRoomDoorPlaceholder"]
 
 @onready var player: CharacterBody2D = $Player
 @onready var ui_layer: Node2D = $UILayer
 @onready var prompt_label: Label = $UILayer/InteractionPrompt
 @onready var prompt_background: ColorRect = $UILayer/InteractionPromptBackground
 @onready var quest_notice: CanvasLayer = $QuestNotice
+@onready var dialogue_box: CanvasLayer = $DialogueBox
 
 var route_cue: Control = null
+var pending_after_dialogue: Callable = Callable()
 
 
 func _ready() -> void:
 	AudioManager.play_music_for_context("staff_corridor")
 	_apply_background_art()
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
+	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
 	_setup_ambient_sprite_effects()
 	_setup_route_cue()
 	_apply_spawn_position()
 	_on_prompt_changed("")
+	call_deferred("_maybe_start_conscience_encounter")
 
 
 func can_open_pause_menu() -> bool:
-	return true
+	return not _dialogue_is_active() and not ConscienceEncounterDirector.is_encounter_active()
+
+
+func start_dialogue(lines: Array, after_dialogue: Callable = Callable()) -> void:
+	pending_after_dialogue = after_dialogue
+	if player and player.has_method("set_control_enabled"):
+		player.set_control_enabled(false)
+	dialogue_box.start_dialogue(lines)
+
+
+func _on_dialogue_finished() -> void:
+	if pending_after_dialogue.is_valid():
+		pending_after_dialogue.call()
+		pending_after_dialogue = Callable()
+	if player and player.has_method("set_control_enabled"):
+		player.set_control_enabled(true)
+
+
+func _dialogue_is_active() -> bool:
+	if dialogue_box == null:
+		return false
+	return dialogue_box.get("active") == true
+
+
+func _maybe_start_conscience_encounter() -> void:
+	ConscienceEncounterDirector.maybe_start_encounter(self, "staff_corridor_approach")
 
 
 func _apply_background_art() -> void:
@@ -84,17 +113,6 @@ func _setup_ambient_sprite_effects() -> void:
 			"sprite_alpha": 0.8,
 		},
 		{
-			"name": "MemoryEchoBeacon",
-			"position": Vector2(320, 228),
-			"scale": Vector2(1.9, 1.9),
-			"effect_type": "glow_pulse",
-			"speed": 0.5,
-			"sprite_sheet_path": AMBIENT_EFFECTS.MEMORY_WISP,
-			"sprite_frame_size": Vector2i(24, 16),
-			"sprite_alpha": 0.85,
-			"sprite_modulate": Color(0.6, 0.98, 1.0, 1.0),
-		},
-		{
 			"name": "MemoryEchoWispA",
 			"position": Vector2(292, 190),
 			"scale": Vector2(1.55, 1.55),
@@ -118,14 +136,24 @@ func _setup_ambient_sprite_effects() -> void:
 			"sprite_modulate": Color(1.0, 0.76, 1.0, 1.0),
 		},
 		{
-			"name": "SecurityTapeScanline",
-			"position": Vector2(320, 309),
-			"scale": Vector2(2.25, 1.7),
-			"effect_type": "scanline_pulse",
-			"speed": 0.74,
-			"active_flag_optional": "maintenance_sync_completed",
-			"sprite_sheet_path": AMBIENT_EFFECTS.SCANLINE_BAR,
-			"sprite_frame_size": Vector2i(32, 8),
-			"sprite_alpha": 0.72,
+			"name": "StaffDoorWarningLight",
+			"position": Vector2(296, 52),
+			"scale": Vector2(1.2, 1.2),
+			"effect_type": "blink",
+			"speed": 0.45,
+			"intensity": 0.07,
+			"sprite_sheet_path": AMBIENT_EFFECTS.WARNING_LIGHT,
+			"sprite_alpha": 0.66,
+		},
+		{
+			"name": "CorridorDustWispC",
+			"position": Vector2(282, 356),
+			"scale": Vector2(1.1, 1.1),
+			"effect_type": "dust_mote_drift",
+			"speed": 0.4,
+			"intensity": 0.14,
+			"sprite_sheet_path": AMBIENT_EFFECTS.MEMORY_WISP,
+			"sprite_frame_size": Vector2i(24, 16),
+			"sprite_alpha": 0.5,
 		},
 	])

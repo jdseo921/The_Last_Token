@@ -6,6 +6,7 @@ extends Node2D
 
 const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
 const ROUTE_CUE_SCRIPT := preload("res://scripts/RouteCue.gd")
+const AMBIENT_EFFECTS := preload("res://scripts/AmbientSpriteEffects.gd")
 
 @onready var player: CharacterBody2D = $Player
 @onready var dialogue_box: CanvasLayer = $UILayer/DialogueBox
@@ -20,6 +21,7 @@ func _ready() -> void:
 	AudioManager.play_music_for_context("arcade_hub")
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
+	_setup_ambient_sprite_effects()
 	_setup_route_cue()
 	_apply_spawn_position()
 	_on_prompt_changed("")
@@ -95,3 +97,52 @@ func _get_env_state(key: String, fallback: Array) -> Array:
 		if not restored.is_empty():
 			return restored
 	return DIALOGUE_POOL.get_lines("environment_objects", key, fallback)
+
+
+func _setup_ambient_sprite_effects() -> void:
+	# No MEMORY_WISP here on purpose: the mirror's foreshadow stays in text.
+	# Static and scanline read as an electrical fault, not the private channel.
+	AMBIENT_EFFECTS.create_layer(self, $UILayer, [
+		{
+			"name": "MirrorStaticFlash",
+			"position": Vector2(320, 132),
+			"scale": Vector2(1.2, 1.2),
+			"effect_type": "random_screen_flash",
+			"speed": 0.8,
+			"intensity": 0.07,
+			"sprite_sheet_path": AMBIENT_EFFECTS.STATIC_SPARK,
+			"sprite_alpha": 0.5,
+		},
+		{
+			"name": "MirrorScanline",
+			"position": Vector2(320, 152),
+			"scale": Vector2(1.6, 1.3),
+			"effect_type": "scanline_pulse",
+			"speed": 0.6,
+			"sprite_sheet_path": AMBIENT_EFFECTS.SCANLINE_BAR,
+			"sprite_frame_size": Vector2i(32, 8),
+			"sprite_alpha": 0.42,
+			"sprite_modulate": Color(0.66, 0.84, 1.0, 1.0),
+		},
+		{
+			"name": "WindowsillGlint",
+			"position": Vector2(470, 318),
+			"scale": Vector2(1.0, 1.0),
+			"effect_type": "random_screen_flash",
+			"speed": 0.55,
+			"intensity": 0.05,
+			"sprite_sheet_path": AMBIENT_EFFECTS.TICKET_GLINT,
+			"sprite_alpha": 0.55,
+		},
+		{
+			"name": "RestroomFloorDustDrift",
+			"position": Vector2(200, 286),
+			"scale": Vector2(0.85, 0.85),
+			"effect_type": "dust_mote_drift",
+			"speed": 0.38,
+			"intensity": 0.14,
+			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
+			"sprite_alpha": 0.25,
+			"sprite_modulate": Color(0.72, 0.8, 0.9, 1.0),
+		},
+	])

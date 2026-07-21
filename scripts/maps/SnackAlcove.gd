@@ -30,7 +30,15 @@ func _ready() -> void:
 	call_deferred("_maybe_play_circuit_replay_return")
 
 func can_open_pause_menu() -> bool:
-	return not _dialogue_is_active() and not ConscienceEncounterDirector.is_encounter_active()
+	return not _dialogue_is_active() and not ConscienceEncounterDirector.is_encounter_active() and not _choice_box_is_open()
+
+func _choice_box_is_open() -> bool:
+	if ui_layer == null:
+		return false
+	for child in ui_layer.get_children():
+		if child.has_method("open_choice") and child is CanvasItem and (child as CanvasItem).visible:
+			return true
+	return false
 
 func _maybe_play_circuit_replay_return() -> void:
 	if _dialogue_is_active() or ConscienceEncounterDirector.is_encounter_active():
@@ -149,6 +157,9 @@ func _handle_vendo() -> void:
 			{"speaker": "Vendo", "text": "TRUTH FILTER REQUIRED."},
 		])
 		return
+	# Defensive backstop: the Service Hallway door already gates on the Gus
+	# check-in, which requires the debrief, so this should be unreachable. It
+	# stays because the ??? encounter order breaks if the alcove opens early.
 	if not GameState.mr_byte_truth_filter_debriefed and not GameState.circuit_soda_completed:
 		start_dialogue([
 			{"speaker": "Vendo", "text": "One moment. The row next door says your Truth Filter report is still open."},
@@ -194,15 +205,21 @@ func _handle_vendo() -> void:
 			{"speaker": "Vendo", "text": "It sounded like a warning that forgot to introduce itself."},
 			{"speaker": "Player", "text": "So it may be protecting me. Or hiding something."},
 			{"speaker": "Vendo", "text": "Correct. Extremely unhelpful."},
-			{"speaker": "Vendo", "text": "Prize Service Hall is the passage on the right, between Circuit Soda and me."},
+			{"speaker": "Vendo", "text": "Prize Service Hall is the passage in the right wall, just past Circuit Soda."},
 			{"speaker": "Vendo", "text": "Ask Pip about the loose labels. Shelves overhear what machines miss."},
 			{"speaker": "Player", "text": "(Mystery voice, talking vending machine, suspicious plush. Finally, a normal errand.)"},
 		]), Callable(self, "_complete_vendo_unknown_clue"))
 		return
-	start_dialogue(_get_vendo_lines("overloaded_phase", [
-		{"speaker": "Vendo", "text": "Signal routed."},
-		{"speaker": "Vendo", "text": "Paperwork remains tragically next."},
-	]))
+	if GameState.maintenance_sync_completed:
+		start_dialogue(_get_vendo_lines("overloaded_phase", [
+			{"speaker": "Vendo", "text": "The Staff Room is close enough that my display is trying not to flicker."},
+			{"speaker": "Vendo", "text": "The door has stopped pretending it is only a door."},
+		]))
+		return
+	start_dialogue([
+		{"speaker": "Vendo", "text": "Signal routed. Prize Service Hall is still the right-hand passage."},
+		{"speaker": "Vendo", "text": "Pip is expecting you. Or dreading you. My sensors do not distinguish."},
+	])
 
 func _handle_circuit_soda() -> void:
 	if GameState.lying_cabinets_completed and not GameState.mr_byte_truth_filter_debriefed and not GameState.circuit_soda_completed:
@@ -224,7 +241,10 @@ func _handle_circuit_soda() -> void:
 		]), Callable(self, "_offer_circuit_soda_replay"))
 		return
 	if GameState.circuit_soda_completed:
-		start_dialogue(_get_environment_lines("circuit_soda_machine_restored", [
+		var completed_key := "circuit_soda_machine_restored"
+		if GameState.maintenance_sync_completed and not _is_post_reveal():
+			completed_key = "circuit_soda_machine_overloaded"
+		start_dialogue(_get_environment_lines(completed_key, [
 			{"speaker": "Circuit Soda", "text": "MEMORY FLOW RESTORED."},
 			{"speaker": "Circuit Soda", "text": "FRACTURED SIGNAL STABILIZED."},
 		]))
@@ -254,7 +274,7 @@ func _handle_snack_service_adventure() -> void:
 			return
 		if not GameState.closing_shift_score_clue_found:
 			start_dialogue([
-				{"speaker": "Player", "text": "The route is missing its start time. Broken Score should have it."},
+				{"speaker": "Player", "text": "This slot keeps pulling at me, but the score board is still ahead of it."},
 			])
 			return
 		if not GameState.closing_shift_service_clue_found:
@@ -270,12 +290,12 @@ func _handle_snack_service_adventure() -> void:
 		])
 		return
 	var lines := [
-		{"speaker": "Service Slot", "text": "The service slot is jammed with old labels."},
+		{"speaker": "Service Dash", "text": "SERVICE SLOT JAMMED. OLD LABELS PRESENT."},
 	]
 	if GameState.vendo_intro_seen:
-		lines.append({"speaker": "Service Slot", "text": "Vendo insists this is a feature. Refunds remain impossible."})
+		lines.append({"speaker": "Service Dash", "text": "VENDO FILED THIS AS A FEATURE. REFUNDS IMPOSSIBLE."})
 	else:
-		lines.append({"speaker": "Service Slot", "text": "A faded sticker calls this a feature. It also rejects refunds."})
+		lines.append({"speaker": "Service Dash", "text": "STICKER CALLS THIS A FEATURE. REFUNDS IMPOSSIBLE."})
 	start_dialogue(lines)
 
 func _go_to_snack_service_dash() -> void:
@@ -330,6 +350,49 @@ func _setup_ambient_sprite_effects() -> void:
 			"intensity": 0.08,
 			"sprite_sheet_path": AMBIENT_EFFECTS.STATIC_SPARK,
 			"sprite_alpha": 0.68,
+		},
+		{
+			"name": "VendoBubbleSpriteC",
+			"position": Vector2(298, 142),
+			"scale": Vector2(0.95, 0.95),
+			"effect_type": "bob",
+			"speed": 0.66,
+			"intensity": 0.12,
+			"sprite_sheet_path": AMBIENT_EFFECTS.SODA_BUBBLE,
+			"sprite_alpha": 0.55,
+		},
+		{
+			"name": "SnackSignNeonFlicker",
+			"position": Vector2(320, 96),
+			"scale": Vector2(1.15, 1.15),
+			"effect_type": "flicker",
+			"speed": 0.88,
+			"intensity": 0.07,
+			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
+			"sprite_alpha": 0.55,
+			"sprite_modulate": Color(0.58, 1.0, 0.72, 1.0),
+		},
+		{
+			"name": "CircuitSodaBubble",
+			"position": Vector2(474, 150),
+			"scale": Vector2(1.1, 1.1),
+			"effect_type": "bob",
+			"speed": 0.6,
+			"intensity": 0.14,
+			"sprite_sheet_path": AMBIENT_EFFECTS.SODA_BUBBLE,
+			"sprite_alpha": 0.6,
+			"sprite_modulate": Color(0.72, 1.0, 0.86, 1.0),
+		},
+		{
+			"name": "AlcoveFloorDustDrift",
+			"position": Vector2(240, 286),
+			"scale": Vector2(0.9, 0.9),
+			"effect_type": "dust_mote_drift",
+			"speed": 0.42,
+			"intensity": 0.15,
+			"sprite_sheet_path": AMBIENT_EFFECTS.BLINK_DOT,
+			"sprite_alpha": 0.28,
+			"sprite_modulate": Color(0.7, 1.0, 0.82, 1.0),
 		},
 	])
 

@@ -17,6 +17,7 @@ const BACKGROUND_ART_PATH := "res://assets/art/maps/staff_room/staff_room_backgr
 var active_cutscene: Node = null
 var active_dialogue_box: Node = null
 var reveal_in_progress := false
+var ending_prompt_active := false
 var route_cue: Control = null
 
 func _ready() -> void:
@@ -35,7 +36,7 @@ func _on_prompt_changed(text: String) -> void:
 	prompt_background.visible = prompt_label.visible
 
 func can_open_pause_menu() -> bool:
-	return active_dialogue_box == null and active_cutscene == null and not reveal_in_progress
+	return active_dialogue_box == null and active_cutscene == null and not reveal_in_progress and not ending_prompt_active
 
 func _apply_background_art() -> void:
 	if not ResourceLoader.exists(BACKGROUND_ART_PATH):
@@ -109,6 +110,12 @@ func _handle_archive_desk() -> void:
 			{"speaker": "Archive Desk", "text": "SECURITY TAPE FRAGMENTS READY."},
 			{"speaker": "Player", "text": "(I want the truth, even if it is worse than the missing pieces. I am doing this.)"},
 		], Callable(self, "_go_to_security_tape_assembly"))
+		return
+	if GameState.twist_reveal_seen:
+		_start_terminal_dialogue([
+			{"speaker": "Archive Desk", "text": "TAPE ARCHIVED."},
+			{"speaker": "Archive Desk", "text": "PLAYBACK COMPLETE."},
+		], Callable(self, "_restore_player_control"))
 		return
 	_start_terminal_dialogue([
 		{"speaker": "Archive Desk", "text": "TAPE ORDER RESTORED."},
@@ -221,13 +228,15 @@ func _on_final_self_conflict_finished() -> void:
 
 func _show_ending_prompt() -> void:
 	reveal_in_progress = false
+	# The prompt always leaves via a scene change, so this never needs unsetting.
+	ending_prompt_active = true
 	var ending_prompt := ENDING_PROMPT_SCENE.instantiate()
 	add_child(ending_prompt)
 
 func _get_final_self_conflict_lines() -> Array:
 	var lines := [
 		{"speaker": "???", "text": "Employee 04."},
-		{"speaker": "Player", "text": "Owner. Repair hand. The person everyone here recognized."},
+		{"speaker": "Player", "text": "Owner. Repair hand. The name this building never stopped holding."},
 		{"speaker": "Player", "text": "That was me."},
 		{"speaker": "\"Player\"", "text": "Reality should not be like a game."},
 		{"speaker": "\"Player\"", "text": "A clean win cannot solve rent, exhaustion, or grief."},
@@ -271,27 +280,31 @@ func _get_final_self_conflict_lines() -> Array:
 		{"speaker": "\"Player\"", "text": "Carry the wonder and the ledger."},
 		{"speaker": "\"Player\"", "text": "But do not make me bury you again."},
 		{"speaker": "Player", "text": "I will not."},
+	]
+	# The run-specific memories are the last things handed over, so the closing
+	# exchange answers them instead of reopening a scene that already resolved.
+	lines.append_array(_get_run_reprise_lines())
+	lines.append_array([
 		{"speaker": "\"Player\"", "text": "Then I have nothing left to hide from you."},
 		{"speaker": "\"Player\"", "text": "No more endings to force on your behalf."},
 		{"speaker": "\"Player\"", "text": "From here, we take our turns together."},
-	]
-	lines.append_array(_get_run_reprise_lines())
-	lines.append({"speaker": "\"Player\"", "text": "..."})
-	lines.append({"speaker": "\"Player\"", "text": "Go on, then."})
+		{"speaker": "\"Player\"", "text": "..."},
+		{"speaker": "\"Player\"", "text": "Go on, then."},
+	])
 	return lines
 
 func _get_run_reprise_lines() -> Array:
 	# Additive, run-specific memory beats gathered from this player's route.
+	# This scene stays strictly between the two halves: the beats describe what
+	# the player did with the weight, never who else was standing there.
 	var reprise: Array = []
 	if GameState.midpoint_told_mira:
-		reprise.append({"speaker": "Player", "text": "Mira knew what I found before this door did. I did not walk in here alone."})
-		reprise.append({"speaker": "\"Player\"", "text": "You told her. That was new. You used to file every weight as yours only."})
+		reprise.append({"speaker": "Player", "text": "I did not carry the last of it in silence. I set some of it down on the way here."})
+		reprise.append({"speaker": "\"Player\"", "text": "That was new. You used to file every weight as yours only."})
 	else:
 		reprise.append({"speaker": "\"Player\"", "text": "You carried the shift file here alone. Some habits survive even forgetting."})
-	if GameState.ssr_secret_cache_found:
-		reprise.append({"speaker": "\"Player\"", "text": "You found the spares you once labeled for the night shift. 'Take what you need.' You finally did."})
-	if GameState.fnw_secret_echo_found:
-		reprise.append({"speaker": "\"Player\"", "text": "And the frame no camera was meant to keep. The bow tie. You always fixed it before lights out."})
+	if GameState.tape_anomaly_frame_seen:
+		reprise.append({"speaker": "\"Player\"", "text": "And the frame with no hour on it. Two of us at that door, and the recorder only had room for one."})
 	return reprise
 
 func _restore_player_control() -> void:

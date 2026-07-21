@@ -15,14 +15,14 @@ const MAPS := [
 	"res://scenes/maps/PartyRoom.tscn", "res://scenes/maps/Restrooms.tscn",
 	"res://scenes/maps/hallways/CabinetHallway.tscn", "res://scenes/maps/hallways/SnackHallway.tscn",
 	"res://scenes/maps/hallways/PrizeHallway.tscn", "res://scenes/maps/hallways/MaintenanceHallway.tscn",
-	"res://scenes/maps/hallways/BackHallway.tscn", "res://scenes/maps/hallways/CabinetSnackHallway.tscn",
+	"res://scenes/maps/hallways/CabinetSnackHallway.tscn",
 	"res://scenes/maps/hallways/SnackPrizeHallway.tscn", "res://scenes/maps/hallways/MaintenanceStaffHallway.tscn",
 ]
 const MUSIC_CONTEXTS := [
 	"title", "arcade_hub", "cabinet_row", "snack_alcove", "prize_corner",
 	"maintenance_hall", "staff_corridor", "staff_room", "rockbyte_duel",
 	"truth_filter", "circuit_soda", "static_service_run", "maintenance_sync",
-	"security_tape_assembly", "final_night_walk", "memory_echo", "ending", "post_reveal",
+	"security_tape_assembly", "memory_echo", "ending", "post_reveal",
 ]
 const DIALOGUE_TEXT_WIDTH_PORTRAIT := 454.0
 const DIALOGUE_TEXT_WIDTH_PLAIN := 558.0
@@ -109,16 +109,86 @@ func _check_dialogue_overflow() -> void:
 			_fail("dialogue: %s failed to parse" % file_name)
 			continue
 		_walk_dialogue(parsed, file_name, font)
-	# also audit hardcoded StaffRoom climax lines (the longest required sequence)
-	var staff_room_script = load("res://scripts/StaffRoom.gd")
-	if staff_room_script != null:
-		var sr: Node = staff_room_script.new()
-		if sr.has_method("_get_final_self_conflict_lines"):
-			for line in sr.call("_get_final_self_conflict_lines"):
-				measured += 1
-				_measure_line(line, "StaffRoom.gd climax", font)
-		sr.free()
+	# Roughly 40% of the game's dialogue is authored as inline arrays inside the
+	# map handlers rather than in the JSON pools. Those lines reach the same box
+	# and must be measured too, or the audit only guards part of the script.
+	_measure_inline_dialogue("res://scripts", font)
 	print("  C dialogue overflow: %d lines measured against DialogueBox rect" % measured)
+
+func _measure_inline_dialogue(root_path: String, font: Font) -> void:
+	var dir := DirAccess.open(root_path)
+	if dir == null:
+		return
+	dir.list_dir_begin()
+	var entry := dir.get_next()
+	while entry != "":
+		var full := root_path + "/" + entry
+		if dir.current_is_dir():
+			if not entry.begins_with(".") and entry != "qa":
+				_measure_inline_dialogue(full, font)
+		elif entry.ends_with(".gd"):
+			var src := FileAccess.get_file_as_string(full)
+			for line in _extract_inline_lines(src):
+				measured += 1
+				_measure_line(line, entry, font)
+		entry = dir.get_next()
+	dir.list_dir_end()
+
+func _extract_inline_lines(src: String) -> Array:
+	# Scans for {"speaker": "...", "text": "..."} literals. Hand-rolled instead
+	# of a RegEx because the antagonist speaker is itself a quoted string
+	# ("\"Player\"") and escape handling has to be exact.
+	var out: Array = []
+	var search_from := 0
+	while true:
+		var head := src.find("\"speaker\"", search_from)
+		if head < 0:
+			break
+		search_from = head + 9
+		var speaker_result := _read_quoted_after_colon(src, search_from)
+		if speaker_result.is_empty():
+			continue
+		var text_key: int = src.find("\"text\"", int(speaker_result["end"]))
+		if text_key < 0 or text_key - int(speaker_result["end"]) > 8:
+			continue
+		var text_result := _read_quoted_after_colon(src, text_key + 6)
+		if text_result.is_empty():
+			continue
+		var entry := {"speaker": speaker_result["value"], "text": text_result["value"]}
+		var tail_end: int = mini(src.length(), int(text_result["end"]) + 160)
+		var tail := src.substr(int(text_result["end"]), tail_end - int(text_result["end"]))
+		var brace := tail.find("}")
+		if brace >= 0 and tail.substr(0, brace).contains("\"portrait\""):
+			entry["portrait"] = true
+		out.append(entry)
+		search_from = int(text_result["end"])
+	return out
+
+func _read_quoted_after_colon(src: String, from_index: int) -> Dictionary:
+	var i := from_index
+	while i < src.length() and src[i] != "\"":
+		var c := src[i]
+		if c != ":" and c != " " and c != "\t":
+			return {}
+		i += 1
+	if i >= src.length():
+		return {}
+	i += 1
+	var value := ""
+	while i < src.length():
+		var c := src[i]
+		if c == "\\":
+			if i + 1 < src.length():
+				var n := src[i + 1]
+				value += "\n" if n == "n" else n
+				i += 2
+				continue
+			return {}
+		if c == "\"":
+			return {"value": value, "end": i + 1}
+		value += c
+		i += 1
+	return {}
 
 func _walk_dialogue(node: Variant, source: String, font: Font) -> void:
 	if node is Dictionary:
@@ -134,13 +204,22 @@ func _walk_dialogue(node: Variant, source: String, font: Font) -> void:
 
 var machine_font: Font = null
 const DIALOGUE_BOX_SCRIPT := preload("res://scripts/DialogueBox.gd")
+const PORTRAIT_REGISTRY := preload("res://scripts/DialoguePortraitRegistry.gd")
 const BALANCED_TEXT := preload("res://scripts/BalancedText.gd")
 
 func _measure_line(line: Dictionary, source: String, font: Font) -> void:
 	if machine_font != null and DIALOGUE_BOX_SCRIPT.MACHINE_SPEAKERS.has(str(line.get("speaker", ""))):
 		font = machine_font
-	var text := BALANCED_TEXT.split_balanced(str(line.get("text", "")), 56)
-	var width := DIALOGUE_TEXT_WIDTH_PORTRAIT if line.has("portrait") else DIALOGUE_TEXT_WIDTH_PLAIN
+	var text := str(line.get("text", "")).strip_edges()
+	# DialogueBox indents the text whenever a portrait resolves, including the
+	# default portrait a speaker gets without an explicit "portrait" key, which
+	# narrows the label from 558 to 454. Measuring the wide rect for those lines
+	# would let a real overflow pass.
+	var shows_portrait: bool = line.has("portrait")
+	if not shows_portrait:
+		var portrait_path: String = PORTRAIT_REGISTRY.get_default_portrait_path(str(line.get("speaker", "")), false)
+		shows_portrait = not portrait_path.is_empty() and ResourceLoader.exists(portrait_path)
+	var width := DIALOGUE_TEXT_WIDTH_PORTRAIT if shows_portrait else DIALOGUE_TEXT_WIDTH_PLAIN
 	var size := font.get_multiline_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, width, DIALOGUE_FONT_SIZE)
 	if size.y > DIALOGUE_TEXT_HEIGHT:
 		_fail("dialogue overflow (%s): %.0fpx tall > %.0f: \"%s...\"" % [source, size.y, DIALOGUE_TEXT_HEIGHT, text.substr(0, 48)])

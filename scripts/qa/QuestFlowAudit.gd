@@ -15,7 +15,7 @@ const HUD_TIP_FONT_SIZE := 16
 
 const LOCATIONS := [
 	"arcade_hub", "cabinet_row", "snack_alcove", "prize_corner",
-	"maintenance_hall", "staff_corridor", "cabinet_hallway", "back_hallway",
+	"maintenance_hall", "staff_corridor", "cabinet_hallway",
 	"cabinet_snack_hallway", "snack_hallway", "snack_prize_hallway",
 	"prize_hallway", "maintenance_hallway", "maintenance_staff_hallway",
 	"staff_room", "front_entrance", "party_room", "restrooms",
@@ -72,7 +72,6 @@ func _run() -> void:
 	_beat("static service run", func(): gs.complete_static_service_run())
 	_beat("maintenance sync", func(): gs.complete_maintenance_sync())
 	_beat("security tape", func(): gs.complete_security_tape_assembly())
-	_beat("final night walk", func(): gs.complete_final_night_walk())
 	_beat("memory echo", func(): gs.complete_memory_echo())
 	_beat("reveal", func(): gs.mark_twist_reveal_seen())
 	_beat("final conscience", func(): gs.mark_conscience_final_room_seen())
@@ -96,19 +95,18 @@ func _beat(label: String, advance: Callable) -> void:
 		if str(data.get(field, "")).is_empty():
 			print("  FAIL [%s] quest '%s' missing %s" % [label, quest_id, field])
 			fails += 1
-	# The persistent HUD reserves two balanced lines at m5x7 16 px.
+	# The persistent HUD prints the tip as one unbroken line at m5x7 16 px, so a
+	# summary wider than the backing would wrap instead of staying whole.
 	var tip_font: Font = load(HUD_TIP_FONT_PATH)
 	if tip_font != null:
-		var formatted_summary := BALANCED_TEXT.split_balanced(str(data.get("summary", "")), 32)
-		var summary_lines := formatted_summary.split("\n")
-		if summary_lines.size() > 2:
-			print("  FAIL [%s] quest '%s' summary uses more than two HUD lines" % [label, quest_id])
+		var summary := str(data.get("summary", ""))
+		if summary.contains("\n"):
+			print("  FAIL [%s] quest '%s' summary contains a hard line break" % [label, quest_id])
 			fails += 1
-		for summary_line in summary_lines:
-			var tip_width: float = tip_font.get_string_size(str(summary_line), HORIZONTAL_ALIGNMENT_LEFT, -1, HUD_TIP_FONT_SIZE).x
-			if tip_width > HUD_TIP_WIDTH:
-				print("  FAIL [%s] quest '%s' summary line too wide for HUD tip: %.0fpx > %.0fpx" % [label, quest_id, tip_width, HUD_TIP_WIDTH])
-				fails += 1
+		var tip_width: float = tip_font.get_string_size(summary, HORIZONTAL_ALIGNMENT_LEFT, -1, HUD_TIP_FONT_SIZE).x
+		if tip_width > HUD_TIP_WIDTH:
+			print("  FAIL [%s] quest '%s' summary too wide to stay on one HUD line: %.0fpx > %.0fpx" % [label, quest_id, tip_width, HUD_TIP_WIDTH])
+			fails += 1
 	# 2. routing guidance from every room
 	for loc in LOCATIONS:
 		var hint: String = ROUTE_CUE.get_current_hint(loc)

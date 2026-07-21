@@ -18,8 +18,6 @@ static func get_profile(stage_id: String) -> Dictionary:
 			profile.merge(_prize_echo_profile(), true)
 		"static_service_run":
 			profile.merge(_static_service_profile(), true)
-		"final_night_walk":
-			profile.merge(_final_night_profile(), true)
 		"night_ledger_run":
 			profile.merge(_night_ledger_profile(), true)
 		_:
@@ -34,7 +32,6 @@ static func get_all_stage_ids() -> Array[String]:
 		"snack_service_dash",
 		"prize_shelf_run",
 		"static_service_run",
-		"final_night_walk",
 		"night_ledger_run",
 	]
 
@@ -150,24 +147,6 @@ static func _static_service_profile() -> Dictionary:
 		],
 		"accent": Color(0.18, 0.9, 0.62),
 		"secondary": Color(0.26, 0.74, 1.0),
-	}
-
-
-static func _final_night_profile() -> Dictionary:
-	return {
-		"title": "FRACTURED NIGHT CROSSING",
-		"music": "final_night_walk",
-		"course": "a",
-		"environment_index": 5,
-		"collectible_cell": 5,
-		"collectible_name": "True Frames",
-		"key_name": "Signal Anchors",
-		"ordered_collectibles": true,
-		"objective": "Cross the fractured closing route. Recover 18 true frames and anchor the three signal breaks.",
-		"status_intro": "The route has depth now. The brighter frames belong to the walk that happened first.",
-		"completion_text": "FINAL NIGHT STABILIZED. One life carried two answers to the Staff Door.",
-		"accent": Color(0.62, 0.46, 1.0),
-		"secondary": Color(1.0, 0.26, 0.72),
 	}
 
 

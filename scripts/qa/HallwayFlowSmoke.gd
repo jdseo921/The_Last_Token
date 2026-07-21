@@ -5,7 +5,6 @@ const EXPECTED_EXIT_ANCHORS := {
 	"cabinet_hallway": [Vector2(58, 233), Vector2(581, 233)],
 	"prize_hallway": [Vector2(73, 227), Vector2(566, 227)],
 	"maintenance_hallway": [Vector2(59, 233), Vector2(579, 233)],
-	"back_hallway": [Vector2(62, 231), Vector2(576, 231)],
 	"cabinet_snack_hallway": [Vector2(61, 298), Vector2(578, 298)],
 	"snack_prize_hallway": [Vector2(59, 233), Vector2(579, 232)],
 	"maintenance_staff_hallway": [Vector2(77, 233), Vector2(562, 233)],
@@ -17,7 +16,6 @@ const HALLWAY_SCENES := {
 	"snack_hallway": "res://scenes/maps/hallways/SnackHallway.tscn",
 	"prize_hallway": "res://scenes/maps/hallways/PrizeHallway.tscn",
 	"maintenance_hallway": "res://scenes/maps/hallways/MaintenanceHallway.tscn",
-	"back_hallway": "res://scenes/maps/hallways/BackHallway.tscn",
 	"cabinet_snack_hallway": "res://scenes/maps/hallways/CabinetSnackHallway.tscn",
 	"snack_prize_hallway": "res://scenes/maps/hallways/SnackPrizeHallway.tscn",
 	"maintenance_staff_hallway": "res://scenes/maps/hallways/MaintenanceStaffHallway.tscn",
@@ -108,7 +106,7 @@ func _check_story_gates() -> void:
 
 	for hallway_id in [
 		"cabinet_hallway", "snack_hallway", "prize_hallway", "maintenance_hallway",
-		"back_hallway", "cabinet_snack_hallway", "snack_prize_hallway", "maintenance_staff_hallway",
+		"cabinet_snack_hallway", "snack_prize_hallway", "maintenance_staff_hallway",
 	]:
 		game_state.call("reset_for_new_game")
 		_expect(_message_lines(hallway_id).is_empty(), "%s stays silent when accessed early" % hallway_id)
@@ -145,14 +143,9 @@ func _check_story_gates() -> void:
 
 	game_state.call("reset_for_new_game")
 	game_state.set("maintenance_sync_completed", true)
-	_expect(not _message_lines("back_hallway").is_empty(), "Back Hall whisper opens after Maintenance Sync")
 	_expect(not _message_lines("maintenance_staff_hallway").is_empty(), "Maintenance-Staff whisper opens after Maintenance Sync")
 	game_state.set("security_tape_assembly_completed", true)
-	_expect(_message_lines("back_hallway").is_empty(), "early Back Hall whisper closes after Security Tape")
-	game_state.set("final_night_walk_completed", true)
-	_expect(not _message_lines("back_hallway").is_empty(), "late Back Hall whisper opens after Final Night Walk")
-	game_state.set("memory_echo_completed", true)
-	_expect(_message_lines("back_hallway").is_empty(), "late Back Hall whisper closes after Memory Echo")
+	_expect(_message_lines("maintenance_staff_hallway").is_empty(), "Maintenance-Staff whisper closes after Security Tape")
 
 
 func _message_lines(hallway_id: String) -> Array:

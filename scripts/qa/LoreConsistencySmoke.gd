@@ -56,10 +56,11 @@ func _check_reveal_pacing() -> void:
 	var director: Node = director_script.new()
 	var truth_text := _lines_text(director.call("get_encounter_lines", "after_truth_filter")).to_lower()
 	var soda_text := _lines_text(director.call("get_encounter_lines", "after_circuit_soda")).to_lower()
-	var final_walk_text := _lines_text(director.call("get_encounter_lines", "after_final_night_walk")).to_lower()
+	var approach_text := _lines_text(director.call("get_encounter_lines", "staff_corridor_approach")).to_lower()
 	_expect(not truth_text.contains("two of us") and not truth_text.contains("separation"), "Truth Filter foreshadows incompatible priorities without naming the split")
 	_expect(not soda_text.contains("two of us") and soda_text.contains("remembers what the dream cost"), "Circuit Soda keeps the voice protective and ambiguous")
-	_expect(final_walk_text.contains("two signals") and final_walk_text.contains("did not appear in one instant"), "Final Night makes the gradual separation explicit at the late reveal")
+	_expect(approach_text.contains("did not appear in one instant"), "the Staff Corridor approach makes the gradual separation explicit before the reveal")
+	_expect(not approach_text.contains("counter dark") and not approach_text.contains("records two signals"), "the Staff Corridor approach does not recite the Security Tape fragments it precedes")
 	director.free()
 
 

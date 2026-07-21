@@ -21,6 +21,9 @@ const REFRESHED_PORTRAITS := [
 	"res://assets/art/portraits/night_ledger/night_ledger_grin.png",
 ]
 const SIDE_SAFETY_MARGIN := 4
+# DialogueBox draws portraits into an 80x104 rect with KEEP_ASPECT_CENTERED,
+# so a square source is displayed at 80x80.
+const PORTRAIT_RENDER_SIZE := 80
 
 var failed := false
 
@@ -111,19 +114,51 @@ func _expect_refreshed_portrait(path: String) -> void:
 	if load_error != OK:
 		_fail("Refreshed portrait cannot be read: %s" % path)
 		return
-	if image.get_size() != Vector2i(128, 128):
-		_fail("Refreshed portrait must be 128x128: %s" % path)
+	# Canvases are sized per character so every head renders at the same
+	# apparent size in the 80px portrait box. The invariants that matter are:
+	# square, never smaller than the box (so the engine only downscales), clear
+	# corners, and a head that is centred and clear of the panel edge. Shoulders
+	# are allowed to run off the sides on a close-up portrait.
+	var size := image.get_size()
+	if size.x != size.y:
+		_fail("Refreshed portrait must be square, got %dx%d: %s" % [size.x, size.y, path])
+		return
+	if size.x < PORTRAIT_RENDER_SIZE:
+		_fail("Refreshed portrait must be at least %dpx so it is never upscaled, got %d: %s" % [PORTRAIT_RENDER_SIZE, size.x, path])
 		return
 	if image.get_pixel(0, 0).a > 0.05:
 		_fail("Refreshed portrait must keep transparent corners: %s" % path)
-	for y in range(image.get_height()):
-		for x in range(SIDE_SAFETY_MARGIN):
-			if image.get_pixel(x, y).a > 0.05 or image.get_pixel(image.get_width() - 1 - x, y).a > 0.05:
-				_fail("Refreshed portrait clips the side safety margin: %s" % path)
-				return
+	var head_bounds := _get_head_bounds(image)
+	if head_bounds.x < SIDE_SAFETY_MARGIN or head_bounds.y > size.x - 1 - SIDE_SAFETY_MARGIN:
+		_fail("Refreshed portrait head clips the side safety margin: %s" % path)
+		return
 	var head_center_x := _get_upper_foreground_center_x(image)
-	if absf(head_center_x - 64.0) > 3.5:
-		_fail("Refreshed portrait head is not centered (%.2f): %s" % [head_center_x, path])
+	if absf(head_center_x - float(size.x - 1) * 0.5) > 3.5:
+		_fail("Refreshed portrait head is not centered (%.2f of %d): %s" % [head_center_x, size.x, path])
+
+func _get_head_bounds(image: Image) -> Vector2i:
+	# Horizontal extent of the head band only, ignoring the shoulders below it.
+	var w := image.get_width()
+	var h := image.get_height()
+	var top := 0
+	for y in range(h):
+		var count := 0
+		for x in range(w):
+			if image.get_pixel(x, y).a > 0.05:
+				count += 1
+		if count >= 3:
+			top = y
+			break
+	var band_end: int = mini(h, top + int(round(float(h) * 0.55)))
+	var left := w
+	var right := -1
+	for y in range(top, band_end):
+		for x in range(w):
+			if image.get_pixel(x, y).a <= 0.05:
+				continue
+			left = mini(left, x)
+			right = maxi(right, x)
+	return Vector2i(left, right)
 
 func _get_upper_foreground_center_x(image: Image) -> float:
 	var upper_limit := int(round(float(image.get_height()) * 0.48))

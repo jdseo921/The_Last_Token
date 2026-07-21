@@ -185,7 +185,7 @@ func _begin_round() -> void:
 	for index in range(statement_labels.size()):
 		statement_labels[index].text = "..."
 		_set_panel_state(index, CABINET_ACTIVE_COLOR, SCREEN_NORMAL_COLOR, CABINET_ART_ACTIVE)
-	await get_tree().create_timer(0.95).timeout
+	await get_tree().create_timer(0.95, false).timeout
 	if completed:
 		return
 	round_transition_running = false
@@ -244,7 +244,7 @@ func _on_choice_pressed(index: int) -> void:
 	_play_audio("play_score_blip")
 	await _play_correct_feedback(index)
 	status_label.text = str(ROUND_DATA[current_round]["explanation"])
-	await get_tree().create_timer(1.35).timeout
+	await get_tree().create_timer(1.35, false).timeout
 	current_round += 1
 	if current_round >= ROUND_DATA.size():
 		_complete_puzzle()
