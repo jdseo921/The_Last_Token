@@ -7,6 +7,7 @@ extends SceneTree
 
 const GAME_STATE_SCRIPT := preload("res://scripts/GameState.gd")
 const ROUTE_CUE := preload("res://scripts/RouteCue.gd")
+const BALANCED_TEXT := preload("res://scripts/BalancedText.gd")
 
 const HUD_TIP_FONT_PATH := "res://assets/fonts/m5x7.ttf"
 const HUD_TIP_WIDTH := 282.0
@@ -15,6 +16,9 @@ const HUD_TIP_FONT_SIZE := 16
 const LOCATIONS := [
 	"arcade_hub", "cabinet_row", "snack_alcove", "prize_corner",
 	"maintenance_hall", "staff_corridor", "cabinet_hallway", "back_hallway",
+	"cabinet_snack_hallway", "snack_hallway", "snack_prize_hallway",
+	"prize_hallway", "maintenance_hallway", "maintenance_staff_hallway",
+	"staff_room", "front_entrance", "party_room", "restrooms",
 ]
 
 var fails := 0
@@ -92,16 +96,27 @@ func _beat(label: String, advance: Callable) -> void:
 		if str(data.get(field, "")).is_empty():
 			print("  FAIL [%s] quest '%s' missing %s" % [label, quest_id, field])
 			fails += 1
-	# summary must fit the top-right HUD tip on ONE line (m3x6 @16, 282px)
+	# The persistent HUD reserves two balanced lines at m5x7 16 px.
 	var tip_font: Font = load(HUD_TIP_FONT_PATH)
 	if tip_font != null:
-		var tip_width: float = tip_font.get_string_size(str(data.get("summary", "")), HORIZONTAL_ALIGNMENT_LEFT, -1, HUD_TIP_FONT_SIZE).x
-		if tip_width > HUD_TIP_WIDTH:
-			print("  FAIL [%s] quest '%s' summary too wide for HUD tip: %.0fpx > %.0fpx" % [label, quest_id, tip_width, HUD_TIP_WIDTH])
+		var formatted_summary := BALANCED_TEXT.split_balanced(str(data.get("summary", "")), 32)
+		var summary_lines := formatted_summary.split("\n")
+		if summary_lines.size() > 2:
+			print("  FAIL [%s] quest '%s' summary uses more than two HUD lines" % [label, quest_id])
 			fails += 1
+		for summary_line in summary_lines:
+			var tip_width: float = tip_font.get_string_size(str(summary_line), HORIZONTAL_ALIGNMENT_LEFT, -1, HUD_TIP_FONT_SIZE).x
+			if tip_width > HUD_TIP_WIDTH:
+				print("  FAIL [%s] quest '%s' summary line too wide for HUD tip: %.0fpx > %.0fpx" % [label, quest_id, tip_width, HUD_TIP_WIDTH])
+				fails += 1
 	# 2. routing guidance from every room
 	for loc in LOCATIONS:
 		var hint: String = ROUTE_CUE.get_current_hint(loc)
+		if quest_id == "finish_memory":
+			if not hint.is_empty():
+				print("  FAIL [%s] finish_memory should not show a route cue in %s" % [label, loc])
+				fails += 1
+			continue
 		if hint.is_empty():
 			print("  FAIL [%s] quest '%s': no route hint from %s" % [label, quest_id, loc])
 			fails += 1

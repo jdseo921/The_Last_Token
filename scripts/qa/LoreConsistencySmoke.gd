@@ -6,13 +6,11 @@ const STAFF_ROOM_PATH := "res://scripts/StaffRoom.gd"
 
 const DIALOGUE_FILES := [
 	"res://data/dialogue/cabinet_07.json",
-	"res://data/dialogue/coily.json",
 	"res://data/dialogue/gus.json",
 	"res://data/dialogue/mira.json",
 	"res://data/dialogue/mr_byte.json",
 	"res://data/dialogue/night_ledger.json",
 	"res://data/dialogue/pip.json",
-	"res://data/dialogue/reel.json",
 	"res://data/dialogue/roxy.json",
 	"res://data/dialogue/vendo.json",
 ]
@@ -72,8 +70,6 @@ func _check_completion_themes() -> void:
 	_expect(_contains("vendo", "circuit_soda_completion_anecdote", "fixed a route, not me"), "Circuit Soda repairs a route rather than the person")
 	_expect(_contains("pip", "prize_sort_completion", "Neither remembers a whole owner alone"), "Prize Echo Ascent joins wanting, return, and responsibility")
 	_expect(_contains("gus", "static_service_run_anecdote", "next step"), "Static Service presents repair as one next step")
-	_expect(_contains("coily", "security_tape_completion", "cannot decide what every night after"), "Security Tape refuses to turn one recorded night into a verdict")
-	_expect(_contains("reel", "memory_echo_completion", "bright melody and the low notes"), "Memory Echo keeps hopeful and bitter truths on one track")
 
 
 func _check_post_reveal_identity() -> void:

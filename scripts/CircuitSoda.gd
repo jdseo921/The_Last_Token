@@ -557,9 +557,6 @@ func _pos_in_grid(pos: Vector2i) -> bool:
 func _index_from_pos(pos: Vector2i) -> int:
 	return pos.y * grid_cols + pos.x
 
-func _pos_from_index(index: int) -> Vector2i:
-	return Vector2i(index % grid_cols, int(index / grid_cols))
-
 func _on_exit_pressed() -> void:
 	ARCADE_JUICE.pulse_control(self, exit_button)
 	_play_audio("play_button_pulse")

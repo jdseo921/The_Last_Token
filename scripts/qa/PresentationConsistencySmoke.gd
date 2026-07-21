@@ -5,6 +5,8 @@ const HUB_SCENE := "res://scenes/arcade/ArcadeHub.tscn"
 const CABINET_SCENE := "res://scenes/maps/CabinetRow.tscn"
 const MAINTENANCE_SCENE := "res://scenes/maps/MaintenanceHall.tscn"
 const SNACK_SCENE := "res://scenes/maps/SnackAlcove.tscn"
+const STAFF_ROOM_SCENE := "res://scenes/arcade/StaffRoom.tscn"
+const BALANCED_TEXT := preload("res://scripts/BalancedText.gd")
 const CHARACTER_SHEETS := {
 	"mira idle": ["res://assets/art/characters/mira/mira_idle_sheet_v2.png", Vector2i(64, 32)],
 	"mira facing": ["res://assets/art/characters/mira/mira_turn_diagonal_sheet_v2.png", Vector2i(128, 32)],
@@ -26,6 +28,11 @@ func _run() -> void:
 	var cabinet := (load(CABINET_SCENE) as PackedScene).instantiate()
 	var maintenance := (load(MAINTENANCE_SCENE) as PackedScene).instantiate()
 	var snack := (load(SNACK_SCENE) as PackedScene).instantiate()
+	var staff_room := (load(STAFF_ROOM_SCENE) as PackedScene).instantiate()
+	root.add_child(staff_room)
+	await process_frame
+	await process_frame
+	_expect(staff_room.get("active_dialogue_box") == null and staff_room.get("active_cutscene") == null, "Staff Room waits for terminal interaction instead of auto-starting the reveal")
 
 	var vendo := hub.get_node("InteractableLayer/Vendo")
 	_expect(str(vendo.get("label_text")) == "SIP-2", "main-hub soda machine is distinctly named SIP-2")
@@ -63,6 +70,63 @@ func _run() -> void:
 
 	_expect(str(cabinet.get_node("InteractableLayer/Roxy").get("facing_sheet_path")).ends_with("roxy_turn_diagonal_sheet_v2.png"), "Roxy uses the portrait-matched facing sheet")
 
+	var furniture_rectangles: Array[Vector4] = staff_room.get_node("FurnitureCollision").get("rectangles")
+	_expect(staff_room.get_node_or_null("FurnitureCollision/CollisionBox00/Shape") is CollisionPolygon2D, "Staff Room terminal collision shape is generated at runtime")
+	_expect(staff_room.get_node_or_null("FurnitureCollision/CollisionBox01/Shape") is CollisionPolygon2D, "Staff Room archive desk collision shape is generated at runtime")
+	_expect(furniture_rectangles.has(Vector4(225, 108, 172, 72)), "Staff Room terminal keeps its former interaction rectangle as solid collision")
+	_expect(furniture_rectangles.has(Vector4(98, 199, 56, 100)), "Staff Room archive desk keeps its former interaction rectangle as solid collision")
+	_expect((staff_room.get_node("RevealTerminal").get("interact_extents") as Vector2).is_equal_approx(Vector2(206.4, 86.4)), "Staff Room terminal interaction area is twenty percent larger")
+	_expect((staff_room.get_node("SecurityTapeDesk").get("interact_extents") as Vector2).is_equal_approx(Vector2(67.2, 120)), "Staff Room archive desk interaction area is twenty percent larger")
+	var staff_player := staff_room.get_node("Player") as CharacterBody2D
+	staff_player.global_position = Vector2(162, 249)
+	await physics_frame
+	await physics_frame
+	_expect(staff_player.get_node("InteractionArea").get_overlapping_areas().has(staff_room.get_node("SecurityTapeDesk")), "archive desk remains interactable from outside its solid collision")
+	staff_player.global_position = Vector2(311, 190)
+	await physics_frame
+	_expect(staff_player.get_node("InteractionArea").get_overlapping_areas().has(staff_room.get_node("RevealTerminal")), "terminal remains interactable from outside its solid collision")
+
+	var slideshow := (load("res://scenes/cutscenes/SlideshowCutscene.tscn") as PackedScene).instantiate()
+	root.add_child(slideshow)
+	await process_frame
+	var panel_clip := slideshow.get_node("PanelClip") as Control
+	_expect(panel_clip.clip_contents, "Memory Echo slideshow clips zoomed pictures to the image frame")
+	_expect(slideshow.get_node_or_null("FadeOverlay") is ColorRect, "Memory Echo slideshow has a full-screen crossfade overlay")
+	var balanced_caption: String = BALANCED_TEXT.split_balanced("You protected the dream by hiding its cost, until hope and responsibility stopped speaking.")
+	var balanced_lines := balanced_caption.split("\n")
+	_expect(balanced_lines.size() == 2 and absi(balanced_lines[0].length() - balanced_lines[1].length()) <= 12, "long Memory Echo captions split into balanced horizontal lines")
+	slideshow.free()
+
+	var ending_prompt := (load("res://scenes/cutscenes/EndingPrompt.tscn") as PackedScene).instantiate()
+	root.add_child(ending_prompt)
+	await process_frame
+	var ending_panel := ending_prompt.get_node("Panel") as Panel
+	var ending_vbox := ending_prompt.get_node("Panel/VBox") as VBoxContainer
+	_expect(ending_panel.modulate.a < 1.0, "ending message window begins a long fade-in")
+	_expect(ending_panel.size.y - (ending_vbox.position.y + ending_vbox.size.y) >= 40.0, "ending buttons keep a comfortable bottom margin")
+	ending_prompt.free()
+
+	var final_lines: Array = staff_room.call("_get_final_self_conflict_lines")
+	_expect(str(final_lines[0].get("speaker", "")) == "???", "post-Echo conversation identifies the first voice as ???")
+	_expect(str(final_lines[1].get("speaker", "")) == "Player", "post-Echo conversation restores the Player label on the next line")
+	var game_state := root.get_node("GameState")
+	game_state.set("maintenance_sync_completed", true)
+	game_state.set("security_tape_assembly_completed", true)
+	game_state.set("twist_reveal_seen", false)
+	var staff_route_cue := staff_room.get("route_cue") as Control
+	staff_route_cue.set("dismissed", false)
+	staff_route_cue.visible = true
+	staff_route_cue.get_node("RouteCueLabel").text = "LOCAL: Inspect the restore terminal."
+	staff_room.call("_handle_terminal_interaction")
+	_expect(bool(staff_route_cue.get("dismissed")) and not staff_route_cue.visible, "restored-tape terminal dialogue expires its navigation immediately")
+	var final_dialogue: Node = staff_room.get("active_dialogue_box")
+	if final_dialogue != null:
+		final_dialogue.call("set_antagonist_ambience_enabled", false)
+		final_dialogue.call("start_dialogue", [{"speaker": "???", "text": "Employee 04."}])
+		_expect(not bool(final_dialogue.get("antagonist_ambience_enabled")), "final conversation disables antagonist background and music dimming")
+		var dim_overlay := final_dialogue.get("dim_overlay") as ColorRect
+		_expect(dim_overlay != null and not dim_overlay.visible, "final conversation keeps the Staff Room background visible")
+
 	for sheet_name in CHARACTER_SHEETS:
 		var definition: Array = CHARACTER_SHEETS[sheet_name]
 		var path := str(definition[0])
@@ -86,6 +150,7 @@ func _run() -> void:
 	cabinet.free()
 	maintenance.free()
 	snack.free()
+	staff_room.free()
 	print("PresentationConsistencySmoke: %s" % ("PASS" if failures == 0 else "FAIL (%d)" % failures))
 	quit(0 if failures == 0 else 1)
 

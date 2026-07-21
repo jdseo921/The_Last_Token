@@ -187,17 +187,9 @@ func go_to_security_tape_assembly() -> void:
 	_capture_return_point()
 	change_scene(SECURITY_TAPE_ASSEMBLY_SCENE)
 
-func go_to_final_night_walk() -> void:
-	_capture_return_point()
-	change_scene(FINAL_NIGHT_WALK_SCENE)
-
 func go_to_broken_high_score() -> void:
 	_capture_return_point()
 	change_scene(BROKEN_HIGH_SCORE_SCENE)
-
-func go_to_sync_door_puzzle() -> void:
-	_capture_return_point()
-	change_scene(SYNC_DOOR_PUZZLE_SCENE)
 
 func go_to_maintenance_sync() -> void:
 	_capture_return_point()
@@ -205,10 +197,6 @@ func go_to_maintenance_sync() -> void:
 
 func go_to_staff_room() -> void:
 	change_scene(STAFF_ROOM_SCENE)
-
-func go_to_memory_echo() -> void:
-	_capture_return_point()
-	change_scene(MEMORY_ECHO_SCENE)
 
 func go_to_title_or_main() -> void:
 	change_scene(TITLE_OR_MAIN_SCENE)

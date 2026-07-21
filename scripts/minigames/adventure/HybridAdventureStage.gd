@@ -6,6 +6,7 @@ signal hybrid_transition_requested(payload: Dictionary)
 const EXPLORER_SCENE := preload("res://scenes/minigames/adventure/HybridExplorerCharacter.tscn")
 const PAUSE_MENU_SCENE := preload("res://scenes/ui/PauseMenu.tscn")
 const MINIGAME_UI := preload("res://scripts/ui/MinigameUI.gd")
+const BALANCED_TEXT := preload("res://scripts/BalancedText.gd")
 const ENVIRONMENT_ATLAS := preload("res://assets/art/minigames/hybrid_exploration/exploration_environment_atlas.png")
 const PROP_ATLAS := preload("res://assets/art/minigames/hybrid_exploration/exploration_prop_atlas.png")
 const CHECKPOINT_FLAG := preload("res://assets/art/minigames/hybrid_exploration/adventure_checkpoint_flag_v2.png")
@@ -387,7 +388,7 @@ func _build_hud() -> void:
 	var top_panel := _make_panel(hud_layer, "TopPanel", TOP_HUD_RECT, stage_profile.get("accent", Color.CYAN))
 	var title := _make_label(top_panel, "TitleLabel", Rect2(10, 7, 412, 23), str(stage_profile.get("title", "DEPTH TRAVERSE")), 14, true)
 	MINIGAME_UI.configure_label(title, MinigameUI.TextRole.TITLE, false, true, 11, 14, Vector2(3, 1))
-	var objective_text := _balanced_two_line_text(str(stage_profile.get("objective", "Explore the route.")), 54)
+	var objective_text := BALANCED_TEXT.split_balanced(str(stage_profile.get("objective", "Explore the route.")), 54)
 	var objective := _make_label(top_panel, "ObjectiveLabel", Rect2(12, 32, 408, 41), objective_text, 11, true)
 	MINIGAME_UI.configure_label(objective, MinigameUI.TextRole.BODY, true, true, 9, 11, Vector2(3, 1))
 	counter_label = _make_label(top_panel, "CounterLabel", Rect2(430, 3, 184, 30), "", 10, true)
@@ -694,24 +695,9 @@ func _get_idle_status() -> String:
 func _set_status(message: String, duration := 1.8) -> void:
 	if status_label == null:
 		return
-	status_label.text = _balanced_two_line_text(message, 42)
+	status_label.text = BALANCED_TEXT.split_balanced(message, 42)
 	status_timer = duration
 	MINIGAME_UI.fit_label(status_label)
-
-
-func _balanced_two_line_text(text_value: String, single_line_limit: int) -> String:
-	var normalized := text_value.strip_edges()
-	if normalized.contains("\n") or normalized.length() <= single_line_limit:
-		return normalized
-	var midpoint := int(normalized.length() / 2.0)
-	var before := normalized.rfind(" ", midpoint)
-	var after := normalized.find(" ", midpoint)
-	var split_at := before
-	if split_at <= 0 or (after > 0 and after - midpoint < midpoint - before):
-		split_at = after
-	if split_at <= 0:
-		return normalized
-	return normalized.substr(0, split_at).strip_edges() + "\n" + normalized.substr(split_at + 1).strip_edges()
 
 
 func _on_jump_energy_changed(current: float, maximum: float) -> void:
@@ -741,10 +727,6 @@ func _reset_stage() -> void:
 	# silently discarded the active checkpoint and made every save look broken.
 	_soft_respawn("RESET: Returned to the last threshold.")
 	_play_audio("play_button_pulse")
-
-
-func _perform_stage_reset() -> void:
-	_build_stage()
 
 
 func is_hybrid_adventure() -> bool:

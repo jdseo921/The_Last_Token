@@ -37,6 +37,20 @@ func _run() -> void:
 	dialogue_box.call("start_dialogue", [{"speaker": "Roxy", "text": "Finally."}])
 	_expect(not automatic_cue.visible, "target NPC dialogue closes the navigation cue")
 	_expect(bool(automatic_cue.get("dismissed")), "target NPC closure remains dismissed in the room")
+	_expect(bool(automatic_cue.call("_dialogue_matches_displayed_target", "LOCAL: Talk to Mr.\nByte about the Truth Filter.", [{"speaker": "Mr. Byte", "text": "Ready."}])), "balanced route-cue line breaks do not prevent destination matching")
+	var object_cue := ROUTE_CUE.new()
+	host.add_child(object_cue)
+	object_cue.setup("staff_room", Vector2(24, 86), 390.0)
+	await process_frame
+	object_cue.set("dismissed", false)
+	object_cue.visible = true
+	object_cue.get_node("RouteCueLabel").text = "LOCAL: Inspect the restore terminal."
+	var late_dialogue_box := DIALOGUE_BOX.instantiate()
+	host.add_child(late_dialogue_box)
+	await process_frame
+	late_dialogue_box.call("start_dialogue", [{"speaker": "Terminal", "text": "RESTORED TAPE ACCEPTED."}])
+	_expect(not object_cue.visible, "destination dialogue closes navigation for a dynamically added terminal box")
+	_expect(bool(object_cue.get("dismissed")), "terminal destination navigation remains expired")
 	game_state.set("story_started", true)
 	game_state.set("lost_token_quest_completed", true)
 	game_state.set("broken_high_score_completed", true)
@@ -88,7 +102,9 @@ func _run() -> void:
 	_expect(backing != null, "top-right quest HUD builds")
 	if backing != null:
 		_expect(is_zero_approx(backing.position.y), "quest HUD touches the top edge")
-		_expect(backing.size.y <= 40.0, "quest HUD is vertically compact")
+		_expect(backing.size.y <= 60.0, "quest HUD stays compact while reserving two readable action lines")
+		var action_label := host.get_node("ObjectiveHudLayer/ObjectiveHud/ObjectiveAction") as Label
+		_expect(action_label.size.y >= 32.0, "quest HUD does not clip the second action line")
 
 	game_state.set("circuit_soda_completed", true)
 	game_state.set("prize_sort_completed", true)
@@ -100,6 +116,21 @@ func _run() -> void:
 	game_state.set("closing_shift_service_clue_found", true)
 	var gus_return_hint := ROUTE_CUE.get_current_hint("snack_alcove")
 	_expect(gus_return_hint.contains("CABINET HALLWAY") and not gus_return_hint.contains("AFTER-HOURS"), "Service Dash routes back to Gus instead of the optional archive")
+
+	game_state.set("lost_shift_file_completed", true)
+	game_state.set("static_service_run_completed", true)
+	game_state.set("maintenance_sync_completed", true)
+	game_state.set("story_puzzle_completed", true)
+	game_state.set("security_tape_assembly_completed", false)
+	game_state.set("memory_echo_completed", false)
+	quest_notice.call("set_location_context", "staff_corridor")
+	quest_notice.call("refresh_objective_hud")
+	var hud_action := host.get_node("ObjectiveHudLayer/ObjectiveHud/ObjectiveAction") as Label
+	_expect(hud_action.text.replace("\n", " ") == "Take the NORTH exit to STAFF ROOM.", "Staff Corridor quest HUD routes north before mentioning the archive desk")
+	var staff_corridor := (load("res://scenes/maps/StaffCorridor.tscn") as PackedScene).instantiate()
+	var north_exit := staff_corridor.get_node("StaffRouteExit")
+	_expect(str(north_exit.get("destination_name")) == "STAFF ROOM", "Staff Corridor north exit is labeled Staff Room")
+	staff_corridor.free()
 
 	var save_data: Dictionary = game_state.call("to_save_data")
 	_expect(bool(save_data.get("route_cue_close_tip_seen", false)), "first-close tutorial state is saved")

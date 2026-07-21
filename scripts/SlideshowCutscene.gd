@@ -5,20 +5,29 @@ signal cutscene_finished
 const ADVANCE_COOLDOWN_MSEC := 250
 const MIN_SLIDE_DELAY_SEC := 0.25
 const FINAL_MEMORY_DELAY_SEC := 1.0
+const SLIDE_FADE_IN_SECONDS := 0.42
+const SLIDE_FADE_OUT_SECONDS := 0.26
+const FINAL_FADE_OUT_SECONDS := 0.7
+const STAFF_ROOM_FADE_IN_SECONDS := 0.85
+const CAPTION_BALANCE_MIN_CHARS := 58
+const BALANCED_TEXT := preload("res://scripts/BalancedText.gd")
 
-@onready var panel_texture: TextureRect = $PanelTexture
+@onready var panel_texture: TextureRect = $PanelClip/PanelTexture
 @onready var missing_panel: Panel = $MissingPanel
 @onready var missing_panel_label: Label = $MissingPanel/MissingPanelLabel
 @onready var caption_label: Label = $CaptionLabel
 @onready var slide_counter_label: Label = $SlideCounterLabel
 @onready var prompt_label: Label = $PromptLabel
+@onready var fade_overlay: ColorRect = $FadeOverlay
 
 var slides: Array = []
 var current_index := 0
 var active_tween: Tween = null
+var transition_tween: Tween = null
 var can_advance := false
 var finished := false
 var waiting_for_final_input := false
+var transition_in_progress := false
 var last_advance_msec := 0
 var advance_generation := 0
 
@@ -31,14 +40,23 @@ func start_cutscene(slide_list: Array) -> void:
 	last_advance_msec = 0
 	advance_generation = 0
 	visible = true
+	transition_in_progress = false
+	fade_overlay.visible = true
+	fade_overlay.color.a = 1.0
 	prompt_label.text = "Press E / Space to continue"
 	if slides.is_empty():
 		call_deferred("_finish_cutscene")
 		return
 	_show_current_slide()
+	transition_in_progress = true
+	_fade_in_first_slide()
+
+func _fade_in_first_slide() -> void:
+	await _fade_from_black(SLIDE_FADE_IN_SECONDS)
+	transition_in_progress = false
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not visible or finished or not can_advance:
+	if not visible or finished or transition_in_progress or not can_advance:
 		return
 	if event.is_action_pressed("interact"):
 		if event is InputEventKey and event.echo:
@@ -55,14 +73,22 @@ func _unhandled_input(event: InputEvent) -> void:
 func _next_slide() -> void:
 	if finished:
 		return
+	can_advance = false
 	if waiting_for_final_input:
 		_finish_cutscene()
 		return
+	_transition_to_next_slide()
+
+func _transition_to_next_slide() -> void:
+	transition_in_progress = true
+	await _fade_to_black(SLIDE_FADE_OUT_SECONDS)
 	current_index += 1
 	if current_index >= slides.size():
 		_show_final_memory_prompt()
-		return
-	_show_current_slide()
+	else:
+		_show_current_slide()
+	await _fade_from_black(SLIDE_FADE_IN_SECONDS)
+	transition_in_progress = false
 
 func _show_current_slide() -> void:
 	if finished or current_index < 0 or current_index >= slides.size():
@@ -72,11 +98,12 @@ func _show_current_slide() -> void:
 	if active_tween and active_tween.is_valid():
 		active_tween.kill()
 	panel_texture.scale = Vector2.ONE
+	panel_texture.pivot_offset = panel_texture.size * 0.5
 	panel_texture.modulate = Color(1, 1, 1, 1)
 	missing_panel.modulate = Color(1, 1, 1, 1)
 	var slide := _get_slide_data(current_index)
 	var image_path := str(slide.get("image_path", ""))
-	caption_label.text = str(slide.get("caption", ""))
+	caption_label.text = BALANCED_TEXT.split_balanced(str(slide.get("caption", "")), CAPTION_BALANCE_MIN_CHARS)
 	slide_counter_label.text = "Memory %d / %d" % [current_index + 1, slides.size()]
 	prompt_label.text = "Press E / Space to continue"
 	var effect := str(slide.get("effect", "fade"))
@@ -147,7 +174,35 @@ func _finish_cutscene() -> void:
 		return
 	finished = true
 	can_advance = false
+	transition_in_progress = true
 	if active_tween and active_tween.is_valid():
 		active_tween.kill()
+	await _fade_to_black(FINAL_FADE_OUT_SECONDS)
+	_hide_slide_content()
+	await _fade_from_black(STAFF_ROOM_FADE_IN_SECONDS)
 	visible = false
 	cutscene_finished.emit()
+
+func _fade_to_black(duration: float) -> void:
+	await _tween_fade_overlay(1.0, duration)
+
+func _fade_from_black(duration: float) -> void:
+	await _tween_fade_overlay(0.0, duration)
+
+func _tween_fade_overlay(target_alpha: float, duration: float) -> void:
+	if transition_tween and transition_tween.is_valid():
+		transition_tween.kill()
+	fade_overlay.visible = true
+	transition_tween = create_tween()
+	transition_tween.set_trans(Tween.TRANS_SINE)
+	transition_tween.set_ease(Tween.EASE_IN_OUT)
+	transition_tween.tween_property(fade_overlay, "color:a", target_alpha, maxf(duration, 0.05))
+	await transition_tween.finished
+	transition_tween = null
+
+func _hide_slide_content() -> void:
+	for child in get_children():
+		if child == fade_overlay:
+			continue
+		if child is CanvasItem:
+			(child as CanvasItem).visible = false

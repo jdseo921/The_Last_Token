@@ -5,11 +5,14 @@ extends Node2D
 # an optional "birthday high-score" cabinet. Placeholder lore; dressed later.
 
 const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
+const ROUTE_CUE_SCRIPT := preload("res://scripts/RouteCue.gd")
 
 @onready var player: CharacterBody2D = $Player
 @onready var dialogue_box: CanvasLayer = $UILayer/DialogueBox
 @onready var prompt_label: Label = $UILayer/InteractionPrompt
 @onready var prompt_background: ColorRect = $UILayer/InteractionPromptBackground
+
+var route_cue: Control = null
 
 var pending_after_dialogue: Callable = Callable()
 
@@ -17,6 +20,7 @@ func _ready() -> void:
 	AudioManager.play_music_for_context("prize_corner")
 	player.interaction_prompt_changed.connect(_on_prompt_changed)
 	dialogue_box.dialogue_finished.connect(_on_dialogue_finished)
+	_setup_route_cue()
 	_apply_spawn_position()
 	_on_prompt_changed("")
 
@@ -46,6 +50,16 @@ func _on_dialogue_finished() -> void:
 		pending_after_dialogue = Callable()
 	if player and player.has_method("set_control_enabled"):
 		player.set_control_enabled(true)
+	_refresh_route_cue()
+
+func _setup_route_cue() -> void:
+	route_cue = ROUTE_CUE_SCRIPT.new()
+	$UILayer.add_child(route_cue)
+	route_cue.setup("party_room", Vector2(24, 86), 430.0)
+
+func _refresh_route_cue() -> void:
+	if route_cue != null and is_instance_valid(route_cue):
+		route_cue.refresh()
 
 func _dialogue_is_active() -> bool:
 	if dialogue_box == null:

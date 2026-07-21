@@ -1,7 +1,6 @@
 extends Control
 
 const ARCADE_JUICE := preload("res://scripts/ArcadeJuice.gd")
-const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
 
 const FRAGMENTS := [
 	"Counter lights shut off.",
@@ -29,7 +28,9 @@ const STATIC_OVERLAY_ART_PATH := "res://assets/art/minigames/security_tape/tape_
 @onready var hint_label: Label = $Panel/HintLabel
 @onready var submit_button: Button = $Panel/Controls/SubmitButton
 @onready var reset_button: Button = $Panel/Controls/ResetButton
-@onready var return_button: Button = $Panel/ReturnButton
+@onready var completion_overlay: Control = $CompletionOverlay
+@onready var completion_message: Label = $CompletionOverlay/CompletionPanel/MessageLabel
+@onready var return_button: Button = $CompletionOverlay/CompletionPanel/ReturnButton
 @onready var fragment_container: VBoxContainer = $Panel/Fragments
 @onready var fragment_a: Button = $Panel/Fragments/FragmentA
 @onready var fragment_b: Button = $Panel/Fragments/FragmentB
@@ -44,7 +45,6 @@ var anomaly_acknowledged := false
 var feedback_flash: ColorRect = null
 
 func _ready() -> void:
-	AudioManager.play_music_for_context("security_tape_assembly")
 	ArcadeScreen.apply(self, "res://assets/art/minigames/security_tape/backgrounds/security_tape_screen.svg")
 	GameState.start_security_tape_assembly()
 	_apply_optional_art_hooks()
@@ -68,8 +68,8 @@ func _ready() -> void:
 	submit_button.pressed.connect(_on_submit_pressed)
 	reset_button.pressed.connect(_reset_selection)
 	return_button.pressed.connect(_return_to_staff_corridor)
-	return_button.visible = false
-	status_label.text = "COILY: Ooh, home movies! Clear the static, then\nput the night back in order. One frame will not fit.\nTrust the feeling when you find it."
+	completion_overlay.visible = false
+	status_label.text = "Clear the static, then put the night back in order.\nOne frame will not fit. Watch the timestamps."
 	_refresh_view()
 
 func _looks_presolved() -> bool:
@@ -113,7 +113,7 @@ func _on_submit_pressed() -> void:
 		GameState.record_security_tape_wrong_order()
 		_play_audio("play_error_buzz")
 		_flash_feedback(ARCADE_JUICE.FLASH_RED, 0.4)
-		status_label.text = "FRAME REJECTED: NO TIMESTAMP.\nThat frame does not belong to any hour of that night.\nCOILY: ...I greeted everyone, pal. That one, I never greeted."
+		status_label.text = "FRAME REJECTED: NO TIMESTAMP.\nThat frame does not belong to any hour of that night.\nThe recorder has no matching entry."
 		anomaly_acknowledged = true
 		_reset_selection(false)
 		return
@@ -122,16 +122,17 @@ func _on_submit_pressed() -> void:
 		_play_audio("play_success_jingle")
 		_flash_feedback(ARCADE_JUICE.FLASH_CYAN, 0.32)
 		GameState.complete_security_tape_assembly()
-		var closing := "TAPE ORDER RESTORED.\nTHE STAFF DOOR DID NOT RECORD A CUSTOMER."
+		var closing := "THE STAFF DOOR DID NOT RECORD A CUSTOMER."
 		if anomaly_acknowledged:
 			closing += "\nOne frame stays on the reel. It has no hour to return to."
 		else:
 			closing += "\nOne frame was never seated. It has no hour to return to."
-		status_label.text = closing
+		closing += "\nTake the restored tape to the terminal."
+		status_label.text = ""
 		_set_fragment_buttons_disabled(true)
 		submit_button.disabled = true
 		reset_button.disabled = true
-		return_button.visible = true
+		_show_completion_popup(closing)
 		return
 	GameState.record_security_tape_wrong_order()
 	_play_audio("play_error_buzz")
@@ -165,6 +166,11 @@ func _refresh_view() -> void:
 func _set_fragment_buttons_disabled(disabled: bool) -> void:
 	for button in fragment_buttons:
 		button.disabled = disabled
+
+func _show_completion_popup(message: String) -> void:
+	completion_message.text = message
+	completion_overlay.visible = true
+	return_button.grab_focus()
 
 func _return_to_staff_corridor() -> void:
 	ARCADE_JUICE.pulse_control(self, return_button)

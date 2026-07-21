@@ -79,14 +79,6 @@
         {"speaker": "Mr. Byte", "text": "Emotional residue: high."}
       ]
     ],
-    "security_tape_completion_anecdote": [
-      [
-        {"speaker": "Mr. Byte", "text": "Tape order restored.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_stable.png"},
-        {"speaker": "Mr. Byte", "text": "Sequence now describes a route."},
-        {"speaker": "Mr. Byte", "text": "It does not yet describe the cause."},
-        {"speaker": "Mr. Byte", "text": "A reconstructed route is evidence, not a verdict on the life that walked it."}
-      ]
-    ],
     "staff_records_chain": [
       [
         {"speaker": "Mr. Byte", "text": "Staff record chain active.", "portrait": "res://assets/art/portraits/mr_byte/mr_byte_diagnostic.png"},

@@ -1,6 +1,8 @@
 extends Control
 class_name RouteCue
 
+const BALANCED_TEXT := preload("res://scripts/BalancedText.gd")
+
 const DEFAULT_SIZE := Vector2(340, 48)
 const TILE_SIZE := 16
 const CLOSE_BUTTON_SIZE := Vector2(22, 22)
@@ -36,9 +38,15 @@ func _ready() -> void:
 	z_index = 100
 	_build_nodes()
 	_apply_layout()
+	if not get_tree().node_added.is_connected(_on_tree_node_added):
+		get_tree().node_added.connect(_on_tree_node_added)
 	_connect_dialogue_boxes()
 	call_deferred("_connect_dialogue_boxes")
 	refresh()
+
+func _exit_tree() -> void:
+	if get_tree() != null and get_tree().node_added.is_connected(_on_tree_node_added):
+		get_tree().node_added.disconnect(_on_tree_node_added)
 
 func refresh() -> void:
 	var current_quest_id := _get_current_quest_id()
@@ -54,7 +62,7 @@ func refresh() -> void:
 	visible = not hint.is_empty()
 	if route_label == null:
 		return
-	route_label.text = hint
+	route_label.text = BALANCED_TEXT.split_balanced(hint, 50)
 	route_label.modulate = LOCAL_COLOR if hint.begins_with("LOCAL") else TEXT_COLOR
 	if close_button != null:
 		close_button.visible = visible
@@ -131,17 +139,13 @@ static func get_current_hint(current_location_id: String) -> String:
 		"maintenance_sync":
 			return _local_or_route(current_location_id, "maintenance_hall", "LOCAL: Report to Gus in Maintenance Hall.")
 		"staff_corridor":
-			return _local_or_route(current_location_id, "staff_corridor", "LOCAL: Take the NORTH exit to the Final Room.")
+			return _local_or_route(current_location_id, "staff_corridor", "LOCAL: Take the NORTH exit to the Staff Room.")
 		"security_tape_assembly":
 			return _local_or_route(current_location_id, "staff_room", "LOCAL: Inspect the archive desk for the Security Tape.")
-		"final_night_walk":
-			return _local_or_route(current_location_id, "staff_room", "LOCAL: Use the archive desk to trace the Final Night.")
-		"stabilize_memory_echo":
-			return _local_or_route(current_location_id, "staff_room", "LOCAL: Use the archive desk to open Memory Echo.")
 		"enter_staff_room":
 			return _local_or_route(current_location_id, "staff_room", "LOCAL: Inspect the restore terminal.")
 		"finish_memory":
-			return _local_or_route(current_location_id, "staff_room", "LOCAL: Let the memory finish.")
+			return ""
 		"talk_to_witnesses":
 			return _get_witness_hint(current_location_id, state)
 	return ""
@@ -185,11 +189,19 @@ func _apply_layout() -> void:
 
 func _connect_dialogue_boxes() -> void:
 	for dialogue_box in get_tree().get_nodes_in_group("dialogue_boxes"):
-		if not dialogue_box.has_signal("dialogue_started"):
-			continue
-		var callback := Callable(self, "_on_dialogue_started")
-		if not dialogue_box.is_connected("dialogue_started", callback):
-			dialogue_box.connect("dialogue_started", callback)
+		_connect_dialogue_box(dialogue_box)
+
+func _on_tree_node_added(node: Node) -> void:
+	call_deferred("_connect_dialogue_box", node)
+
+func _connect_dialogue_box(dialogue_box: Node) -> void:
+	if not is_instance_valid(dialogue_box) or not dialogue_box.is_in_group("dialogue_boxes"):
+		return
+	if not dialogue_box.has_signal("dialogue_started"):
+		return
+	var callback := Callable(self, "_on_dialogue_started")
+	if not dialogue_box.is_connected("dialogue_started", callback):
+		dialogue_box.connect("dialogue_started", callback)
 
 
 func _on_dialogue_started(lines: Array) -> void:
@@ -252,9 +264,23 @@ func _finish_dismiss_tip() -> void:
 
 
 static func _dialogue_matches_displayed_target(hint: String, lines: Array) -> bool:
-	var lowered_hint := hint.to_lower()
+	var lowered_hint := hint.to_lower().replace("\n", " ")
 	var expected_speakers: Array[String] = []
-	if lowered_hint.contains("mr. byte"):
+	if lowered_hint.contains("archive desk"):
+		expected_speakers = ["archive desk"]
+	elif lowered_hint.contains("terminal"):
+		expected_speakers = ["terminal"]
+	elif lowered_hint.contains("cabinet 07"):
+		expected_speakers = ["cabinet 07"]
+	elif lowered_hint.contains("broken score"):
+		expected_speakers = ["broken score", "score cabinet", "roxy"]
+	elif lowered_hint.contains("truth filter"):
+		expected_speakers = ["truth filter", "mr. byte"]
+	elif lowered_hint.contains("circuit soda"):
+		expected_speakers = ["circuit soda", "vendo"]
+	elif lowered_hint.contains("shelf beside pip"):
+		expected_speakers = ["prize shelf", "pip"]
+	elif lowered_hint.contains("mr. byte"):
 		expected_speakers = ["mr. byte"]
 	elif lowered_hint.contains("mira"):
 		expected_speakers = ["mira"]
@@ -383,7 +409,7 @@ static func _get_next_step(current_location_id: String, target_location_id: Stri
 			return "Back to ARCADE HUB, then %s." % _get_target_label(target_location_id)
 		"staff_corridor":
 			if target_location_id == "staff_room":
-				return "Use STAFF ROOM door."
+				return "Take the NORTH exit to STAFF ROOM."
 			if target_location_id == "maintenance_hall":
 				return "Take the STAFF ACCESS HALL at the bottom."
 			if target_location_id == "arcade_hub":
@@ -405,6 +431,20 @@ static func _get_next_step(current_location_id: String, target_location_id: Stri
 			return "Take PRIZE CORNER exit." if target_location_id == "prize_corner" else "Take SNACK ALCOVE exit."
 		"maintenance_staff_hallway":
 			return "Take STAFF CORRIDOR exit." if target_location_id == "staff_corridor" or target_location_id == "staff_room" else "Take MAINTENANCE exit."
+		"front_entrance":
+			if target_location_id == "arcade_hub":
+				return "Take the ARCADE HUB exit at the top."
+			return "Take the ARCADE HUB exit at the top, then %s." % _get_target_label(target_location_id)
+		"party_room":
+			if target_location_id == "front_entrance":
+				return "Take the FRONT ENTRANCE exit on the left."
+			return "Take the FRONT ENTRANCE exit on the left, then ARCADE HUB."
+		"restrooms":
+			if target_location_id == "party_room":
+				return "Take the PARTY ROOM exit on the left."
+			return "Take the PARTY ROOM exit on the left, then FRONT ENTRANCE."
+		"staff_room":
+			return "Take the STAFF CORRIDOR exit at the bottom, then %s." % _get_target_label(target_location_id)
 	return "Follow signs to %s." % _get_target_label(target_location_id)
 
 static func _get_target_label(target_location_id: String) -> String:

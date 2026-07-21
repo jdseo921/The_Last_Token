@@ -11,7 +11,6 @@ const DEBUG := preload("res://scripts/Debug.gd")
 @export var destination_name := ""
 @export var arrow_direction := "auto"
 @export var label_offset_override := Vector2.ZERO
-@export var route_mode := ""
 
 const ARM_DELAY_SECONDS := 0.35
 const PROXIMITY_RADIUS := 96.0
@@ -169,9 +168,6 @@ func _try_transition() -> void:
 		DEBUG.info(self, "navigation", "exit_blocked_by_flag", _debug_transition_data())
 		_show_locked_dialogue()
 		return
-	if not route_mode.is_empty():
-		if _try_route_mode():
-			return
 	if target_scene_path.is_empty():
 		DEBUG.failure(self, "navigation", "exit_missing_target", _debug_transition_data())
 		push_error("MapTransition: target_scene_path is empty.")
@@ -184,21 +180,6 @@ func _try_transition() -> void:
 	DEBUG.info(self, "navigation", "exit_transition_started", _debug_transition_data())
 	GameState.set_pending_spawn_id(target_spawn_id)
 	SceneChanger.change_scene(target_scene_path)
-
-func _try_route_mode() -> bool:
-	match route_mode:
-		"staff_sequence":
-			transition_started = true
-			if not GameState.security_tape_assembly_completed:
-				SceneChanger.go_to_security_tape_assembly()
-			elif not GameState.final_night_walk_completed:
-				SceneChanger.go_to_final_night_walk()
-			elif not GameState.memory_echo_completed:
-				SceneChanger.go_to_memory_echo()
-			else:
-				SceneChanger.go_to_staff_room()
-			return true
-	return false
 
 func _required_flag_is_met() -> bool:
 	if required_flag.is_empty():

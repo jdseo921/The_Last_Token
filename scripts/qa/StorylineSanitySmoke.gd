@@ -131,9 +131,10 @@ func _check_required_route_handoffs() -> void:
 	state.complete_maintenance_sync()
 	_expect_quest("security_tape_assembly", "the Staff Door opens onto Security Tape")
 	state.complete_security_tape_assembly()
-	_expect_quest("final_night_walk", "the assembled tape unlocks Final Night Walk")
+	_expect_quest("enter_staff_room", "the assembled tape hands directly to the Staff Room terminal")
+	# The Staff Room owns the direct tape-to-terminal handoff. These flags remain
+	# for compatibility with pre-handoff saves and archival replay scenes.
 	state.complete_final_night_walk()
-	_expect_quest("stabilize_memory_echo", "the reconstructed walk leads to Memory Echo")
 	state.complete_memory_echo()
 	_expect_quest("enter_staff_room", "Memory Echo opens the Staff Room reveal")
 	state.mark_twist_reveal_seen()

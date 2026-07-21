@@ -132,9 +132,9 @@ func _audit_alternate_states(scene: Node, scene_name: String) -> void:
 			_audit_node(scene, "%s revealed fragments" % scene_name)
 			var security_status := scene.get_node("Panel/StatusLabel") as Label
 			var security_messages := [
-				"COILY: Ooh, home movies! Clear the static, then\nput the night back in order. One frame will not fit.\nTrust the feeling when you find it.",
-				"FRAME REJECTED: NO TIMESTAMP.\nThat frame does not belong to any hour of that night.\nCOILY: ...I greeted everyone, pal. That one, I never greeted.",
-				"TAPE ORDER RESTORED.\nTHE STAFF DOOR DID NOT RECORD A CUSTOMER.\nOne frame stays on the reel. It has no hour to return to.",
+				"Clear the static, then put the night back in order.\nOne frame will not fit. Watch the timestamps.",
+				"FRAME REJECTED: NO TIMESTAMP.\nThat frame does not belong to any hour of that night.\nThe recorder has no matching entry.",
+				"THE STAFF DOOR DID NOT RECORD A CUSTOMER.\nOne frame stays on the reel. It has no hour to return to.\nTake the restored tape to the terminal.",
 			]
 			for index in range(security_messages.size()):
 				security_status.text = security_messages[index]
@@ -142,6 +142,8 @@ func _audit_alternate_states(scene: Node, scene_name: String) -> void:
 			var selected := scene.get_node("Panel/SelectedLabel") as Label
 			selected.text = "RESTORED ORDER\n1. Counter lights shut off.\n2. Cabinet 07 remains powered.\n3. A staff member enters the back hall.\n4. The Staff Door records two signals."
 			_audit_node(scene, "%s restored order" % scene_name)
+			scene.call("_show_completion_popup", "THE STAFF DOOR DID NOT RECORD A CUSTOMER.\nOne frame was never seated. It has no hour to return to.")
+			_audit_node(scene, "%s completion popup" % scene_name)
 		"MemoryEcho.tscn":
 			scene.set_process(false)
 			for question_index in range(3):

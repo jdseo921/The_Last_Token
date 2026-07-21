@@ -33,7 +33,7 @@ func _run() -> void:
 	var notice_title: Label = notice.get("hud_title")
 	var notice_action: Label = notice.get("hud_action")
 	_expect(notice_title.text == "GET YOUR BEARINGS", "opening HUD names the first quest")
-	_expect(notice_action.text == "Look around. Talk to whoever is still here.", "opening HUD shows the requested local instruction")
+	_expect(notice_action.text.replace("\n", " ") == "Look around. Talk to whoever is still here.", "opening HUD shows the requested local instruction")
 
 	var route_cue: Node = (load(ROUTE_CUE_PATH) as Script).new()
 	host.add_child(route_cue)
@@ -41,7 +41,7 @@ func _run() -> void:
 	await process_frame
 	route_cue.call("refresh")
 	_expect(route_cue.visible, "opening local navigation is visible after the monologue")
-	_expect((route_cue.get_node("RouteCueLabel") as Label).text == "LOCAL: Look around. Talk to whoever is still here.", "route cue uses the opening local instruction")
+	_expect((route_cue.get_node("RouteCueLabel") as Label).text.replace("\n", " ") == "LOCAL: Look around. Talk to whoever is still here.", "route cue uses the opening local instruction")
 
 	var hub: Node = (load(ARCADE_HUB_SCRIPT_PATH) as Script).new()
 	var opening_lines: Array = hub.call("_get_opening_intro_lines")

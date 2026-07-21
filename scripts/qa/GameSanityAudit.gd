@@ -134,11 +134,12 @@ func _walk_dialogue(node: Variant, source: String, font: Font) -> void:
 
 var machine_font: Font = null
 const DIALOGUE_BOX_SCRIPT := preload("res://scripts/DialogueBox.gd")
+const BALANCED_TEXT := preload("res://scripts/BalancedText.gd")
 
 func _measure_line(line: Dictionary, source: String, font: Font) -> void:
 	if machine_font != null and DIALOGUE_BOX_SCRIPT.MACHINE_SPEAKERS.has(str(line.get("speaker", ""))):
 		font = machine_font
-	var text := str(line.get("text", ""))
+	var text := BALANCED_TEXT.split_balanced(str(line.get("text", "")), 56)
 	var width := DIALOGUE_TEXT_WIDTH_PORTRAIT if line.has("portrait") else DIALOGUE_TEXT_WIDTH_PLAIN
 	var size := font.get_multiline_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, width, DIALOGUE_FONT_SIZE)
 	if size.y > DIALOGUE_TEXT_HEIGHT:

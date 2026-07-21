@@ -1,7 +1,9 @@
 extends Control
 
 const SAVE_SLOT_MENU_SCENE := preload("res://scenes/ui/SaveSlotMenu.tscn")
+const MESSAGE_FADE_IN_SECONDS := 2.6
 
+@onready var panel: Panel = $Panel
 @onready var save_and_continue_button: Button = $Panel/VBox/SaveAndContinueButton
 @onready var return_to_title_button: Button = $Panel/VBox/ReturnToTitleButton
 
@@ -13,6 +15,21 @@ func _ready() -> void:
 	save_and_continue_button.pressed.connect(_on_save_and_continue_pressed)
 	return_to_title_button.pressed.connect(_on_return_to_title_pressed)
 	_build_return_to_title_confirm()
+	_fade_in_message_window()
+
+func _fade_in_message_window() -> void:
+	panel.modulate.a = 0.0
+	save_and_continue_button.disabled = true
+	return_to_title_button.disabled = true
+	var fade_tween := create_tween()
+	fade_tween.set_trans(Tween.TRANS_SINE)
+	fade_tween.set_ease(Tween.EASE_OUT)
+	fade_tween.tween_property(panel, "modulate:a", 1.0, MESSAGE_FADE_IN_SECONDS)
+	fade_tween.tween_callback(_finish_message_fade_in)
+
+func _finish_message_fade_in() -> void:
+	save_and_continue_button.disabled = false
+	return_to_title_button.disabled = false
 	save_and_continue_button.grab_focus()
 
 func _on_save_and_continue_pressed() -> void:

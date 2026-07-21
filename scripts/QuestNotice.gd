@@ -3,6 +3,8 @@ extends CanvasLayer
 signal quest_closed
 
 const ASSET_PATHS := preload("res://scripts/AssetPaths.gd")
+const ROUTE_CUE_SCRIPT := preload("res://scripts/RouteCue.gd")
+const BALANCED_TEXT := preload("res://scripts/BalancedText.gd")
 const NOTIFICATION_FADE_IN_SECONDS := 0.7
 const NOTIFICATION_HOLD_SECONDS := 2.0
 const NOTIFICATION_FADE_OUT_SECONDS := 1.0
@@ -28,6 +30,7 @@ var hud_title: Label = null
 var hud_action: Label = null
 var hud_tween: Tween = null
 var last_announced_signature := ""
+var location_context_id := ""
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -55,17 +58,18 @@ func _maybe_build_objective_hud() -> void:
 	backing.name = "ObjectiveBacking"
 	backing.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	backing.position = Vector2(340, 0)
-	backing.size = Vector2(294, 40)
+	backing.size = Vector2(294, 58)
 	backing.color = Color(0.012, 0.016, 0.026, 0.78)
 	hud_root.add_child(backing)
 	var edge := ColorRect.new()
 	edge.name = "ObjectiveEdge"
 	edge.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	edge.position = Vector2(340, 0)
-	edge.size = Vector2(2, 40)
+	edge.size = Vector2(2, 58)
 	edge.color = Color(0.3, 0.9, 1.0, 0.85)
 	hud_root.add_child(edge)
 	hud_title = Label.new()
+	hud_title.name = "ObjectiveTitle"
 	hud_title.position = Vector2(348, 2)
 	hud_title.size = Vector2(282, 18)
 	hud_title.add_theme_font_override("font", preload("res://assets/fonts/m5x7.ttf"))
@@ -73,8 +77,9 @@ func _maybe_build_objective_hud() -> void:
 	hud_title.add_theme_color_override("font_color", Color(0.5, 0.95, 1.0, 1.0))
 	hud_root.add_child(hud_title)
 	hud_action = Label.new()
+	hud_action.name = "ObjectiveAction"
 	hud_action.position = Vector2(348, 20)
-	hud_action.size = Vector2(282, 16)
+	hud_action.size = Vector2(282, 34)
 	hud_action.add_theme_font_override("font", preload("res://assets/fonts/m5x7.ttf"))
 	hud_action.add_theme_font_size_override("font_size", 16)
 	hud_action.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -95,10 +100,10 @@ func _update_objective_hud(pulse: bool) -> void:
 	var data: Dictionary = GameState.get_current_quest_data()
 	hud_root.visible = true
 	hud_title.text = str(data.get("title", "")).to_upper()
-	var action := str(data.get("summary", ""))
+	var action := _get_contextual_action(data)
 	if action.is_empty():
 		action = str(data.get("location", ""))
-	hud_action.text = action
+	hud_action.text = BALANCED_TEXT.split_balanced(action, 32)
 	if pulse:
 		if hud_tween and hud_tween.is_valid():
 			hud_tween.kill()
@@ -112,6 +117,20 @@ func refresh_objective_hud(pulse := false) -> void:
 	# Map scripts call this at exact story handoffs instead of waiting for the
 	# half-second polling fallback.
 	_update_objective_hud(pulse)
+
+func set_location_context(new_location_id: String) -> void:
+	location_context_id = new_location_id
+	if hud_root != null:
+		_update_objective_hud(false)
+
+func _get_contextual_action(quest_data: Dictionary) -> String:
+	if not location_context_id.is_empty():
+		var hint: String = ROUTE_CUE_SCRIPT.get_current_hint(location_context_id)
+		if hint.begins_with("LOCAL: "):
+			return hint.trim_prefix("LOCAL: ")
+		if hint.begins_with("ROUTE: "):
+			return hint.trim_prefix("ROUTE: ")
+	return str(quest_data.get("summary", ""))
 
 func _process(delta: float) -> void:
 	# Announce whenever the active quest changes so the player always sees the

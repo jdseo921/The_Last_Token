@@ -225,9 +225,6 @@ func _get_cabinet07_sequential_lines(key: String, fallback: Array) -> Array:
 func _get_staff_door_lines(key: String, fallback: Array) -> Array:
 	return DIALOGUE_POOL.get_lines("staff_door", key, fallback)
 
-func _get_staff_door_sequential_lines(key: String, fallback: Array) -> Array:
-	return DIALOGUE_POOL.get_sequential_set("staff_door", key, key, fallback)
-
 func _get_environment_lines(key: String, fallback: Array) -> Array:
 	return DIALOGUE_POOL.get_lines("environment_objects", key, fallback)
 
@@ -323,19 +320,6 @@ func _refresh_objective_hint_visibility() -> void:
 	objective_hint_label.visible = false
 	objective_hint_background.visible = false
 
-func _objective_hint_should_be_visible() -> bool:
-	if _get_objective_hint_text().is_empty():
-		return false
-	if _should_play_opening_intro() or intro_active:
-		return false
-	if _dialogue_is_active() or _choice_box_is_open() or _save_slot_menu_is_open():
-		return false
-	if pause_menu != null and pause_menu.visible:
-		return false
-	if quest_notice != null and quest_notice.visible:
-		return false
-	return true
-
 func _get_objective_hint_text() -> String:
 	match GameState.get_current_quest_id():
 		"opening_look_around":
@@ -366,10 +350,6 @@ func _get_objective_hint_text() -> String:
 			return "Objective: Maintenance Hall -> use the Staff Corridor exit."
 		"security_tape_assembly":
 			return "Objective: Staff Corridor -> assemble the Security Tape."
-		"final_night_walk":
-			return "Objective: Staff Corridor -> walk the Final Night route."
-		"stabilize_memory_echo":
-			return "Objective: Staff Corridor -> stabilize the Memory Echo."
 		"enter_staff_room":
 			return "Objective: Staff Corridor -> enter the Staff Room."
 		"finish_memory":

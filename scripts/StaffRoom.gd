@@ -4,16 +4,20 @@ const SLIDESHOW_SCENE := preload("res://scenes/cutscenes/SlideshowCutscene.tscn"
 const ENDING_PROMPT_SCENE := preload("res://scenes/cutscenes/EndingPrompt.tscn")
 const DIALOGUE_BOX_SCENE := preload("res://scenes/ui/DialogueBox.tscn")
 const DIALOGUE_POOL := preload("res://scripts/DialoguePool.gd")
+const ROUTE_CUE_SCRIPT := preload("res://scripts/RouteCue.gd")
 const MEMORY_REVEAL_PANEL_DIR := "res://assets/art/cutscenes/memory_reveal/"
 const BACKGROUND_ART_PATH := "res://assets/art/maps/staff_room/staff_room_background_640x440.png"
 
 @onready var player: CharacterBody2D = $Player
-@onready var prompt_label: Label = $InteractionPrompt
-@onready var return_button: Button = $Panel/ReturnButton
+@onready var ui_layer: Node2D = $UILayer
+@onready var prompt_label: Label = $UILayer/InteractionPrompt
+@onready var prompt_background: ColorRect = $UILayer/InteractionPromptBackground
+@onready var dialogue_box: CanvasLayer = $UILayer/DialogueBox
 
 var active_cutscene: Node = null
 var active_dialogue_box: Node = null
 var reveal_in_progress := false
+var route_cue: Control = null
 
 func _ready() -> void:
 	AudioManager.play_music_for_context("staff_room")
@@ -21,13 +25,14 @@ func _ready() -> void:
 	_apply_room_bounds()
 	if player and player.has_signal("interaction_prompt_changed"):
 		player.interaction_prompt_changed.connect(_on_prompt_changed)
-	return_button.pressed.connect(_on_return_pressed)
 	_apply_spawn_position()
+	_setup_route_cue()
 	_on_prompt_changed("")
 
 func _on_prompt_changed(text: String) -> void:
 	prompt_label.text = text
 	prompt_label.visible = not text.is_empty()
+	prompt_background.visible = prompt_label.visible
 
 func can_open_pause_menu() -> bool:
 	return active_dialogue_box == null and active_cutscene == null and not reveal_in_progress
@@ -45,18 +50,20 @@ func _apply_background_art() -> void:
 	spr.position = Vector2.ZERO
 	add_child(spr)
 	move_child(spr, 0)
-	for placeholder_name in ["Floor", "BackWall", "TerminalGlow", "EmployeeFileVisual", "EmployeeFileLabel"]:
+	for placeholder_name in ["Floor", "BackWall", "TerminalGlow"]:
 		var node := get_node_or_null(NodePath(placeholder_name))
 		if node is CanvasItem:
 			(node as CanvasItem).visible = false
 
 func _apply_room_bounds() -> void:
-	if has_node("RoomBounds"):
+	if has_node("CollisionBounds") or has_node("RoomBounds"):
 		return
 	var body := StaticBody2D.new()
 	body.name = "RoomBounds"
 	add_child(body)
-	for r in [Rect2(0, 0, 640, 44), Rect2(0, 404, 640, 36), Rect2(0, 0, 40, 440), Rect2(600, 0, 40, 440), Rect2(218, 58, 214, 116)]:
+	# The authored bounds leave the central floor and bottom exit clear; this
+	# fallback only protects old scenes that do not include CollisionBounds.
+	for r in [Rect2(0, 0, 640, 154), Rect2(0, 154, 120, 246), Rect2(520, 154, 120, 246), Rect2(0, 400, 250, 40), Rect2(390, 400, 250, 40)]:
 		var cs := CollisionShape2D.new()
 		var shape := RectangleShape2D.new()
 		shape.size = r.size
@@ -70,14 +77,21 @@ func _apply_spawn_position() -> void:
 	if marker is Marker2D:
 		player.global_position = marker.global_position
 
+func _setup_route_cue() -> void:
+	route_cue = ROUTE_CUE_SCRIPT.new()
+	ui_layer.add_child(route_cue)
+	route_cue.call("setup", "staff_room", Vector2(24, 86), 430.0)
+
+func _refresh_route_cue() -> void:
+	if route_cue != null and is_instance_valid(route_cue) and route_cue.has_method("refresh"):
+		route_cue.call("refresh")
+
 func handle_hub_interaction(interactable: Node, player_node: Node = null) -> void:
 	match str(interactable.interactable_kind):
 		"security_tape_desk":
 			_handle_archive_desk()
 		"reveal_terminal":
 			_handle_terminal_interaction()
-		"employee_04_file":
-			_handle_employee_04_file()
 
 func _get_environment_lines(key: String, fallback: Array) -> Array:
 	return DIALOGUE_POOL.get_lines("environment_objects", key, fallback)
@@ -93,64 +107,18 @@ func _handle_archive_desk() -> void:
 	if not GameState.security_tape_assembly_completed:
 		_start_terminal_dialogue([
 			{"speaker": "Archive Desk", "text": "SECURITY TAPE FRAGMENTS READY."},
-			{"speaker": "Player", "text": "(The desk has the damaged tape. I can put its night back in order.)"},
+			{"speaker": "Player", "text": "(I want the truth, even if it is worse than the missing pieces. I am doing this.)"},
 		], Callable(self, "_go_to_security_tape_assembly"))
 		return
-	if not GameState.final_night_walk_completed:
-		_start_terminal_dialogue([
-			{"speaker": "Archive Desk", "text": "TAPE ORDER RESTORED. ROUTE TRACE AVAILABLE."},
-			{"speaker": "Player", "text": "(The final night is next. I can follow it from here.)"},
-		], Callable(self, "_go_to_final_night_walk"))
-		return
-	if not GameState.memory_echo_completed:
-		_start_terminal_dialogue([
-			{"speaker": "Archive Desk", "text": "MEMORY ECHO CONSOLE RESPONDING."},
-			{"speaker": "Player", "text": "(One last signal is waiting in the archive.)"},
-		], Callable(self, "_go_to_memory_echo"))
-		return
 	_start_terminal_dialogue([
-		{"speaker": "Archive Desk", "text": "ARCHIVE COMPLETE. THE DRAWER IS QUIET."},
+		{"speaker": "Archive Desk", "text": "TAPE ORDER RESTORED."},
+		{"speaker": "Archive Desk", "text": "TAKE RESTORED TAPE TO TERMINAL."},
 	], Callable(self, "_restore_player_control"))
 
 func _go_to_security_tape_assembly() -> void:
 	GameState.start_security_tape_assembly()
 	GameState.set_pending_spawn_id("Spawn_FromSecurityTape")
 	SceneChanger.go_to_security_tape_assembly()
-
-func _go_to_final_night_walk() -> void:
-	GameState.start_final_night_walk()
-	GameState.set_pending_spawn_id("Spawn_FromFinalNightWalk")
-	SceneChanger.go_to_final_night_walk()
-
-func _go_to_memory_echo() -> void:
-	GameState.start_memory_echo()
-	GameState.set_pending_spawn_id("Spawn_FromMemoryEcho")
-	SceneChanger.go_to_memory_echo()
-
-func _handle_employee_04_file() -> void:
-	if player and player.has_method("set_control_enabled"):
-		player.set_control_enabled(false)
-	if GameState.conscience_final_room_seen:
-		GameState.employee_04_file_found = true
-		_start_terminal_dialogue(_get_environment_lines("employee_04_file_integrated", [
-			{"speaker": "Employee File", "text": "EMPLOYEE 04 // IDENTITY STATUS: INTEGRATED."},
-			{"speaker": "Employee File", "text": "The photo is yours."},
-			{"speaker": "Employee File", "text": "The file was never about someone else."},
-			{"speaker": "Employee File", "text": "The regret field is no longer sealed."},
-		]), Callable(self, "_restore_player_control"))
-		return
-	if GameState.twist_reveal_seen:
-		GameState.employee_04_file_found = true
-		_start_terminal_dialogue(_get_environment_lines("employee_04_file_restored", [
-			{"speaker": "Employee File", "text": "EMPLOYEE 04 // MEMORY ACCESS: RECOVERED."},
-			{"speaker": "Employee File", "text": "The photo is yours."},
-			{"speaker": "Employee File", "text": "The file was never about someone else."},
-		]), Callable(self, "_restore_player_control"))
-		return
-	_start_terminal_dialogue(_get_environment_lines("employee_04_file_archived", [
-		{"speaker": "Employee File", "text": "EMPLOYEE 04 // MEMORY ACCESS: SEALED."},
-		{"speaker": "Employee File", "text": "The photo is corrupted beyond recognition."},
-	]), Callable(self, "_restore_player_control"))
 
 func _handle_terminal_interaction() -> void:
 	if reveal_in_progress:
@@ -169,24 +137,28 @@ func _handle_terminal_interaction() -> void:
 		reveal_in_progress = true
 		_start_final_self_conflict()
 		return
-	if not GameState.memory_echo_completed:
+	if not GameState.security_tape_assembly_completed:
 		_start_terminal_dialogue(_get_environment_lines("staff_room_terminal_locked", [
 			{"speaker": "Terminal", "text": "RESTORE PLAYBACK LOCKED."},
-			{"speaker": "Terminal", "text": "MEMORY ECHO REQUIRED."},
+			{"speaker": "Terminal", "text": "RESTORED SECURITY TAPE REQUIRED."},
 		]), Callable(self, "_restore_player_control"))
 		return
+	if route_cue != null and is_instance_valid(route_cue) and route_cue.has_method("dismiss_for_target_dialogue"):
+		route_cue.call("dismiss_for_target_dialogue")
 	reveal_in_progress = true
 	_start_terminal_dialogue(_get_environment_lines("staff_room_terminal_available", [
-		{"speaker": "Terminal", "text": "Employee file recovered."},
-		{"speaker": "Terminal", "text": "Identity signal matched."},
-		{"speaker": "Terminal", "text": "Name: Employee 04."},
-	]), Callable(self, "_start_reveal"))
+		{"speaker": "Terminal", "text": "RESTORED TAPE ACCEPTED."},
+		{"speaker": "Terminal", "text": "PLAYBACK SUBJECT IDENTIFIED: EMPLOYEE 04."},
+		{"speaker": "Player", "text": "(Employee 04? Why does it think that is me?)"},
+	]), Callable(self, "_start_memory_echo_reveal"))
 
-func _start_terminal_dialogue(lines: Array, after_dialogue: Callable) -> void:
+func _start_terminal_dialogue(lines: Array, after_dialogue: Callable, antagonist_ambience_enabled := true) -> void:
 	if active_dialogue_box and is_instance_valid(active_dialogue_box):
 		active_dialogue_box.queue_free()
 	active_dialogue_box = DIALOGUE_BOX_SCENE.instantiate()
 	add_child(active_dialogue_box)
+	if active_dialogue_box.has_method("set_antagonist_ambience_enabled"):
+		active_dialogue_box.call("set_antagonist_ambience_enabled", antagonist_ambience_enabled)
 	if active_dialogue_box.has_signal("dialogue_finished"):
 		active_dialogue_box.connect("dialogue_finished", _on_terminal_dialogue_finished.bind(after_dialogue), CONNECT_ONE_SHOT)
 	if active_dialogue_box.has_method("start_dialogue"):
@@ -198,6 +170,11 @@ func _on_terminal_dialogue_finished(after_dialogue: Callable) -> void:
 	active_dialogue_box = null
 	if after_dialogue.is_valid():
 		after_dialogue.call_deferred()
+	_refresh_route_cue()
+
+func _start_memory_echo_reveal() -> void:
+	GameState.start_memory_echo()
+	_start_reveal()
 
 func _start_reveal() -> void:
 	active_cutscene = SLIDESHOW_SCENE.instantiate()
@@ -230,7 +207,7 @@ func _on_reveal_finished() -> void:
 func _start_final_self_conflict() -> void:
 	if player and player.has_method("set_control_enabled"):
 		player.set_control_enabled(false)
-	_start_terminal_dialogue(_get_final_self_conflict_lines(), Callable(self, "_on_final_self_conflict_finished"))
+	_start_terminal_dialogue(_get_final_self_conflict_lines(), Callable(self, "_on_final_self_conflict_finished"), false)
 
 func _on_final_self_conflict_finished() -> void:
 	GameState.mark_conscience_final_room_seen()
@@ -249,7 +226,7 @@ func _show_ending_prompt() -> void:
 
 func _get_final_self_conflict_lines() -> Array:
 	var lines := [
-		{"speaker": "Player", "text": "Employee 04."},
+		{"speaker": "???", "text": "Employee 04."},
 		{"speaker": "Player", "text": "Owner. Repair hand. The person everyone here recognized."},
 		{"speaker": "Player", "text": "That was me."},
 		{"speaker": "\"Player\"", "text": "Reality should not be like a game."},
@@ -320,10 +297,6 @@ func _get_run_reprise_lines() -> Array:
 func _restore_player_control() -> void:
 	if player and player.has_method("set_control_enabled"):
 		player.set_control_enabled(true)
-
-func _on_return_pressed() -> void:
-	_play_audio("play_ui_confirm")
-	SceneChanger.go_to_arcade_hub()
 
 func _play_audio(method_name: String) -> void:
 	var audio_manager := get_node_or_null("/root/AudioManager")

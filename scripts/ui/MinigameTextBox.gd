@@ -4,6 +4,7 @@ extends PanelContainer
 ## Padded, centered, auto-fitting text panel for instructions, status and results.
 
 const MINIGAME_UI := preload("res://scripts/ui/MinigameUI.gd")
+const BALANCED_TEXT := preload("res://scripts/BalancedText.gd")
 
 @export_multiline var text_value := ""
 @export_enum("Title", "Heading", "Body", "Compact", "HUD") var text_role: int = int(MinigameUI.TextRole.BODY)
@@ -19,7 +20,7 @@ const MINIGAME_UI := preload("res://scripts/ui/MinigameUI.gd")
 
 func _ready() -> void:
 	_apply_padding()
-	text_label.text = text_value
+	text_label.text = BALANCED_TEXT.split_balanced(text_value)
 	MINIGAME_UI.configure_label(
 		text_label,
 		text_role,
@@ -37,12 +38,8 @@ func set_text(value: String) -> void:
 	text_value = value
 	if not is_node_ready():
 		return
-	text_label.text = text_value
+	text_label.text = BALANCED_TEXT.split_balanced(text_value)
 	_fit_text()
-
-
-func get_text() -> String:
-	return text_value
 
 
 func get_label() -> Label:

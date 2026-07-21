@@ -4,8 +4,6 @@
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/common/MapTransition.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="4"]
-[ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="5"]
-[ext_resource type="PackedScene" path="res://scenes/arcade/HubInteractable.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://scenes/ui/QuestNotice.tscn" id="8"]
 [ext_resource type="Script" path="res://scripts/MapCollisionBounds.gd" id="9"]
 [ext_resource type="FontFile" path="res://assets/fonts/PressStart2P-Regular.ttf" id="fpx_title"]
@@ -49,6 +47,9 @@ position = Vector2(320, 360)
 [node name="Spawn_FromMaintenanceHall" type="Marker2D" parent="."]
 position = Vector2(320, 360)
 
+[node name="Spawn_FromStaffRoom" type="Marker2D" parent="."]
+position = Vector2(320, 360)
+
 [node name="Spawn_FromMemoryEcho" type="Marker2D" parent="."]
 position = Vector2(320, 282)
 
@@ -73,14 +74,12 @@ destination_name = "STAFF ACCESS HALL"
 position = Vector2(320, 140)
 target_scene_path = "res://scenes/arcade/StaffRoom.tscn"
 target_spawn_id = "Spawn_FromStaffCorridor"
-destination_name = "FINAL ROOM"
+destination_name = "STAFF ROOM"
 arrow_direction = "up"
 label_offset_override = Vector2(-75, 28)
 required_flag = "maintenance_sync_completed"
 
 [node name="UILayer" type="Node2D" parent="."]
-
-[node name="DialogueBox" parent="UILayer" instance=ExtResource("5")]
 
 [node name="TitleLabel" type="Label" parent="UILayer"]
 position = Vector2(24, 20)

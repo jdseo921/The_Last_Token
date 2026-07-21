@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 const DEBUG := preload("res://scripts/Debug.gd")
+const BALANCED_TEXT := preload("res://scripts/BalancedText.gd")
 
 signal dialogue_finished
 signal dialogue_started(lines: Array)
@@ -69,6 +70,7 @@ var dialogue_text_home_position := Vector2.ZERO
 var continue_prompt_home_position := Vector2.ZERO
 var dim_overlay: ColorRect = null
 var dim_tween: Tween = null
+var antagonist_ambience_enabled := true
 
 func _ready() -> void:
 	add_to_group("dialogue_boxes")
@@ -124,7 +126,13 @@ func start_dialogue(lines: Array) -> void:
 			"first_speaker": str((dialogue_lines[0] as Dictionary).get("speaker", "")) if dialogue_lines[0] is Dictionary else "<invalid>",
 		})
 		dialogue_started.emit(dialogue_lines)
-	_refresh_line()
+		_refresh_line()
+
+func set_antagonist_ambience_enabled(enabled: bool) -> void:
+	antagonist_ambience_enabled = enabled
+	if not enabled:
+		_set_antagonist_dim(false)
+		_set_unknown_voice_music_dim(false)
 
 func _input(event: InputEvent) -> void:
 	if not active:
@@ -172,12 +180,12 @@ func _refresh_line() -> void:
 		return
 	var line: Dictionary = dialogue_lines[current_index]
 	var speaker := str(line.get("speaker", ""))
-	var text := str(line.get("text", ""))
+	var text := BALANCED_TEXT.split_balanced(str(line.get("text", "")), 56)
 	speaker_name_label.text = speaker
 	_apply_speaker_font(speaker)
 	current_line_is_antagonist = _is_antagonist_speaker(speaker)
-	_set_antagonist_dim(current_line_is_antagonist)
-	_set_unknown_voice_music_dim(speaker == "???" and not _should_show_revealed_player_portrait())
+	_set_antagonist_dim(current_line_is_antagonist and antagonist_ambience_enabled)
+	_set_unknown_voice_music_dim(antagonist_ambience_enabled and speaker == "???" and not _should_show_revealed_player_portrait())
 	current_antagonist_effect = str(line.get("effect", "normal"))
 	antagonist_elapsed = 0.0
 	var portrait_path := _get_portrait_path(line, speaker)

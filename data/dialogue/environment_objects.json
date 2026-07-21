@@ -265,86 +265,6 @@
         {"speaker": "Maintenance Sync", "text": "NO FURTHER KNOCKS REQUIRED."}
       ]
     ],
-    "security_tape_terminal_locked": [
-      [
-        {"speaker": "Security Tape", "text": "SECURITY TAPE LOCKED."},
-        {"speaker": "Security Tape", "text": "MAINTENANCE SYNC REQUIRED."}
-      ]
-    ],
-    "security_tape_terminal_overloaded": [
-      [
-        {"speaker": "Security Tape", "text": "SECURITY TAPE DAMAGED."},
-        {"speaker": "Security Tape", "text": "FRAMES OUT OF ORDER."},
-        {"speaker": "Security Tape", "text": "RESTORE SEQUENCE."}
-      ]
-    ],
-    "security_tape_terminal_restored": [
-      [
-        {"speaker": "Security Tape", "text": "TAPE ORDER RESTORED."},
-        {"speaker": "Security Tape", "text": "FRAMES NOW FORM A STAFF ROUTE."},
-        {"speaker": "Security Tape", "text": "FINAL NIGHT WALK REQUIRED."}
-      ]
-    ],
-    "final_night_walk_terminal_locked": [
-      [
-        {"speaker": "Memory System", "text": "FINAL NIGHT WALK LOCKED."},
-        {"speaker": "Memory System", "text": "SECURITY TAPE REQUIRED."}
-      ]
-    ],
-    "final_night_walk_terminal_overloaded": [
-      [
-        {"speaker": "Memory System", "text": "TAPE ORDER RESTORED."},
-        {"speaker": "Memory System", "text": "ROUTE MEMORY UNSTABLE."},
-        {"speaker": "Memory System", "text": "WALK THE FINAL NIGHT."}
-      ]
-    ],
-    "final_night_walk_terminal_restored": [
-      [
-        {"speaker": "Memory System", "text": "FINAL NIGHT ROUTE STABLE."},
-        {"speaker": "Memory System", "text": "WALKBACK MATCHED SECURITY SEQUENCE."},
-        {"speaker": "Memory System", "text": "ONE WALKED IN."},
-        {"speaker": "Memory System", "text": "TWO SIGNALS ANSWERED."},
-        {"speaker": "Memory System", "text": "MEMORY ECHO READY."}
-      ]
-    ],
-    "memory_echo_object_locked": [
-      [
-        {"speaker": "Memory Echo", "text": "MEMORY ECHO LOCKED."},
-        {"speaker": "Memory Echo", "text": "FINAL NIGHT WALK REQUIRED."}
-      ]
-    ],
-    "memory_echo_object_maintenance_required": [
-      [
-        {"speaker": "Memory Echo", "text": "SIGNAL TOO QUIET."},
-        {"speaker": "Memory Echo", "text": "MAINTENANCE SYNC REQUIRED."}
-      ]
-    ],
-    "memory_echo_object_security_tape_required": [
-      [
-        {"speaker": "Memory Echo", "text": "MEMORY ECHO LOCKED."},
-        {"speaker": "Memory Echo", "text": "SECURITY TAPE REQUIRED."}
-      ]
-    ],
-    "memory_echo_object_final_night_required": [
-      [
-        {"speaker": "Memory Echo", "text": "MEMORY ECHO LOCKED."},
-        {"speaker": "Memory Echo", "text": "FINAL NIGHT WALK REQUIRED."}
-      ]
-    ],
-    "memory_echo_object_overloaded": [
-      [
-        {"speaker": "Memory Echo", "text": "FINAL NIGHT ROUTE STABLE."},
-        {"speaker": "Memory Echo", "text": "MEMORY ECHO AVAILABLE."},
-        {"speaker": "Memory Echo", "text": "IDENTITY CONFLICT APPROACHING READABLE RANGE."}
-      ]
-    ],
-    "memory_echo_object_restored": [
-      [
-        {"speaker": "Memory Echo", "text": "Echo stabilized."},
-        {"speaker": "Memory Echo", "text": "The arcade stops arguing with itself."},
-        {"speaker": "Memory Echo", "text": "That might be worse."}
-      ]
-    ],
     "truth_filter_machine_replay_offer": [
       [
         {"speaker": "Truth Filter", "text": "TRUTH FILTER ONLINE. NO CONTRADICTIONS PENDING."},
@@ -419,14 +339,14 @@
     "staff_room_terminal_locked": [
       [
         {"speaker": "Terminal", "text": "RESTORE PLAYBACK LOCKED."},
-        {"speaker": "Terminal", "text": "MEMORY ECHO REQUIRED."}
+        {"speaker": "Terminal", "text": "RESTORED SECURITY TAPE REQUIRED."}
       ]
     ],
     "staff_room_terminal_available": [
       [
-        {"speaker": "Terminal", "text": "Employee file recovered."},
-        {"speaker": "Terminal", "text": "Identity signal matched."},
-        {"speaker": "Terminal", "text": "Name: Employee 04."}
+        {"speaker": "Terminal", "text": "RESTORED TAPE ACCEPTED."},
+        {"speaker": "Terminal", "text": "PLAYBACK SUBJECT IDENTIFIED: EMPLOYEE 04."},
+        {"speaker": "Player", "text": "(Employee 04? Why does it think that is me?)"}
       ]
     ],
     "staff_room_terminal_restored": [

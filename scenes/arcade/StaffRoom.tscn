@@ -1,9 +1,15 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/StaffRoom.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/arcade/HubInteractable.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PauseMenu.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/common/MapTransition.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://scenes/ui/QuestNotice.tscn" id="7"]
+[ext_resource type="Script" path="res://scripts/MapCollisionBounds.gd" id="8"]
+[ext_resource type="FontFile" path="res://assets/fonts/PressStart2P-Regular.ttf" id="fpx_title"]
+[ext_resource type="FontFile" path="res://assets/fonts/m6x11.ttf" id="fpx_micro"]
 
 [node name="StaffRoom" type="Node2D"]
 script = ExtResource("1")
@@ -22,20 +28,13 @@ polygon = PackedVector2Array(24, 24, 336, 24, 336, 96, 24, 96)
 color = Color(0.05, 0.22, 0.18, 1)
 polygon = PackedVector2Array(156, 112, 232, 112, 232, 176, 156, 176)
 
-[node name="EmployeeFileVisual" type="Polygon2D" parent="."]
-color = Color(0.5, 0.42, 0.28, 1)
-polygon = PackedVector2Array(64, 132, 116, 132, 116, 164, 64, 164)
+[node name="CollisionBounds" type="Node2D" parent="."]
+script = ExtResource("8")
+rectangles = Array[Vector4]([Vector4(0, 0, 640, 154), Vector4(0, 154, 120, 246), Vector4(520, 154, 120, 246), Vector4(0, 400, 250, 40), Vector4(390, 400, 250, 40)])
 
-[node name="EmployeeFileLabel" type="Label" parent="."]
-position = Vector2(52, 168)
-text = "EMPLOYEE 04 FILE"
-
-[node name="Employee04File" parent="." instance=ExtResource("3")]
-position = Vector2(244, 182)
-interact_extents = Vector2(90, 90)
-interactable_kind = "employee_04_file"
-label_text = "FILE"
-use_placeholder_visual = false
+[node name="FurnitureCollision" type="Node2D" parent="."]
+script = ExtResource("8")
+rectangles = Array[Vector4]([Vector4(225, 108, 172, 72), Vector4(98, 199, 56, 100)])
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
 position = Vector2(320, 312)
@@ -55,48 +54,60 @@ position = Vector2(244, 246)
 [node name="Player" parent="." instance=ExtResource("2")]
 position = Vector2(320, 312)
 
-[node name="InteractionPrompt" type="Label" parent="."]
-position = Vector2(24, 272)
-text = ""
-
-[node name="Panel" type="Panel" parent="."]
-offset_left = 24.0
-offset_top = 24.0
-offset_right = 360.0
-offset_bottom = 112.0
-
-[node name="Title" type="Label" parent="Panel"]
-offset_left = 12.0
-offset_top = 8.0
-offset_right = 320.0
-offset_bottom = 28.0
-text = "STAFF ROOM"
-
-[node name="Body" type="Label" parent="Panel"]
-visible = false
-offset_left = 12.0
-offset_top = 32.0
-offset_right = 320.0
-offset_bottom = 52.0
-text = "The old terminal is still running."
-
-[node name="ReturnButton" type="Button" parent="Panel"]
-offset_left = 12.0
-offset_top = 56.0
-offset_right = 152.0
-offset_bottom = 84.0
-text = "Return to Arcade"
-
 [node name="RevealTerminal" parent="." instance=ExtResource("3")]
-position = Vector2(320, 182)
-interact_extents = Vector2(120, 120)
+position = Vector2(311, 144)
+interact_extents = Vector2(206.4, 86.4)
 interactable_kind = "reveal_terminal"
 label_text = "TERMINAL"
+label_offset = Vector2(9, 38)
 use_placeholder_visual = false
 
 [node name="SecurityTapeDesk" parent="." instance=ExtResource("3")]
-position = Vector2(148, 190)
-interact_extents = Vector2(74, 66)
+position = Vector2(126, 249)
+interact_extents = Vector2(67.2, 120)
 interactable_kind = "security_tape_desk"
 label_text = "ARCHIVE DESK"
+label_offset = Vector2(22, -62)
 use_placeholder_visual = false
+
+[node name="ReturnToStaffCorridor" parent="." instance=ExtResource("5")]
+position = Vector2(320, 400)
+target_scene_path = "res://scenes/maps/StaffCorridor.tscn"
+target_spawn_id = "Spawn_FromStaffRoom"
+destination_name = "STAFF CORRIDOR"
+arrow_direction = "down"
+label_offset_override = Vector2(-75, -30)
+
+[node name="UILayer" type="Node2D" parent="."]
+
+[node name="DialogueBox" parent="UILayer" instance=ExtResource("6")]
+
+[node name="TitleLabel" type="Label" parent="UILayer"]
+position = Vector2(24, 20)
+size = Vector2(300, 28)
+theme_override_fonts/font = ExtResource("fpx_title")
+theme_override_font_sizes/font_size = 16
+text = "STAFF ROOM"
+
+[node name="HintLabel" type="Label" parent="UILayer"]
+visible = false
+position = Vector2(24, 48)
+size = Vector2(430, 42)
+theme_override_fonts/font = ExtResource("fpx_micro")
+theme_override_font_sizes/font_size = 16
+text = "The archive desk and terminal are still powered."
+autowrap_mode = 3
+
+[node name="InteractionPromptBackground" type="ColorRect" parent="UILayer"]
+visible = false
+position = Vector2(194, 400)
+size = Vector2(252, 30)
+color = Color(0.015, 0.018, 0.024, 0.68)
+
+[node name="InteractionPrompt" type="Label" parent="UILayer"]
+position = Vector2(200, 404)
+size = Vector2(240, 24)
+text = ""
+horizontal_alignment = 1
+
+[node name="QuestNotice" parent="." instance=ExtResource("7")]

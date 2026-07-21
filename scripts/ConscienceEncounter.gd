@@ -5,6 +5,7 @@ signal encounter_finished(encounter_id: String)
 const ADVANCE_COOLDOWN_MSEC := 220
 const DEFAULT_LINE_LOCKOUT_MSEC := 120
 const ANTAGONIST_LETTERS_PER_SECOND := 34.0
+const BALANCED_TEXT := preload("res://scripts/BalancedText.gd")
 
 @onready var overlay_root: Control = $OverlayRoot
 @onready var dialogue_panel: Panel = $OverlayRoot/DialoguePanel
@@ -111,7 +112,7 @@ func _refresh_line() -> void:
 		return
 	var line: Dictionary = dialogue_lines[current_index]
 	var speaker := str(line.get("speaker", "???"))
-	var text := str(line.get("text", ""))
+	var text := BALANCED_TEXT.split_balanced(str(line.get("text", "")), 56)
 	var effect := str(line.get("effect", "normal"))
 	var pause_seconds := float(line.get("pause", 0.0))
 	speaker_label.text = speaker

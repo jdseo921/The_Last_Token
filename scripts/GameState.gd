@@ -577,10 +577,6 @@ func consume_pending_spawn_id(default_spawn_id: String = "Spawn_Default") -> Str
 		return default_spawn_id
 	return spawn_id
 
-func set_arcade_return_position(position: Vector2) -> void:
-	arcade_return_position = position
-	has_arcade_return_position = true
-
 func clear_arcade_return_position() -> void:
 	arcade_return_position = Vector2.ZERO
 	has_arcade_return_position = false
@@ -892,11 +888,6 @@ func _post_reveal_witnesses_complete() -> bool:
 		return false
 	return true
 
-func unlock_staff_room() -> void:
-	staff_room_unlocked = true
-	staff_corridor_unlocked = true
-	update_memory_signal_from_progress()
-
 func mark_twist_reveal_seen() -> void:
 	staff_room_unlocked = true
 	staff_corridor_unlocked = true
@@ -960,10 +951,11 @@ func get_current_quest_id() -> String:
 		return "maintenance_sync"
 	if maintenance_sync_completed and not security_tape_assembly_completed and not memory_echo_completed:
 		return "security_tape_assembly"
-	if security_tape_assembly_completed and not final_night_walk_completed and not memory_echo_completed:
-		return "final_night_walk"
-	if final_night_walk_completed and not memory_echo_completed:
-		return "stabilize_memory_echo"
+	# Restoring the tape now hands directly into the Staff Room terminal reveal.
+	# Keep the old completion flags for save compatibility, but do not surface
+	# retired Final Night / Memory Echo objectives to the player.
+	if security_tape_assembly_completed and not twist_reveal_seen:
+		return "enter_staff_room"
 	if maintenance_sync_completed and not memory_echo_completed:
 		return "staff_corridor"
 	if memory_echo_completed and not twist_reveal_seen:
@@ -1121,36 +1113,22 @@ func get_current_quest_data() -> Dictionary:
 			return _with_registry_quest_data({
 				"id": "staff_corridor",
 				"title": "Enter the Staff Corridor",
-				"summary": "Follow the Staff Access Hall onward.",
-				"details": "Gus stabilized the Staff Door. Use the Staff Corridor exit so the overloaded signal can lead toward Security Tape, Final Night Walk, and Memory Echo.",
+				"summary": "Take the north exit to the Staff Room.",
+				"details": "Gus stabilized the Staff Door. Follow the north exit through Staff Corridor to the archive in the Staff Room.",
 			}, "staff_corridor")
 		"security_tape_assembly":
 			return {
 				"id": "security_tape_assembly",
 				"title": "Assemble the Security Tape",
-				"owner": "Staff Door / Mr. Byte",
-				"location": "Staff Corridor",
-				"summary": "Restore the Security Tape in Staff Corridor.",
-				"details": "The Staff Door recorded two signals, but the tape is damaged. Assemble the Security Tape in Staff Corridor before Final Night Walk and Memory Echo.",
+				"owner": "Archive Desk",
+				"location": "Staff Room",
+				"summary": "Inspect the archive desk in Staff Room.",
+				"details": "The archive holds the damaged security tape. Inspect the desk in the Staff Room to restore its four recorded frames.",
 				"required": true,
 				"starts_after": "maintenance_sync_completed",
 				"minigame": "Security Tape Assembly",
 				"memory_signal_after": "Overloaded",
 			}
-		"final_night_walk":
-			return _with_registry_quest_data({
-				"id": "final_night_walk",
-				"title": "Final Night Walk",
-				"summary": "Use the FINAL NIGHT terminal in Staff Corridor.",
-				"details": "The security tape is assembled, but the memory is still too unstable to play back. Use Final Night Walk in Staff Corridor before confronting the Memory Echo.",
-			}, "final_night_walk")
-		"stabilize_memory_echo":
-			return _with_registry_quest_data({
-				"id": "stabilize_memory_echo",
-				"title": "Stabilize the Memory Echo",
-				"summary": "Use Memory Echo in Staff Corridor.",
-				"details": "The Final Night route is stable. Use Memory Echo in Staff Corridor to stabilize the signal before the Staff Room reveals what happened.",
-			}, "memory_echo")
 		"circuit_soda":
 			if get_npc_dialogue_count("vendo_circuit_explained") == 0:
 				return _with_registry_quest_data({
@@ -1190,18 +1168,23 @@ func get_current_quest_data() -> Dictionary:
 				"required": true,
 			}
 		"enter_staff_room":
-			return _with_registry_quest_data({
+			return {
 				"id": "enter_staff_room",
-				"title": "Enter the Staff Room",
-				"summary": "Enter the Staff Room from Staff Corridor.",
-				"details": "The Memory Echo in Staff Corridor stabilized. The Staff Room door is ready.",
-			}, "staff_corridor")
+				"title": "Take the Tape to the Terminal",
+				"owner": "Terminal",
+				"location": "Staff Room",
+				"summary": "Take the restored tape to the Staff Room terminal.",
+				"details": "The tape order is restored. Carry it across the Staff Room and interact with the terminal to begin playback.",
+				"required": true,
+				"minigame": "Memory Echo",
+				"memory_signal_after": "Overloaded",
+			}
 		"finish_memory":
 			return {
 				"id": "finish_memory",
 				"title": "Finish the Memory",
-				"summary": "Let the memory settle.",
-				"details": "The truth is visible now. I need to let this memory finish and see what remains afterward.",
+				"summary": "Face the restored memory at the terminal.",
+				"details": "The terminal has recovered the truth. Stay with the memory long enough to hear what the other voice has been protecting.",
 			}
 		"talk_to_witnesses":
 			return _with_registry_quest_data({
