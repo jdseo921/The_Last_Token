@@ -72,7 +72,10 @@ func _check_catalog() -> void:
 		_expect(bool(profile.get("variable_jump", false)), "%s enables variable jump height" % id)
 		_expect(bool(profile.get("wall_cling", false)) and bool(profile.get("wall_kick", false)), "%s enables wall traversal" % id)
 		_expect((profile.get("portals", []) as Array).size() >= 4, "%s has layered portal exploration" % id)
-		_expect((profile.get("checkpoints", []) as Array).size() >= 4, "%s has four progression thresholds" % id)
+		if id == "static_service_run":
+			_expect((profile.get("checkpoints", []) as Array).is_empty(), "%s deliberately has no mid-shaft saves" % id)
+		else:
+			_expect((profile.get("checkpoints", []) as Array).size() >= 4, "%s has four progression thresholds" % id)
 		_expect((profile.get("keys", []) as Array).size() == int(profile.get("required_keys", 0)), "%s authors every required key" % id)
 		_expect((profile.get("collectibles", []) as Array).size() == int(profile.get("required_collectibles", 0)), "%s authors every required collectible" % id)
 		_check_route_safety(id, profile)

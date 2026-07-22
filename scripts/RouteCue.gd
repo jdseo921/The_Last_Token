@@ -110,11 +110,11 @@ static func get_current_hint(current_location_id: String) -> String:
 		"recover_lost_token":
 			return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Play Cabinet 07 on the main floor.")
 		"return_lost_token":
-			return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Return the Lost Token to Mira.")
+			return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Return the Lost Token to Mira at the counter.")
 		"broken_high_score":
 			if int(state.call("get_npc_dialogue_count", "roxy:broken_high_score_intro")) == 0:
 				return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Talk to Roxy by the score cabinet.")
-			return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Use the BROKEN SCORE cabinet.")
+			return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Use BROKEN SCORE, the top right cabinet.")
 		"vendo_circuit_debrief":
 			return _local_or_route(current_location_id, "snack_alcove", "LOCAL: Talk to Vendo after Circuit Soda.")
 		"ask_vendo_about_unknown":
@@ -124,7 +124,7 @@ static func get_current_hint(current_location_id: String) -> String:
 				return _local_or_route(current_location_id, "prize_corner", "LOCAL: Take the Echo Token to Pip.")
 			if not bool(state.get("pip_met")):
 				if current_location_id == "snack_alcove":
-					return "LOCAL: Take the right passage between the two machines."
+					return "LOCAL: Take PRIZE SERVICE HALL, right wall past Circuit Soda."
 				return _local_or_route(current_location_id, "prize_corner", "LOCAL: Talk to Pip by the prize counter.")
 			return _local_or_route(current_location_id, "prize_corner", "LOCAL: Use the shelf beside Pip.")
 		"truth_filter":
@@ -144,15 +144,17 @@ static func get_current_hint(current_location_id: String) -> String:
 		"lost_shift_file":
 			return _get_lost_shift_hint(current_location_id, state)
 		"static_service_run":
-			return _local_or_route(current_location_id, "maintenance_hall", "LOCAL: Talk to Gus, then run Static Service.")
+			if int(state.call("get_npc_dialogue_count", "gus_static_intro")) == 0:
+				return _local_or_route(current_location_id, "maintenance_hall", "LOCAL: Talk to Gus by the workbench, left side.")
+			return _local_or_route(current_location_id, "maintenance_hall", "LOCAL: Run MAINTENANCE SYNC by the staff door.")
 		"maintenance_sync":
-			return _local_or_route(current_location_id, "maintenance_hall", "LOCAL: Report to Gus in Maintenance Hall.")
+			return _local_or_route(current_location_id, "maintenance_hall", "LOCAL: Report to Gus by the workbench.")
 		"staff_corridor":
 			return _local_or_route(current_location_id, "staff_corridor", "LOCAL: Take the NORTH exit to the Staff Room.")
 		"security_tape_assembly":
-			return _local_or_route(current_location_id, "staff_room", "LOCAL: Inspect the archive desk for the Security Tape.")
+			return _local_or_route(current_location_id, "staff_room", "LOCAL: Inspect the ARCHIVE DESK, left wall.")
 		"enter_staff_room":
-			return _local_or_route(current_location_id, "staff_room", "LOCAL: Inspect the restore terminal.")
+			return _local_or_route(current_location_id, "staff_room", "LOCAL: Use the TERMINAL at the back wall.")
 		"finish_memory":
 			return ""
 		"talk_to_witnesses":
@@ -350,11 +352,11 @@ static func _make_panel_style() -> StyleBoxFlat:
 
 static func _get_lost_shift_hint(current_location_id: String, state: Node) -> String:
 	if not bool(state.get("closing_shift_mira_clue_found")):
-		return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Ask Mira about the closing shift.")
+		return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Ask Mira at the counter, top left.")
 	if not bool(state.get("closing_shift_score_clue_found")):
-		return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Inspect BROKEN SCORE.")
+		return _local_or_route(current_location_id, "cabinet_row", "LOCAL: Read BROKEN SCORE, the top right cabinet.")
 	if not bool(state.get("closing_shift_service_clue_found")):
-		return _local_or_route(current_location_id, "snack_alcove", "LOCAL: Inspect SERVICE DASH.")
+		return _local_or_route(current_location_id, "snack_alcove", "LOCAL: Check SERVICE DASH, left of Vendo.")
 	return _local_or_route(current_location_id, "arcade_hub", "LOCAL: Report the echoes to Gus.")
 
 static func _local_or_route(current_location_id: String, target_location_id: String, local_text: String) -> String:
@@ -404,9 +406,9 @@ static func _get_next_step(current_location_id: String, target_location_id: Stri
 			return "Back to ARCADE HUB, then %s." % _get_target_label(target_location_id)
 		"maintenance_hall":
 			if target_location_id == "staff_corridor":
-				return "Take the STAFF ACCESS HALL on the right."
+				return "Take the STAFF ACCESS HALL to the north."
 			if target_location_id == "staff_room":
-				return "Take the STAFF ACCESS HALL on the right."
+				return "Take the STAFF ACCESS HALL to the north."
 			if target_location_id == "arcade_hub":
 				return "Take the MAINTENANCE HALLWAY at the bottom."
 			return "Back to ARCADE HUB, then %s." % _get_target_label(target_location_id)

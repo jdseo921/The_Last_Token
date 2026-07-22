@@ -121,15 +121,15 @@ static func _static_service_profile() -> Dictionary:
 		"world_size": Vector2(1920.0, 3800.0),
 		"start_position": Vector2(1540.0, 188.0),
 		"required_collectibles": 6,
-		"required_keys": 2,
+		"required_keys": 0,
 		"ordered_collectibles": true,
 		"camera_zoom": 0.64,
 		"environment_index": 4,
 		"collectible_cell": 4,
 		"collectible_name": "Breaker Cores",
 		"key_name": "Phase Relays",
-		"objective": "Descend the service shaft. Recover 6 breaker cores in order and bridge two phase relays.",
-		"status_intro": "GUS (radio): Take the drop shafts downward. Only sealed cross-shafts need a phase gate.",
+		"objective": "Descend the service shaft. Recover 6 breaker cores in order.",
+		"status_intro": "GUS (radio): Take the drop shafts downward. Wall gates climb back up when you overshoot.",
 		"completion_text": "SERVICE POWER RESTORED. One repair opens the next route; it does not erase the strain.",
 		"descent_cues": [
 			{"position": Vector2(1018, 194), "direction": "left"},
@@ -231,7 +231,7 @@ static func _apply_course(profile: Dictionary) -> void:
 		profile["checkpoints"] = _ledger_vertical_checkpoints()
 		profile["goal"] = Rect2(300, 40, 70, 100)
 	elif course == "static_descent":
-		profile["checkpoints"] = _static_service_checkpoints()
+		profile["checkpoints"] = []
 		profile["goal"] = Rect2(430, 3500, 70, 100)
 	else:
 		profile["checkpoints"] = [
@@ -562,20 +562,20 @@ static func _course_c_portals() -> Array[Dictionary]:
 
 static func _static_service_platforms() -> Array[Rect2]:
 	# A descending service shaft: each shelf catches a deliberate drop and turns
-	# the route through a different bay. Two sealed cross-shafts are deliberately
-	# out of reach, so the only portals are useful rather than decorative.
+	# the route through a different bay. Every shelf between the intake and the
+	# exit floor carries a climb gate back to the shelf above it.
 	return [
 		Rect2(980, 220, 860, 40), # Upper-right intake.
 		Rect2(720, 470, 350, 30),
 		Rect2(180, 730, 720, 40),
 		Rect2(580, 1000, 420, 30),
-		Rect2(1100, 1260, 740, 40), # First relay alcove.
+		Rect2(1100, 1260, 740, 40),
 		Rect2(730, 1530, 440, 30),
-		Rect2(80, 1780, 550, 40), # Sealed lower-left shaft.
-		Rect2(1300, 2180, 540, 40), # Reached through phase gate A.
+		Rect2(80, 1780, 550, 40),
+		Rect2(1300, 2180, 540, 40), # Reached by dropping off the shelf above.
 		Rect2(700, 2460, 420, 30),
-		Rect2(40, 2720, 660, 40), # Second sealed crossing starts here.
-		Rect2(1320, 3100, 520, 40), # Reached through phase gate B.
+		Rect2(40, 2720, 660, 40),
+		Rect2(1320, 3100, 520, 40),
 		Rect2(700, 3340, 460, 30),
 		Rect2(120, 3600, 580, 40), # Exit floor.
 	]
@@ -591,8 +591,8 @@ static func _static_service_collectibles() -> Array[Vector2]:
 
 
 static func _static_service_keys() -> Array[Vector2]:
-	# Both relays sit in full bays, well away from their corresponding gates.
-	return [Vector2(1730, 1228), Vector2(1770, 3068)]
+	# The descent carries no phase relays: geometry is the only lock.
+	return []
 
 
 static func _static_service_hazards() -> Array[Rect2]:
@@ -601,36 +601,32 @@ static func _static_service_hazards() -> Array[Rect2]:
 
 static func _static_service_moving_hazards() -> Array[Dictionary]:
 	# Each moving field patrols a shelf that the descending route must cross.
-	# None sit on a save, a gate, or a required pickup.
+	# None sit on a gate or a required pickup, and each sweep leaves room for
+	# the climb gate sharing its shelf.
 	return [
-		{"position": Vector2(780, 438), "range": 150.0, "speed": 88.0, "size": Vector2(42, 42)},
+		{"position": Vector2(760, 438), "range": 80.0, "speed": 88.0, "size": Vector2(42, 42)},
 		{"position": Vector2(820, 1498), "range": 160.0, "speed": 94.0, "size": Vector2(42, 42)},
 		{"position": Vector2(760, 2428), "range": 170.0, "speed": 90.0, "size": Vector2(42, 42)},
 	]
 
 
 static func _static_service_portals() -> Array[Dictionary]:
-	# These are the two only cross-shafts that cannot be crossed by a normal
-	# drop, wall kick, or multi-jump. Every portal has a reciprocal return.
-	var lower_shaft_gate := Rect2(170, 1716, 52, 64)
-	var relay_bay_gate := Rect2(1320, 2116, 52, 64)
-	var lower_cross_gate := Rect2(240, 2656, 52, 64)
-	var exit_bay_gate := Rect2(1350, 3036, 52, 64)
+	# One climb gate per shelf, except the intake (top) and the exit floor
+	# (bottom). Each pad rests on its platform surface and lifts the player to
+	# a clear landing on the shelf directly above, so any overshoot during the
+	# descent can be walked back without mid-shaft saves.
 	return [
-		{"rect": lower_shaft_gate, "target": relay_bay_gate.get_center(), "action": "down", "label": "RELAY BAY"},
-		{"rect": relay_bay_gate, "target": lower_shaft_gate.get_center(), "action": "up", "label": "LOWER SHAFT"},
-		{"rect": lower_cross_gate, "target": exit_bay_gate.get_center(), "action": "down", "label": "EXIT BAY"},
-		{"rect": exit_bay_gate, "target": lower_cross_gate.get_center(), "action": "up", "label": "CROSS SHAFT"},
-	]
-
-
-static func _static_service_checkpoints() -> Array[Dictionary]:
-	return [
-		{"rect": Rect2(240, 630, 80, 100), "position": Vector2(280, 686), "spawn": Vector2(280, 698), "name": "LOWER INTAKE"},
-		{"rect": Rect2(1080, 1160, 80, 100), "position": Vector2(1120, 1216), "spawn": Vector2(1120, 1228), "name": "RELAY ALCOVE"},
-		{"rect": Rect2(1400, 2080, 80, 100), "position": Vector2(1440, 2136), "spawn": Vector2(1440, 2148), "name": "SEALED BAY"},
-		{"rect": Rect2(560, 2620, 80, 100), "position": Vector2(600, 2676), "spawn": Vector2(600, 2688), "name": "CROSS SHAFT"},
-		{"rect": Rect2(740, 3240, 80, 100), "position": Vector2(780, 3296), "spawn": Vector2(780, 3308), "name": "EXIT DEPTH"},
+		{"rect": Rect2(1015, 406, 52, 64), "target": Vector2(1020, 188), "action": "up", "label": "SHELF ABOVE"},
+		{"rect": Rect2(600, 666, 52, 64), "target": Vector2(940, 438), "action": "up", "label": "SHELF ABOVE"},
+		{"rect": Rect2(760, 936, 52, 64), "target": Vector2(760, 698), "action": "up", "label": "SHELF ABOVE"},
+		{"rect": Rect2(1500, 1196, 52, 64), "target": Vector2(900, 968), "action": "up", "label": "SHELF ABOVE"},
+		{"rect": Rect2(1090, 1466, 52, 64), "target": Vector2(1200, 1228), "action": "up", "label": "SHELF ABOVE"},
+		{"rect": Rect2(300, 1716, 52, 64), "target": Vector2(1155, 1498), "action": "up", "label": "SHELF ABOVE"},
+		{"rect": Rect2(1380, 2116, 52, 64), "target": Vector2(480, 1748), "action": "up", "label": "SHELF ABOVE"},
+		{"rect": Rect2(1030, 2396, 52, 64), "target": Vector2(1700, 2148), "action": "up", "label": "SHELF ABOVE"},
+		{"rect": Rect2(550, 2656, 52, 64), "target": Vector2(990, 2428), "action": "up", "label": "SHELF ABOVE"},
+		{"rect": Rect2(1400, 3036, 52, 64), "target": Vector2(200, 2688), "action": "up", "label": "SHELF ABOVE"},
+		{"rect": Rect2(1000, 3276, 52, 64), "target": Vector2(1600, 3068), "action": "up", "label": "SHELF ABOVE"},
 	]
 
 

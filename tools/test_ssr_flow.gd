@@ -25,7 +25,7 @@ func _process(_delta: float) -> bool:
 	var profile: Dictionary = HYBRID_CATALOG.get_profile("static_service_run")
 	_check("profile has title", str(profile.get("title", "")) != "")
 	_check("profile requires collectibles", int(profile.get("required_collectibles", 0)) > 0)
-	_check("profile requires keys", int(profile.get("required_keys", 0)) > 0)
+	_check("descent needs no phase relays", int(profile.get("required_keys", -1)) == 0)
 	_check("profile is ordered", bool(profile.get("ordered_collectibles", false)))
 
 	# 2. stage build: enough pickups exist to satisfy the requirements

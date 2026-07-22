@@ -604,10 +604,14 @@ func _check_goal() -> void:
 	var required_collectibles := int(stage_profile.get("required_collectibles", collectibles.size()))
 	var required_keys := int(stage_profile.get("required_keys", keys.size()))
 	if collected_count < required_collectibles or keys_collected < required_keys:
-		_set_status("EXIT LOCKED: %s %d/%d  //  %s %d/%d" % [
+		var locked_text := "EXIT LOCKED: %s %d/%d" % [
 			str(stage_profile.get("collectible_name", "Signals")), collected_count, required_collectibles,
-			str(stage_profile.get("key_name", "Anchors")), keys_collected, required_keys,
-		], 1.5)
+		]
+		if required_keys > 0:
+			locked_text += "  //  %s %d/%d" % [
+				str(stage_profile.get("key_name", "Anchors")), keys_collected, required_keys,
+			]
+		_set_status(locked_text, 1.5)
 		return
 	_complete_stage()
 

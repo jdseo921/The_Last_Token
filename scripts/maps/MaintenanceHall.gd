@@ -128,23 +128,7 @@ func handle_hub_interaction(interactable: Node, _player_node: Node = null) -> vo
 			start_dialogue([{"speaker": "System", "text": "Nothing happens."}])
 
 func _handle_gus() -> void:
-	if GameState.post_reveal_roam_unlocked and GameState.witness_gus_heard:
-		start_dialogue(_get_gus_lines("static_run_replay_offer", [
-			{"speaker": "Gus", "text": "The route is alive and humming, thanks to you."},
-			{"speaker": "Gus", "text": "Want to run it again anyway? For fun."},
-		]), Callable(self, "_offer_static_run_replay"))
-		return
 	GameState.gus_intro_seen = true
-	if GameState.twist_reveal_seen or GameState.post_reveal_roam_unlocked:
-		GameState.gus_post_reveal_seen = true
-		var was_completed := _was_witness_route_completed()
-		GameState.mark_witness_gus_heard()
-		start_dialogue(_get_gus_lines("post_reveal_witness", [
-			{"speaker": "Gus", "text": "Employee 04."},
-			{"speaker": "Gus", "text": "Yeah. I know."},
-			{"speaker": "Gus", "text": "Keep breathing."},
-		]), _get_witness_completion_callback(was_completed))
-		return
 	if not GameState.circuit_soda_completed:
 		start_dialogue([
 			{"speaker": "Gus", "text": "Maintenance Hall is not ready for you yet."},
@@ -164,6 +148,7 @@ func _handle_gus() -> void:
 			])
 		return
 	if GameState.lost_shift_file_completed and not GameState.static_service_run_completed and not GameState.maintenance_sync_completed and not GameState.story_puzzle_completed:
+		GameState.increment_npc_dialogue_count("gus_static_intro")
 		start_dialogue(_get_gus_lines("static_service_full_intro", [
 			{"speaker": "Gus", "text": "The file gives me enough to work with."},
 			{"speaker": "Gus", "text": "The maintenance route is still dead, but the Sync can run a diagnostic."},
@@ -250,10 +235,10 @@ func _go_to_maintenance_sync() -> void:
 
 func _refresh_gus_presence() -> void:
 	# Gus moves here only for the service sequence. Once the Sync accepts the
-	# player, he returns to the hub and leaves the Staff Access discovery alone.
-	# Post-reveal he drifts back so the Static Service Run replay stays reachable.
+	# player, he returns to the hub for good; the Static Service Run replay is
+	# offered by hub Gus after the reveal.
 	var post_reveal := GameState.twist_reveal_seen or GameState.post_reveal_roam_unlocked
-	var available := (GameState.lost_shift_file_completed and (not GameState.maintenance_sync_completed or not GameState.gus_sync_anecdote_seen) and not post_reveal) or GameState.post_reveal_roam_unlocked
+	var available := GameState.lost_shift_file_completed and (not GameState.maintenance_sync_completed or not GameState.gus_sync_anecdote_seen) and not post_reveal
 	gus.visible = available
 	gus.monitoring = available
 	gus.monitorable = available
@@ -408,10 +393,10 @@ func _maybe_play_completion_anecdote() -> void:
 		]))
 		return
 	if GameState.consume_postgame_replay_return("static_service_run"):
-		start_dialogue(_get_gus_lines("static_run_replay_return", [
-			{"speaker": "Gus", "text": "Power held the whole way down."},
-			{"speaker": "Gus", "text": "That is not forgetting. That is the good version of remembering."},
-		]))
+		start_dialogue([
+			{"speaker": "Player", "text": "Power held the whole way down."},
+			{"speaker": "Player", "text": "That is not forgetting. That is the good version of remembering."},
+		])
 		return
 	if GameState.static_service_run_completed and not GameState.maintenance_sync_completed and GameState.get_npc_dialogue_count("maintenance_sync_restored_notice") == 0:
 		GameState.increment_npc_dialogue_count("maintenance_sync_restored_notice")
@@ -432,5 +417,3 @@ func _complete_sync_and_send_gus_back_to_hub() -> void:
 func _offer_maintenance_sync_replay() -> void:
 	PostGameReplay.open_offer(ui_layer, player, "Sync the door again?", "maintenance_sync", Callable(self, "_go_to_maintenance_sync"))
 
-func _offer_static_run_replay() -> void:
-	PostGameReplay.open_offer(ui_layer, player, "Run the service route again?", "static_service_run", Callable(self, "_go_to_static_service_run"))

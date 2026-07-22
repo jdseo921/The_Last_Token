@@ -706,6 +706,12 @@ func _show_witness_route_complete_notice() -> void:
 
 func _handle_gus() -> void:
 	if _is_post_reveal():
+		if GameState.witness_gus_heard:
+			start_dialogue(_get_gus_lines("static_run_replay_offer", [
+				{"speaker": "Gus", "text": "The route is alive and humming, thanks to you."},
+				{"speaker": "Gus", "text": "Want to run it again anyway? For fun."},
+			]), Callable(self, "_offer_static_run_replay"))
+			return
 		GameState.gus_post_reveal_seen = true
 		var was_completed := _was_witness_route_completed()
 		GameState.mark_witness_gus_heard()
@@ -1430,6 +1436,13 @@ func _start_cabinet_glow_pulse() -> void:
 	cabinet_glow_tween.tween_property(glow_target, "modulate:a", 1.0, 0.42)
 	cabinet_glow_tween.tween_property(glow_target, "modulate:a", 0.45, 0.28)
 	cabinet_glow_tween.tween_property(glow_target, "modulate:a", 0.8, 0.55)
+
+func _offer_static_run_replay() -> void:
+	PostGameReplay.open_offer(ui_layer, player, "Run the service route again?", "static_service_run", Callable(self, "_launch_static_run_replay"))
+
+func _launch_static_run_replay() -> void:
+	_store_arcade_return_position()
+	SceneChanger.go_to_static_service_run()
 
 func _offer_rockbyte_replay() -> void:
 	PostGameReplay.open_offer(ui_layer, player, "Play the duel again?", "rockbyte", Callable(self, "_launch_rockbyte_replay"))

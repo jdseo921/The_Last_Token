@@ -143,18 +143,20 @@ func _check_static_service_profile(profile: Dictionary) -> void:
 	_expect(str(profile.get("course", "")) == "static_descent", "Static Service uses its own descending course")
 	_expect(start.y < goal.get_center().y, "Static Service descends from the upper intake toward the lower exit")
 	_expect(int(profile.get("required_collectibles", 0)) == 6, "Static Service uses six route-critical cores instead of another long sweep")
-	_expect(int(profile.get("required_keys", 0)) == 2, "Static Service uses two phase relays")
-	_expect((profile.get("portals", []) as Array).size() == 4, "Static Service keeps only two reciprocal sealed-shaft portal links")
-	_expect(start.distance_to((profile.get("collectibles", []) as Array)[0]) >= 140.0, "Static Service does not place a breaker core directly on spawn")
+	_expect(int(profile.get("required_keys", 0)) == 0, "Static Service descends without phase relays")
+	_expect((profile.get("checkpoints", []) as Array).is_empty(), "Static Service carries no mid-shaft saves")
+	var interior_shelves := (profile.get("platforms", []) as Array).size() - 2
 	var portals: Array = profile.get("portals", [])
-	_expect(
-		(portals[0] as Dictionary).get("rect", Rect2()).get_center().distance_to((portals[0] as Dictionary).get("target", Vector2.ZERO)) >= 900.0,
-		"Static Service's first phase gate crosses a genuinely sealed shaft"
-	)
-	_expect(
-		(portals[2] as Dictionary).get("rect", Rect2()).get_center().distance_to((portals[2] as Dictionary).get("target", Vector2.ZERO)) >= 900.0,
-		"Static Service's second phase gate crosses a genuinely sealed shaft"
-	)
+	_expect(portals.size() == interior_shelves, "Static Service puts one climb gate on every interior shelf")
+	_expect(start.distance_to((profile.get("collectibles", []) as Array)[0]) >= 140.0, "Static Service does not place a breaker core directly on spawn")
+	var every_gate_climbs := true
+	for portal_value in portals:
+		var climb_portal: Dictionary = portal_value
+		var pad_rect: Rect2 = climb_portal.get("rect", Rect2())
+		var climb_target: Vector2 = climb_portal.get("target", Vector2.ZERO)
+		if str(climb_portal.get("action", "")) != "up" or climb_target.y >= pad_rect.position.y:
+			every_gate_climbs = false
+	_expect(every_gate_climbs, "Static Service gates all climb toward the shelf above")
 	for portal_value in profile.get("portals", []):
 		var portal: Dictionary = portal_value
 		var target: Vector2 = portal.get("target", Vector2.ZERO)
@@ -299,7 +301,12 @@ func _check_portal_connections(stage_id: String, profile: Dictionary) -> void:
 				partner_index = candidate_index
 				break
 		if partner_index < 0:
-			_expect(false, "%s portal %d targets a paired portal" % [stage_id, index + 1])
+			# One-way climb gates are valid when they land on supported floor;
+			# only gates that claim a partner must return to it.
+			_expect(
+				_has_platform_support(target, profile.get("platforms", [])),
+				"%s portal %d is one-way onto supported floor" % [stage_id, index + 1]
+			)
 			continue
 		var partner: Dictionary = portals[partner_index]
 		var partner_target: Vector2 = partner.get("target", Vector2.ZERO)
