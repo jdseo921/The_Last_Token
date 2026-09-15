@@ -17,8 +17,9 @@ Most of these are working records kept from development, not maintained specific
 | --- | --- |
 | [`STORY_CANON.md`](STORY_CANON.md) | Story consistency check for required-route and optional dialogue |
 | [`MINIGAME_UI.md`](MINIGAME_UI.md) | Fonts, text roles, padding, font-size floors, and the layout guard |
+| [`MINIGAME_ROSTER.md`](MINIGAME_ROSTER.md) | The shipped required route, the 12-milestone counter, optional content, and the playable screen list |
 | [`FLAG_REGISTRY.md`](FLAG_REGISTRY.md) | Naming rules for GameState flags |
-| [`CONTROLS.md`](CONTROLS.md) | Input bindings |
+| [`CONTROLS.md`](CONTROLS.md) | Input bindings, display setting, and debug keys |
 
 ## Design and systems
 
@@ -45,7 +46,6 @@ Scope and content proposals written during development. Several describe routes 
 
 | Document | Covers |
 | --- | --- |
-| [`MINIGAME_ROSTER.md`](MINIGAME_ROSTER.md) | Required and optional stage roster |
 | [`NPC_QUEST_OWNERSHIP.md`](NPC_QUEST_OWNERSHIP.md) | Which NPC owns which quest |
 | [`STORY_DENSITY_PLAN.md`](STORY_DENSITY_PLAN.md) | Keeping a short run dense without a lore dump |
 | [`LORE_QUEST_PLAN.md`](LORE_QUEST_PLAN.md) | Lore-reading quests |
@@ -66,9 +66,9 @@ Scope and content proposals written during development. Several describe routes 
 | [`QA_AUTOMATION.md`](QA_AUTOMATION.md) | Headless automation boundary, smoke commands, route helpers |
 | [`TEST_PLAN.md`](TEST_PLAN.md) | Manual playthrough test plan |
 | [`DEBUGGING.md`](DEBUGGING.md) | Runtime trace, F8/F9 overlays, event categories, regression suite |
-| [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md) | Development-era issue and risk list |
-| [`ACT_2_ACCEPTANCE.md`](ACT_2_ACCEPTANCE.md) | Act 2 acceptance checklist |
-| [`EXPANDED_REQUIRED_ROUTE_ACCEPTANCE.md`](EXPANDED_REQUIRED_ROUTE_ACCEPTANCE.md) | Expanded required route acceptance checklist |
+| [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md) | Current open work, known risks, and what has since been resolved |
+| [`ACT_2_ACCEPTANCE.md`](ACT_2_ACCEPTANCE.md) | Act 2 acceptance checklist — superseded status record |
+| [`EXPANDED_REQUIRED_ROUTE_ACCEPTANCE.md`](EXPANDED_REQUIRED_ROUTE_ACCEPTANCE.md) | Expanded route acceptance checklist — superseded status record, gates the pre-12-milestone route |
 | [`ADVENTURE_STAGE_ACCEPTANCE.md`](ADVENTURE_STAGE_ACCEPTANCE.md) | Adventure stage acceptance against the shared controller |
 
 ## Build and assets

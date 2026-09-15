@@ -1,10 +1,12 @@
 # Expanded Required Route Acceptance
 
+> **Superseded status record.** Dated 2026-06-20, kept as a development record. Two things in it are no longer true. The game has since been finished and played through end to end, including by other people at a July 2026 showcase. And the route it gates is not the shipped route: Broken High Score and Prize Echo Ascent are now `"required": true` in `data/quests.json`, the Final Night Walk stage was cut, and the required counter is 12 rather than 10. `MINIGAME_ROSTER.md` has the current route and counter.
+
 ## Status
-- Implementation status: expanded required route implemented with placeholder visuals.
-- Acceptance status: not accepted yet.
-- Required verification: full live Godot viewport playthrough.
-- Scope: required route only. Roxy, Pip, Prize Sort, Broken High Score, and other optional secrets must not be required.
+- Implementation status (historical): expanded required route implemented with placeholder visuals.
+- Acceptance status (historical): not accepted yet.
+- Required verification (historical): full live Godot viewport playthrough.
+- Scope (historical): required route only. Roxy, Pip, Prize Sort, Broken High Score, and other optional secrets must not be required. **This no longer holds** — Broken High Score and Prize Echo Ascent became required milestones.
 - Do not mark accepted unless a live Godot playthrough has actually passed.
 
 ## Final Gate Results
@@ -330,7 +332,7 @@ Each checkpoint must preserve:
 - Current objective.
 - Memory Signal label.
 - Route access locks and unlocks.
-- Save slot summary values:
+- Save slot summary values. **Outdated:** the slot menu no longer prints counters. It renders slot number, story phase, and last-saved time, and `SaveSlotDisplaySmoke.gd` asserts `MAIN:`, `OPTIONAL:`, and `SECRETS:` are absent. The counters still exist on the save data; read them from the route smokes instead. As written when this checklist was authored:
   - `Main: x / 10`
   - `Optional: x / 2`
   - `Secrets: x / y`
