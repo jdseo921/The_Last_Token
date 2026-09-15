@@ -1,0 +1,41 @@
+MIT License
+
+Copyright (c) 2026 jdseo921
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+Scope of this license
+
+"Software" above means the source code of The Last Token: the GDScript under
+`scripts/` and `tools/`, the scene and resource files under `scenes/` and
+`themes/`, the data files under `data/`, the PowerShell runners, the project
+configuration, and the documentation under `docs/`.
+
+Art and audio assets are NOT covered by this license and are excluded from the
+grant above. That includes everything under `assets/` and `art_drop/` — map and
+character art, portraits, minigame art, the Staff Room reveal panels, icons,
+music, and sound effects — much of which is placeholder or generated material
+kept only so the project runs. Do not assume any reuse right in those files.
+
+Fonts under `assets/fonts/` carry their own upstream licenses; see
+`docs/FONT_CREDITS.md`.
+
+Godot Engine is licensed separately by its authors and is not distributed here.
