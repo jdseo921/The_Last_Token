@@ -2,15 +2,19 @@
 
 The Last Token is a 2D top-down retro arcade mystery built in Godot 4.7 with GDScript. The player explores Pixel Haven after closing, talks to the arcade's regulars, recovers a lost token, works through eleven required quests and a roster of arcade stages, unlocks the staff room, and finds out who they actually are.
 
+<!-- SCREENSHOT SLOT. Record docs/media/arcade-hub.png, then delete this comment and
+     uncomment the line below. It is commented out so the README does not render a
+     broken-image icon in the meantime.
+
 ![The Last Token — the Pixel Haven arcade hub](docs/media/arcade-hub.png)
 
-<!--
-Captures to record into docs/media/ (the paths above and below are placeholders until then):
+Captures to record into docs/media/:
   arcade-hub.png   ArcadeHub with Mira at the ticket counter and the quest notice visible
   dialogue.png     A DialogueBox line with a portrait (Mira or Mr. Byte)
   minigame.gif     ~6s of Rockbyte Duel or Circuit Soda being played
   staff-room.png   A Staff Room reveal slideshow panel
   save-slots.png   The three-slot Memory Slot menu
+
 Capture helpers exist under tools/capture_*.gd; they write PNGs to tmp/captures/ and need a
 real rendering display, because the headless dummy renderer has no framebuffer.
 -->

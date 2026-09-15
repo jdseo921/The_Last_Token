@@ -30,10 +30,10 @@ Scope of this license
 configuration, and the documentation under `docs/`.
 
 Art and audio assets are NOT covered by this license and are excluded from the
-grant above. That includes everything under `assets/` and `art_drop/` — map and
-character art, portraits, minigame art, the Staff Room reveal panels, icons,
-music, and sound effects — much of which is placeholder or generated material
-kept only so the project runs. Do not assume any reuse right in those files.
+grant above. That includes everything under `assets/` — map and character art,
+portraits, minigame art, the Staff Room reveal panels, icons, music, and sound
+effects — much of which is placeholder or generated material kept only so the
+project runs. Do not assume any reuse right in those files.
 
 Fonts under `assets/fonts/` carry their own upstream licenses; see
 `docs/FONT_CREDITS.md`.

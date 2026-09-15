@@ -15,3 +15,6 @@ exports/
 
 # Temporary Codex/image generation/QA scratch files
 tmp/
+
+# Raw art-generation drop folder (kept locally, not part of the project)
+art_drop/
