@@ -247,6 +247,9 @@ static func _apply_course(profile: Dictionary) -> void:
 		profile["checkpoints"] = _ledger_vertical_checkpoints()
 		profile["goal"] = Rect2(300, 40, 70, 100)
 	elif course == "static_descent":
+		# Deliberately no mid-shaft saves: the climb gates are this stage's
+		# recovery mechanism. HybridExplorerSmoke guards that decision, and
+		# StaticDescentCueSmoke guards the gate coverage it depends on.
 		profile["checkpoints"] = []
 		profile["goal"] = Rect2(430, 3500, 70, 100)
 	else:
@@ -592,7 +595,10 @@ static func _static_service_platforms() -> Array[Rect2]:
 		Rect2(700, 2460, 420, 30),
 		Rect2(40, 2720, 660, 40),
 		Rect2(1320, 3100, 520, 40),
-		Rect2(700, 3340, 460, 30),
+		# Widened right from 460. Walking off the ledge above used to clear this
+		# shelf by roughly 40px and fall out of the world; it now catches that
+		# step instead of demanding a midair jump nobody is told to make.
+		Rect2(700, 3340, 540, 30),
 		Rect2(120, 3600, 580, 40), # Exit floor.
 	]
 

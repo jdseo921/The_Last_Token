@@ -42,10 +42,8 @@ func _run() -> void:
 	_expect(not platforms.is_empty(), "the descent course builds platforms")
 	_expect(not cues.is_empty(), "the descent course authors cues")
 
-	# Without thresholds a void fall rewinds the whole stage. If this course ever
-	# gains checkpoints the cue rules can relax, so state the assumption loudly.
-	_expect((profile.get("checkpoints", []) as Array).is_empty(),
-		"descent still has no mid-shaft thresholds, so a void fall is expensive")
+	_check_recovery(profile, platforms)
+	_check_completable(profile, platforms)
 
 	var shelves_with_cues := {}
 	for index in range(cues.size()):
@@ -109,6 +107,93 @@ func _check_required_route(profile: Dictionary, platforms: Array, cues: Array) -
 				descends = true
 				break
 		_expect(descends, "the shelf holding core %02d has a cue that reaches another shelf" % [index + 1])
+
+
+func _check_recovery(profile: Dictionary, platforms: Array) -> void:
+	# This stage deliberately has no mid-shaft saves -- "Wall gates climb back up
+	# when you overshoot" is its stated recovery, and HybridExplorerSmoke asserts
+	# the absence of thresholds. That design only holds while the gates actually
+	# cover the shaft, so guard the thing it leans on.
+	_expect((profile.get("checkpoints", []) as Array).is_empty(),
+		"the shaft still relies on climb gates rather than mid-shaft saves")
+
+	var portals: Array = profile.get("portals", [])
+	var shelves_with_gate := {}
+	for portal_value in portals:
+		var portal: Dictionary = portal_value
+		var pad: Rect2 = portal.get("rect", Rect2())
+		var pad_foot := Vector2(pad.get_center().x, pad.end.y - 1.0)
+		var shelf := _shelf_under(pad_foot, platforms)
+		_expect(shelf >= 0, "climb gate at %s stands on a shelf" % pad.get_center())
+		if shelf >= 0:
+			shelves_with_gate[shelf] = true
+
+		# A gate that drops the player somewhere unsupported would strand them.
+		var target: Vector2 = portal.get("target", Vector2.ZERO)
+		var landing := _shelf_under(target, platforms)
+		_expect(landing >= 0, "climb gate at %s lifts to a shelf" % pad.get_center())
+		if landing >= 0 and shelf >= 0:
+			_expect(platforms[landing].position.y < platforms[shelf].position.y,
+				"climb gate at %s lifts upward" % pad.get_center())
+
+	# Every shelf between the intake and the exit floor needs a way back up,
+	# because overshooting one is the failure this stage expects players to make.
+	for shelf in range(1, platforms.size() - 1):
+		_expect(shelves_with_gate.has(shelf),
+			"shelf %d carries a climb gate back toward the intake" % shelf)
+
+
+func _check_completable(profile: Dictionary, platforms: Array) -> void:
+	# A cue-by-cue check still allows a shaft nobody can finish. Walk the actual
+	# objective order -- spawn, then each core in sequence, then the exit -- and
+	# require every leg to be reachable by dropping between shelves.
+	var midair_jumps := int(profile.get("max_midair_jumps", 3))
+	var world_size: Vector2 = profile.get("world_size", Vector2.ZERO)
+	var start: Vector2 = profile.get("start_position", Vector2.ZERO)
+	var goal: Rect2 = profile.get("goal", Rect2())
+
+	var leg_names: Array[String] = ["spawn"]
+	var leg_shelves: Array[int] = [_shelf_under(start, platforms)]
+	_expect(leg_shelves[0] >= 0, "the player spawns onto a shelf")
+
+	var cores: Array = profile.get("collectibles", [])
+	for index in range(cores.size()):
+		var core: Vector2 = cores[index]
+		leg_names.append("core %02d" % (index + 1))
+		leg_shelves.append(_shelf_under(core, platforms))
+
+	# The exit beacon rests on the floor its rect bottoms out on.
+	var goal_foot := Vector2(goal.get_center().x, goal.end.y - 1.0)
+	leg_names.append("exit beacon")
+	leg_shelves.append(_shelf_under(goal_foot, platforms))
+	_expect(leg_shelves[leg_shelves.size() - 1] >= 0, "the exit beacon rests on a shelf")
+
+	for index in range(leg_shelves.size() - 1):
+		var from_shelf := leg_shelves[index]
+		var to_shelf := leg_shelves[index + 1]
+		if from_shelf < 0 or to_shelf < 0:
+			continue
+		var reachable := from_shelf == to_shelf or _can_descend_between(
+			from_shelf, to_shelf, midair_jumps, platforms, world_size)
+		_expect(reachable, "%s -> %s is reachable by dropping between shelves"
+			% [leg_names[index], leg_names[index + 1]])
+
+
+func _can_descend_between(from_shelf: int, to_shelf: int, midair_jumps: int, platforms: Array, world_size: Vector2) -> bool:
+	var seen := {from_shelf: true}
+	var frontier: Array[int] = [from_shelf]
+	while not frontier.is_empty():
+		var shelf: int = frontier.pop_front()
+		for direction in ["left", "right"]:
+			for jumps in range(midair_jumps + 1):
+				var landing := _simulate_drop(shelf, direction, jumps, platforms, world_size)
+				if landing < 0 or seen.has(landing):
+					continue
+				if landing == to_shelf:
+					return true
+				seen[landing] = true
+				frontier.append(landing)
+	return false
 
 
 func _read_controller_tuning() -> void:
