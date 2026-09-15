@@ -1,9 +1,11 @@
 # Act 2 Acceptance
 
+> **Superseded status record.** The status below is from development and is no longer current: the game was finished and played through end to end, including by other people at a July 2026 showcase. The checklist is kept as a regression reference. Route names and flag counts in it predate later changes — `data/quests.json` and `MINIGAME_ROSTER.md` are current.
+
 ## Status
-- Implementation status: scaffold implemented.
-- Acceptance status: not accepted yet.
-- Reason: the full Act 2 route still needs a live Godot viewport playthrough.
+- Implementation status (historical): scaffold implemented.
+- Acceptance status (historical): not accepted yet.
+- Reason (historical): the full Act 2 route still needs a live Godot viewport playthrough.
 
 ## Required Route
 1. Start a New Memory.

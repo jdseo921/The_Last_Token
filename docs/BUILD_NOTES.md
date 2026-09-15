@@ -9,19 +9,25 @@
 - `res://scenes/main/Main.tscn`
 
 ## Autoloads
+- `DebugLog` -> `res://scripts/DebugLog.gd`
 - `GameState` -> `res://scripts/GameState.gd`
 - `SceneChanger` -> `res://scripts/SceneChanger.gd`
 - `SaveManager` -> `res://scripts/SaveManager.gd`
 - `AudioManager` -> `res://scripts/AudioManager.gd`
+- `DisplayOptions` -> `res://scripts/DisplayOptions.gd`
+- `GameSettings` -> `res://scripts/GameSettings.gd`
+- `ConscienceEncounterDirector` -> `res://scripts/ConscienceEncounterDirector.gd`
+- `DevRouteMenu` -> `res://scripts/DevRouteMenu.gd`
 
 ## Export Status
-- `export_presets.cfg` does not currently exist.
-- If a local `export_presets.cfg` is created manually, review it before sharing because it may contain machine-specific paths.
-- No platform-specific export settings have been created in the repo.
+- `export_presets.cfg` exists at the repo root and is committed. It defines a `Windows Desktop` preset exporting to `build/windows/TheLastToken.exe`, with `tools/`, `tmp/`, `docs/`, `*.md`, `scripts/qa/`, and generated art excluded from the pack.
 - No generated binaries should be committed.
 - Local build folders such as `build/`, `builds/`, `export/`, and `exports/` are ignored by `.gitignore`.
+- `BUILD.md` is the current build reference; the manual steps below are kept only for recreating the preset from scratch.
 
 ## Manual Windows Export Steps
+The committed preset makes these unnecessary. Use them only if `export_presets.cfg` is lost.
+
 1. Open the project in Godot 4.7.x.
 2. Go to `Project -> Export`.
 3. Choose `Add...`.
@@ -48,5 +54,7 @@ Runtime saves are written under:
 
 The exact OS path for `user://` depends on the Godot editor/runtime environment.
 
-## Automated QA Caveat
-Use `QA_AUTOMATION.md` for Codex/headless check guidance. In this workspace, temporary Godot QA runners have crashed while opening `user://logs/...`, so automated checks should be limited to scene smoke tests unless that local runner issue is fixed.
+## Automated QA
+`tools/RunRegressionSuite.ps1` is the maintained validation entry point: an editor-wide parse, a main-scene boot, then 30 QA scripts from `scripts/qa/`. See `QA_AUTOMATION.md` for what it does and does not prove, and `DEBUGGING.md` for runtime tracing.
+
+The earlier note here limited automation to scene smoke tests because `--script` QA runners crashed while opening `user://logs/...`. That advice predates the regression suite, which runs 30 `--script` checks sequentially, each with its own `--log-file` and `--disable-crash-handler`.

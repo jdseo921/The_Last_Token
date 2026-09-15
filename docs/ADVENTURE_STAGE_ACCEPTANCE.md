@@ -1,8 +1,12 @@
 # Hybrid Adventure Acceptance Checklist
 
-All seven adventure scenes use `HybridAdventureStage`, authored profiles from
+All four adventure stages use `HybridAdventureStage`, authored profiles from
 `HybridAdventureCatalog`, and `HybridExplorerController`. The target is a
 three-to-four-minute first clear, not a speed-run time.
+
+The stage ids returned by `HybridAdventureCatalog.get_all_stage_ids()` are
+`snack_service_dash`, `prize_shelf_run`, `static_service_run`, and
+`night_ledger_run`. An earlier version of this checklist said seven scenes.
 
 ## Movement FSM
 

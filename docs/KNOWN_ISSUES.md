@@ -1,27 +1,36 @@
 # KNOWN_ISSUES.md
 
-## Live Runtime Test Status
-- Final runtime click-through still needs to be completed in Godot on a machine with the editor installed.
-- Publish-readiness polish pass was statically reviewed and passed a Godot 4.7 headless project/main-scene smoke check.
-- The full `TEST_PLAN.md` path still needs a human interactive playthrough in the Godot viewport because NPC movement, collisions, focus navigation, and menu readability cannot be fully verified from the headless console.
-- Codex-driven temporary Godot QA runners have repeatedly crashed while opening `user://logs/...`. Use `QA_AUTOMATION.md` and prefer headless scene smoke checks plus manual viewport QA.
+Updated after the game was completed and playtested. Entries below were re-checked against the code; the earlier MVP-era list described a much less finished project.
 
-## Known Bugs / Risks
-- Rockbyte Duel uses simple cabinet AI, so outcomes may vary and winning may require retrying.
-- Save/load restores GameState flags and safe scene paths, but exact player position/facing restoration is still placeholder-level. ArcadeHub uses simple state-based spawn positions instead of a full spawn marker system.
-- Saves made from minigames, cutscenes, title flow, or post-reveal states restore safely to ArcadeHub instead of restoring the exact transient scene.
-- Save/load menu interaction should be manually tested with existing and empty slots.
-- Latest UI polish should be manually checked in the Godot viewport for text clipping at the project window size, especially Memory Slot summaries and longer dialogue lines.
-- No `export_presets.cfg` is included yet; Windows export presets must be created manually in Godot.
+## Status
+- The game is complete and playable end to end, and has been played through by other people.
+- `tools/RunRegressionSuite.ps1` is the maintained validation entry point: an editor-wide parse, a main-scene boot, then 30 checks from `scripts/qa/`.
+- Headless automation still does not prove movement feel, input timing, or readability. `TEST_PLAN.md` remains the manual pass for those.
 
-## Placeholder Limitations
-- Visuals are simple placeholder shapes and labels.
-- Slideshow reveal panels may be missing and should display an intentional `MEMORY PANEL / Placeholder image pending` panel.
-- Audio hooks exist, but final sound effects and music are not included. Missing audio files should not block play.
-- Title, save slots, dialogue, puzzle, reveal, and ending screens have MVP readability polish, but still use simple placeholder UI.
-- Hub interactables are labeled placeholder markers; final sprite art and richer environmental dressing are still out of scope for this MVP pass.
+## Open work
+- Exit placement between rooms needs another pass.
+- Adventure-stage levels need adjustment.
 
-## Not Bugs
-- Missing custom art and missing audio files are expected for the MVP.
+## Known bugs / risks
+- Rockbyte Duel uses simple cabinet AI, so outcomes vary and winning may require retrying.
+- Saves made from minigames, cutscenes, title flow, or post-reveal states restore to the parent room that owns them rather than to the exact transient scene. This is deliberate; see `SaveManager._get_safe_resume_scene`.
+- Exact player position and facing are not restored. Story state, safe scene paths, and named spawn markers are.
+
+## Resolved since the MVP list
+- **Spawn markers.** ArcadeHub no longer uses state-based spawn positions. It has eight named markers (`Spawn_Default`, `Spawn_FromCabinetRow`, and so on), and 21 markers exist across the scenes. `GameSanityAudit.gd` checks that every `MapTransition` target marker exists in both directions.
+- **Export preset.** `export_presets.cfg` is committed and configured for Windows Desktop. See `BUILD.md`.
+- **Audio.** Sixteen music tracks and sixteen SFX one-shots ship under `assets/audio/`, wired through `AudioManager` with context mapping and crossfades. Missing audio still does not block play.
+- **Reveal panels.** Eight panels exist under `assets/art/cutscenes/memory_reveal/`. The `MEMORY PANEL / Placeholder image pending` card is now only a fallback for a removed image.
+- **Text clipping.** Now covered automatically: `GameSanityAudit.gd` measures every shipped dialogue line against the real DialogueBox rect, `MinigameLayoutAudit.gd` measures minigame controls against their parents, and `tools/audit_text_fit.gd` sweeps every scene. `MinigameUI.gd` logs a `text_did_not_fit` warning through `DebugLog` at runtime.
+- **Save/load menu.** Covered by `SaveSlotDisplaySmoke.gd` for slot text and by the save/reload and corrupt-file checks in `GameSanityAudit.gd`.
+- **QA runner crashes.** The old `user://logs` crash advice predates the regression suite, which runs 30 `--script` checks sequentially, each with its own `--log-file` and `--disable-crash-handler`.
+
+## Placeholder limitations
+- Some map and character visuals are still simple shapes and labels, though 207 PNGs now ship under `assets/art/`, including map backgrounds for eight rooms and portraits for ten speakers.
+- SFX are simple generated WAV one-shots rather than final sound design.
+- Generated polish assets are deterministic and project-local; the generators live under `tools/`.
+
+## Not bugs
 - The project intentionally has one ending and a small post-reveal roam mode.
-- The project intentionally does not include combat, inventory, extra NPCs, or additional minigames.
+- The project intentionally does not include combat or an inventory.
+- The MVP-era line "no additional minigames" no longer holds: the shipped game has eleven playable screens, catalogued in `scripts/qa/MinigameTestCatalog.gd`.
