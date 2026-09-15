@@ -59,6 +59,7 @@ $tests = @(
 	"OpeningArrivalSmoke.gd",
 	"NavigationUiSmoke.gd",
 	"HallwayFlowSmoke.gd",
+	"HallwayExitSealSmoke.gd",
 	"ClosingShiftEchoesSmoke.gd",
 	"CircuitSodaStoryHandoffSmoke.gd",
 	"PrizeEchoHandoffSmoke.gd",
