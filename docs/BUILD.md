@@ -16,7 +16,7 @@ From the repo root, run the maintained regression entry point:
 pwsh tools/RunRegressionSuite.ps1
 ```
 
-The runner performs an editor-wide parse, boots the main scene, treats silent script compile failures as failures, and executes all focused QA scripts. Logs are written under `tmp/qa/<timestamp>/`. See [`DEBUGGING.md`](../DEBUGGING.md) for runtime tracing.
+The runner performs an editor-wide parse, boots the main scene, treats silent script compile failures as failures, and executes all focused QA scripts. Logs are written under `tmp/qa/<timestamp>/`. See [`DEBUGGING.md`](DEBUGGING.md) for runtime tracing.
 
 ## Build
 

@@ -163,7 +163,7 @@ These are the judgment calls made while reworking the docs. Each is my recommend
 
 ## 9. What this supersedes
 
-The following root-level docs are **archived/advisory only** once this Bible and `STAGE_DESIGN.md` are approved. Recommend moving them to `docs/archive/` to end the sprawl (nothing deleted without your say-so):
+The following planning docs are **archived/advisory only** once this Bible and `STAGE_DESIGN.md` are approved. They have since been collected into `docs/` alongside this file (nothing deleted):
 
 `STORY_DENSITY_PLAN.md`, `LORE_QUEST_PLAN.md`, `DIALOGUE_EXPANSION_PLAN.md`, `CONSCIENCE_ANTAGONIST_PLAN.md`, `EXPANDED_CONTENT_PLAN.md`, `MINIGAME_ROSTER.md`, `DIFFICULTY_ESCALATION_GUIDE.md`, `NPC_DIALOGUE_GUIDE.md`, `NPC_QUEST_OWNERSHIP.md`, `MEMORY_SIGNAL_SYSTEM.md`, `STORY_DENSITY_PLAN.md`, `MAP_EXPANSION_PLAN.md`, `ACT_2_*.md`, `EXPANDED_REQUIRED_ROUTE_ACCEPTANCE.md`, `FIRST_QUEST_VERTICAL_SLICE.md`.
 
