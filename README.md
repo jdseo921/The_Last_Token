@@ -80,6 +80,14 @@ Also 49 `.tscn` scenes, 13 JSON data files (quests, dialogue, minigame config, a
 - Fixed 640x440 viewport, `canvas_items` stretch, no Camera2D — each room is one screen.
 - Nine autoloads: `DebugLog`, `GameState`, `SceneChanger`, `SaveManager`, `AudioManager`, `DisplayOptions`, `GameSettings`, `ConscienceEncounterDirector`, `DevRouteMenu`.
 
+## Play it
+
+Download the Windows x64 build from
+[Releases](https://github.com/jdseo921/The_Last_Token/releases/latest). Unzip
+`TheLastToken.exe` and `TheLastToken.pck` into the same folder and run the exe —
+the `.pck` carries the game content and the exe will not start without it
+alongside. No Godot install needed.
+
 ## Open the project
 
 1. Install Godot 4.7.
