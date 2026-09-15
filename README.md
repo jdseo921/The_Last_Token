@@ -2,22 +2,16 @@
 
 The Last Token is a 2D top-down retro arcade mystery built in Godot 4.7 with GDScript. The player explores Pixel Haven after closing, talks to the arcade's regulars, recovers a lost token, works through eleven required quests and a roster of arcade stages, unlocks the staff room, and finds out who they actually are.
 
-<!-- SCREENSHOT SLOT. Record docs/media/arcade-hub.png, then delete this comment and
-     uncomment the line below. It is commented out so the README does not render a
-     broken-image icon in the meantime.
+![Pixel Haven's arcade hub: labelled interactables, NPCs, the route cue banner and the exit arrows](docs/media/hero.png)
 
-![The Last Token — the Pixel Haven arcade hub](docs/media/arcade-hub.png)
+<p align="center">
+  <img src="docs/media/dialogue.png" width="49%" alt="Roxy speaking in Cabinet Row, with a character portrait and the destination-labelled exit">
+  <img src="docs/media/minigame.png" width="49%" alt="The Truth Filter minigame running inside the shared minigame UI frame">
+</p>
 
-Captures to record into docs/media/:
-  arcade-hub.png   ArcadeHub with Mira at the ticket counter and the quest notice visible
-  dialogue.png     A DialogueBox line with a portrait (Mira or Mr. Byte)
-  minigame.gif     ~6s of Rockbyte Duel or Circuit Soda being played
-  staff-room.png   A Staff Room reveal slideshow panel
-  save-slots.png   The three-slot Memory Slot menu
-
-Capture helpers exist under tools/capture_*.gd; they write PNGs to tmp/captures/ and need a
-real rendering display, because the headless dummy renderer has no framebuffer.
--->
+<!-- These are rendered from the shipped game rather than hand-captured:
+     godot --disable-crash-handler --path . --script "res://tools/capture_readme_shots.gd"
+     writes them to tmp/captures/ at 960x660. See tools/capture_readme_shots.gd. -->
 
 ## Status
 
