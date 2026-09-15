@@ -259,20 +259,43 @@ func _build_descent_cues() -> void:
 		var arrow := Polygon2D.new()
 		arrow.name = "DescentCue"
 		arrow.position = position
-		arrow.polygon = _descent_cue_points(direction)
+		arrow.polygon = _descent_cue_points()
+		arrow.rotation = _descent_cue_rotation(direction)
 		arrow.color = Color(stage_profile.get("accent", Color.CYAN), 0.82)
 		arrow.z_index = 3
 		world_root.add_child(arrow)
+		# Exits elsewhere in the game pulse (see MapTransition). Matching that
+		# here keeps one visual vocabulary for "this is the way out".
+		var pulse := create_tween().set_loops()
+		pulse.tween_property(arrow, "modulate:a", 0.45, 0.55)
+		pulse.tween_property(arrow, "modulate:a", 1.0, 0.55)
 
 
-func _descent_cue_points(direction: String) -> PackedVector2Array:
+func _descent_cue_points() -> PackedVector2Array:
+	# One arrow drawn along +X, rotated per direction by _descent_cue_rotation().
+	# The previous cue was a flat triangle, which told the player to walk that
+	# way rather than to drop off that edge. A shaft plus a wide head, angled
+	# downward, reads as a direction of travel at this stage's camera zoom.
+	return PackedVector2Array([
+		Vector2(-15, -4),
+		Vector2(1, -4),
+		Vector2(1, -11),
+		Vector2(16, 0),
+		Vector2(1, 11),
+		Vector2(1, 4),
+		Vector2(-15, 4),
+	])
+
+
+func _descent_cue_rotation(direction: String) -> float:
+	# +Y is down in 2D, so a positive rotation swings the arrow downward.
 	match direction:
 		"left":
-			return PackedVector2Array([Vector2(8, -6), Vector2(8, 6), Vector2(-8, 0)])
+			return deg_to_rad(135.0)
 		"right":
-			return PackedVector2Array([Vector2(-8, -6), Vector2(-8, 6), Vector2(8, 0)])
+			return deg_to_rad(45.0)
 		_:
-			return PackedVector2Array([Vector2(-6, -8), Vector2(6, -8), Vector2(0, 8)])
+			return deg_to_rad(90.0)
 
 
 func _build_static_hazards() -> void:

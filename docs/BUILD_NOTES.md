@@ -55,6 +55,6 @@ Runtime saves are written under:
 The exact OS path for `user://` depends on the Godot editor/runtime environment.
 
 ## Automated QA
-`tools/RunRegressionSuite.ps1` is the maintained validation entry point: an editor-wide parse, a main-scene boot, then 30 QA scripts from `scripts/qa/`. See `QA_AUTOMATION.md` for what it does and does not prove, and `DEBUGGING.md` for runtime tracing.
+`tools/RunRegressionSuite.ps1` is the maintained validation entry point: an editor-wide parse, a main-scene boot, then 31 QA scripts from `scripts/qa/`. See `QA_AUTOMATION.md` for what it does and does not prove, and `DEBUGGING.md` for runtime tracing.
 
-The earlier note here limited automation to scene smoke tests because `--script` QA runners crashed while opening `user://logs/...`. That advice predates the regression suite, which runs 30 `--script` checks sequentially, each with its own `--log-file` and `--disable-crash-handler`.
+The earlier note here limited automation to scene smoke tests because `--script` QA runners crashed while opening `user://logs/...`. That advice predates the regression suite, which runs 31 `--script` checks sequentially, each with its own `--log-file` and `--disable-crash-handler`.
