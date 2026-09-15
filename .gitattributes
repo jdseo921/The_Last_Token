@@ -1,2 +1,16 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# The .gd extension is ambiguous to GitHub's linguist (GDScript and GAP share
+# it), so state it. GDScript is 1.15 MB across 153 files here and should be what
+# the language bar reports.
+*.gd linguist-language=GDScript
+
+# Godot writes these on import; they are not authored. .import alone is 246 KB,
+# the second-largest text type in the repository, and counting it as source
+# misrepresents what the project is.
+*.import linguist-generated=true
+*.uid linguist-generated=true
+
+# Scenes and resources are left detectable on purpose: they are authored in the
+# editor and are legitimately part of a Godot project's content.
