@@ -131,19 +131,35 @@ static func _static_service_profile() -> Dictionary:
 		"objective": "Descend the service shaft. Recover 6 breaker cores in order.",
 		"status_intro": "GUS (radio): Take the drop shafts downward. Wall gates climb back up when you overshoot.",
 		"completion_text": "SERVICE POWER RESTORED. One repair opens the next route; it does not erase the strain.",
+		# Each cue sits 26px above its shelf and points at the drop that carries
+		# the descent onward. Wide shelves carry two: one where the player lands
+		# and one at the edge they leave from, so an arrow is on screen for the
+		# whole shelf at this stage's 0.64 camera zoom.
+		#
+		# Direction is not decorative. This course has no mid-shaft thresholds,
+		# so a drop with no shelf under it costs the player the entire descent
+		# back to the intake. StaticDescentCueSmoke.gd simulates every cue below
+		# and fails if one points at a fall that lands on nothing.
 		"descent_cues": [
-			{"position": Vector2(1018, 194), "direction": "left"},
+			{"position": Vector2(1560, 194), "direction": "left"},   # intake: in view at spawn
+			{"position": Vector2(1018, 194), "direction": "left"},   # intake: drop edge
 			{"position": Vector2(742, 444), "direction": "left"},
+			{"position": Vector2(560, 704), "direction": "right"},   # past core 02
 			{"position": Vector2(874, 704), "direction": "right"},
-			{"position": Vector2(974, 974), "direction": "right"},
+			{"position": Vector2(974, 974), "direction": "right"},   # side ledge: rejoin the rail
+			{"position": Vector2(1620, 1234), "direction": "left"},  # past core 03
 			{"position": Vector2(1124, 1234), "direction": "left"},
-			{"position": Vector2(754, 1504), "direction": "left"},
-			{"position": Vector2(604, 1754), "direction": "left"},
+			{"position": Vector2(800, 1504), "direction": "right"},  # landing side of the shelf
+			{"position": Vector2(1040, 1504), "direction": "right"}, # drop edge to the core 04 shelf
+			{"position": Vector2(604, 1754), "direction": "right"},  # side pocket: the only exit that lands
+			{"position": Vector2(1700, 2154), "direction": "left"},  # past core 04
 			{"position": Vector2(1324, 2154), "direction": "left"},
 			{"position": Vector2(724, 2434), "direction": "left"},
+			{"position": Vector2(260, 2694), "direction": "right"},  # past core 05
 			{"position": Vector2(674, 2694), "direction": "right"},
-			{"position": Vector2(1344, 3074), "direction": "left"},
-			{"position": Vector2(724, 3314), "direction": "left"},
+			{"position": Vector2(1344, 3074), "direction": "left"},  # side ledge: rejoin above the exit
+			{"position": Vector2(1120, 3314), "direction": "left"},  # past core 06
+			{"position": Vector2(724, 3314), "direction": "left"},   # last drop to the exit floor
 		],
 		"accent": Color(0.18, 0.9, 0.62),
 		"secondary": Color(0.26, 0.74, 1.0),

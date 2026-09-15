@@ -40,13 +40,13 @@ What remains is minor polish:
 
 ## QA automation
 
-[`scripts/qa/`](scripts/qa) holds 32 automated checks plus a shared scene inventory (33 files, 4,166 lines), driven by one PowerShell entry point.
+[`scripts/qa/`](scripts/qa) holds 33 automated checks plus a shared scene inventory (34 files, 4,346 lines), driven by one PowerShell entry point.
 
 ```powershell
 pwsh tools/RunRegressionSuite.ps1
 ```
 
-[`tools/RunRegressionSuite.ps1`](tools/RunRegressionSuite.ps1) runs an editor-wide parse precheck, boots the main scene, then executes 30 of those checks sequentially in headless Godot. It does not trust exit codes alone: every log is scanned for `SCRIPT ERROR: Parse Error`, `SCRIPT ERROR: Compile Error`, `Failed to load script`, and `Failed to instantiate an autoload`, so a silent compile failure still fails the run. Each check writes its own log under `tmp/qa/<timestamp>/`, and a failing run prints the offending log path.
+[`tools/RunRegressionSuite.ps1`](tools/RunRegressionSuite.ps1) runs an editor-wide parse precheck, boots the main scene, then executes 31 of those checks sequentially in headless Godot. It does not trust exit codes alone: every log is scanned for `SCRIPT ERROR: Parse Error`, `SCRIPT ERROR: Compile Error`, `Failed to load script`, and `Failed to instantiate an autoload`, so a silent compile failure still fails the run. Each check writes its own log under `tmp/qa/<timestamp>/`, and a failing run prints the offending log path.
 
 What the suite asserts, with the real engine running:
 
@@ -66,10 +66,10 @@ Measured from tracked files at the current commit:
 
 | | Files | Lines |
 | --- | ---: | ---: |
-| Game and UI GDScript (`scripts/`, excluding `scripts/qa/`) | 70 | 18,625 |
-| QA GDScript (`scripts/qa/`) | 33 | 4,166 |
+| Game and UI GDScript (`scripts/`, excluding `scripts/qa/`) | 70 | 18,664 |
+| QA GDScript (`scripts/qa/`) | 34 | 4,346 |
 | Tooling GDScript (`tools/`) | 48 | 5,005 |
-| **Total GDScript** | **151** | **27,796** |
+| **Total GDScript** | **152** | **28,015** |
 
 Also 49 `.tscn` scenes, 13 JSON data files (quests, dialogue, minigame config, asset manifest), and 2 PowerShell runners.
 

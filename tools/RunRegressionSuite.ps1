@@ -67,6 +67,7 @@ $tests = @(
 	"CircuitSodaSmoke.gd",
 	"TruthFilterSmoke.gd",
 	"HybridExplorerSmoke.gd",
+	"StaticDescentCueSmoke.gd",
 	"MinigameUiArchitectureSmoke.gd",
 	"MinigameLayoutAudit.gd",
 	"MinigamePauseCoverageSmoke.gd",

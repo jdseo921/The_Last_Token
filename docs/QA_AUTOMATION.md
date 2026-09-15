@@ -13,7 +13,7 @@ pwsh tools/RunRegressionSuite.ps1
 
 1. Runs an editor-wide parse (`--headless --editor ... --quit`).
 2. Boots `res://scenes/main/Main.tscn` for two seconds.
-3. Runs 30 checks from `scripts/qa/` sequentially, each as its own `--script` launch.
+3. Runs 31 checks from `scripts/qa/` sequentially, each as its own `--script` launch.
 
 It does not trust exit codes alone. Every log is scanned for `SCRIPT ERROR: Parse Error`, `SCRIPT ERROR: Compile Error`, `Failed to load script`, and `Failed to instantiate an autoload`, so a silent compile failure still fails the run. Each check writes its own log under `tmp/qa/<timestamp>/`, and a failure prints the offending log path.
 
@@ -23,7 +23,7 @@ For scene-boot-only checks there is also `tools/RunGodotSmoke.ps1`, which opens 
 
 ## What the suite covers
 
-`scripts/qa/` holds 32 checks plus `MinigameTestCatalog.gd`, a shared screen inventory that pause, layout, and UI-architecture coverage all read from.
+`scripts/qa/` holds 33 checks plus `MinigameTestCatalog.gd`, a shared screen inventory that pause, layout, and UI-architecture coverage all read from.
 
 Broadly, the suite covers:
 
@@ -31,6 +31,7 @@ Broadly, the suite covers:
 - Route and quest integrity (`RequiredRouteStateSmoke.gd`, `QuestFlowAudit.gd`, `ScenePathSmoke.gd`, `StorylineSanitySmoke.gd`, `LoreConsistencySmoke.gd`).
 - UI and layout (`MinigameLayoutAudit.gd`, `MinigameUiArchitectureSmoke.gd`, `MinigamePauseCoverageSmoke.gd`, `PauseMenuSmoke.gd`, `PresentationConsistencySmoke.gd`, `SaveSlotDisplaySmoke.gd`).
 - Dialogue data and presentation (`DialoguePoolSmoke.gd`, `DialoguePortraitSmoke.gd`, `DialogueStyleSmoke.gd`, `DialogueHandoffSmoke.gd`, `PostMinigameDialogueSmoke.gd`).
+- Descent-cue correctness in Static Service Depths (`StaticDescentCueSmoke.gd`): every arrow sits on a shelf and points at a drop that lands on another shelf. That course authors no thresholds, so a cue aimed at a gap costs the player the whole descent.
 - Per-stage regressions (`HybridExplorerSmoke.gd`, `CircuitSodaSmoke.gd`, `TruthFilterSmoke.gd`, `BrokenHighScoreSmoke.gd`, `ArchiveHistorySmoke.gd`, `HallwayFlowSmoke.gd`, `OpeningArrivalSmoke.gd`, `PrizeEchoHandoffSmoke.gd`, `CircuitSodaStoryHandoffSmoke.gd`, `ClosingShiftEchoesSmoke.gd`, `UnknownVoiceMusicDuckSmoke.gd`, `DebugDiagnosticsSmoke.gd`, `NavigationUiSmoke.gd`).
 
 Two checks exist but are not wired into the runner, and are invoked directly:
@@ -73,7 +74,7 @@ ERROR: Failed to open 'user://logs/godot...log'.
 CrashHandlerException: Program crashed with signal 11
 ```
 
-This document previously advised avoiding `--script` runners entirely. That advice predates the regression suite, which runs 30 of them. Both runners give every launch a unique `--log-file` and pass `--disable-crash-handler`, and the suite runs strictly sequentially.
+This document previously advised avoiding `--script` runners entirely. That advice predates the regression suite, which runs 31 of them. Both runners give every launch a unique `--log-file` and pass `--disable-crash-handler`, and the suite runs strictly sequentially.
 
 Two constraints from that period still hold:
 
