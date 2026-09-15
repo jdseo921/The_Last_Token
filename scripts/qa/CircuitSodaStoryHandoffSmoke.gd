@@ -45,7 +45,10 @@ func _run() -> void:
 
 	snack_alcove.call("_handle_vendo")
 	var clue_lines: Array = dialogue_box.get("dialogue_lines")
-	_expect(_contains_text(clue_lines, "between Circuit Soda and me"), "Vendo identifies the right-side passage between the machines")
+	# Assert the direction Vendo gives, not the sentence he gives it in. The
+	# earlier literal ("between Circuit Soda and me") broke on a rewording that
+	# kept the meaning intact.
+	_expect(_contains_text(clue_lines, "passage in the right wall"), "Vendo identifies the right-side passage out of Snack Alcove")
 	_finish_dialogue(dialogue_box)
 	_expect(game_state.vendo_unknown_clue_seen, "Vendo's clue is recorded after the conversation")
 	_expect(game_state.get_current_quest_id() == "prize_sort", "Vendo's clue advances the quest to Prize Service Hall")
