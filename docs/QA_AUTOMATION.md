@@ -13,7 +13,7 @@ pwsh tools/RunRegressionSuite.ps1
 
 1. Runs an editor-wide parse (`--headless --editor ... --quit`).
 2. Boots `res://scenes/main/Main.tscn` for two seconds.
-3. Runs 32 checks from `scripts/qa/` sequentially, each as its own `--script` launch.
+3. Runs all 35 checks from `scripts/qa/` sequentially, each as its own `--script` launch.
 
 It does not trust exit codes alone. Every log is scanned for `SCRIPT ERROR: Parse Error`, `SCRIPT ERROR: Compile Error`, `Failed to load script`, and `Failed to instantiate an autoload`, so a silent compile failure still fails the run. Each check writes its own log under `tmp/qa/<timestamp>/`, and a failure prints the offending log path.
 
@@ -23,7 +23,7 @@ For scene-boot-only checks there is also `tools/RunGodotSmoke.ps1`, which opens 
 
 ## What the suite covers
 
-`scripts/qa/` holds 34 checks plus `MinigameTestCatalog.gd`, a shared screen inventory that pause, layout, and UI-architecture coverage all read from.
+`scripts/qa/` holds 35 checks plus `MinigameTestCatalog.gd`, a shared screen inventory that pause, layout, and UI-architecture coverage all read from.
 
 Broadly, the suite covers:
 
@@ -35,10 +35,9 @@ Broadly, the suite covers:
 - Hallway exit sealing (`HallwayExitSealSmoke.gd`): in every hallway, anywhere the player can stand against a screen edge, an exit trigger is already on them. Walls come from each scene's collision export and triggers from the live Area2D positions after `_ready()`, so moving an exit anchor cannot silently reopen a gap.
 - Per-stage regressions (`HybridExplorerSmoke.gd`, `CircuitSodaSmoke.gd`, `TruthFilterSmoke.gd`, `BrokenHighScoreSmoke.gd`, `ArchiveHistorySmoke.gd`, `HallwayFlowSmoke.gd`, `OpeningArrivalSmoke.gd`, `PrizeEchoHandoffSmoke.gd`, `CircuitSodaStoryHandoffSmoke.gd`, `ClosingShiftEchoesSmoke.gd`, `UnknownVoiceMusicDuckSmoke.gd`, `DebugDiagnosticsSmoke.gd`, `NavigationUiSmoke.gd`).
 
-Two checks exist but are not wired into the runner, and are invoked directly:
+- Overworld traversability (`RouteTraversalSmoke.gd`): each of the 17 rooms is flood-filled from its spawn point with the real player body against the real physics world, and every exit, interactable and other spawn marker must lie in that one connected region. Shape queries are used rather than the collision export, so sprite- and polygon-derived collision counts.
 
-- `NavigationPrecisionSmoke.gd` — asserts the exact navigation hint per quest sub-stage and that it hands off when the next flag flips.
-- `MaintenanceRouteSmoke.gd` — guards the simplified maintenance branch and a collision-free path to the service door.
+Every check in `scripts/qa/` is wired into the runner. `MinigameTestCatalog.gd` is the only file there that is not a check.
 
 ## Automation boundary
 
@@ -75,7 +74,7 @@ ERROR: Failed to open 'user://logs/godot...log'.
 CrashHandlerException: Program crashed with signal 11
 ```
 
-This document previously advised avoiding `--script` runners entirely. That advice predates the regression suite, which runs 32 of them. Both runners give every launch a unique `--log-file` and pass `--disable-crash-handler`, and the suite runs strictly sequentially.
+This document previously advised avoiding `--script` runners entirely. That advice predates the regression suite, which runs 35 of them. Both runners give every launch a unique `--log-file` and pass `--disable-crash-handler`, and the suite runs strictly sequentially.
 
 Two constraints from that period still hold:
 

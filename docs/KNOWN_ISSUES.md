@@ -4,7 +4,7 @@ Updated after the game was completed and playtested. Entries below were re-check
 
 ## Status
 - The game is complete and playable end to end, and has been played through by other people.
-- `tools/RunRegressionSuite.ps1` is the maintained validation entry point: an editor-wide parse, a main-scene boot, then 32 checks from `scripts/qa/`.
+- `tools/RunRegressionSuite.ps1` is the maintained validation entry point: an editor-wide parse, a main-scene boot, then 35 checks from `scripts/qa/`.
 - Headless automation still does not prove movement feel, input timing, or readability. `TEST_PLAN.md` remains the manual pass for those.
 
 ## Open work
@@ -23,7 +23,7 @@ Updated after the game was completed and playtested. Entries below were re-check
 - **Reveal panels.** Eight panels exist under `assets/art/cutscenes/memory_reveal/`. The `MEMORY PANEL / Placeholder image pending` card is now only a fallback for a removed image.
 - **Text clipping.** Now covered automatically: `GameSanityAudit.gd` measures every shipped dialogue line against the real DialogueBox rect, `MinigameLayoutAudit.gd` measures minigame controls against their parents, and `tools/audit_text_fit.gd` sweeps every scene. `MinigameUI.gd` logs a `text_did_not_fit` warning through `DebugLog` at runtime.
 - **Save/load menu.** Covered by `SaveSlotDisplaySmoke.gd` for slot text and by the save/reload and corrupt-file checks in `GameSanityAudit.gd`.
-- **QA runner crashes.** The old `user://logs` crash advice predates the regression suite, which runs 32 `--script` checks sequentially, each with its own `--log-file` and `--disable-crash-handler`.
+- **QA runner crashes.** The old `user://logs` crash advice predates the regression suite, which runs 35 `--script` checks sequentially, each with its own `--log-file` and `--disable-crash-handler`.
 
 ## Placeholder limitations
 - Some map and character visuals are still simple shapes and labels, though 207 PNGs now ship under `assets/art/`, including map backgrounds for eight rooms and portraits for ten speakers.

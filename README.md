@@ -40,13 +40,13 @@ What remains is minor polish:
 
 ## QA automation
 
-[`scripts/qa/`](scripts/qa) holds 34 automated checks plus a shared scene inventory (35 files, 4,603 lines), driven by one PowerShell entry point.
+[`scripts/qa/`](scripts/qa) holds 35 automated checks plus a shared scene inventory (36 files, 4,876 lines), driven by one PowerShell entry point.
 
 ```powershell
 pwsh tools/RunRegressionSuite.ps1
 ```
 
-[`tools/RunRegressionSuite.ps1`](tools/RunRegressionSuite.ps1) runs an editor-wide parse precheck, boots the main scene, then executes 32 of those checks sequentially in headless Godot. It does not trust exit codes alone: every log is scanned for `SCRIPT ERROR: Parse Error`, `SCRIPT ERROR: Compile Error`, `Failed to load script`, and `Failed to instantiate an autoload`, so a silent compile failure still fails the run. Each check writes its own log under `tmp/qa/<timestamp>/`, and a failing run prints the offending log path.
+[`tools/RunRegressionSuite.ps1`](tools/RunRegressionSuite.ps1) runs an editor-wide parse precheck, boots the main scene, then executes all 35 sequentially in headless Godot. It does not trust exit codes alone: every log is scanned for `SCRIPT ERROR: Parse Error`, `SCRIPT ERROR: Compile Error`, `Failed to load script`, and `Failed to instantiate an autoload`, so a silent compile failure still fails the run. Each check writes its own log under `tmp/qa/<timestamp>/`, and a failing run prints the offending log path.
 
 What the suite asserts, with the real engine running:
 
@@ -56,7 +56,7 @@ What the suite asserts, with the real engine running:
 - **Dialogue and story data** — [`DialoguePoolSmoke.gd`](scripts/qa/DialoguePoolSmoke.gd) (loading, set selection, missing-file and missing-key fallbacks), [`DialoguePortraitSmoke.gd`](scripts/qa/DialoguePortraitSmoke.gd) (portrait sources stay at or above the displayed rect, so art is only ever downscaled), [`DialogueStyleSmoke.gd`](scripts/qa/DialogueStyleSmoke.gd), [`DialogueHandoffSmoke.gd`](scripts/qa/DialogueHandoffSmoke.gd), [`PostMinigameDialogueSmoke.gd`](scripts/qa/PostMinigameDialogueSmoke.gd), [`StorylineSanitySmoke.gd`](scripts/qa/StorylineSanitySmoke.gd), and [`LoreConsistencySmoke.gd`](scripts/qa/LoreConsistencySmoke.gd).
 - **Per-stage regressions** — [`HybridExplorerSmoke.gd`](scripts/qa/HybridExplorerSmoke.gd) for the shared movement FSM, plus focused checks for Circuit Soda, Truth Filter, Broken High Score, the Night Ledger archive, the hallway network, the opening arrival, the prize-echo handoff, closing-shift echoes, unknown-voice music ducking, and the debug diagnostics themselves.
 
-Two further checks are not wired into the runner and are invoked directly with `--script`: [`NavigationPrecisionSmoke.gd`](scripts/qa/NavigationPrecisionSmoke.gd), which asserts the exact navigation hint shown per quest sub-stage and that it hands off the moment the next flag flips, and [`MaintenanceRouteSmoke.gd`](scripts/qa/MaintenanceRouteSmoke.gd), which guards the simplified maintenance branch and a collision-free path to the service door. For ad-hoc scene smoke tests there is also [`tools/RunGodotSmoke.ps1`](tools/RunGodotSmoke.ps1), which opens the project and boots nine key scenes sequentially with per-run log files.
+Traversability is covered too: [`RouteTraversalSmoke.gd`](scripts/qa/RouteTraversalSmoke.gd) flood-fills each of the 17 rooms from its spawn point using the real player body against the real physics world, then asserts every exit, every interactable and every other spawn marker lies in that one connected region. It uses shape queries rather than reading the collision export, so collision derived from sprites and polygons counts too.
 
 The suite's boundary is stated in [`docs/QA_AUTOMATION.md`](docs/QA_AUTOMATION.md): headless checks cover structure, data, state, and layout — not movement feel, input timing, or readability. Those are verified by playing the game.
 
@@ -67,9 +67,9 @@ Measured from tracked files at the current commit:
 | | Files | Lines |
 | --- | ---: | ---: |
 | Game and UI GDScript (`scripts/`, excluding `scripts/qa/`) | 70 | 18,670 |
-| QA GDScript (`scripts/qa/`) | 35 | 4,603 |
+| QA GDScript (`scripts/qa/`) | 36 | 4,876 |
 | Tooling GDScript (`tools/`) | 48 | 5,005 |
-| **Total GDScript** | **153** | **28,278** |
+| **Total GDScript** | **154** | **28,551** |
 
 Also 49 `.tscn` scenes, 13 JSON data files (quests, dialogue, minigame config, asset manifest), and 2 PowerShell runners.
 
