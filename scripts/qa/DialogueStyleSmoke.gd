@@ -32,7 +32,14 @@ func _run() -> void:
 	var vendo_text := FileAccess.get_file_as_string("res://data/dialogue/vendo.json")
 	_expect(not snack_text.contains("Vendo loves explaining"), "Circuit Soda no longer assumes the player knows Vendo")
 	_expect(not vendo_text.contains("my signal needs a soda"), "Vendo introduction no longer gives the Player an unexplained soda-signal conclusion")
-	_expect(vendo_text.contains("Questioning it can wait; I should keep moving"), "Vendo introduction keeps the Player confused but moving forward")
+	# These two assertions are a pair, and they guard a property rather than a
+	# script: meeting Vendo must leave the Player bewildered and still walking,
+	# never handed a conclusion they have not earned. The beat currently doing
+	# that job is "(A vending machine missed me. I am filing that under things to
+	# panic about later.)" in circuit_soda_intro. Match the deferral, not the
+	# whole sentence - pinning the full line is what broke this check when the
+	# copy was reworded without the meaning changing.
+	_expect(vendo_text.contains("things to panic about later"), "Vendo introduction keeps the Player confused but moving forward")
 	_expect(not cabinet_text.contains("Roxy's turf"), "Broken Score no longer assumes the player knows Roxy")
 	print("DialogueStyleSmoke: %s" % ("PASS" if failures == 0 else "FAIL (%d)" % failures))
 	quit(0 if failures == 0 else 1)
