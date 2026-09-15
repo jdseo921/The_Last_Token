@@ -29,7 +29,7 @@ polygon = PackedVector2Array(0, 214, 640, 214, 640, 226, 0, 226)
 
 [node name="CollisionBounds" type="Node2D" parent="."]
 script = ExtResource("6")
-rectangles = Array[Vector4]([Vector4(0, 0, 640, 196), Vector4(0, 376, 640, 64)])
+rectangles = Array[Vector4]([Vector4(0, 0, 640, 196), Vector4(0, 376, 640, 64), Vector4(0, 196, 30, 180), Vector4(30, 196, 47, 15), Vector4(30, 255, 47, 121), Vector4(609, 196, 31, 180), Vector4(562, 196, 47, 15), Vector4(562, 255, 47, 121)])
 
 [node name="Spawn_Default" type="Marker2D" parent="."]
 position = Vector2(92, 284)
