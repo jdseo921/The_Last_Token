@@ -41,6 +41,14 @@ If you have two minutes:
    which launches Rockbyte Duel. That banner text is not authored per room — it is what the
    resolver in step 1 returned.
 
+## Play it
+
+Download the Windows x64 build from
+[Releases](https://github.com/jdseo921/the-last-token/releases/latest). Unzip
+`TheLastToken.exe` and `TheLastToken.pck` into the same folder and run the exe —
+the `.pck` carries the game content and the exe will not start without it
+alongside. No Godot install needed.
+
 ## What this demonstrates
 
 - **Quest and flag progression.** Quest records are data, not code: [`data/quests.json`](data/quests.json) holds title, owner, location, summary, `required`, the `starts_after` prerequisite flag, and the Memory Signal each quest moves, loaded through [`scripts/QuestRegistry.gd`](scripts/QuestRegistry.gd). [`scripts/GameState.gd`](scripts/GameState.gd) (1,584 lines) is the single autoloaded source of route truth: roughly ninety named story flags, a derived current-quest resolver, story phase labels, a five-level Memory Signal, a twelve-milestone required-progress counter, and `validate_debug_state()` invariants. [`scripts/RouteCue.gd`](scripts/RouteCue.gd) and [`scripts/QuestNotice.gd`](scripts/QuestNotice.gd) turn that state into per-room guidance instead of hard-coded objective text.
@@ -92,14 +100,6 @@ Also 49 `.tscn` scenes, 13 JSON data files (quests, dialogue, minigame config, a
 - Main scene: `res://scenes/main/Main.tscn`.
 - Fixed 640x440 viewport, `canvas_items` stretch, no Camera2D — each room is one screen.
 - Nine autoloads: `DebugLog`, `GameState`, `SceneChanger`, `SaveManager`, `AudioManager`, `DisplayOptions`, `GameSettings`, `ConscienceEncounterDirector`, `DevRouteMenu`.
-
-## Play it
-
-Download the Windows x64 build from
-[Releases](https://github.com/jdseo921/the-last-token/releases/latest). Unzip
-`TheLastToken.exe` and `TheLastToken.pck` into the same folder and run the exe —
-the `.pck` carries the game content and the exe will not start without it
-alongside. No Godot install needed.
 
 ## Open the project
 
