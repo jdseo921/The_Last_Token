@@ -77,7 +77,7 @@ Also 49 `.tscn` scenes, 13 JSON data files (quests, dialogue, minigame config, a
 ## Play it
 
 Download the Windows x64 build from
-[Releases](https://github.com/jdseo921/The_Last_Token/releases/latest). Unzip
+[Releases](https://github.com/jdseo921/the-last-token/releases/latest). Unzip
 `TheLastToken.exe` and `TheLastToken.pck` into the same folder and run the exe —
 the `.pck` carries the game content and the exe will not start without it
 alongside. No Godot install needed.
