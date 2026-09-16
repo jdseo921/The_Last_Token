@@ -6,10 +6,11 @@ Most of these are working records kept from development, not maintained specific
 
 ## Start here
 
-1. [`STORY_CANON.md`](STORY_CANON.md) — the story source of truth: protagonist and `???` truth, themes, reveal pacing, dialogue guardrails. Read with the shipped content in `data/dialogue/*.json`, `data/quests.json`, and `scripts/GameState.gd`.
-2. [`MINIGAME_UI.md`](MINIGAME_UI.md) — the current UI and layout contract for every minigame and adventure screen.
-3. [`BUILD.md`](BUILD.md) and [`DEBUGGING.md`](DEBUGGING.md) — validation, diagnostics, and the export workflow.
-4. [`QA_AUTOMATION.md`](QA_AUTOMATION.md) — what the automated suite does and does not prove.
+1. [`ARCHITECTURE.md`](ARCHITECTURE.md) — the shipped systems behind the README's headline bullets, at full detail: quest and flag progression, dialogue, the minigame roster, save/load, scene transitions, audio, and the debug tooling.
+2. [`STORY_CANON.md`](STORY_CANON.md) — the story source of truth: protagonist and `???` truth, themes, reveal pacing, dialogue guardrails. Read with the shipped content in `data/dialogue/*.json`, `data/quests.json`, and `scripts/GameState.gd`.
+3. [`MINIGAME_UI.md`](MINIGAME_UI.md) — the current UI and layout contract for every minigame and adventure screen.
+4. [`BUILD.md`](BUILD.md) and [`DEBUGGING.md`](DEBUGGING.md) — validation, diagnostics, and the export workflow.
+5. [`QA_AUTOMATION.md`](QA_AUTOMATION.md) — what the automated suite does and does not prove.
 
 ## Current contracts
 
@@ -25,6 +26,7 @@ Most of these are working records kept from development, not maintained specific
 
 | Document | Covers |
 | --- | --- |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md) | The shipped systems in detail, moved out of the README |
 | [`DESIGN_BIBLE.md`](DESIGN_BIBLE.md) | Historical planning baseline: themes, pacing, difficulty philosophy |
 | [`STAGE_DESIGN.md`](STAGE_DESIGN.md) | Historical per-stage design: verb, entertainment, story connection |
 | [`STORY_FINALIZATION.md`](STORY_FINALIZATION.md) | Finalized story and pacing amendments to the Bible |
