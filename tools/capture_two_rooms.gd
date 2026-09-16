@@ -1,3 +1,8 @@
+# Copyright (c) 2026 jdseo921. All rights reserved.
+# This software and associated documentation files are proprietary and confidential.
+# Unauthorized copying, modification, or distribution of this file is strictly prohibited.
+# Written by jdseo921, jdseo0921@gmail.com
+
 extends SceneTree
 # Windowed capture of Staff Corridor + Staff Room with their new backgrounds.
 # Run WITHOUT --headless:  godot --script res://tools/capture_two_rooms.gd --path <project>

@@ -1,3 +1,8 @@
+# Copyright (c) 2026 jdseo921. All rights reserved.
+# This software and associated documentation files are proprietary and confidential.
+# Unauthorized copying, modification, or distribution of this file is strictly prohibited.
+# Written by jdseo921, jdseo0921@gmail.com
+
 extends SceneTree
 
 const BACKGROUND_MASTER := "res://assets/art/minigames/rockbyte_duel/generated/rockbyte_duel_deluxe_background_master.png"

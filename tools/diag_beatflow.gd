@@ -1,3 +1,8 @@
+# Copyright (c) 2026 jdseo921. All rights reserved.
+# This software and associated documentation files are proprietary and confidential.
+# Unauthorized copying, modification, or distribution of this file is strictly prohibited.
+# Written by jdseo921, jdseo0921@gmail.com
+
 extends SceneTree
 # Walk the Roxy -> Truth Filter -> Mr. Byte -> Gus stretch and print exactly
 # what the UI tells the player at each step (tip + in-room routing bar).

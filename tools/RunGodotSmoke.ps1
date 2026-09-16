@@ -1,3 +1,8 @@
+# Copyright (c) 2026 jdseo921. All rights reserved.
+# This software and associated documentation files are proprietary and confidential.
+# Unauthorized copying, modification, or distribution of this file is strictly prohibited.
+# Written by jdseo921, jdseo0921@gmail.com
+
 param(
 	[string]$GodotExe = "$env:USERPROFILE\Downloads\Godot_v4.7-stable_win64.exe\Godot_v4.7-stable_win64_console.exe",
 	[string[]]$Scenes = @(

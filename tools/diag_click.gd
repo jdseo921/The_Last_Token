@@ -1,3 +1,8 @@
+# Copyright (c) 2026 jdseo921. All rights reserved.
+# This software and associated documentation files are proprietary and confidential.
+# Unauthorized copying, modification, or distribution of this file is strictly prohibited.
+# Written by jdseo921, jdseo0921@gmail.com
+
 extends SceneTree
 # Diagnostic: which Control actually receives a click aimed at RockbyteDuel's
 # move buttons? Emulates Godot's pick order (canvas layer, then tree order).

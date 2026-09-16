@@ -181,6 +181,8 @@ In the same debug builds, `F9` prints a route snapshot and `F8` prints the recen
 
 Design, content, QA, and build documents live in [`docs/`](docs). Start at [`docs/README.md`](docs/README.md) for the index, or [`docs/STORY_CANON.md`](docs/STORY_CANON.md) for the current story source of truth. [`AGENTS.md`](AGENTS.md) holds the working rules the project was built under.
 
-## License
+## Intellectual Property & Usage
 
-Code is MIT licensed — see [`LICENSE`](LICENSE). Placeholder art and audio assets are excluded from that grant.
+This repository contains personal portfolio code for employment review. All rights are reserved by the author. No permission is granted for commercial reuse, redistribution, or modification.
+
+The reservation above covers the original work in this project: the GDScript under `scripts/` and `tools/`, the scenes and themes, the data files, the PowerShell runners, the project configuration, and the documentation under `docs/`. It does not extend to third-party material bundled so the game runs, which remains subject to its owners' terms — the fonts under `assets/fonts/`, which carry their own upstream licenses and attribution requirements listed in [`docs/FONT_CREDITS.md`](docs/FONT_CREDITS.md), and the Godot Engine, which is licensed separately by its authors and is not distributed here.

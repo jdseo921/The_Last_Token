@@ -1,3 +1,8 @@
+# Copyright (c) 2026 jdseo921. All rights reserved.
+# This software and associated documentation files are proprietary and confidential.
+# Unauthorized copying, modification, or distribution of this file is strictly prohibited.
+# Written by jdseo921, jdseo0921@gmail.com
+
 extends SceneTree
 # Measure circuit soda tile sheet: for each of the 6 frames, report which edge
 # midpoints have pipe pixels (N/E/S/W openings) so logic can match the art.

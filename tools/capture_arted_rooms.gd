@@ -1,3 +1,8 @@
+# Copyright (c) 2026 jdseo921. All rights reserved.
+# This software and associated documentation files are proprietary and confidential.
+# Unauthorized copying, modification, or distribution of this file is strictly prohibited.
+# Written by jdseo921, jdseo0921@gmail.com
+
 extends SceneTree
 # Capture all rooms with real art for exit-vs-art review.
 # Run WITHOUT --headless: godot --script res://tools/capture_arted_rooms.gd --path <project>

@@ -1,3 +1,8 @@
+# Copyright (c) 2026 jdseo921. All rights reserved.
+# This software and associated documentation files are proprietary and confidential.
+# Unauthorized copying, modification, or distribution of this file is strictly prohibited.
+# Written by jdseo921, jdseo0921@gmail.com
+
 extends SceneTree
 # Verifies the ArcadeHub's runtime-generated wall collision actually blocks a body.
 #   godot --headless --script res://tools/test_hub_collision.gd --path <project>
