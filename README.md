@@ -22,6 +22,25 @@ What remains is minor polish:
 - Exit placement between rooms.
 - Adventure-stage level adjustments.
 
+## Start here
+
+If you have two minutes:
+
+1. **Read [`scripts/GameState.gd`](scripts/GameState.gd) first.** `get_current_quest_id()` is the
+   whole design in one function: the current objective is *derived* from roughly ninety named
+   story flags every time it is asked for, rather than stored on a scene or advanced by a
+   counter. Nothing in the game hard-codes what to do next — [`RouteCue.gd`](scripts/RouteCue.gd)
+   and [`QuestNotice.gd`](scripts/QuestNotice.gd) render whatever that resolver returns.
+2. **Then [`scripts/qa/RouteTraversalSmoke.gd`](scripts/qa/RouteTraversalSmoke.gd).** The rest of
+   the suite proves the route is *wired*; this one proves it can be *walked*. It flood-fills each
+   of the seventeen rooms from its spawn point using the real player body against the real
+   physics world, then asserts every exit, every interactable and every other spawn marker lies
+   in that one connected region.
+3. **If you play only the first sixty seconds, play these.** Choose **New Memory**, talk to Mira
+   at the ticket counter, and watch the route cue banner name the next objective: Cabinet 07,
+   which launches Rockbyte Duel. That banner text is not authored per room — it is what the
+   resolver in step 1 returned.
+
 ## What this demonstrates
 
 - **Quest and flag progression.** Quest records are data, not code: [`data/quests.json`](data/quests.json) holds title, owner, location, summary, `required`, the `starts_after` prerequisite flag, and the Memory Signal each quest moves, loaded through [`scripts/QuestRegistry.gd`](scripts/QuestRegistry.gd). [`scripts/GameState.gd`](scripts/GameState.gd) (1,584 lines) is the single autoloaded source of route truth: roughly ninety named story flags, a derived current-quest resolver, story phase labels, a five-level Memory Signal, a twelve-milestone required-progress counter, and `validate_debug_state()` invariants. [`scripts/RouteCue.gd`](scripts/RouteCue.gd) and [`scripts/QuestNotice.gd`](scripts/QuestNotice.gd) turn that state into per-room guidance instead of hard-coded objective text.
