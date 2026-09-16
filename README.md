@@ -36,7 +36,7 @@ If you have two minutes:
    of the seventeen rooms from its spawn point using the real player body against the real
    physics world, then asserts every exit, every interactable and every other spawn marker lies
    in that one connected region.
-3. **If you play only the first sixty seconds, play these.** Choose **New Memory**, talk to Mira
+3. **If you play only the first sixty seconds, spend them here.** Choose **New Memory**, talk to Mira
    at the ticket counter, and watch the route cue banner name the next objective: Cabinet 07,
    which launches Rockbyte Duel. That banner text is not authored per room — it is what the
    resolver in step 1 returned.
