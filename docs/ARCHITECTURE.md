@@ -6,7 +6,7 @@ reads in two minutes.
 
 ## Quest and flag progression
 
-Quest records are data, not code: [`data/quests.json`](../data/quests.json) holds title, owner, location, summary, `required`, the `starts_after` prerequisite flag, and the Memory Signal each quest moves, loaded through [`scripts/QuestRegistry.gd`](../scripts/QuestRegistry.gd). [`scripts/GameState.gd`](../scripts/GameState.gd) (1,589 lines) is the single autoloaded source of route truth: roughly ninety named story flags, a derived current-quest resolver, story phase labels, a five-level Memory Signal, a twelve-milestone required-progress counter, and `validate_debug_state()` invariants. [`scripts/RouteCue.gd`](../scripts/RouteCue.gd) and [`scripts/QuestNotice.gd`](../scripts/QuestNotice.gd) turn that state into per-room guidance instead of hard-coded objective text.
+Quest records are data, not code: [`data/quests.json`](../data/quests.json) holds title, owner, location, summary, `required`, the `starts_after` prerequisite flag, and the Memory Signal each quest moves, loaded through [`scripts/QuestRegistry.gd`](../scripts/QuestRegistry.gd). [`scripts/GameState.gd`](../scripts/GameState.gd) (1,589 lines) is the single autoloaded source of route truth: more than a hundred named story flags, a derived current-quest resolver, story phase labels, a five-level Memory Signal, a twelve-milestone required-progress counter, and `validate_debug_state()` invariants. [`scripts/RouteCue.gd`](../scripts/RouteCue.gd) and [`scripts/QuestNotice.gd`](../scripts/QuestNotice.gd) turn that state into per-room guidance instead of hard-coded objective text.
 
 ## NPC and dialogue systems
 

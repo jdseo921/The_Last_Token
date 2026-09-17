@@ -27,8 +27,8 @@ What remains is minor polish:
 If you have two minutes:
 
 1. **Read [`scripts/GameState.gd`](scripts/GameState.gd) first.** `get_current_quest_id()` is the
-   whole design in one function: the current objective is *derived* from roughly ninety named
-   story flags every time it is asked for, rather than stored on a scene or advanced by a
+   whole design in one function: the current objective is *derived* from more than a hundred
+   named story flags every time it is asked for, rather than stored on a scene or advanced by a
    counter. Nothing in the game hard-codes what to do next — [`RouteCue.gd`](scripts/RouteCue.gd)
    and [`QuestNotice.gd`](scripts/QuestNotice.gd) render whatever that resolver returns.
 2. **Then [`scripts/qa/RouteTraversalSmoke.gd`](scripts/qa/RouteTraversalSmoke.gd).** The rest of
@@ -51,7 +51,7 @@ alongside. No Godot install needed.
 
 ## What this demonstrates
 
-- **Quest and flag progression.** Quest records are data, not code: [`data/quests.json`](data/quests.json) carries each quest's owner, location, `required` status, `starts_after` prerequisite and the Memory Signal it moves. [`scripts/GameState.gd`](scripts/GameState.gd) (1,589 lines) is the single autoloaded source of route truth, deriving the current objective from roughly ninety named flags on every call rather than storing it anywhere.
+- **Quest and flag progression.** Quest records are data, not code: [`data/quests.json`](data/quests.json) carries each quest's owner, location, `required` status, `starts_after` prerequisite and the Memory Signal it moves. [`scripts/GameState.gd`](scripts/GameState.gd) (1,589 lines) is the single autoloaded source of route truth, deriving the current objective from more than a hundred named flags on every call rather than storing it anywhere.
 - **NPC and dialogue systems.** [`scripts/DialoguePool.gd`](scripts/DialoguePool.gd) serves line sets from [`data/dialogue/`](data/dialogue) first, random or sequential, with defined fallbacks when a file or key is missing. [`scripts/DialogueBox.gd`](scripts/DialogueBox.gd) drives the typewriter reveal and gives the antagonist speakers a separate scan-jitter presentation that ducks music through the AudioManager as it plays.
 - **Minigame roster.** Eleven playable screens plus a template, enumerated once in [`scripts/qa/MinigameTestCatalog.gd`](scripts/qa/MinigameTestCatalog.gd) so pause, layout and UI-architecture coverage all inherit the same inventory. Presentation is shared rather than copied, and [`MinigameUILayoutGuard.gd`](scripts/ui/MinigameUILayoutGuard.gd) preserves authored rectangles, shrinking text only when changed copy would overflow them.
 - **Save/load with spawn-marker-safe restores.** [`scripts/SaveManager.gd`](scripts/SaveManager.gd) writes three JSON slots and parses player files with a `JSON` instance rather than `JSON.parse_string()`, so a corrupt save is rejected quietly with logged context instead of raising engine errors. Restores avoid exact coordinates — transient scenes map back to the parent room that owns them and re-enter at a named spawn marker — and `GameState.apply_save_data()` back-fills prerequisite flags so saves written before the route was expanded keep loading.
