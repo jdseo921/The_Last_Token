@@ -51,7 +51,7 @@ alongside. No Godot install needed.
 
 ## What this demonstrates
 
-- **Quest and flag progression.** Quest records are data, not code: [`data/quests.json`](data/quests.json) carries each quest's owner, location, `required` status, `starts_after` prerequisite and the Memory Signal it moves. [`scripts/GameState.gd`](scripts/GameState.gd) (1,584 lines) is the single autoloaded source of route truth, deriving the current objective from roughly ninety named flags on every call rather than storing it anywhere.
+- **Quest and flag progression.** Quest records are data, not code: [`data/quests.json`](data/quests.json) carries each quest's owner, location, `required` status, `starts_after` prerequisite and the Memory Signal it moves. [`scripts/GameState.gd`](scripts/GameState.gd) (1,589 lines) is the single autoloaded source of route truth, deriving the current objective from roughly ninety named flags on every call rather than storing it anywhere.
 - **NPC and dialogue systems.** [`scripts/DialoguePool.gd`](scripts/DialoguePool.gd) serves line sets from [`data/dialogue/`](data/dialogue) first, random or sequential, with defined fallbacks when a file or key is missing. [`scripts/DialogueBox.gd`](scripts/DialogueBox.gd) drives the typewriter reveal and gives the antagonist speakers a separate scan-jitter presentation that ducks music through the AudioManager as it plays.
 - **Minigame roster.** Eleven playable screens plus a template, enumerated once in [`scripts/qa/MinigameTestCatalog.gd`](scripts/qa/MinigameTestCatalog.gd) so pause, layout and UI-architecture coverage all inherit the same inventory. Presentation is shared rather than copied, and [`MinigameUILayoutGuard.gd`](scripts/ui/MinigameUILayoutGuard.gd) preserves authored rectangles, shrinking text only when changed copy would overflow them.
 - **Save/load with spawn-marker-safe restores.** [`scripts/SaveManager.gd`](scripts/SaveManager.gd) writes three JSON slots and parses player files with a `JSON` instance rather than `JSON.parse_string()`, so a corrupt save is rejected quietly with logged context instead of raising engine errors. Restores avoid exact coordinates — transient scenes map back to the parent room that owns them and re-enter at a named spawn marker — and `GameState.apply_save_data()` back-fills prerequisite flags so saves written before the route was expanded keep loading.
@@ -63,7 +63,7 @@ Full detail for every bullet above — the file-by-file breakdown, `CHARACTER_FI
 
 ## QA automation
 
-[`scripts/qa/`](scripts/qa) holds 35 automated checks plus a shared scene inventory (36 files, 4,876 lines), driven by one PowerShell entry point.
+[`scripts/qa/`](scripts/qa) holds 35 automated checks plus a shared scene inventory (36 files, 5,056 lines), driven by one PowerShell entry point.
 
 ```powershell
 pwsh tools/RunRegressionSuite.ps1
@@ -85,10 +85,10 @@ Measured from tracked files at the current commit:
 
 | | Files | Lines |
 | --- | ---: | ---: |
-| Game and UI GDScript (`scripts/`, excluding `scripts/qa/`) | 70 | 18,670 |
-| QA GDScript (`scripts/qa/`) | 36 | 4,876 |
-| Tooling GDScript (`tools/`) | 49 | 5,131 |
-| **Total GDScript** | **155** | **28,677** |
+| Game and UI GDScript (`scripts/`, excluding `scripts/qa/`) | 70 | 19,020 |
+| QA GDScript (`scripts/qa/`) | 36 | 5,056 |
+| Tooling GDScript (`tools/`) | 49 | 5,376 |
+| **Total GDScript** | **155** | **29,452** |
 
 Also 49 `.tscn` scenes, 13 JSON data files (quests, dialogue, minigame config, asset manifest), and 2 PowerShell runners.
 
