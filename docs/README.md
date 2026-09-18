@@ -2,7 +2,7 @@
 
 Every design, content, QA, and build document lives in this folder. Only `README.md` and `AGENTS.md` remain at the repository root.
 
-Most of these are working records kept from development, not maintained specifications. Where a planning document and shipped behaviour disagree, **shipped behaviour wins**, and [`STORY_CANON.md`](STORY_CANON.md) is the arbiter for story questions.
+Most of these are working records kept from development, not maintained specifications. Where a planning document and shipped behavior disagree, **shipped behavior wins**, and [`STORY_CANON.md`](STORY_CANON.md) is the arbiter for story questions.
 
 ## Start here
 

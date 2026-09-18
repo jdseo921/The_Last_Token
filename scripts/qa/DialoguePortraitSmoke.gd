@@ -123,7 +123,7 @@ func _expect_refreshed_portrait(path: String) -> void:
 	# Canvases are sized per character so every head renders at the same
 	# apparent size in the 80px portrait box. The invariants that matter are:
 	# square, never smaller than the box (so the engine only downscales), clear
-	# corners, and a head that is centred and clear of the panel edge. Shoulders
+	# corners, and a head that is centered and clear of the panel edge. Shoulders
 	# are allowed to run off the sides on a close-up portrait.
 	var size := image.get_size()
 	if size.x != size.y:

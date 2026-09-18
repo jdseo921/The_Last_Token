@@ -473,7 +473,7 @@ static func _ledger_vertical_moving_hazards() -> Array[Dictionary]:
 
 static func _ledger_vertical_portals() -> Array[Dictionary]:
 	return [
-		# Each target is the centre of its paired threshold. This keeps a depth
+		# Each target is the center of its paired threshold. This keeps a depth
 		# shift reversible instead of sending the player beside an unrelated gate.
 		{"rect": Rect2(1110, 2760, 52, 64), "target": Vector2(206, 2478), "action": "up", "label": "UPPER LEDGER"},
 		{"rect": Rect2(180, 2446, 52, 64), "target": Vector2(1136, 2792), "action": "down", "label": "LOWER LEDGER"},

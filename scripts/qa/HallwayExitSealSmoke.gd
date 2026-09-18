@@ -119,8 +119,8 @@ func _collect_exit_rects(scene: Node) -> Array[Rect2]:
 		if shape_node == null or not shape_node.shape is RectangleShape2D:
 			continue
 		var size: Vector2 = (shape_node.shape as RectangleShape2D).size
-		var centre: Vector2 = area.position + shape_node.position
-		result.append(Rect2(centre - size * 0.5, size))
+		var center: Vector2 = area.position + shape_node.position
+		result.append(Rect2(center - size * 0.5, size))
 	return result
 
 
@@ -131,23 +131,23 @@ func _first_leak_on_edge(edge: String, walls: Array[Rect2], exits: Array[Rect2])
 	var limit: float = SCREEN.y if edge == "left" or edge == "right" else SCREEN.x
 	var value := 0.0
 	while value <= limit:
-		var centre: Vector2
+		var center: Vector2
 		match edge:
 			"left":
-				centre = Vector2(half.x + EDGE_PROBE, value)
+				center = Vector2(half.x + EDGE_PROBE, value)
 			"right":
-				centre = Vector2(SCREEN.x - half.x - EDGE_PROBE, value)
+				center = Vector2(SCREEN.x - half.x - EDGE_PROBE, value)
 			"top":
-				centre = Vector2(value, half.y + EDGE_PROBE)
+				center = Vector2(value, half.y + EDGE_PROBE)
 			_:
-				centre = Vector2(value, SCREEN.y - half.y - EDGE_PROBE)
+				center = Vector2(value, SCREEN.y - half.y - EDGE_PROBE)
 		value += SAMPLE_STEP
-		var box := Rect2(centre - half, PLAYER_BOX)
+		var box := Rect2(center - half, PLAYER_BOX)
 		if _overlaps_any(box, walls):
 			continue  # solid here, the player cannot stand in it
 		if _overlaps_any(box, exits):
 			continue  # standing here means the exit already fired
-		return centre
+		return center
 	return Vector2(-1.0, -1.0)
 
 

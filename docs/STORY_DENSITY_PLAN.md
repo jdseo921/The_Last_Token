@@ -87,7 +87,7 @@ Keep a 45-75 minute version of The Last Token dense, readable, and emotionally c
 - Second interaction: alternate flavor or reminder.
 - Third and later interactions: clear objective nudge.
 - Post-completion: owner anecdote once, then short repeat.
-- Post-reveal: replace evasive hints with direct acknowledgement.
+- Post-reveal: replace evasive hints with direct acknowledgment.
 
 ## Anti-Lore-Dump Checklist
 - Does this beat reveal one useful thing, not five?

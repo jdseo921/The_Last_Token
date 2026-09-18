@@ -2,10 +2,10 @@
 
 The Last Token is a 2D top-down retro arcade mystery built in Godot 4.7 with GDScript. The player explores Pixel Haven after closing, talks to the arcade's regulars, recovers a lost token, works through eleven required quests and a roster of arcade stages, unlocks the staff room, and finds out who they actually are.
 
-![Pixel Haven's arcade hub: labelled interactables, NPCs, the route cue banner and the exit arrows](docs/media/hero.png)
+![Pixel Haven's arcade hub: labeled interactables, NPCs, the route cue banner and the exit arrows](docs/media/hero.png)
 
 <p align="center">
-  <img src="docs/media/dialogue.png" width="49%" alt="Roxy speaking in Cabinet Row, with a character portrait and the destination-labelled exit">
+  <img src="docs/media/dialogue.png" width="49%" alt="Roxy speaking in Cabinet Row, with a character portrait and the destination-labeled exit">
   <img src="docs/media/minigame.png" width="49%" alt="The Truth Filter minigame running inside the shared minigame UI frame">
 </p>
 
@@ -57,7 +57,7 @@ alongside. No Godot install needed.
 - **Save/load with spawn-marker-safe restores.** [`scripts/SaveManager.gd`](scripts/SaveManager.gd) writes three JSON slots and parses player files with a `JSON` instance rather than `JSON.parse_string()`, so a corrupt save is rejected quietly with logged context instead of raising engine errors. Restores avoid exact coordinates — transient scenes map back to the parent room that owns them and re-enter at a named spawn marker — and `GameState.apply_save_data()` back-fills prerequisite flags so saves written before the route was expanded keep loading.
 - **Scene transitions.** [`scripts/SceneChanger.gd`](scripts/SceneChanger.gd) owns the fade overlay, a re-entrancy guard, named route constants and return-point capture, so a minigame can hand control back to the room that launched it. [`scripts/MapTransition.gd`](scripts/MapTransition.gd) arms itself only after the spawn frame, so a spawn overlapping an exit cannot bounce the player straight back out.
 - **Audio management.** [`scripts/AudioManager.gd`](scripts/AudioManager.gd) pools SFX players and runs two music players for crossfades, mapping a context id — room, stage or story phase — to a track. It dims music while the unknown voice speaks and re-reads volumes from [`scripts/GameSettings.gd`](scripts/GameSettings.gd) whenever settings change.
-- **In-editor debug and diagnostic tooling.** [`scripts/DebugLog.gd`](scripts/DebugLog.gd) is a structured session trace — categorised events to `user://logs`, a 250-entry ring buffer, `F9` and `F8` overlays — that raises an `invalid_route_state` error automatically when GameState reports an impossible flag combination. [`scripts/Debug.gd`](scripts/Debug.gd) is a compile-safe bridge to it, so isolated `--script` QA runs do not depend on autoload symbols.
+- **In-editor debug and diagnostic tooling.** [`scripts/DebugLog.gd`](scripts/DebugLog.gd) is a structured session trace — categorized events to `user://logs`, a 250-entry ring buffer, `F9` and `F8` overlays — that raises an `invalid_route_state` error automatically when GameState reports an impossible flag combination. [`scripts/Debug.gd`](scripts/Debug.gd) is a compile-safe bridge to it, so isolated `--script` QA runs do not depend on autoload symbols.
 
 Full detail for every bullet above — the file-by-file breakdown, `CHARACTER_FILES`, the eleven screen names, the shared adventure movement FSM, `DevRouteMenu`, and the 49 utilities under [`tools/`](tools) — is in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 

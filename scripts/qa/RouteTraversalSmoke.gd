@@ -213,10 +213,10 @@ func _standable(space: PhysicsDirectSpaceState2D, at: Vector2) -> bool:
 
 func _cell_reachable(reachable: Dictionary, at: Vector2) -> bool:
 	# A marker counts as reachable if any cell within a body's width of it is.
-	var centre := _to_cell(at)
+	var center := _to_cell(at)
 	for dx in range(-6, 7):
 		for dy in range(-6, 7):
-			if reachable.has(centre + Vector2i(dx, dy)):
+			if reachable.has(center + Vector2i(dx, dy)):
 				return true
 	return false
 
@@ -236,8 +236,8 @@ func _area_rect(area: Area2D) -> Rect2:
 	if shape_node == null or not shape_node.shape is RectangleShape2D:
 		return Rect2(area.global_position, Vector2.ONE)
 	var size: Vector2 = (shape_node.shape as RectangleShape2D).size
-	var centre: Vector2 = area.position + shape_node.position
-	return Rect2(centre - size * 0.5, size)
+	var center: Vector2 = area.position + shape_node.position
+	return Rect2(center - size * 0.5, size)
 
 
 func _to_cell(world: Vector2) -> Vector2i:

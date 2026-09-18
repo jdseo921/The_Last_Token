@@ -16,7 +16,7 @@ extends SceneTree
 const VIEWPORT := Vector2(640.0, 440.0)
 const EPSILON := 0.5
 # Reusable props are instantiated into a parent at a runtime position and are
-# authored centred on their own origin, so measuring them standalone at (0,0)
+# authored centered on their own origin, so measuring them standalone at (0,0)
 # says nothing about where they land on screen.
 const PREFAB_DIRS := ["/common/"]
 const PREFAB_SCENES := ["res://scenes/ui/ReadableNote.tscn"]

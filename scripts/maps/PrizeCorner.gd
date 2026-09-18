@@ -246,7 +246,7 @@ func _maybe_show_pip_minigame_return() -> void:
 	if _dialogue_is_active() or not _is_prize_sort_completed():
 		return
 	# Story completion waits for an explicit Pip interaction so the player
-	# actually delivers the Echo Token. Replay acknowledgements may stay eager.
+	# actually delivers the Echo Token. Replay acknowledgments may stay eager.
 	var replay_return := GameState.postgame_replay_pending == "prize_sort" and GameState.postgame_replay_won
 	if replay_return:
 		_show_pip_prize_completion_dialogue()

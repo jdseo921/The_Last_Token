@@ -116,7 +116,7 @@ Expected result:
 - Prints `RequiredRouteStateSmoke: PASS` and exits `0`.
 - Exits `1` if a quest id, story phase, signal, or progress count does not match.
 
-Use it to catch missing flags, bad progress counts, and wrong quest IDs. It is not acceptance for movement, dialogue timing, scene transitions, minigame playability, save/load behaviour, or the full live route.
+Use it to catch missing flags, bad progress counts, and wrong quest IDs. It is not acceptance for movement, dialogue timing, scene transitions, minigame playability, save/load behavior, or the full live route.
 
 ### DialoguePoolSmoke
 Checks that `DialoguePool.gd` can load sample JSON dialogue, return first/random/sequential sets, and fall back safely for missing files or keys.
@@ -125,7 +125,7 @@ Expected result:
 
 - Prints `DialoguePoolSmoke: PASS`.
 - Exits `0` when sample data and fallbacks work.
-- Exits `1` if a required sample set cannot be loaded or fallback behaviour breaks.
+- Exits `1` if a required sample set cannot be loaded or fallback behavior breaks.
 
 ## Manual gate
 
@@ -148,4 +148,4 @@ The manual playthrough in `TEST_PLAN.md` remains the only proof for feel and rea
 - Add a new playable screen to `scripts/qa/MinigameTestCatalog.gd` once; pause, layout, and UI architecture coverage inherit it.
 - Add a new check to the `$tests` array in `tools/RunRegressionSuite.ps1`, or it will not run.
 - Keep QA documentation honest: static review, headless suite, and live playthrough are different results.
-- Keep temporary generated files in `tmp/`, and do not rely on them for committed project behaviour.
+- Keep temporary generated files in `tmp/`, and do not rely on them for committed project behavior.
