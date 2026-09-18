@@ -185,4 +185,6 @@ Design, content, QA, and build documents live in [`docs/`](docs). Start at [`doc
 
 This repository contains personal portfolio code for employment review. All rights are reserved by the author. No permission is granted for commercial reuse, redistribution, or modification.
 
-The reservation above covers the original work in this project: the GDScript under `scripts/` and `tools/`, the scenes and themes, the data files, the PowerShell runners, the project configuration, and the documentation under `docs/`. It does not extend to third-party material bundled so the game runs, which remains subject to its owners' terms — the fonts under `assets/fonts/`, which carry their own upstream licenses and attribution requirements listed in [`docs/FONT_CREDITS.md`](docs/FONT_CREDITS.md), and the Godot Engine, which is licensed separately by its authors and is not distributed here.
+The reservation above covers the original work in this project: the GDScript under `scripts/` and `tools/`, the scenes and themes, the data files, the PowerShell runners, the project configuration, the documentation under `docs/`, and the art, audio and written story content. It does not extend to third-party material bundled so the game runs, which remains subject to its owners' terms — the fonts under `assets/fonts/`, which carry their own upstream licenses and attribution requirements listed in [`docs/FONT_CREDITS.md`](docs/FONT_CREDITS.md), and the Godot Engine, which is licensed separately by its authors and is not distributed here.
+
+The full terms are in [`LICENSE`](LICENSE).

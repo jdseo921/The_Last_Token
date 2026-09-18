@@ -1,0 +1,30 @@
+All rights reserved.
+
+Copyright (c) 2026 jdseo921
+
+This repository contains a personal portfolio project, published so that it can be read and assessed
+as part of employment review. It is not offered for reuse.
+
+No permission is granted to copy, modify, merge, publish, distribute, sublicense or sell this work
+or any part of it, and no licence to any patent or trademark is granted. Viewing the repository and
+reading its contents is expressly permitted; anything beyond that requires written permission from
+the author.
+
+SCOPE
+
+The reservation above covers the original work in this project: the GDScript under scripts/ and
+tools/, the scenes and themes, the data files, the PowerShell runners, the project configuration,
+the documentation under docs/, and the art, audio and written story content.
+
+It does not extend to third-party material bundled so the game runs, which remains subject to its
+owners' terms:
+
+  - The fonts under assets/fonts/, which carry their own upstream licences and attribution
+    requirements. Those are listed in docs/FONT_CREDITS.md.
+  - The Godot Engine, which is licensed separately by its authors and is not distributed here.
+
+THE WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE WORK OR THE
+USE OR OTHER DEALINGS IN THE WORK.
